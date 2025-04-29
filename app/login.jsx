@@ -25,7 +25,9 @@ const USER = {
     activeWorkout: {},
     analytics: {
       weight: [ {date: 235234, amount: 190.5, }, {date: 235235, amount: 188.5, }, {date: 235236, amount: 185.5, }, {date: 235237, amount: 185, }, {date: 235238, amount: 187, }, {date: 235239, amount: 185.5, }, {date: 235240, amount: 183.5, } ],	
-      expenditure: [ {date: 235234, amount: 2500, }, {date: 235235, amount: 2525, }, {date: 235236, amount: 2520, }, {date: 235237, amount: 2500, }, {date: 235238, amount: 2490, }, {date: 235239, amount: 2480, }, {date: 235240, amount: 2490, } ],	
+      expenditure: [ {date: 235234, amount: 2500, }, {date: 235235, amount: 2525, }, {date: 235236, amount: 2520, }, {date: 235237, amount: 2500, }, {date: 235238, amount: 2490, }, {date: 235239, amount: 2480, }, {date: 235240, amount: 2525, } ],	
+      sleep: [ {date: 235234, amount: 7.5, }, {date: 235235, amount: 8, }, {date: 235236, amount: 7.5, }, {date: 235237, amount: 7.5, }, {date: 235238, amount: 8, }, {date: 235239, amount: 7.5, }, {date: 235240, amount: 8, } ],
+      hydration: [ {date: 235234, amount: 2.5, }, {date: 235235, amount: 2.2, }, {date: 235236, amount: 2.5, }, {date: 235237, amount: 2.4, }, {date: 235238, amount: 2.2, }, {date: 235239, amount: 2, }, {date: 235240, amount: 2.4, } ],
     },
 };
 

@@ -1,8 +1,9 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import LineGraph from './LineGraph'
 import Spacer from './Spacer'
 import { Colors } from '../constants/Colors'
+import RightArrow from '../assets/icons/rightArrow.png'
 
 const PreviewData = (props) => {
 
@@ -14,7 +15,7 @@ const PreviewData = (props) => {
     const isPositive = percentDifference > 0 ? true : false;
     
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={props.onPress}>
         <View>
             <Text  style={styles.title}>{props.title}</Text>
             <View style={{flexDirection: "row", alignItems: "flex-end"}}>
@@ -27,12 +28,15 @@ const PreviewData = (props) => {
 
         <LineGraph data={props.data} color={props.color} aspectRatio={1/6}  />
 
+        <Spacer height={15} />
+
         <View style={{flexDirection: "row", alignItems: "center"}}>
-            <Text style={styles.bottomText}>{isPositive ? "+":""}{percentDifference}%</Text>
+            <Text style={[styles.bottomText, {color: isPositive ? "#86BE79" : "#FF8686", fontWeight: "700"}]}>{isPositive ? "+":""}{percentDifference}%</Text>
             <Text style={styles.bottomText}>Last {props.timeframe}</Text>
+            <Image style={styles.arrowImage} source={RightArrow} />
         </View>
 
-    </View>
+    </Pressable>
   )
 }
 
@@ -65,5 +69,11 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: Colors.dark.text,
         marginLeft: 5,
+    },
+    arrowImage: {
+        width: 10,
+        height: 10,
+        marginLeft: "auto",
+        tintColor: Colors.dark.text,
     }
 })

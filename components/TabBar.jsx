@@ -7,14 +7,8 @@ import ThemedText from './ThemedText';
 import { Colors } from '../constants/Colors';
 // import multiple images from assets/tabBarIcons
 import Home from '../assets/tabBarIcons/home.png';
-import HomeWhite from '../assets/tabBarIcons/homeWhite.png';
-import HomeBlack from '../assets/tabBarIcons/homeBlack.png';
 import Progress from '../assets/tabBarIcons/progress.png';
-import ProgressWhite from '../assets/tabBarIcons/progressWhite.png';
-import ProgressBlack from '../assets/tabBarIcons/progressBlack.png';
 import Workout from '../assets/tabBarIcons/workout.png';
-import WorkoutWhite from '../assets/tabBarIcons/workoutWhite.png';
-import WorkoutBlack from '../assets/tabBarIcons/workoutBlack.png';
 
 function TabBar({ state, descriptors, navigation }) {
   const { colors } = useTheme();
@@ -69,12 +63,7 @@ function TabBar({ state, descriptors, navigation }) {
             onLongPress={onLongPress}
             style={[styles.tabbarItem, , isMiddleTab ? styles.middleTab : null, { opacity: 1 }]}
           >
-
-            <Image style={[styles.tabBarIcon, isMiddleTab ? styles.middleTabIcon : null,]} source={isFocused ? (
-                route.name === 'home' ? (lightTheme ? HomeBlack : HomeWhite) : route.name === 'workout' ? (lightTheme ? WorkoutBlack : WorkoutWhite) : (lightTheme ? ProgressBlack : ProgressWhite)
-            ) : (
-                route.name === 'home' ? (Home) : route.name === 'workout' ? (Workout) : (Progress)
-            )} />
+            <Image style={[styles.tabBarIcon, isMiddleTab ? styles.middleTabIcon : null, {tintColor: isFocused ? theme.title : "grey"}]} source={(route.name === 'home' ? Home : route.name === 'workout' ? Workout : Progress)} />
 
 
             {!isMiddleTab && (
@@ -121,5 +110,5 @@ const styles = StyleSheet.create({
     middleTabIcon: {
         height: 60,
         width: 60,
-    }
+    },
 });

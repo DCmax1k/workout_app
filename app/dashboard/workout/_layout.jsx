@@ -7,7 +7,7 @@ const Workout = () => {
   return (
     <ThemedView  style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
-        <ThemedText>Workout</ThemedText>
+        <ThemedText style={{fontSize: 20, fontWeight: 700, marginTop: 20}}>Workout</ThemedText>
       </SafeAreaView>
     </ThemedView>
   )

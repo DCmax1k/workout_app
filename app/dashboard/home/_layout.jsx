@@ -23,8 +23,8 @@ const Home = () => {
 
   return user ? (
     <ThemedView style={styles.container}> 
-      <SafeAreaView style={{flex: 1}}>
-        <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
+      <SafeAreaView style={{flex: 1}} >
+        <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}} contentContainerStyle={{paddingBottom: 80}}>
           <View style={styles.welcomeCont}>
             <View>
               <Text style={{color: Colors.primaryOrange, fontSize: 15}} >Welcome back,</Text>
@@ -32,7 +32,7 @@ const Home = () => {
             </View>
             <View>
               {/* Profile Icon */}
-              <BlueButton onPress={clearUserData} title={"Clear user data"} style={{marginLeft: 20}} />
+              <BlueButton onPress={clearUserData} title={"[DEV] REST USER"} style={{marginLeft: 20}} />
             </View>
           </View>
 
@@ -45,7 +45,7 @@ const Home = () => {
 
           <Spacer />
           <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Activity</ThemedText>
-          <NotificationCard header={"3 min ago"} title={"Dougie started a workout"} subtitle={"Chest and shoulders"} />
+          <NotificationCard header={"3 min ago"} title={"User2 started a workout"} subtitle={"Chest and shoulders"} />
         </ScrollView>
 
       </SafeAreaView>
