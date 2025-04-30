@@ -29,18 +29,20 @@ const IndexProgress = () => {
             {/* <ThemedText>Progress</ThemedText>
             <BlueButton title="View Progress" onPress={openProgressExpanded} /> */}
 
-            <ThemedText style={[styles.header, {marginTop: 40}]}>Analytics</ThemedText>
+            <ThemedText style={[styles.header, {marginTop: 20, fontSize: 20,  textAlign: 'center'}]}>Progress</ThemedText>
+
+            <ThemedText style={[styles.header, {marginTop: 20, fontSize: 15}]} >Insights</ThemedText>
             <ScrollView style={styles.widgets} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: "flex-start", paddingHorizontal: 20}}>
               <PreviewData data={weightData} title={"Weight"} unit={"lbs"} timeframe={"7 days"} color={"#546FDB"} onPress={() => {Alert.alert("Coming soon")}} />
               <PreviewData data={expData} title={"Expenditure"} unit={"kcal"} timeframe={"7 days"} color={"#DB8854"} />
             </ScrollView>
 
-            <ThemedText style={[styles.header, {marginTop: 40,}]} >Health</ThemedText>
+            <ThemedText style={[styles.header, {marginTop: 40, fontSize: 15}]} >Rest</ThemedText>
             <ScrollView style={styles.widgets} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: "flex-start", paddingHorizontal: 20}}>
               <PreviewData data={sleepData} title={"Sleep amount"} unit={"hrs"} timeframe={"7 days"} color={"#54DB78"} />
             </ScrollView>
 
-            <ThemedText style={[styles.header, {marginTop: 40,}]}>Hydration</ThemedText>
+            <ThemedText style={[styles.header, {marginTop: 40, fontSize: 15}]}>Hydration</ThemedText>
             <ScrollView style={styles.widgets} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: "flex-start", paddingHorizontal: 20}}>
               <PreviewData data={hydrationData} title={"Water"} unit={"liters"} timeframe={"7 days"} color={"#DB54B2"} />
             </ScrollView>

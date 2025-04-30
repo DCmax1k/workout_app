@@ -5,10 +5,13 @@ import { Colors } from '../constants/Colors'
 const BlueButton = ({style, title, ...props}) => {
   return (
     <TouchableOpacity
-      style={[styles.button, { backgroundColor: Colors.primaryBlue || "#fff" }, style]}
+      style={[styles.button, { backgroundColor: props.color || Colors.primaryBlue }, style]}
       {...props}
     >
       <Text style={styles.buttonText}>{title}</Text>
+      {props.subtitle && (
+        <Text style={[styles.buttonText, { fontSize: 12, fontWeight: 400, color: "#D0D0D0" }]}>{props.subtitle}</Text>
+      )}
     </TouchableOpacity>
   )
 }
