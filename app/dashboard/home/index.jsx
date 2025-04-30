@@ -1,4 +1,4 @@
-import { Alert, Button, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, Button, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import { Link, Slot, Stack, useRouter } from 'expo-router'
 import ThemedView from '../../../components/ThemedView'
@@ -8,6 +8,9 @@ import Spacer from '../../../components/Spacer'
 import { useUserStore } from '../../../stores/useUserStore'
 import BlueButton from '../../../components/BlueButton'
 import NotificationCard from '../../../components/NotificationCard'
+
+import profileIcon from '../../../assets/icons/profileIcon.png'
+import search from '../../../assets/icons/search.png'
 
 const IndexHome = () => {
   const router = useRouter();
@@ -28,15 +31,22 @@ const IndexHome = () => {
     <ThemedView style={styles.container}> 
       <SafeAreaView style={{flex: 1}} >
         <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}} contentContainerStyle={{paddingBottom: 80}}>
+          <BlueButton onPress={clearUserData} title={"[DEV] REST USER"} style={{marginLeft: 20}} />
+          {/* <BlueButton onPress={changeUsernameTest} title={"Change username"} style={{marginLeft: 20}} /> */}
           <View style={styles.welcomeCont}>
             <View>
               <Text style={{color: Colors.primaryOrange, fontSize: 15}} >Welcome back,</Text>
               <ThemedText title={true} style={{fontSize: 25, fontWeight: 700}}>{user.username}</ThemedText>
             </View>
-            <View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
               {/* Profile Icon */}
-              <BlueButton onPress={clearUserData} title={"[DEV] REST USER"} style={{marginLeft: 20}} />
-              {/* <BlueButton onPress={changeUsernameTest} title={"Change username"} style={{marginLeft: 20}} /> */}
+              <Pressable style={styles.actionButtonCont} onPress={() => router.push('/dashboard/home/search')} >
+                  <Image style={{width: "70%", height: "70%"}} source={search} />
+              </Pressable>
+              <Pressable style={styles.actionButtonCont} onPress={() => router.push('/dashboard/home/profile')}>
+                  <Image style={{width: "100%", height: "100%"}} source={profileIcon} />
+              </Pressable>
+              
             </View>
           </View>
 
@@ -71,6 +81,15 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     marginTop: 40,
-  }
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  actionButtonCont: {
+    width: 65,
+    height: 65,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 3,
+  },
   
 })

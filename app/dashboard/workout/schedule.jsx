@@ -4,6 +4,8 @@ import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
 import Spacer from '../../../components/Spacer'
 import { useUserStore } from '../../../stores/useUserStore'
+import TitleWithBack from '../../../components/TitleWithBack'
+import { router } from 'expo-router'
 const { getState } = useUserStore
 const rightArrow = require('../../../assets/icons/rightArrow.png')
 const hamburger = require('../../../assets/icons/hamburger.png')
@@ -13,23 +15,36 @@ const Schedule = () => {
     const user = useUserStore((state) => state.user);
     const updateUser = useUserStore((state) => state.updateUser);
 
-    const rotation = user.schedule.rotation.map(id => user.savedWorkouts.find(w => w.id === id)).filter(Boolean);
+    const rotation = user.schedule.rotation.map(id => {
+        if (id === "0") {
+            return {id: "0", name: "Rest Day"}
+        }
+
+        return user.savedWorkouts.find(w => w.id === id)
+    })
     const unused = user.savedWorkouts.filter(workout => !user.schedule.rotation.includes(workout.id));
 
     const addToRotation = (workoutId) => {
-        console.log("Adding to rotation", workoutId)
         // Add workout to rotation
         const newRotation = [...user.schedule.rotation, workoutId];
-        console.log("New rotation", newRotation);
         updateUser({schedule: {...user.schedule, rotation: newRotation}});
-        // console log update user
-        console.log("Updated user", getState().user.schedule.rotation);
     }
 
-    const removeFromRotation = (workoutId) => {
-        console.log("Removing from rotation", workoutId)
+    const removeFromRotation = (workoutId, restDayIndex = 0) => {
+        if (workoutId === "0") {
+            // Remove rest day from rotation
+            const newRotation = user.schedule.rotation.filter((id, index) => index !== restDayIndex);
+            updateUser({schedule: {...user.schedule, rotation: newRotation}});
+            return;
+        }
         // Remove workout from rotation
         const newRotation = user.schedule.rotation.filter(id => id !== workoutId);
+        updateUser({schedule: {...user.schedule, rotation: newRotation}});
+    }
+
+    const addRestDay = () => {
+        // Add rest day to rotation
+        const newRotation = [...user.schedule.rotation, "0"];
         updateUser({schedule: {...user.schedule, rotation: newRotation}});
     }
 
@@ -37,19 +52,20 @@ const Schedule = () => {
     <ThemedView style={styles.container}>
         <SafeAreaView style={{flex: 1}}>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 20}}>
-                <ThemedText style={{fontSize: 20, fontWeight: 700, marginTop: 20, textAlign: 'center'}}>Schedule</ThemedText>
+                <TitleWithBack title={"Schedule"}/>
                 <Spacer />
 
                 <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Schedule Rotation</ThemedText>
                 {rotation.map((workout, index) => {
+                    const isRestDay = workout.id === "0";
                     return (
-                        <Pressable key={workout.id+index} style={[styles.listItem]} onPress={() => removeFromRotation(workout.id)}>
+                        <Pressable key={workout.id+index} style={[styles.listItem, isRestDay ? styles.restDay : null]} onPress={() => removeFromRotation(workout.id, index)}>
                             <Image style={[styles.listItemIcon, styles.rotationItemIcon]} source={remove} />
                             <ThemedText style={{fontSize: 15, fontWeight: 700,}} title={true} >{workout.name}</ThemedText>
                         </Pressable>
                     )
                 })}
-                <Pressable style={[styles.addRestDay]} onPress={() => {Alert.alert("Rest Day")}}>
+                <Pressable style={[styles.addRestDay]} onPress={addRestDay}>
                     <ThemedText color={"#636363"} style={{fontSize: 16, fontWeight: 700, textAlign: "center"}}>Add Rest Day</ThemedText>
                     <ThemedText color={"#636363"} style={{fontSize: 13, fontWeight: 400, textAlign: "center"}}>or select a workout from below</ThemedText>
                 </Pressable>
@@ -77,7 +93,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       padding: 20,
-    },
+    },  
     listItem: {
         padding: 10,
         paddingVertical: 18,
@@ -86,6 +102,11 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         flexDirection: "row",
     },
+    restDay: {
+        backgroundColor: "#4B3B30",
+        borderColor: "#636363",
+        borderWidth: 2,
+    },  
     listItemIcon: {
         width: 15,
         height: 15,

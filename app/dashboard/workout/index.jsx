@@ -9,6 +9,7 @@ import { router } from 'expo-router'
 
 const IndexWorkout = () => {
     const user = useUserStore((state) => state.user);
+    const workoutsInRotation = user.schedule.rotation.filter(id => id !== "0").length;
 
     const openSchedule = () => {
         // Open schedule view
@@ -23,7 +24,7 @@ const IndexWorkout = () => {
 
             <Spacer height={20} />
 
-            <BlueButton title={"Schedule Rotation"} subtitle={`${user.schedule.rotation.length} workout${user.savedWorkouts.length === 1 ? '':"s"} in rotation`} onPress={openSchedule} style={{marginBottom: 40}} />
+            <BlueButton title={"Schedule Rotation"} subtitle={`${workoutsInRotation} workout${workoutsInRotation === 1 ? '':"s"} in rotation`} onPress={openSchedule} style={{marginBottom: 40}} />
 
             <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>My Workouts</ThemedText>
             <BlueButton title={"Create a new workout"} onPress={() => {}} style={{marginBottom: 20}} />

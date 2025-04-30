@@ -23,7 +23,7 @@ const USER = {
     schedule: {
       currentIndex: 0,
       rotation: [
-        "234" // Id of workout 1
+        "234" // Id of workout 1, 0's are rest days
       ],
     },
     completedExercises: { "Chest": [{date: 23235235, sets: [{weight: "135", reps: "10"}], shared: true,}] },
