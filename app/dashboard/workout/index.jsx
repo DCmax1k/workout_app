@@ -23,7 +23,7 @@ const IndexWorkout = () => {
 
             <Spacer height={20} />
 
-            <BlueButton title={"Schedule Rotation"} subtitle={`${user.savedWorkouts.length} workout${user.savedWorkouts.length === 1 ? '':"s"} in rotation`} onPress={openSchedule} style={{marginBottom: 40}} />
+            <BlueButton title={"Schedule Rotation"} subtitle={`${user.schedule.rotation.length} workout${user.savedWorkouts.length === 1 ? '':"s"} in rotation`} onPress={openSchedule} style={{marginBottom: 40}} />
 
             <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>My Workouts</ThemedText>
             <BlueButton title={"Create a new workout"} onPress={() => {}} style={{marginBottom: 20}} />

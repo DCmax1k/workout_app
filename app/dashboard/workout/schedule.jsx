@@ -4,27 +4,46 @@ import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
 import Spacer from '../../../components/Spacer'
 import { useUserStore } from '../../../stores/useUserStore'
+const { getState } = useUserStore
 const rightArrow = require('../../../assets/icons/rightArrow.png')
 const hamburger = require('../../../assets/icons/hamburger.png')
 const remove = require('../../../assets/icons/remove.png')
 
 const Schedule = () => {
     const user = useUserStore((state) => state.user);
+    const updateUser = useUserStore((state) => state.updateUser);
 
-    const rotation = user.savedWorkouts.filter(workout => user.schedule.rotation.includes(workout.id));
+    const rotation = user.schedule.rotation.map(id => user.savedWorkouts.find(w => w.id === id)).filter(Boolean);
     const unused = user.savedWorkouts.filter(workout => !user.schedule.rotation.includes(workout.id));
+
+    const addToRotation = (workoutId) => {
+        console.log("Adding to rotation", workoutId)
+        // Add workout to rotation
+        const newRotation = [...user.schedule.rotation, workoutId];
+        console.log("New rotation", newRotation);
+        updateUser({schedule: {...user.schedule, rotation: newRotation}});
+        // console log update user
+        console.log("Updated user", getState().user.schedule.rotation);
+    }
+
+    const removeFromRotation = (workoutId) => {
+        console.log("Removing from rotation", workoutId)
+        // Remove workout from rotation
+        const newRotation = user.schedule.rotation.filter(id => id !== workoutId);
+        updateUser({schedule: {...user.schedule, rotation: newRotation}});
+    }
 
   return (
     <ThemedView style={styles.container}>
         <SafeAreaView style={{flex: 1}}>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 20}}>
-                <ThemedText style={{fontSize: 20, fontWeight: 700, marginTop: 20, textAlign: 'center'}}>Schedule Rotation</ThemedText>
+                <ThemedText style={{fontSize: 20, fontWeight: 700, marginTop: 20, textAlign: 'center'}}>Schedule</ThemedText>
                 <Spacer />
 
-                <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Schedule</ThemedText>
+                <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Schedule Rotation</ThemedText>
                 {rotation.map((workout, index) => {
                     return (
-                        <Pressable key={workout.id} style={[styles.listItem]} onPress={() => {Alert.alert("Move back")}}>
+                        <Pressable key={workout.id+index} style={[styles.listItem]} onPress={() => removeFromRotation(workout.id)}>
                             <Image style={[styles.listItemIcon, styles.rotationItemIcon]} source={remove} />
                             <ThemedText style={{fontSize: 15, fontWeight: 700,}} title={true} >{workout.name}</ThemedText>
                         </Pressable>
@@ -39,7 +58,7 @@ const Schedule = () => {
                 <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Unused</ThemedText>
                 {unused.map((workout, index) => {
                     return (
-                        <Pressable key={workout.id} style={styles.listItem} onPress={() => {Alert.alert("Adding")}}>
+                        <Pressable key={workout.id+index} style={styles.listItem} onPress={() => addToRotation(workout.id)}>
                             <Image style={styles.listItemIcon} source={rightArrow} />
                             <ThemedText style={{fontSize: 15, fontWeight: 700,}} title={true} >{workout.name}</ThemedText>
                         </Pressable>

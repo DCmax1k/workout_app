@@ -23,11 +23,11 @@ const USER = {
     schedule: {
       currentIndex: 0,
       rotation: [
-        234 // Id of workout 1
+        "234" // Id of workout 1
       ],
     },
     completedExercises: { "Chest": [{date: 23235235, sets: [{weight: "135", reps: "10"}], shared: true,}] },
-    savedWorkouts: [{name: "Legs", id: 234, exercises: [ {name: "Squats", sets: [{weight: "135", reps: "10"}]},] }, {name: "Chest and Shoulders", id: 2344, exercises: [ {name: "Squats", sets: [{weight: "135", reps: "10"}]},] }, {name: "Back", id: 234234, exercises: [ {name: "Squats", sets: [{weight: "135", reps: "10"}]},] }],
+    savedWorkouts: [{name: "Legs", id: "234", exercises: [ {name: "Squats", sets: [{weight: "135", reps: "10"}]},] }, {name: "Chest and Shoulders", id: "2344", exercises: [ {name: "Squats", sets: [{weight: "135", reps: "10"}]},] }, {name: "Back", id: "234234", exercises: [ {name: "Squats", sets: [{weight: "135", reps: "10"}]},] }],
     activeWorkout: {},
     analytics: {
       weight: [ {date: 235234, amount: 190.5, }, {date: 235235, amount: 188.5, }, {date: 235236, amount: 185.5, }, {date: 235237, amount: 185, }, {date: 235238, amount: 187, }, {date: 235239, amount: 185.5, }, {date: 235240, amount: 183.5, } ],	
