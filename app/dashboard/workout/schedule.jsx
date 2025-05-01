@@ -31,15 +31,20 @@ const Schedule = () => {
     }
 
     const removeFromRotation = (workoutId, restDayIndex = 0) => {
+        let schedule = user.schedule;
         if (workoutId === "0") {
             // Remove rest day from rotation
             const newRotation = user.schedule.rotation.filter((id, index) => index !== restDayIndex);
-            updateUser({schedule: {...user.schedule, rotation: newRotation}});
-            return;
+            schedule = {...schedule, rotation: newRotation};
+        } else {
+            // Remove workout from rotation
+            const newRotation = user.schedule.rotation.filter(id => id !== workoutId);
+            schedule = {...schedule, rotation: newRotation}
         }
-        // Remove workout from rotation
-        const newRotation = user.schedule.rotation.filter(id => id !== workoutId);
-        updateUser({schedule: {...user.schedule, rotation: newRotation}});
+    
+        schedule = {...schedule, currentIndex: 0}
+
+        updateUser({schedule});
     }
 
     const addRestDay = () => {
@@ -47,6 +52,9 @@ const Schedule = () => {
         const newRotation = [...user.schedule.rotation, "0"];
         updateUser({schedule: {...user.schedule, rotation: newRotation}});
     }
+
+    const truncate = (text, maxLength) =>
+        text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 
   return (
     <ThemedView style={styles.container}>
@@ -61,7 +69,7 @@ const Schedule = () => {
                     return (
                         <Pressable key={workout.id+index} style={[styles.listItem, isRestDay ? styles.restDay : null]} onPress={() => removeFromRotation(workout.id, index)}>
                             <Image style={[styles.listItemIcon, styles.rotationItemIcon]} source={remove} />
-                            <ThemedText style={{fontSize: 15, fontWeight: 700,}} title={true} >{workout.name}</ThemedText>
+                            <ThemedText style={{fontSize: 15, fontWeight: 700,}} title={true} >{truncate(workout.name, 30)}</ThemedText>
                         </Pressable>
                     )
                 })}
@@ -76,7 +84,7 @@ const Schedule = () => {
                     return (
                         <Pressable key={workout.id+index} style={styles.listItem} onPress={() => addToRotation(workout.id)}>
                             <Image style={styles.listItemIcon} source={rightArrow} />
-                            <ThemedText style={{fontSize: 15, fontWeight: 700,}} title={true} >{workout.name}</ThemedText>
+                            <ThemedText style={{fontSize: 15, fontWeight: 700,}} title={true} >{truncate(workout.name, 30)}</ThemedText>
                         </Pressable>
                     )
                 })}
@@ -104,8 +112,6 @@ const styles = StyleSheet.create({
     },
     restDay: {
         backgroundColor: "#4B3B30",
-        borderColor: "#636363",
-        borderWidth: 2,
     },  
     listItemIcon: {
         width: 15,

@@ -4,7 +4,18 @@ import { useUserStore } from '../stores/useUserStore';
 import { useRouter } from 'expo-router';
 
 const USER = {
-    _id: 1,
+    recentActivity: [{  "userId": "1",
+      "timestamp": "1746060519969",
+      "type": "posted",
+      "details": {
+        "postId": "123",
+        "title": "User2 started a workout",
+        "subtitle": "Chest and shoulders",
+      },
+      "visibility": "visible" // visible, hidden
+    }], // From seperate collection, Activity, received from server
+
+    _id: "1",
     username: "User1",
     name: 'John Doe',
     email: '',
@@ -26,8 +37,10 @@ const USER = {
         "234" // Id of workout 1, 0's are rest days
       ],
     },
+    createdExercises: [],
     completedExercises: { "Chest": [{date: 23235235, sets: [{weight: "135", reps: "10"}], shared: true,}] },
-    savedWorkouts: [{name: "Legs", id: "234", exercises: [ {name: "Squats", sets: [{weight: "135", reps: "10"}]},] }, {name: "Chest and Shoulders", id: "2344", exercises: [ {name: "Squats", sets: [{weight: "135", reps: "10"}]},] }, {name: "Back", id: "234234", exercises: [ {name: "Squats", sets: [{weight: "135", reps: "10"}]},] }],
+    createdWorkouts: [], 
+    savedWorkouts: [{name: "Legs", id: "234", exercises: [ {exerciseId: "1", sets: [{weight: "135", reps: "10"}]},] }, {name: "Chest and Shoulders", id: "2344", exercises: [ {exerciseId: "2", sets: [{weight: "135", reps: "10"}]},] }, {name: "Back", id: "234234", exercises: [ {exerciseId: "3", sets: [{weight: "135", reps: "10"}]},] }],
     activeWorkout: {},
     analytics: {
       weight: [ {date: 235234, amount: 190.5, }, {date: 235235, amount: 188.5, }, {date: 235236, amount: 185.5, }, {date: 235237, amount: 185, }, {date: 235238, amount: 187, }, {date: 235239, amount: 185.5, }, {date: 235240, amount: 183.5, } ],	

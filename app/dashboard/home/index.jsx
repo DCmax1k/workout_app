@@ -11,11 +11,16 @@ import NotificationCard from '../../../components/NotificationCard'
 
 import profileIcon from '../../../assets/icons/profileIcon.png'
 import search from '../../../assets/icons/search.png'
+import { LinearGradient } from 'expo-linear-gradient'
 
 const IndexHome = () => {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
+  const updateUser = useUserStore((state) => state.updateUser);
+
+  //const continuedWorkout = {name: 'test', id: "32", exercises: []}
+  const continuedWorkout = user.schedule.rotation.length > 0 ? user.schedule.rotation[user.schedule.currentIndex] === "0" ? {name: "Rest Day", id: "0",} : user.savedWorkouts.find(w => w.id === user.schedule.rotation[user.schedule.currentIndex]) : null;
 
   const clearUserData = () => {
     // Clear user data
@@ -26,6 +31,18 @@ const IndexHome = () => {
     //setUsername("NewUsername")
     updateUser({username: "User1"});
   }
+
+  const rotateNext = () => {
+    const current = user.schedule.currentIndex; 
+    let newIndex = current+1;
+    if (newIndex >= user.schedule.rotation.length) {
+      newIndex = 0;
+    }
+    updateUser({schedule: {...user.schedule, currentIndex: newIndex}})
+  }
+
+  const truncate = (text, maxLength) =>
+    text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 
   return (
     <ThemedView style={styles.container}> 
@@ -53,7 +70,49 @@ const IndexHome = () => {
           <Spacer />
 
           <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Quick start</ThemedText>
-          <BlueButton onPress={() => router.replace('/dashboard/workout')} title={"Go to My Workouts"} />
+
+          {/* If a schedule, show next in schedule. Else, show create a schedule */}
+          {(continuedWorkout !== null && continuedWorkout.id !== "0") ? (
+            <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
+              <View style={{width: "100%"}}>
+                <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>{truncate(continuedWorkout.name, 30)}</Text>
+                <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>{continuedWorkout.exercises.length} exercise{continuedWorkout.exercises.length === 1 ? "" : "s"}</Text>
+              </View>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
+                <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={() => router.push('/dashboard/workout')}>
+                  <Text style={{fontSize: 14, color: "white"}}>Open workout</Text>
+                </Pressable>
+                <Pressable onPress={rotateNext} style={{padding: 5, backgroundColor: "#656565", borderRadius: 10}}>
+                  <Text style={{fontSize: 12, color: "white"}}>Skip</Text>
+                </Pressable>
+              </View>
+            </LinearGradient>
+          ) : (continuedWorkout !== null && continuedWorkout.id === "0") ? (
+            <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
+              <View style={{width: "100%"}}>
+                <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>Rest Day</Text>
+                <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>Click next for your next workout!</Text>
+              </View>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
+                <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={rotateNext}>
+                  <Text style={{fontSize: 14, color: "white"}}>Next</Text>
+                </Pressable>
+              </View>
+            </LinearGradient>
+          ) : (
+            <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
+              <View style={{width: "100%"}}>
+                <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>Create a schedule</Text>
+                <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>Add or create workouts to add</Text>
+              </View>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
+                <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={() => router.push('/dashboard/workout/schedule')}>
+                  <Text style={{fontSize: 14, color: "white"}}>Schedule rotation</Text>
+                </Pressable>
+              </View>
+            </LinearGradient>
+          )}
+
           <ThemedText style={{fontSize: 10, paddingVertical: 10, textAlign: 'center'}}>or</ThemedText>
           <BlueButton onPress={() => Alert.alert("Starting workout")} title={"Start an empty workout"} />
 
@@ -91,5 +150,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 3,
   },
+  gradientView: {
+    width: '100%',
+    height: 120,
+    borderRadius: 20,
+    padding: 15,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  }
   
 })
