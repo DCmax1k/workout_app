@@ -1,6 +1,5 @@
-import { View, Platform, StyleSheet, Image, useColorScheme } from 'react-native';
+import { View, Platform, StyleSheet, Image, useColorScheme, Pressable } from 'react-native';
 import { useLinkBuilder, useTheme } from '@react-navigation/native';
-import { Text, PlatformPressable } from '@react-navigation/elements';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ThemedView from './ThemedView';
 import ThemedText from './ThemedText';
@@ -53,7 +52,7 @@ function TabBar({ state, descriptors, navigation }) {
         };
 
         return (
-          <PlatformPressable
+          <Pressable
           key={route.name}
             href={buildHref(route.name, route.params)}
             accessibilityState={isFocused ? { selected: true } : {}}
@@ -72,7 +71,7 @@ function TabBar({ state, descriptors, navigation }) {
                 </ThemedText>
             )}
             
-          </PlatformPressable>
+          </Pressable>
         );
       })}
     </View>

@@ -1,17 +1,32 @@
 // app/index.jsx
-import { Redirect } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { useUserStore } from '../stores/useUserStore';
+import { useEffect, useState } from 'react';
+import { Text } from 'react-native';
+import Login from './login'
 
 export default function Index() {
   // Do Login check here
+  const [loading, setLoading] = useState(true);
   const user = useUserStore((state) => state.user);
-  if (!user) {
-    return <Redirect href="/login" />;
+  useEffect(() => {
+    const rehydrate = async () => {
+      await useUserStore.getState().rehydrate();
+      setLoading(false);  // Mark loading as false after rehydration
+    };
+
+    rehydrate();
+  }, []);
+
+  if (loading) {
+    return <Text>Loading...</Text>;
   }
 
+  // If user exists, show user info
   if (user) {
-    return <Redirect href="/dashboard" />;
+    return <Redirect href={"/dashboard"} />;
   }
 
-  return <Redirect href="/dashboard" />;
+  // If no user, show some fallback or prompt
+  return <Login />;
 }
