@@ -1,4 +1,4 @@
-import { Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
@@ -8,10 +8,13 @@ import { useUserStore } from '../../../stores/useUserStore'
 import { router } from 'expo-router'
 import { LinearGradient } from 'expo-linear-gradient'
 import StartWorkout from '../../../components/workout/StartWorkout'
-
+import rightArrow from '../../../assets/icons/rightArrow.png'
+import { generateUniqueId } from '../../../util/uniqueId'
+import WorkoutDescription from '../../../components/workout/WorkoutDescription'
 
 const IndexWorkout = () => {
     const user = useUserStore((state) => state.user);
+    const updateUser = useUserStore((state) => state.updateUser);
     const workouts = user.savedWorkouts;
     const workoutsInRotation = user.schedule.rotation.filter(id => id !== "0").length;
 
@@ -28,6 +31,12 @@ const IndexWorkout = () => {
       setModalVisible(true);
     }
 
+    const createNewWorkout = () => {
+      const newWorkoutData = {name: "New workout", id: generateUniqueId(), exercises: [] };
+      updateUser({editActiveWorkout: newWorkoutData});
+      router.push("/editworkout");
+    }
+
     const truncate = (text, maxLength) =>
       text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 
@@ -35,30 +44,43 @@ const IndexWorkout = () => {
     <ThemedView  style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
-            <ThemedText style={{fontSize: 20, fontWeight: 700, marginTop: 20,  textAlign: 'center'}}>Workout</ThemedText>
-
+          <ThemedText style={{fontSize: 20, fontWeight: 700, marginTop: 20,  textAlign: 'center'}}>Workout</ThemedText>
+          <View style={{padding: 20}}>
+            
             <Spacer height={20} />
 
             <BlueButton title={"Schedule Rotation"} showRight={true} subtitle={`${workoutsInRotation} workout${workoutsInRotation === 1 ? '':"s"} in rotation`} onPress={openSchedule} style={{marginBottom: 40}} />
 
             <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>My Workouts</ThemedText>
-            <BlueButton title={"Create a new workout"} onPress={() => {}} style={{marginBottom: 20}} />
+            <BlueButton title={"Create a new workout"} onPress={createNewWorkout} style={{marginBottom: 20}} />
+            
+          </View>
+            
+            <View style={{paddingHorizontal: 20}}>
+              {workouts.map((workout, i) => {
+                return(
+                <Pressable style={[styles.selectWorkout, styles.boxShadow]} onPress={() => openWorkout(workout)} key={workout.id+""+i}>
+                  <View style={styles.linearGradient}>
+                    <View style={{width: "80%"}}>
+                      <ThemedText style={{fontSize: 17, fontWeight: 700}} title={true}>{truncate(workout.name, 30)}</ThemedText>
+                      <WorkoutDescription workout={workout} />
+                    </View>
 
-            {workouts.map((workout, i) => (
-              <Pressable style={[styles.selectWorkout, styles.boxShadow]} onPress={() => openWorkout(workout)} key={workout.id+""+i}>
-                <LinearGradient style={styles.linearGradient} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
-                  <View>
-                    <ThemedText style={{fontSize: 17, fontWeight: 700}} title={true}>{truncate(workout.name, 30)}</ThemedText>
-                    <ThemedText>{workout.exercises.length} exercise{workout.exercises.length===1 ? '':'s'}</ThemedText>
+                    <View style={[styles.boxShadow, {shadowRadius: 5, backgroundColor: "#546FDB", height: 40, width: 40, borderRadius: 99999, justifyContent: "center", alignItems: "center"}]}>
+                      <View style={{backgroundColor: "#3D52A6", height: 35, width: 35, borderRadius: 99999, justifyContent: "center", alignItems: "center"}}>
+                        <Image style={{height: 20, width: 20}} source={rightArrow} />
+                      </View>
+                    </View>
+                    
                   </View>
-                  
-                </LinearGradient>
-              </Pressable>
-              
-            ))}
+                </Pressable>
+                
+              )})}
+            </View>
+            
 
             {workouts.length === 0 ? (
-              <ThemedText>
+              <ThemedText style={{textAlign: "center"}}>
                 No workouts
               </ThemedText>
             ) : (null)}
@@ -87,7 +109,7 @@ export default IndexWorkout
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: 20,
+      // padding: 20,
     },
     selectWorkout: {
       width: '100%',
@@ -102,12 +124,13 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'space-between',
       marginBottom: 10,
+      backgroundColor: "#2A2A2A",
     },
     boxShadow: {
       shadowColor: "black",
       shadowOffset: {
-        width: -3,
-        height: 3,
+        width: -5,
+        height: 5,
       },
       shadowOpacity: 1,
       shadowRadius: 2,

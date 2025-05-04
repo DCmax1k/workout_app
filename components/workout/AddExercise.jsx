@@ -1,4 +1,4 @@
-import { FlatList, Image, Pressable, ScrollView, SectionList, StyleSheet, Text, View } from 'react-native'
+import { FlatList, Image, Pressable, ScrollView, SectionList, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import ThemedView from '../ThemedView'
 import ThemedText from '../ThemedText'
@@ -10,27 +10,52 @@ import plus from '../../assets/icons/plus.png'
 import Exercise from './Exercise'
 import Spacer from '../Spacer'
 
+function groupExercisesBySection(exercises) {
+    const grouped = {};
+  
+    exercises.forEach(ex => {
+      if (!grouped[ex.group]) {
+        grouped[ex.group] = [];
+      }
+      grouped[ex.group].push(ex);
+    });
+  
+    return Object.keys(grouped).map(groupName => ({
+      title: groupName,
+      data: grouped[groupName]
+    }));
+  }
+
+  function customTitle(title) {
+    return title === 'leg' ? "legs" : title === 'shoulder' ? "shoulders" : title === 'forearm' ? "forearms" : title === 'bicep' ? "biceps" : title === 'tricep' ? "triceps" : title;
+  }
+
 const AddExercise = ({setExerciseModal, addExercises, ...props}) => {
     const user = useUserStore((state) => state.user);
-    //const allExercises = [...user.createdExercises, ...Exercises];
 
     const [exercisesToAdd, setExercisesToAdd] = useState([]);
     const [searchValue, setSearchValue] = useState("");
 
-    const createdExercisesFiltered = user.createdExercises.filter(ex => searchValue ? ex.name.includes(searchValue.toLowerCase()) : true);
-    const dbExercisesFiltered = Exercises.filter(ex => searchValue ? ex.name.includes(searchValue.toLowerCase()) : true);
-    const sectionalData = [
-        {
-          title: 'Modified',
-          data: createdExercisesFiltered,
-        },
-        {
-          title: 'Exercises',
-          data: dbExercisesFiltered,
-        },
-      ];
+    const createdExercisesFiltered = searchValue ? user.createdExercises.filter(ex => ex.name.includes(searchValue.toLowerCase())) : user.createdExercises;
+    const dbExercisesFiltered = searchValue ? Exercises.filter(ex => {
+        const name = ex.name.toLowerCase();
+        const muscles = ex.muscleGroups.join(" ");
+        const group = ex.group;
+        const s = searchValue.toLowerCase();
+        return name.includes(s) || muscles.includes(s) || group.includes(s);
 
-    //const allExercisesFiltered = allExercises.filter(ex => searchValue ? ex.name.includes(searchValue.toLowerCase()) : true);
+    }) : Exercises;
+
+    const dbExercisesFilteredOrganized = groupExercisesBySection(dbExercisesFiltered);
+
+    const sectionalData = createdExercisesFiltered.length === 0 ? dbExercisesFilteredOrganized :
+    [
+        {
+            title: 'Modified',
+            data: createdExercisesFiltered,
+        },
+        ...dbExercisesFilteredOrganized,
+    ];
 
     const selectExercise = (exerciseId) => {
         if (exercisesToAdd.includes(exerciseId)) {
@@ -43,6 +68,9 @@ const AddExercise = ({setExerciseModal, addExercises, ...props}) => {
         if (exercisesToAdd.length < 1) return;
         addExercises(exercisesToAdd);
         setExerciseModal(false);
+    }
+    const capitalizeFirstLetter = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
     }
   return (
     <ThemedView style={{flex: 1, padding: 20}}>
@@ -63,19 +91,18 @@ const AddExercise = ({setExerciseModal, addExercises, ...props}) => {
             <ThemedText title={true} style={{fontSize: 23, fontWeight: 700, textAlign: "center"}}>Add exercise</ThemedText>
         </View>
 
-        <Spacer height={20} />
+        <Spacer height={10} />
 
-        {/* <FlatList
-            data={allExercisesFiltered}
-            keyExtractor={(item) => item.id}
-            renderItem={({item}) => (<Exercise exercise={item} />)}
-        /> */}
+        <TextInput style={styles.search} placeholder='Search' value={searchValue} onChangeText={(e) => setSearchValue(e)} />
+
+        <Spacer height={10} />
+
         <SectionList
             sections={sectionalData}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (<Exercise exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />)}
             renderSectionHeader={({ section: { title } }) => (
-                <ThemedText style={styles.header}>{title}</ThemedText>
+                <ThemedText style={styles.header}>{capitalizeFirstLetter(customTitle(title))}</ThemedText>
             )}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 50 }}
@@ -101,5 +128,14 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         fontSize: 15,
         fontWeight: 600
+    },
+    search: {
+        height: 50,
+        fontSize: 20,
+        color: "white",
+        backgroundColor: "#1C1C1C",
+        borderRadius: 99999,
+        paddingLeft: 20,
+        paddingRight: 10,
     }
 })

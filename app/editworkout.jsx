@@ -1,5 +1,5 @@
 import { Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import ThemedView from '../components/ThemedView'
 import ThemedText from '../components/ThemedText'
 import { useUserStore } from '../stores/useUserStore'
@@ -12,8 +12,11 @@ import EditExercise from '../components/workout/EditExercise'
 import BlueButton from '../components/BlueButton'
 import Spacer from '../components/Spacer'
 import AddExercise from '../components/workout/AddExercise'
+import threeEllipses from '../assets/icons/threeEllipses.png'
 
 const EditWorkout = () => {
+  const workoutNameInputRef = useRef(null);
+
   const user = useUserStore((state) => state.user);
   const updateUser = useUserStore((state) => state.updateUser);
   const workout = user.editActiveWorkout;
@@ -57,8 +60,14 @@ const EditWorkout = () => {
     // Find saved workout
     const savedWorkouts = user.savedWorkouts;
     const workoutIndex = savedWorkouts.findIndex(wk => wk.id === workout.id);
-    // Set saved workout
-    savedWorkouts[workoutIndex] = workout;
+    if (workoutIndex < 0) {
+      // If not found, unshift workout
+      savedWorkouts.unshift(workout);
+    } else {
+      // If found, set saved workout
+      savedWorkouts[workoutIndex] = workout;
+    }
+    
     updateUser({savedWorkouts});
     router.back();
     // Contact db
@@ -102,8 +111,14 @@ const EditWorkout = () => {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150 }}>
 
           <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-            <Image style={{height: 15, width: 15, marginRight: 10}} source={pencil} />
-            <TextInput onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
+            <Pressable style={{ height: 40, width: 40, justifyContent: "center", alignItems: "center"}} onPress={() => {if (workoutNameInputRef.current) {workoutNameInputRef.current.focus()}}}>
+              <Image style={{height: 15, width: 15, marginRight: 10}} source={pencil} />
+            </Pressable>
+            
+            <TextInput ref={workoutNameInputRef} onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
+            <View style={{paddingVertical: 5, paddingHorizontal: 10, backgroundColor: "transparent", borderRadius: 10}}>
+                <Image style={{width: 20, objectFit: "contain"}} source={threeEllipses} />
+            </View>
           </View>
 
           {exercises.map((exercise, i) => (

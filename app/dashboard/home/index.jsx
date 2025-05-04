@@ -13,6 +13,8 @@ import profileIcon from '../../../assets/icons/profileIcon.png'
 import search from '../../../assets/icons/search.png'
 import { LinearGradient } from 'expo-linear-gradient'
 import StartWorkout from '../../../components/workout/StartWorkout'
+import { Exercises } from '../../../constants/Exercises'
+import WorkoutDescription from '../../../components/workout/WorkoutDescription'
 
 const IndexHome = () => {
   const router = useRouter();
@@ -28,7 +30,7 @@ const IndexHome = () => {
 
   const clearUserData = () => {
     // Clear user data
-    setUser('');
+    setUser(null);
   }
   const changeUsernameTest = () => {
     // Change username test
@@ -85,7 +87,7 @@ const IndexHome = () => {
             <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
               <View style={{width: "100%"}}>
                 <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>{truncate(continuedWorkout.name, 30)}</Text>
-                <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>{continuedWorkout.exercises.length} exercise{continuedWorkout.exercises.length === 1 ? "" : "s"}</Text>
+                <WorkoutDescription style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}} workout={continuedWorkout} />
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
                 <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={() => openWorkout(continuedWorkout)}>
@@ -112,11 +114,11 @@ const IndexHome = () => {
             <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
               <View style={{width: "100%"}}>
                 <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>Create a schedule</Text>
-                <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>Add or create workouts to add</Text>
+                <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>Add or create workouts to add!</Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
-                <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={() => router.push('/dashboard/workout/schedule')}>
-                  <Text style={{fontSize: 14, color: "white"}}>Schedule rotation</Text>
+                <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={() => router.push('/dashboard/workout')}>
+                  <Text style={{fontSize: 14, color: "white"}}>Go to workouts</Text>
                 </Pressable>
               </View>
             </LinearGradient>
@@ -172,11 +174,13 @@ const styles = StyleSheet.create({
   },
   gradientView: {
     width: '100%',
-    height: 120,
+    height: 130,
     borderRadius: 20,
     padding: 15,
     justifyContent: 'space-between',
     alignItems: 'center',
+    borderColor: Colors.primaryBlue,
+    borderWidth: 2,
   }
   
 })
