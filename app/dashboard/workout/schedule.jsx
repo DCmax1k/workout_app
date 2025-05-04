@@ -59,7 +59,7 @@ const Schedule = () => {
   return (
     <ThemedView style={styles.container}>
         <SafeAreaView style={{flex: 1}}>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 20}}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 100}}>
                 <TitleWithBack title={"Schedule"}/>
                 <Spacer />
 

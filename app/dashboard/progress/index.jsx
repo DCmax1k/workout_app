@@ -7,6 +7,7 @@ import { router } from 'expo-router'
 import PreviewData from '../../../components/PreviewData'
 import { useUserStore } from '../../../stores/useUserStore'
 
+
 const screenWidth = Dimensions.get('window').width;
 
 const IndexProgress = () => {

@@ -1,4 +1,4 @@
-import { Alert, Button, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, Button, Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import { Link, Slot, Stack, useRouter } from 'expo-router'
 import ThemedView from '../../../components/ThemedView'
@@ -12,12 +12,16 @@ import NotificationCard from '../../../components/NotificationCard'
 import profileIcon from '../../../assets/icons/profileIcon.png'
 import search from '../../../assets/icons/search.png'
 import { LinearGradient } from 'expo-linear-gradient'
+import StartWorkout from '../../../components/workout/StartWorkout'
 
 const IndexHome = () => {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
   const updateUser = useUserStore((state) => state.updateUser);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedWorkout, setSelectedWorkout] = useState(null);
 
   //const continuedWorkout = {name: 'test', id: "32", exercises: []}
   const continuedWorkout = user.schedule.rotation.length > 0 ? user.schedule.rotation[user.schedule.currentIndex] === "0" ? {name: "Rest Day", id: "0",} : user.savedWorkouts.find(w => w.id === user.schedule.rotation[user.schedule.currentIndex]) : null;
@@ -30,6 +34,11 @@ const IndexHome = () => {
     // Change username test
     //setUsername("NewUsername")
     updateUser({username: "User1"});
+  }
+
+  const openWorkout = (workout) => {
+    setSelectedWorkout(workout);
+    setModalVisible(true);
   }
 
   const rotateNext = () => {
@@ -47,8 +56,8 @@ const IndexHome = () => {
   return (
     <ThemedView style={styles.container}> 
       <SafeAreaView style={{flex: 1}} >
-        <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}} contentContainerStyle={{paddingBottom: 80}}>
-          <BlueButton onPress={clearUserData} title={"[DEV] REST USER"} style={{marginLeft: 20}} />
+        <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}} contentContainerStyle={{paddingBottom: 120}}>
+          <BlueButton onPress={clearUserData} title={"[DEV] TEST USER"} style={{marginLeft: 20}} />
           {/* <BlueButton onPress={changeUsernameTest} title={"Change username"} style={{marginLeft: 20}} /> */}
           <View style={styles.welcomeCont}>
             <View>
@@ -79,7 +88,7 @@ const IndexHome = () => {
                 <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>{continuedWorkout.exercises.length} exercise{continuedWorkout.exercises.length === 1 ? "" : "s"}</Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
-                <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={() => router.push('/dashboard/workout')}>
+                <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={() => openWorkout(continuedWorkout)}>
                   <Text style={{fontSize: 14, color: "white"}}>Open workout</Text>
                 </Pressable>
                 <Pressable onPress={rotateNext} style={{padding: 5, backgroundColor: "#656565", borderRadius: 10}}>
@@ -122,7 +131,18 @@ const IndexHome = () => {
         </ScrollView>
 
       </SafeAreaView>
-      
+      <Modal
+        visible={modalVisible}
+        animationType='slide'
+        presentationStyle='pageSheet'
+        onRequestClose={() => {
+          setModalVisible(false)
+        }}
+      >
+        {selectedWorkout !== null ? (
+        <StartWorkout workout={selectedWorkout} setModalVisible={setModalVisible} />
+        ) : null}
+      </Modal>
 
 
     </ThemedView>
