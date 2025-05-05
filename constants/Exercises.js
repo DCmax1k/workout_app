@@ -21,7 +21,7 @@ export const Exercises = [
         "group": "chest",
         "tracks": track.strength,
         "description": "The incline barbell bench press emphasizes the upper chest and front deltoids, helping to develop a well-rounded chest and upper body strength.",
-        //"image": require("../assets/exercises/inclineBarbellPress.png"),
+        "image": require("../assets/exercises/inclineBarbellPress.png"),
         "muscleGroups": ["chest", "shoulders", "triceps"],
         "difficulty": "intermediate",
         "id": "2"
@@ -41,7 +41,7 @@ export const Exercises = [
         "group": "chest",
         "tracks": track.strength,
         "description": "The dumbbell bench press is a versatile chest exercise that enhances muscle symmetry and requires more stabilizer engagement compared to the barbell variation.",
-        //"image": require("../assets/exercises/dumbbellBenchPress.png"),
+        "image": require("../assets/exercises/dumbbellBenchPress.png"),
         "muscleGroups": ["chest", "shoulders", "triceps"],
         "difficulty": "intermediate",
         "id": "4"
@@ -51,7 +51,7 @@ export const Exercises = [
         "group": "chest",
         "tracks": track.strength,
         "description": "The incline dumbbell bench press focuses on the upper chest, improving muscle definition and balance while also engaging shoulder stabilizers.",
-        //"image": require("../assets/exercises/inclineDumbbellPress.png"),
+        "image": require("../assets/exercises/inclineDumbbellPress.png"),
         "muscleGroups": ["chest", "shoulders", "triceps"],
         "difficulty": "intermediate",
         "id": "5"
@@ -71,7 +71,7 @@ export const Exercises = [
         "group": "chest",
         "tracks": track.strength,
         "description": "The machine bench press is a beginner-friendly exercise that allows for controlled chest development with reduced risk of injury due to its guided motion.",
-        //"image": require("../assets/exercises/machineBenchPress.png"),
+        "image": require("../assets/exercises/machineBenchPress.png"),
         "muscleGroups": ["chest", "shoulders", "triceps"],
         "difficulty": "beginner",
         "id": "7"
@@ -91,7 +91,7 @@ export const Exercises = [
         "group": "chest",
         "tracks": track.strength,
         "description": "The machine fly isolates the chest muscles in a safe and controlled manner, ideal for beginners and those focusing on hypertrophy.",
-        //"image": require("../assets/exercises/machineFly.png"),
+        "image": require("../assets/exercises/machineFly.png"),
         "muscleGroups": ["chest"],
         "difficulty": "beginner",
         "id": "9"
@@ -211,7 +211,7 @@ export const Exercises = [
         "group": "back",
         "tracks": track.strength,
         "description": "The barbell deadlift is a compound lift that targets the entire posterior chain, with a focus on the lower back, glutes, and hamstrings.",
-        // "image": require("../assets/exercises/barbellDeadlift.png"),
+        "image": require("../assets/exercises/barbellDeadlift.png"),
         "muscleGroups": ["back", "glutes", "hamstrings"],
         "difficulty": "advanced",
         "id": "21"
@@ -231,7 +231,7 @@ export const Exercises = [
         "group": "back",
         "tracks": track.strength,
         "description": "The cable seated row is a horizontal pulling movement that strengthens the middle back and rear deltoids, improving posture and upper body strength.",
-        // "image": require("../assets/exercises/cableSeatedRow.png"),
+        "image": require("../assets/exercises/cableSeatedRow.png"),
         "muscleGroups": ["back", "biceps", "rear delts"],
         "difficulty": "beginner",
         "id": "23"
@@ -251,7 +251,7 @@ export const Exercises = [
         "group": "back",
         "tracks": track.strength,
         "description": "The barbell bent-over row is a powerful compound movement that develops the lats, traps, and rhomboids, while engaging the lower back for stability.",
-        // "image": require("../assets/exercises/barbellRow.png"),
+        "image": require("../assets/exercises/barbellRow.png"),
         "muscleGroups": ["back", "biceps", "lower back"],
         "difficulty": "intermediate",
         "id": "25"
@@ -291,7 +291,7 @@ export const Exercises = [
         "group": "back",
         "tracks": track.strength,
         "description": "The back hyperextension strengthens the lower back, glutes, and hamstrings, improving spinal stability and injury prevention.",
-        // "image": require("../assets/exercises/backHyperextension.png"),
+        "image": require("../assets/exercises/backHyperextension.png"),
         "muscleGroups": ["lower back", "glutes", "hamstrings"],
         "difficulty": "beginner",
         "id": "29"
@@ -311,7 +311,7 @@ export const Exercises = [
         "group": "bicep",
         "tracks": track.strength,
         "description": "The machine bicep curl provides a stable and controlled environment to isolate the biceps, making it ideal for beginners or focused muscle building.",
-        // "image": require("../assets/exercises/machineBicepCurl.png"),
+        "image": require("../assets/exercises/machineBicepCurl.png"),
         "muscleGroups": ["biceps"],
         "difficulty": "beginner",
         "id": "31"
@@ -381,7 +381,7 @@ export const Exercises = [
         "group": "bicep",
         "tracks": track.strength,
         "description": "The barbell preacher curl emphasizes the lower portion of the biceps, allowing for a strict movement and improved form.",
-        // "image": require("../assets/exercises/barbellPreacherCurl.png"),
+        "image": require("../assets/exercises/barbellPreacherCurl.png"),
         "muscleGroups": ["biceps"],
         "difficulty": "intermediate",
         "id": "38"
@@ -581,7 +581,7 @@ export const Exercises = [
         "group": "leg",
         "tracks": track.strength,
         "description": "The barbell squat is a foundational compound lift that targets the quadriceps, hamstrings, glutes, and core for overall lower-body strength.",
-        // "image": require("../assets/exercises/barbellSquat.png"),
+        "image": require("../assets/exercises/barbellSquat.png"),
         "muscleGroups": ["quadriceps", "hamstrings", "glutes"],
         "difficulty": "intermediate",
         "id": "58"
