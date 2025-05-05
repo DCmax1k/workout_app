@@ -81,7 +81,7 @@ export const Exercises = [
         "group": "chest",
         "tracks": track.strength,
         "description": "The cable crossover is an isolation movement that targets the inner and outer portions of the chest, helping to improve muscle definition and balance.",
-        //"image": require("../assets/exercises/cableCrossover.png"),
+        "image": require("../assets/exercises/cableCrossover.png"),
         "muscleGroups": ["chest"],
         "difficulty": "intermediate",
         "id": "8"
@@ -341,7 +341,7 @@ export const Exercises = [
         "group": "bicep",
         "tracks": track.strength,
         "description": "The dumbbell hammer curl targets both the biceps and brachialis muscles, contributing to thicker, more well-rounded arms.",
-        // "image": require("../assets/exercises/hammerCurl.png"),
+        "image": require("../assets/exercises/hammerCurl.png"),
         "muscleGroups": ["biceps", "brachialis"],
         "difficulty": "intermediate",
         "id": "34"
@@ -411,7 +411,7 @@ export const Exercises = [
         "group": "tricep",
         "tracks": track.strength,
         "description": "The cable tricep pushdown isolates the triceps using controlled downward motion, ideal for toning and building arm definition.",
-        // "image": require("../assets/exercises/cableTricepPushdown.png"),
+        "image": require("../assets/exercises/cableTricepPushdown.png"),
         "muscleGroups": ["triceps"],
         "difficulty": "beginner",
         "id": "41"
@@ -511,7 +511,7 @@ export const Exercises = [
         "group": "forearm",
         "tracks": track.strength,
         "description": "The cable wrist curl provides consistent tension on the forearm flexors throughout the movement, improving grip and endurance.",
-        // "image": require("../assets/exercises/cableWristCurl.png"),
+        "image": require("../assets/exercises/cableWristCurl.png"),
         "muscleGroups": ["forearms"],
         "difficulty": "beginner",
         "id": "51"
@@ -541,7 +541,7 @@ export const Exercises = [
         "group": "shoulder",
         "tracks": track.strength,
         "description": "The dumbbell shoulder press develops the deltoids and triceps, promoting balanced shoulder strength and stability.",
-        // "image": require("../assets/exercises/dumbbellShoulderPress.png"),
+        "image": require("../assets/exercises/dumbbellShoulderPress.png"),
         "muscleGroups": ["shoulders", "triceps"],
         "difficulty": "intermediate",
         "id": "54"
@@ -601,7 +601,7 @@ export const Exercises = [
         "group": "leg",
         "tracks": track.strength,
         "description": "Machine leg extensions isolate the quadriceps, allowing for focused development of the front thigh muscles.",
-        // "image": require("../assets/exercises/legExtension.png"),
+        "image": require("../assets/exercises/legExtension.png"),
         "muscleGroups": ["quadriceps"],
         "difficulty": "beginner",
         "id": "60"
