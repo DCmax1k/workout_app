@@ -1,4 +1,4 @@
-import { Image, Keyboard, KeyboardAvoidingView, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, Image, Keyboard, KeyboardAvoidingView, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import ThemedView from '../components/ThemedView'
 import ThemedText from '../components/ThemedText'
@@ -15,6 +15,9 @@ import AddExercise from '../components/workout/AddExercise'
 import threeEllipses from '../assets/icons/threeEllipses.png'
 import { generateUniqueId } from '../util/uniqueId'
 import keyboardIcon from '../assets/icons/keyboard.png'
+import { PaperProvider } from 'react-native-paper'
+import ActionMenu from '../components/ActionMenu'
+import trashIcon from '../assets/icons/trash.png'
 
 const EditWorkout = () => {
   const workoutNameInputRef = useRef(null);
@@ -88,7 +91,7 @@ const EditWorkout = () => {
           workout.exercises[exerciseIndex].id = modifiedExercise.id;
         } else {
           // Finds id, so change data
-          const {sets, ...rest} = ex;
+          const {sets, note, ...rest} = ex;
           updateCreatedExercise(ex.id, rest);
         }
       }
@@ -96,6 +99,8 @@ const EditWorkout = () => {
       return {
         id: ex.id,
         sets: ex.sets,
+        name: ex.name,
+        note: ex.note,
       }
     });
     workout.exercises = newExercises;
@@ -133,8 +138,34 @@ const EditWorkout = () => {
 
   }
 
+  const deleteWorkout = () => {
+    const userWorkouts = user.savedWorkouts;
+    const workoutToDeleteIndex = userWorkouts.findIndex(w => w.id === workout.id);
+    if (workoutToDeleteIndex >= 0) {
+      // Delete workout and go back
+      userWorkouts.splice(workoutToDeleteIndex, 1);
+      updateUser({savedWorkouts: userWorkouts});
+    }
+    router.back();
+  }
+  const requestDeleteWorkout = () => {
+    Alert.alert(
+        "Delete workout?",
+        "",
+        [
+            {text: "Cancel", style: "cancel"},
+            {text: "Delete", onPress: deleteWorkout}
+        ]
+    );
+  }
+  const removeExercise = (exerciseId) => {
+    const newExercises = workout.exercises.filter(e => e.id !== exerciseId);
+    updateWorkout({exercises: newExercises});
+  }
+
   return (
-    <ThemedView style={{flex: 1, padding: 20}}>
+    <PaperProvider>
+      <ThemedView style={{flex: 1, padding: 20}}>
       <SafeAreaView style={{flex: 1}}>
 
         <View style={styles.actionButtons}>
@@ -156,14 +187,12 @@ const EditWorkout = () => {
               <Image style={{height: 15, width: 15, marginRight: 10}} source={pencil} />
             </Pressable>
             
-            <TextInput ref={workoutNameInputRef} onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
-            <View style={{paddingVertical: 5, paddingHorizontal: 10, backgroundColor: "transparent", borderRadius: 10}}>
-                <Image style={{width: 20, objectFit: "contain"}} source={threeEllipses} />
-            </View>
+            <TextInput selectTextOnFocus ref={workoutNameInputRef} onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
+            <ActionMenu data={[{title: "Delete workout", icon: trashIcon, onPress: requestDeleteWorkout,}]} />
           </View>
 
           {exercises.map((exercise, i) => (
-            <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} index={i} />
+            <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={removeExercise} index={i} />
           ))}
 
           <Spacer height={20} />
@@ -191,6 +220,8 @@ const EditWorkout = () => {
       </Modal>
       
     </ThemedView>
+    </PaperProvider>
+    
   )
 }
 

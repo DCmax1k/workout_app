@@ -1,9 +1,17 @@
 import { Alert, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import threeEllipses from '../../assets/icons/threeEllipses.png'
 import greyX from '../../assets/icons/greyX.png'
+import ActionMenu from '../ActionMenu'
+import fileIcon from '../../assets/icons/file.png'
+import trashIcon from '../../assets/icons/trash.png'
+import pencilIcon from '../../assets/icons/pencil.png'
 
-const EditExercise = ({exercise, updateExercise, index, ...props}) => {
+const EditExercise = ({exercise, updateExercise, index, removeExercise, ...props}) => {
+
+    const exerciseNameRef = useRef(null);
+    const noteRef = useRef(null);
+    const [showNote, setShowNote] = useState(false);
 
     const requestRemoveSet = (setIndex) => {
         Alert.alert(
@@ -41,17 +49,30 @@ const EditExercise = ({exercise, updateExercise, index, ...props}) => {
         updateExercise(index, newExercise);
     }
     const changeExerciseName = (value) => {
-        updateExercise(index, {...exercise, name: value, modified: true});
+        updateExercise(index, {...exercise, name: value});
     }
+    const updateNote = (value) => {
+        updateExercise(index, {...exercise, note: value});
+    }
+    const openNoteAndFocus = () => {
+        setShowNote(true);
+    }
+    useEffect(() => {
+        if (showNote && noteRef.current) {
+            noteRef.current.focus();
+        }
+    }, [showNote]);
 
   return (
     <View style={{backgroundColor: "#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
-            <TextInput value={exercise.name} onChangeText={changeExerciseName} style={{fontSize: 15, fontWeight: 500, color: "#DB8854", }} />
-            <View style={{paddingVertical: 0, paddingHorizontal: 5, backgroundColor: "#DB8854", borderRadius: 5}}>
-                <Image style={{width: 20, objectFit: "contain"}} source={threeEllipses} />
-            </View>
+            <TextInput ref={exerciseNameRef} value={exercise.name} onChangeText={changeExerciseName} style={{fontSize: 15, fontWeight: 500, color: "#DB8854", }} />
+            <ActionMenu backgroundColor={"#DB8854"} data={[{title: "Add note", icon: fileIcon, onPress: openNoteAndFocus, }, {title: "Rename exercise", icon: pencilIcon, onPress: () => exerciseNameRef.current?.focus()}, {title: "Delete exercise", icon: trashIcon, onPress: () => removeExercise(exercise.id)}]} />
         </View>
+
+        {(showNote || exercise.note) && <View>
+            <TextInput style={{color: "white", fontSize: 16, paddingVertical: 10, paddingHorizontal: 0}} multiline={true} ref={noteRef} value={exercise.note} onChangeText={updateNote} onEndEditing={() => exercise.note ? null : setShowNote(false)} />
+        </View>}
 
         <View>
             <View style={styles.row}>
