@@ -1,4 +1,4 @@
-import { Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Image, Keyboard, KeyboardAvoidingView, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import ThemedView from '../components/ThemedView'
 import ThemedText from '../components/ThemedText'
@@ -13,6 +13,8 @@ import BlueButton from '../components/BlueButton'
 import Spacer from '../components/Spacer'
 import AddExercise from '../components/workout/AddExercise'
 import threeEllipses from '../assets/icons/threeEllipses.png'
+import { generateUniqueId } from '../util/uniqueId'
+import keyboardIcon from '../assets/icons/keyboard.png'
 
 const EditWorkout = () => {
   const workoutNameInputRef = useRef(null);
@@ -20,20 +22,24 @@ const EditWorkout = () => {
   const user = useUserStore((state) => state.user);
   const updateUser = useUserStore((state) => state.updateUser);
   const workout = user.editActiveWorkout;
-  const exercises = workout.exercises.map(ex => {
-    const usersInfo = user.createdExercises.find(e => e.id === ex.id);
-    if (usersInfo) {
-      return {
-        ...ex,
-        ...usersInfo
-      }
-    }
-    const info = Exercises.find(e => e.id === ex.id);
-    return {
-      ...ex,
-      ...info
-    }
-  });
+  const exercises = workout.exercises;
+  // const exercises = workout.exercises.map(ex => {
+  //   const usersInfo = user.createdExercises.find(e => {
+  //     console.log(e);
+  //     return e.id === ex.id
+  //   });
+  //   if (usersInfo) {
+  //     return {
+  //       ...ex,
+  //       ...usersInfo
+  //     }
+  //   }
+  //   const info = Exercises.find(e => e.id === ex.id);
+  //   return {
+  //     ...ex,
+  //     ...info
+  //   }
+  // });
   const allExercises = [...user.createdExercises, ...Exercises];
 
   const [exerciseModal, setExerciseModal] = useState(false);
@@ -46,11 +52,47 @@ const EditWorkout = () => {
     ex[exerciseIndex] = newExercise;
     updateWorkout({exercises: ex})
   }
+  const updateCreatedExercise = (exerciseId, newExercise) => {
+      const created = user.createdExercises;
+      const indexOfEx = created.findIndex(e => e.id === exerciseId);
+      created[indexOfEx] = newExercise;
+      updateUser({createdExercises: created});
+  }
 
   const saveWorkout = () => {
     // Last minute changes to workout before save
     if (!workout.name) workout.name = "New workout";
     const newExercises = workout.exercises.map(ex => {
+      // Find any modified exercises, update their data in createdExercises. Create the exercise if modified id not found
+      if (ex.modified) {
+        const createdExerciseId = user.createdExercises.findIndex(e => e.id === ex.id);
+        if (createdExerciseId < 0) {
+          // Didnt find id, so make data, and change id of exercise in workout
+          const modifiedExercise = {
+              name: ex.name,
+              group: ex.group,
+              tracks: ex.tracks,
+              description: ex.description,
+              image: ex.image,
+              muscleGroups: ex.muscleGroups,
+              difficulty: ex.difficulty,
+              previousId: ex.id,
+              id: generateUniqueId(),
+          };
+          const newCreatedExercises = user.createdExercises;
+          newCreatedExercises.unshift(modifiedExercise);
+          updateUser({createdExercises: newCreatedExercises});
+
+          
+          const exerciseIndex = workout.exercises.findIndex(of => of.id === ex.id);
+          workout.exercises[exerciseIndex].id = modifiedExercise.id;
+        } else {
+          // Finds id, so change data
+          const {sets, ...rest} = ex;
+          updateCreatedExercise(ex.id, rest);
+        }
+      }
+      // Set exercises back to simple data
       return {
         id: ex.id,
         sets: ex.sets,
@@ -107,8 +149,7 @@ const EditWorkout = () => {
                 </Pressable>
             </View>
         </View>
-
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150 }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150, }}>
 
           <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
             <Pressable style={{ height: 40, width: 40, justifyContent: "center", alignItems: "center"}} onPress={() => {if (workoutNameInputRef.current) {workoutNameInputRef.current.focus()}}}>
@@ -130,12 +171,14 @@ const EditWorkout = () => {
           <BlueButton title={"Add exercise"} onPress={() => setExerciseModal(true)} />
 
         </ScrollView>
-
-        
-
-
-
       </SafeAreaView>
+
+      <KeyboardAvoidingView style={{position: "absolute", bottom: -50, right: 20, paddingBottom: 10}} behavior='position'>
+        <Pressable style={{paddingVertical: 5, paddingHorizontal: 10, backgroundColor: "#828282", borderRadius: 10}} onPress={() => Keyboard.dismiss()} >
+          <Image style={{height: 30, width: 30, objectFit: 'contain'}} source={keyboardIcon} />
+        </Pressable>
+      </KeyboardAvoidingView>
+
       <Modal
             visible={exerciseModal}
             animationType='slide'

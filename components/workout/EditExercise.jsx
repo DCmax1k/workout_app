@@ -33,18 +33,21 @@ const EditExercise = ({exercise, updateExercise, index, ...props}) => {
         updateExercise(index, newExercise);
     }
     const updateValue = (setIndex, track, value) => {
-
+        if (value.length > 5) value = value.split("").splice(0, 5).join('');
         const sets = exercise.sets;
         const set = sets[setIndex];
         set[track] = value !== "" ? JSON.stringify(parseInt(value)) : "";
         const newExercise = {...exercise, sets};
         updateExercise(index, newExercise);
     }
+    const changeExerciseName = (value) => {
+        updateExercise(index, {...exercise, name: value, modified: true});
+    }
 
   return (
     <View style={{backgroundColor: "#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
-            <Text style={{fontSize: 15, fontWeight: 500, color: "#DB8854", }}>{exercise.name}</Text>
+            <TextInput value={exercise.name} onChangeText={changeExerciseName} style={{fontSize: 15, fontWeight: 500, color: "#DB8854", }} />
             <View style={{paddingVertical: 0, paddingHorizontal: 5, backgroundColor: "#DB8854", borderRadius: 5}}>
                 <Image style={{width: 20, objectFit: "contain"}} source={threeEllipses} />
             </View>
@@ -63,7 +66,7 @@ const EditExercise = ({exercise, updateExercise, index, ...props}) => {
                 <Text style={[styles.column, styles.column1]}>{setIndex+1}</Text>
                 <>
                 {exercise.tracks.map(track => (
-                    <TextInput keyboardType='numeric' key={setIndex+""+track} style={[styles.column, styles.valueInput]} value={set[track]} onChangeText={(value) => {updateValue(setIndex, track, value)}} />
+                    <TextInput selectTextOnFocus keyboardType='numeric' key={setIndex+""+track} style={[styles.column, styles.valueInput]} value={set[track]} onChangeText={(value) => {updateValue(setIndex, track, value)}} />
                 ))}
                 </>
                 <Pressable onPress={() => {requestRemoveSet(setIndex)}} style={styles.column1}>

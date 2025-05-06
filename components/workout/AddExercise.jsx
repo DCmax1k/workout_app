@@ -24,11 +24,20 @@ function groupExercisesBySection(exercises) {
       title: groupName,
       data: grouped[groupName]
     }));
-  }
+}
 
-  function customTitle(title) {
+function customTitle(title) {
     return title === 'leg' ? "legs" : title === 'shoulder' ? "shoulders" : title === 'forearm' ? "forearms" : title === 'bicep' ? "biceps" : title === 'tricep' ? "triceps" : title;
-  }
+}
+
+function shouldShowExerciseForFilter(exercise, searchValue) {
+    const name = exercise.name.toLowerCase();
+    const muscles = exercise.muscleGroups.join(" ");
+    const group = exercise.group;
+    let s = searchValue.toLowerCase().trim();
+    if (s.length>1 && s[s.length-1]==="s") s = s.split('').splice(0, s.length-1).join('');
+    return name.includes(s) || muscles.includes(s) || group.includes(s);
+}
 
 const AddExercise = ({setExerciseModal, addExercises, ...props}) => {
     const user = useUserStore((state) => state.user);
@@ -36,13 +45,11 @@ const AddExercise = ({setExerciseModal, addExercises, ...props}) => {
     const [exercisesToAdd, setExercisesToAdd] = useState([]);
     const [searchValue, setSearchValue] = useState("");
 
-    const createdExercisesFiltered = searchValue ? user.createdExercises.filter(ex => ex.name.includes(searchValue.toLowerCase())) : user.createdExercises;
+    const createdExercisesFiltered = searchValue ? user.createdExercises.filter(ex => {
+        return shouldShowExerciseForFilter(ex, searchValue);
+    }) : user.createdExercises;
     const dbExercisesFiltered = searchValue ? Exercises.filter(ex => {
-        const name = ex.name.toLowerCase();
-        const muscles = ex.muscleGroups.join(" ");
-        const group = ex.group;
-        const s = searchValue.toLowerCase();
-        return name.includes(s) || muscles.includes(s) || group.includes(s);
+        return shouldShowExerciseForFilter(ex, searchValue);
 
     }) : Exercises;
 

@@ -25,6 +25,24 @@ const StartWorkout = ({workout, setModalVisible, ...props}) => {
     }
     const openEditWorkout = () => {
         const clonedWorkout = JSON.parse(JSON.stringify(workout));
+        // Make exercises data complex
+        const complexExercises = clonedWorkout.exercises.map(ex => {
+            const usersInfo = user.createdExercises.find(e => {
+              return e.id === ex.id
+            });
+            if (usersInfo) {
+              return {
+                ...usersInfo,
+                ...ex,
+              }
+            }
+            const info = Exercises.find(e => e.id === ex.id);
+            return {
+              ...info,
+              ...ex,
+            }
+          });
+        clonedWorkout.exercises = complexExercises;
         updateUser({editActiveWorkout: clonedWorkout});
         router.push("/editworkout");
         setModalVisible(false);
