@@ -137,14 +137,21 @@ const EditWorkout = () => {
     updateWorkout({exercises: exercisesAddedTo});
 
   }
+  const removeFromRotation = (workoutId) => {
+    let schedule = user.schedule;
+    const newRotation = user.schedule.rotation.filter(id => id !== workoutId);
+    schedule = {...schedule, rotation: newRotation}
+    schedule = {...schedule, currentIndex: 0}
+    updateUser({schedule});
+}
 
   const deleteWorkout = () => {
     const userWorkouts = user.savedWorkouts;
     const workoutToDeleteIndex = userWorkouts.findIndex(w => w.id === workout.id);
     if (workoutToDeleteIndex >= 0) {
-      // Delete workout and go back
+      // Delete workout from saved workouts, and from rotation if in rotation
       userWorkouts.splice(workoutToDeleteIndex, 1);
-      updateUser({savedWorkouts: userWorkouts});
+      removeFromRotation(workout.id);
     }
     router.back();
   }
