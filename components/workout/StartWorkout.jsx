@@ -1,4 +1,4 @@
-import { Dimensions, FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, Dimensions, FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import ThemedView from '../ThemedView'
 import ThemedText from '../ThemedText'
@@ -21,7 +21,7 @@ const StartWorkout = ({workout, setModalVisible, ...props}) => {
     });
 
     const startWorkout = () => {
-        // If the workout id is the same as the current rotation id, go to next rotation
+        Alert.alert("Coming next!");
     }
     const openEditWorkout = () => {
         const clonedWorkout = JSON.parse(JSON.stringify(workout));

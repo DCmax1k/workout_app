@@ -41,10 +41,10 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, ...props
         updateExercise(index, newExercise);
     }
     const updateValue = (setIndex, track, value) => {
-        if (value.length > 5) value = value.split("").splice(0, 5).join('');
+        if (value.length > 7) value = value.split("").splice(0, 7).join('');
         const sets = exercise.sets;
         const set = sets[setIndex];
-        set[track] = value !== "" ? JSON.stringify(parseInt(value)) : "";
+        set[track] = value !== "" ? (value[value.length-1] !== "." && value[value.length-1] !== "0") ? JSON.stringify(parseFloat(value)) : value : "";
         const newExercise = {...exercise, sets};
         updateExercise(index, newExercise);
     }

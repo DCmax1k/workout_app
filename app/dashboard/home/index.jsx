@@ -59,7 +59,7 @@ const IndexHome = () => {
     <ThemedView style={styles.container}> 
       <SafeAreaView style={{flex: 1}} >
         <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}} contentContainerStyle={{paddingBottom: 120}}>
-          <BlueButton onPress={clearUserData} title={"[DEV] TEST USER"} style={{marginLeft: 20}} />
+          <BlueButton onPress={clearUserData} title={"[BETA] RESET USER DATA"} style={{marginLeft: 20}} />
           {/* <BlueButton onPress={changeUsernameTest} title={"Change username"} style={{marginLeft: 20}} /> */}
           <View style={styles.welcomeCont}>
             <View>

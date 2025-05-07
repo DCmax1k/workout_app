@@ -1,6 +1,7 @@
 const track = {
     strength: ['lbs', 'reps'],
     strengthPlus: ['+lbs', 'reps'],
+    cardio: ['time', 'mile'],
     distance: ['mile'],
     repsOnly: ['reps'],
 }
@@ -111,7 +112,7 @@ export const Exercises = [
         "group": "chest",
         "tracks": track.strength,
         "description": "The push-up is a bodyweight exercise that targets the chest, shoulders, and triceps, and can be performed anywhere without equipment.",
-        //"image": require("../assets/exercises/pushUp.png"),
+        "image": require("../assets/exercises/pushUp.png"),
         "muscleGroups": ["chest", "shoulders", "triceps"],
         "difficulty": "beginner",
         "id": "11"
@@ -121,7 +122,7 @@ export const Exercises = [
         "group": "abs",
         "tracks": track.strength,
         "description": "The machine ab crunch isolates the abdominal muscles using a guided motion, making it ideal for beginners or those seeking focused core work.",
-        // "image": require("../assets/exercises/machineAbCrunch.png"),
+        "image": require("../assets/exercises/machineAbCrunch.png"),
         "muscleGroups": ["abs"],
         "difficulty": "beginner",
         "id": "12"
@@ -131,7 +132,7 @@ export const Exercises = [
         "group": "abs",
         "tracks": track.strength,
         "description": "The plank is an isometric core exercise that strengthens the abdominal muscles, lower back, and stabilizers through sustained tension.",
-        // "image": require("../assets/exercises/plank.png"),
+        "image": require("../assets/exercises/plank.png"),
         "muscleGroups": ["abs", "core"],
         "difficulty": "intermediate",
         "id": "13"

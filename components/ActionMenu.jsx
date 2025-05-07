@@ -14,7 +14,7 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 const MENU_WIDTH = 250;
 const ITEM_HEIGHT = 40;
 
-const ActionMenu = ({ data, backgroundColor }) => {
+const ActionMenu = ({ data, backgroundColor, style, ...props }) => {
   const [active, setActive] = useState(false);
   const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
   const buttonRef = useRef(null);
@@ -39,12 +39,12 @@ const ActionMenu = ({ data, backgroundColor }) => {
       <Pressable
         ref={buttonRef}
         onPress={openMenu}
-        style={{
+        style={[{
           paddingVertical: 0,
           paddingHorizontal: 5,
           backgroundColor,
           borderRadius: 5,
-        }}
+        }, style]}
       >
         <Image
           style={{ width: 20, height: 20, resizeMode: 'contain' }}

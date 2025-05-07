@@ -24,7 +24,12 @@ const IndexProgress = () => {
 
 
   return (
-    <ThemedView  style={styles.container}>
+    <ThemedView style={styles.container}>
+
+        <View style={{position: "absolute", top: 200, left: "50%", transform: [{translateX: "-50%"}], paddingVertical: 10, paddingHorizontal: 20, backgroundColor: "rgb(20, 20, 20)", zIndex: 10, borderRadius: 20}}>
+          <Text style={{color: "white", fontSize: 20, fontWeight: 600}}>Coming soon!</Text>
+        </View>
+
         <SafeAreaView style={{flex: 1}}>
           <ScrollView contentContainerStyle={{paddingBottom: 120}} showsVerticalScrollIndicator={false}>
             {/* <ThemedText>Progress</ThemedText>

@@ -1,4 +1,4 @@
-import { FlatList, Image, Pressable, ScrollView, SectionList, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Dimensions, FlatList, Image, Pressable, ScrollView, SectionList, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import ThemedView from '../ThemedView'
 import ThemedText from '../ThemedText'
@@ -9,6 +9,12 @@ import { Colors } from '../../constants/Colors'
 import plus from '../../assets/icons/plus.png'
 import Exercise from './Exercise'
 import Spacer from '../Spacer'
+import ActionMenu from '../ActionMenu'
+import { Portal } from 'react-native-paper'
+import CreateExercise from './CreateExercise'
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 function groupExercisesBySection(exercises) {
     const grouped = {};
@@ -44,6 +50,7 @@ const AddExercise = ({setExerciseModal, addExercises, ...props}) => {
 
     const [exercisesToAdd, setExercisesToAdd] = useState([]);
     const [searchValue, setSearchValue] = useState("");
+    const [createExercise, setCreateExercise] = useState(false);
 
     const createdExercisesFiltered = searchValue ? user.createdExercises.filter(ex => {
         return shouldShowExerciseForFilter(ex, searchValue);
@@ -58,7 +65,7 @@ const AddExercise = ({setExerciseModal, addExercises, ...props}) => {
     const sectionalData = createdExercisesFiltered.length === 0 ? dbExercisesFilteredOrganized :
     [
         {
-            title: 'Modified',
+            title: 'Created',
             data: createdExercisesFiltered,
         },
         ...dbExercisesFilteredOrganized,
@@ -79,44 +86,59 @@ const AddExercise = ({setExerciseModal, addExercises, ...props}) => {
     const capitalizeFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
+
   return (
-    <ThemedView style={{flex: 1, padding: 20}}>
-        <View style={styles.actionButtons}>
-            <View>
-                <Pressable onPress={() => setExerciseModal(false)}>
-                    <Image style={{height: 50, width: 50}} source={greyX} />
-                </Pressable>
+    <Portal.Host>
+        <ThemedView style={{flex: 1, padding: 20}}>
+
+            <View style={{position: "absolute", width: screenWidth-20, top: 100, left: 10, zIndex: 2, display: createExercise ? "block" : "none" }}>
+                <CreateExercise setCreateExercise={setCreateExercise} />
             </View>
-            <View style={{zIndex: 1}}>
-                <Pressable onPress={requestAddExercises} style={{paddingHorizontal: 10, paddingVertical: 10, backgroundColor: exercisesToAdd.length < 1 ? "grey":Colors.primaryBlue, borderRadius: 10, flexDirection: 'row', alignItems: 'center'}}>
-                    <Image style={{height: 20, width: 20, marginRight: 5}} source={plus} />
-                    <Text style={{fontSize: 20, color: "white", fontWeight: 700}}>{exercisesToAdd.length}</Text>
-                </Pressable>
+
+            <View style={styles.actionButtons}>
+                <View>
+                    <Pressable onPress={() => setExerciseModal(false)}>
+                        <Image style={{height: 50, width: 50}} source={greyX} />
+                    </Pressable>
+                </View>
+                <View style={{zIndex: 1}}>
+                    <Pressable onPress={requestAddExercises} style={{paddingHorizontal: 10, paddingVertical: 10, backgroundColor: exercisesToAdd.length < 1 ? "grey":Colors.primaryBlue, borderRadius: 10, flexDirection: 'row', alignItems: 'center'}}>
+                        <Image style={{height: 20, width: 20, marginRight: 5}} source={plus} />
+                        <Text style={{fontSize: 20, color: "white", fontWeight: 700}}>{exercisesToAdd.length}</Text>
+                    </Pressable>
+                </View>
             </View>
-        </View>
-        <View style={[styles.header]}>
-            <ThemedText title={true} style={{fontSize: 23, fontWeight: 700, textAlign: "center"}}>Add exercise</ThemedText>
-        </View>
+            <View style={[styles.header]}>
+                <ThemedText title={true} style={{fontSize: 23, fontWeight: 700, textAlign: "center"}}>Add exercise</ThemedText>
+            </View>
 
-        <Spacer height={10} />
+            <Spacer height={10} />
 
-        <TextInput style={styles.search} placeholder='Search' value={searchValue} onChangeText={(e) => setSearchValue(e)} />
-
-        <Spacer height={10} />
-
-        <SectionList
-            sections={sectionalData}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (<Exercise exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />)}
-            renderSectionHeader={({ section: { title } }) => (
-                <ThemedText style={styles.header}>{capitalizeFirstLetter(customTitle(title))}</ThemedText>
-            )}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 50 }}
+            <View style={{flexDirection: "row", alignItems: "center"}}>
+                <TextInput style={[styles.search, {flex: 1}]} placeholder='Search' value={searchValue} onChangeText={(e) => setSearchValue(e)} />
+                <ActionMenu style={{marginLeft: 10}} data={[ {title: "Create new exercise", icon: plus, onPress: () => setCreateExercise(true)}]} />
+            </View>
             
-        />
 
-    </ThemedView>
+            <Spacer height={10} />
+
+            <SectionList
+                sections={sectionalData}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (<Exercise exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />)}
+                renderSectionHeader={({ section: { title } }) => (
+                    <ThemedText style={styles.header}>{capitalizeFirstLetter(customTitle(title))}</ThemedText>
+                )}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 50 }}
+                
+            />
+
+
+
+        </ThemedView>
+    </Portal.Host>
+    
   )
 }
 
