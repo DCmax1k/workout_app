@@ -50,6 +50,7 @@ const CreateExercise = ({setCreateExercise, ...props}) => {
     }
 
   return (
+    
     <View style={{flex: 1, backgroundColor: "#4C4C4C", borderRadius: 20, padding: 10,}} {...props}>
       <View style={{flexDirection: "row", alignItems: "center"}}>
         <Pressable onPress={() => setCreateExercise(false)}>
@@ -63,12 +64,12 @@ const CreateExercise = ({setCreateExercise, ...props}) => {
       <Spacer height={10} />
 
       <Text style={styles.screenText}>Name</Text>
-      <TextInput style={styles.input} value={name} onChangeText={(e) => setName(e)} placeholder='ex. Bench press' />
+      <TextInput style={styles.input} value={name} onChangeText={(e) => setName(e)} placeholder='ex. Bench press' placeholderTextColor={"#A6A6A6"} />
 
       <Spacer height={10} />
 
       <Text style={styles.screenText}>Description of exercise - optional</Text>
-      <TextInput style={styles.input} value={description} onChangeText={(e) => setDescription(e)} placeholder="ex. It's an exercise for building upper body..." />
+      <TextInput style={styles.input} value={description} onChangeText={(e) => setDescription(e)} placeholder="ex. It's an exercise for building upper body..." placeholderTextColor={"#A6A6A6"} />
       
 
       <Spacer height={10} />

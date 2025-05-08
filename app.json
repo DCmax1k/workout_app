@@ -1,7 +1,7 @@
 {
   "expo": {
     "scheme": "pumpapp",
-    "name": "Pump_App",
+    "name": "Pumped Up",
     "slug": "Pump_App",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,7 +20,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.caldwell.pumpedup"
     },
     "web": {
       "favicon": "./assets/favicon.png"

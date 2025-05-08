@@ -9,6 +9,7 @@ import { useUserStore } from '../../stores/useUserStore'
 import Exercise from './Exercise'
 import { router } from 'expo-router'
 import Spacer from '../Spacer'
+import { useBottomSheet } from '../../context/BottomSheetContext'
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -20,32 +21,47 @@ const StartWorkout = ({workout, setModalVisible, ...props}) => {
         return availableExercises.find(e => e.id === ex.id);
     });
 
-    const startWorkout = () => {
-        Alert.alert("Coming next!");
+    const { openSheet } = useBottomSheet();
+
+    const exercisesToComplex = (exercises) => {
+        const complexExercises = exercises.map(ex => {
+        const usersInfo = user.createdExercises.find(e => {
+            return e.id === ex.id
+        });
+        if (usersInfo) {
+            return {
+            ...usersInfo,
+            ...ex,
+            }
+        }
+        const info = Exercises.find(e => e.id === ex.id);
+        return {
+            ...info,
+            ...ex,
+        }
+        });
+        return complexExercises;
     }
+
     const openEditWorkout = () => {
         const clonedWorkout = JSON.parse(JSON.stringify(workout));
         // Make exercises data complex
-        const complexExercises = clonedWorkout.exercises.map(ex => {
-            const usersInfo = user.createdExercises.find(e => {
-              return e.id === ex.id
-            });
-            if (usersInfo) {
-              return {
-                ...usersInfo,
-                ...ex,
-              }
-            }
-            const info = Exercises.find(e => e.id === ex.id);
-            return {
-              ...info,
-              ...ex,
-            }
-          });
+        const complexExercises = exercisesToComplex(clonedWorkout.exercises);
         clonedWorkout.exercises = complexExercises;
         updateUser({editActiveWorkout: clonedWorkout});
         router.push("/editworkout");
         setModalVisible(false);
+    }
+    const startWorkout = () => {
+        const clonedWorkout = JSON.parse(JSON.stringify(workout));
+        // Make exercises data complex
+        const complexExercises = exercisesToComplex(clonedWorkout.exercises);
+        clonedWorkout.exercises = complexExercises;
+        clonedWorkout.startTime = Date.now();
+        updateUser({activeWorkout: clonedWorkout});
+
+        setModalVisible(false);
+        openSheet(1);
     }
   return (
     <ThemedView style={{flex: 1, padding: 20}}>

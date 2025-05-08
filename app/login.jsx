@@ -17,7 +17,7 @@ const USER = {
 
     _id: "1",
     username: "User1",
-    name: 'John Doe',
+    name: 'Test Name',
     email: '',
     dateJoined: 234234234,
     rank: 'user',
@@ -60,8 +60,8 @@ const USER = {
     },
 
     // Only local not in live db
-    activeWorkout: {},
-    editActiveWorkout: {},
+    activeWorkout: null,
+    editActiveWorkout: null,
 };
 
 const Login = () => {

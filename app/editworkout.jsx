@@ -26,23 +26,6 @@ const EditWorkout = () => {
   const updateUser = useUserStore((state) => state.updateUser);
   const workout = user.editActiveWorkout;
   const exercises = workout.exercises;
-  // const exercises = workout.exercises.map(ex => {
-  //   const usersInfo = user.createdExercises.find(e => {
-  //     console.log(e);
-  //     return e.id === ex.id
-  //   });
-  //   if (usersInfo) {
-  //     return {
-  //       ...ex,
-  //       ...usersInfo
-  //     }
-  //   }
-  //   const info = Exercises.find(e => e.id === ex.id);
-  //   return {
-  //     ...ex,
-  //     ...info
-  //   }
-  // });
   const allExercises = [...user.createdExercises, ...Exercises];
 
   const [exerciseModal, setExerciseModal] = useState(false);
@@ -54,6 +37,10 @@ const EditWorkout = () => {
     const ex = workout.exercises;
     ex[exerciseIndex] = newExercise;
     updateWorkout({exercises: ex})
+  }
+  const removeExercise = (exerciseId) => {
+    const newExercises = workout.exercises.filter(e => e.id !== exerciseId);
+    updateWorkout({exercises: newExercises});
   }
   const updateCreatedExercise = (exerciseId, newExercise) => {
       const created = user.createdExercises;
@@ -92,6 +79,7 @@ const EditWorkout = () => {
         } else {
           // Finds id, so change data
           const {sets, note, ...rest} = ex;
+          console.log(rest);
           updateCreatedExercise(ex.id, rest);
         }
       }
@@ -165,10 +153,6 @@ const EditWorkout = () => {
         ]
     );
   }
-  const removeExercise = (exerciseId) => {
-    const newExercises = workout.exercises.filter(e => e.id !== exerciseId);
-    updateWorkout({exercises: newExercises});
-  }
 
   return (
     <PaperProvider>
@@ -208,12 +192,6 @@ const EditWorkout = () => {
 
         </ScrollView>
       </SafeAreaView>
-
-      <KeyboardAvoidingView style={{position: "absolute", bottom: -50, right: 20, paddingBottom: 10}} behavior='position'>
-        <Pressable style={{paddingVertical: 5, paddingHorizontal: 10, backgroundColor: "#828282", borderRadius: 10}} onPress={() => Keyboard.dismiss()} >
-          <Image style={{height: 30, width: 30, objectFit: 'contain'}} source={keyboardIcon} />
-        </Pressable>
-      </KeyboardAvoidingView>
 
       <Modal
             visible={exerciseModal}

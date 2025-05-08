@@ -8,8 +8,9 @@ import { Colors } from '../constants/Colors';
 import Home from '../assets/tabBarIcons/home.png';
 import Progress from '../assets/tabBarIcons/progress.png';
 import Workout from '../assets/tabBarIcons/workout.png';
+import Animated from 'react-native-reanimated';
 
-function TabBar({ state, descriptors, navigation }) {
+function TabBar({animatedTabbarPosition, state, descriptors, navigation }) {
   const { colors } = useTheme();
   const { buildHref } = useLinkBuilder();
 
@@ -18,7 +19,7 @@ function TabBar({ state, descriptors, navigation }) {
   const theme = Colors[colorScheme] ?? Colors.dark
 
   return (
-    <View style={[styles.tabbar, { backgroundColor: theme.tabBar.background },]}>
+    <Animated.View style={[styles.tabbar, { backgroundColor: theme.tabBar.background,}, animatedTabbarPosition]}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =
@@ -74,7 +75,7 @@ function TabBar({ state, descriptors, navigation }) {
           </Pressable>
         );
       })}
-    </View>
+    </Animated.View>
   );
 }
 
@@ -87,6 +88,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        zIndex: 1,
     },
     tabBarText: {
         marginTop: -5,

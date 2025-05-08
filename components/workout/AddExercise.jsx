@@ -91,7 +91,7 @@ const AddExercise = ({setExerciseModal, addExercises, ...props}) => {
     <Portal.Host>
         <ThemedView style={{flex: 1, padding: 20}}>
 
-            <View style={{position: "absolute", width: screenWidth-20, top: 100, left: 10, zIndex: 2, display: createExercise ? "block" : "none" }}>
+            <View style={{position: "absolute", width: screenWidth-20, top: 30, left: 10, zIndex: 2, display: createExercise ? "block" : "none" }}>
                 <CreateExercise setCreateExercise={setCreateExercise} />
             </View>
 
@@ -115,7 +115,7 @@ const AddExercise = ({setExerciseModal, addExercises, ...props}) => {
             <Spacer height={10} />
 
             <View style={{flexDirection: "row", alignItems: "center"}}>
-                <TextInput style={[styles.search, {flex: 1}]} placeholder='Search' value={searchValue} onChangeText={(e) => setSearchValue(e)} />
+                <TextInput style={[styles.search, {flex: 1}]} placeholder='Search' placeholderTextColor={"#A6A6A6"} value={searchValue} onChangeText={(e) => setSearchValue(e)} />
                 <ActionMenu style={{marginLeft: 10}} data={[ {title: "Create new exercise", icon: plus, onPress: () => setCreateExercise(true)}]} />
             </View>
             

@@ -14,7 +14,7 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 const MENU_WIDTH = 250;
 const ITEM_HEIGHT = 40;
 
-const ActionMenu = ({ data, backgroundColor, style, ...props }) => {
+const ActionMenu = ({ data, backgroundColor, style, offset = false, ...props }) => {
   const [active, setActive] = useState(false);
   const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
   const buttonRef = useRef(null);
@@ -27,7 +27,7 @@ const ActionMenu = ({ data, backgroundColor, style, ...props }) => {
   
       setMenuPos({
         x: pageX - MENU_WIDTH + 30,
-        y: isLowerHalf ? pageY - MENU_HEIGHT : pageY + height
+        y: isLowerHalf ? pageY - MENU_HEIGHT - (offset ? 75 : 0) : pageY + height - (offset ? 50 : 0)
       });
   
       setActive(true);

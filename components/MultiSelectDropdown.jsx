@@ -3,8 +3,9 @@ import React, { useState } from 'react'
 import dropdown from '../assets/icons/dropdown.png'
 import { Image } from 'react-native';
 import whiteX from '../assets/icons/whiteX.png'
+import { Portal } from 'react-native-paper';
 
-const MultiSelectDropdown = ({data, height = 50, maxHeight = 275, style, selectedIds, setSelectedIds,  ...props}) => {
+const MultiSelectDropdown = ({data, height = 50, maxHeight = 175, style, selectedIds, setSelectedIds,  ...props}) => {
     const [active, setActive] = useState(false);
 
     const selected = data.filter(d => selectedIds.includes(d.id));
@@ -27,21 +28,24 @@ const MultiSelectDropdown = ({data, height = 50, maxHeight = 275, style, selecte
   return (
     <View>
         {/* Dropdown */}
-        <View style={[styles.mainCont, {height: height, overflow: active ? "visible" : "hidden", zIndex: active ? 10 : 0}, style]} >
-            <Pressable key={selected.id} style={[styles.item, {height: height, fontSize: 18, backgroundColor: "#3D3D3D", borderTopWidth: 0, borderTopLeftRadius: 10, borderTopRightRadius: 10}]} onPress={() => setActive(!active)}>
+        <View style={[styles.mainCont, {height: active ? height*data.length > (maxHeight+height) ? (maxHeight+height) : height*data.length : height, overflow: "visible", zIndex: active ? 10 : 0}, style]} >
+            <Pressable key={selected.id} style={[styles.item, {height: height, fontSize: 18, backgroundColor: "#3D3D3D", borderTopWidth: 0, borderRadius: 10}]} onPress={() => setActive(!active)}>
                 <Text style={[styles.itemText]}>Pick from selection</Text>
             </Pressable>
-            <View style={{maxHeight: maxHeight,}}>
-                <ScrollView style={{height: scrollViewHeight, backgroundColor: "#595959", borderBottomRightRadius: 10, borderBottomLeftRadius: 10}} >
-                {notSelected.map((item, i) => {
-                    return (<Pressable key={item.id} style={[styles.item, {height: height, fontSize: 18,},]} onPress={() => {addItem(item.id)}}>
-                            <Text style={[styles.itemText]}>{item.title}</Text>
-                        </Pressable>
-                    )})}
-                </ScrollView>
+
+            {active && (
+                <View style={{maxHeight: maxHeight, position: "absolute", top: height, left: 0, width: "100%", elevation: 100, zIndex: 100}}>
+                    <ScrollView style={{height: scrollViewHeight, backgroundColor: "#595959", borderBottomRightRadius: 10, borderBottomLeftRadius: 10}} >
+                    {notSelected.map((item, i) => {
+                        return (<Pressable key={item.id} style={[styles.item, {height: height, fontSize: 18,},]} onPress={() => {addItem(item.id)}}>
+                                <Text style={[styles.itemText]}>{item.title}</Text>
+                            </Pressable>
+                        )})}
+                    </ScrollView>
+                </View>
+            )}
             
             
-            </View>
 
             <Image style={{position: 'absolute', height: 20, width: 20, objectFit: "contain", right: 10, top: 15}} source={dropdown} />
             
