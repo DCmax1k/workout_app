@@ -12,6 +12,7 @@ import Spacer from '../Spacer'
 import ActionMenu from '../ActionMenu'
 import { Portal } from 'react-native-paper'
 import CreateExercise from './CreateExercise'
+import { BottomSheetSectionList } from '@gorhom/bottom-sheet'
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -45,7 +46,7 @@ function shouldShowExerciseForFilter(exercise, searchValue) {
     return name.includes(s) || muscles.includes(s) || group.includes(s);
 }
 
-const AddExercise = ({setExerciseModal, addExercises, ...props}) => {
+const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props}) => {
     const user = useUserStore((state) => state.user);
 
     const [exercisesToAdd, setExercisesToAdd] = useState([]);
@@ -82,6 +83,7 @@ const AddExercise = ({setExerciseModal, addExercises, ...props}) => {
         if (exercisesToAdd.length < 1) return;
         addExercises(exercisesToAdd);
         setExerciseModal(false);
+        setExercisesToAdd([]);
     }
     const capitalizeFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -122,7 +124,20 @@ const AddExercise = ({setExerciseModal, addExercises, ...props}) => {
 
             <Spacer height={10} />
 
-            <SectionList
+            
+            {notModal ? (
+               <BottomSheetSectionList 
+               sections={sectionalData}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (<Exercise exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />)}
+                renderSectionHeader={({ section: { title } }) => (
+                    <ThemedText style={styles.header}>{capitalizeFirstLetter(customTitle(title))}</ThemedText>
+                )}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 50 }}
+               />
+            ) : (
+                <SectionList
                 sections={sectionalData}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (<Exercise exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />)}
@@ -133,6 +148,8 @@ const AddExercise = ({setExerciseModal, addExercises, ...props}) => {
                 contentContainerStyle={{ paddingBottom: 50 }}
                 
             />
+            )}
+            
 
 
 

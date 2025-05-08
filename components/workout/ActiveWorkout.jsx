@@ -1,4 +1,4 @@
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import Timer from '../Timer'
 import Animated from 'react-native-reanimated';
@@ -10,6 +10,9 @@ import Spacer from '../Spacer';
 import AddExercise from './AddExercise';
 import BlueButton from '../BlueButton';
 import { Exercises } from '../../constants/Exercises';
+import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+
+const screenHeight = Dimensions.get("window").height;
 
 const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen, ...props}) => {
     const user = useUserStore(state => state.user);
@@ -62,7 +65,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen,
             </Animated.View>
 
             <PaperProvider>
-            <ScrollView style={{marginTop: 85}} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150, }}>
+            <BottomSheetScrollView style={{marginTop: 85}} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150, }}>
                 
                 <View style={[{ paddingHorizontal: 10}]}>
                     <Text style={[styles.text, {fontSize: 25}]}>{workout.name}</Text>
@@ -78,20 +81,26 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen,
                 <Spacer height={20} />
 
                 <BlueButton title={"Add exercise"} onPress={() => setExerciseModal(true)} />
-            </ScrollView>
+            </BottomSheetScrollView>
             </PaperProvider>
             
+            {Platform.OS === 'ios' ? (
+                <Modal
+                    visible={exerciseModal}
+                    animationType='slide'
+                    presentationStyle='pageSheet'
+                    onRequestClose={() => {
+                    setExerciseModal(false)
+                    }}
+                >
+                    <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} />
+                </Modal>
+            ):(
+                <View style={{position: "absolute", top: exerciseModal ? 0 : screenHeight, left: 0, height: screenHeight, width: "100%", zIndex: 5, elevation: 5}}>
+                    <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} notModal={true} />
+                </View>
+            )}
             
-            <Modal
-                visible={exerciseModal}
-                animationType='slide'
-                presentationStyle='pageSheet'
-                onRequestClose={() => {
-                setExerciseModal(false)
-                }}
-            >
-                <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} />
-            </Modal>
         </View> 
     
   );

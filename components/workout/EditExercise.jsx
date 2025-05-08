@@ -25,7 +25,6 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise,activeWor
         const sets = exercise.sets;
         sets[setIndex].complete = sets[setIndex].complete ? false : true;
         const newExercise = {...exercise, sets};
-        console.log(newExercise);
         updateExercise(index, newExercise);
     }
     const addSet = () => {
