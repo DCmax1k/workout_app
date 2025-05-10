@@ -1,4 +1,4 @@
-import { Dimensions, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, Dimensions, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import Timer from '../Timer'
 import Animated from 'react-native-reanimated';
@@ -15,7 +15,7 @@ import ConfirmMenu from '../ConfirmMenu';
 
 const screenHeight = Dimensions.get("window").height;
 
-const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen, ...props}) => {
+const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPosition, ...props}) => {
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
     const {closeSheet, showFinishWorkout} = useBottomSheet();
@@ -65,8 +65,6 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen,
     }
 
     const requestFinish = () => {
-        // Test if any finished sets, if not just cancel workout
-
 
         finish();
     }
@@ -78,9 +76,23 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen,
         if (!workout.name) updateWorkoutName("New workout");
     }
 
-    const cancelWorkout = () => {
+    const cancelWorkout = (confirmation = false) => {
+        if (confirmation) {
+            setConfirmMenuData({
+                title: "Cancel workout?",
+                subTitle: "All progress will be lost",
+                option1: "Cancel Workout",
+                option1color: "#DB5454",
+                option2: "Cancel",
+                confirm: cancelWorkout,
+            });
+            setConfirmMenuActive(true);
+            return;
+        }
         closeSheet();
-        updateWorkout({startTime: 0});
+        setTimeout(() => {
+            updateUser({activeWorkout: null});
+        }, 300)
     }
 
     const finish = () => {
@@ -113,16 +125,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen,
             }
         });
         if (completedExercises.length <= 0) {
-            setConfirmMenuData({
-                title: "Cancel workout?",
-                subTitle: "No sets from any exercises",
-                subTitle2: "are marked as complete.",
-                option1: "Cancel Workout",
-                option2: "Cancel",
-                confirm: cancelWorkout,
-            });
-            setConfirmMenuActive(true);
-            return;
+            return cancelWorkout(true);
         }
          // Save each completed exercise
          const currentTime = Date.now();
@@ -138,12 +141,13 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen,
 
              fullWorkout: ultimateCloneOfActiveWorkout,
          }
-        
-        updateWorkout({startTime: 0});
-        updateUser({completeExercises: usersCompletedExercises});
         closeSheet();
-        
         showFinishWorkout(finishScreenData);
+        
+        setTimeout(() => {
+            updateUser({completeExercises: usersCompletedExercises, activeWorkout: null});
+        }, 300)
+        
     }
 
   return (
@@ -153,7 +157,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen,
 
 
                 <Animated.View style={[{flexDirection: "row", justifyContent: "flex-end", position: "absolute", left: 0, top: 0, width: "100%", zIndex: 1, elevation: 1}, animatedFinishOpacity]}>
-                    <Pressable onPress={sheetOpen ? requestFinish : null} style={{backgroundColor: "#21863C", paddingVertical: 10, paddingHorizontal: 15, marginRight: 10, borderRadius: 10}}>
+                    <Pressable onPress={true ? requestFinish : null} style={{backgroundColor: "#21863C", paddingVertical: 10, paddingHorizontal: 15, marginRight: 10, borderRadius: 10}}>
                         <Text style={styles.text}>Finish</Text>
                     </Pressable>
                 </Animated.View>
@@ -178,7 +182,9 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen,
 
                     <Spacer height={20} />
 
-                    <BlueButton title={"Add exercise"} onPress={() => setExerciseModal(true)} />
+                    <BlueButton title={"Add exercise"} style={{marginRight: 10, marginLeft: 10}} onPress={() => setExerciseModal(true)} />
+                    <Spacer height={40} />
+                    <BlueButton title={"Cancel workout"} color={"#572E32"} style={{marginRight: 30, marginLeft: 30}} onPress={() => cancelWorkout(true)} />
                 </BottomSheetScrollView>
                 </PaperProvider>
                 

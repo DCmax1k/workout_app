@@ -52,7 +52,18 @@ const StartWorkout = ({workout, setModalVisible, ...props}) => {
         router.push("/editworkout");
         setModalVisible(false);
     }
-    const startWorkout = () => {
+    const startWorkout = (bypassCheck = false) => {
+        if (bypassCheck === false && user.activeWorkout !== null) {
+            Alert.alert(
+                "Workout in progress",
+                "If you start a new workout, your current one will be discarded",
+                [
+                    {text: "Start new workout", style: "destructive", onPress: () => startWorkout(true)},
+                    {text: "Do Nothing", style: "cancel"}
+                ]
+            )
+            return;
+        } 
         const clonedWorkout = JSON.parse(JSON.stringify(workout));
         // Make exercises data complex
         const complexExercises = exercisesToComplex(clonedWorkout.exercises);
@@ -99,7 +110,7 @@ const StartWorkout = ({workout, setModalVisible, ...props}) => {
             contentContainerStyle={{ paddingBottom: 120, paddingTop: 20 }}
         />
 
-        <Pressable style={styles.floatingBtn} onPress={startWorkout}>
+        <Pressable style={styles.floatingBtn} onPress={() => startWorkout()}>
             <Text style={{fontSize: 20, fontWeight: 700, color: "white"}}>Start workout</Text>
         </Pressable>
         

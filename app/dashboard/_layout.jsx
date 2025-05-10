@@ -25,7 +25,7 @@ const Dashboard = () => {
   }, [])
 
   const sheetRef = useRef(null);
-  const [sheetOpen, setSheetOpen] = useState(true);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const [finishWorkoutData, setFinishWorkoutData] = useState(null);
 
@@ -48,17 +48,28 @@ const Dashboard = () => {
   
 
   const animatedFinishOpacity = useAnimatedStyle(() => {
-    const opacity = interpolate( animatedPosition.value, [screenHeight-firstSnap, screenHeight-0.95 * screenHeight], [0, 1], Extrapolation.CLAMP );
+    const opacity = interpolate(
+      animatedPosition.value,
+      [screenHeight-firstSnap-30, screenHeight-0.95 * screenHeight],
+      [0, 1], Extrapolation.CLAMP );
     return {opacity};
   });
 
   const animatedHeaderOpacity = useAnimatedStyle(() => {
-    const opacity = interpolate( animatedPosition.value, [screenHeight-firstSnap, screenHeight-0.95 * screenHeight], [1, 0], Extrapolation.CLAMP );
+    const opacity = interpolate(
+      animatedPosition.value,
+      [screenHeight-firstSnap, screenHeight-0.95 * screenHeight],
+      [1, 0],
+      Extrapolation.CLAMP );
     return {opacity};
   });
 
   const animatedTabbarPosition = useAnimatedStyle(() => {
-    const bottom = interpolate(animatedPosition.value, [screenHeight-firstSnap, screenHeight-0.95 * screenHeight], [0, -tabBarHeight], Extrapolation.CLAMP);
+    const bottom = interpolate(
+      animatedPosition.value,
+      [screenHeight-firstSnap-30, screenHeight-0.95 * screenHeight],
+      [0, -tabBarHeight],
+      Extrapolation.CLAMP);
     return {bottom};
   })
 
@@ -78,7 +89,7 @@ const Dashboard = () => {
     <BottomSheetContext.Provider value={{ openSheet: handleSnapPress, closeSheet: handleCloseSheet, showFinishWorkout }}>
 
       <>
-        <Tabs tabBar={props => <TabBar animatedTabbarPosition={animatedTabbarPosition} sheetOpen={sheetOpen} {...props} />} screenOptions={{headerShown: false, headerStyle: { backgroundColor: theme.background, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0,}, headerTintColor: theme.title, tabBarStyle: { backgroundColor: "#000" }, tabBarActiveTintColor: theme.title, tabBarInactiveTintColor: "#868686", }}> 
+        <Tabs tabBar={props => <TabBar animatedTabbarPosition={animatedTabbarPosition} {...props} />} screenOptions={{headerShown: false, headerStyle: { backgroundColor: theme.background, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0,}, headerTintColor: theme.title, tabBarStyle: { backgroundColor: "#000" }, tabBarActiveTintColor: theme.title, tabBarInactiveTintColor: "#868686", }}> 
             <Tabs.Screen name="home" options={{ title: 'Home', headerTintColor: "transparent"  }} />
             <Tabs.Screen name="workout" options={{ title: 'Workouts' }} />
             <Tabs.Screen name="progress" options={{ title: 'Progress' }} />
@@ -98,9 +109,9 @@ const Dashboard = () => {
           >
               {user.activeWorkout && (
                 <ActiveWorkout
-                sheetOpen={sheetOpen}
                 animatedFinishOpacity={animatedFinishOpacity}
                 animatedHeaderOpacity={animatedHeaderOpacity}
+                currentPosition={currentPosition}
               />
               )}
               
