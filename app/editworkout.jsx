@@ -1,9 +1,7 @@
 import { Alert, Image, Keyboard, KeyboardAvoidingView, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import ThemedView from '../components/ThemedView'
-import ThemedText from '../components/ThemedText'
 import { useUserStore } from '../stores/useUserStore'
-import TitleWithBack from '../components/TitleWithBack'
 import { Colors } from '../constants/Colors'
 import { router } from 'expo-router'
 import pencil from '../assets/icons/pencil.png'
@@ -12,13 +10,10 @@ import EditExercise from '../components/workout/EditExercise'
 import BlueButton from '../components/BlueButton'
 import Spacer from '../components/Spacer'
 import AddExercise from '../components/workout/AddExercise'
-import threeEllipses from '../assets/icons/threeEllipses.png'
-import { generateUniqueId } from '../util/uniqueId'
-import keyboardIcon from '../assets/icons/keyboard.png'
 import { PaperProvider } from 'react-native-paper'
 import ActionMenu from '../components/ActionMenu'
 import trashIcon from '../assets/icons/trash.png'
-import { saveWorkout } from '../util/saveWorkout'
+import { workoutToSimple } from '../util/workoutToSimple'
 
 const EditWorkout = () => {
   const workoutNameInputRef = useRef(null);
@@ -46,67 +41,21 @@ const EditWorkout = () => {
   }
 
   const requestSaveWorkout = () => {
-    saveWorkout(workout);
-  }
-
-  // const saveWorkout = (w) => {
-  //   // Last minute changes to workout before save
-  //   if (!w.name) w.name = "New workout";
-  //   const newExercises = w.exercises.map(ex => {
-  //     // Find any modified exercises, update their data in createdExercises. Create the exercise if modified id not found
-  //     if (ex.modified) {
-  //       const createdExerciseId = user.createdExercises.findIndex(e => e.id === ex.id);
-  //       if (createdExerciseId < 0) {
-  //         // Didnt find id, so make data, and change id of exercise in workout
-  //         const modifiedExercise = {
-  //             name: ex.name,
-  //             group: ex.group,
-  //             tracks: ex.tracks,
-  //             description: ex.description,
-  //             image: ex.image,
-  //             muscleGroups: ex.muscleGroups,
-  //             difficulty: ex.difficulty,
-  //             previousId: ex.id,
-  //             id: generateUniqueId(),
-  //         };
-  //         const newCreatedExercises = user.createdExercises;
-  //         newCreatedExercises.unshift(modifiedExercise);
-  //         updateUser({createdExercises: newCreatedExercises});
-
-          
-  //         const exerciseIndex = w.exercises.findIndex(of => of.id === ex.id);
-  //         w.exercises[exerciseIndex].id = modifiedExercise.id;
-  //       } else {
-  //         // Finds id, so change data
-  //         const {sets, note, ...rest} = ex;
-  //         console.log(rest);
-  //         updateCreatedExercise(ex.id, rest);
-  //       }
-  //     }
-  //     // Set exercises back to simple data
-  //     return {
-  //       id: ex.id,
-  //       sets: ex.sets,
-  //       name: ex.name,
-  //       note: ex.note,
-  //     }
-  //   });
-  //   w.exercises = newExercises;
-  //   // Find saved workout
-  //   const savedWorkouts = user.savedWorkouts;
-  //   const workoutIndex = savedWorkouts.findIndex(wk => wk.id === w.id);
-  //   if (workoutIndex < 0) {
-  //     // If not found, unshift workout
-  //     savedWorkouts.unshift(w);
-  //   } else {
-  //     // If found, set saved workout
-  //     savedWorkouts[workoutIndex] = w;
-  //   }
+    const w = workoutToSimple(workout);
+    // Save simplified workout
+    const savedWorkouts = user.savedWorkouts;
+    const workoutIndex = savedWorkouts.findIndex(wk => wk.id === w.id);
+    if (workoutIndex < 0) {
+      // If not found, unshift workout
+      savedWorkouts.unshift(w);
+    } else {
+      // If found, set saved workout
+      savedWorkouts[workoutIndex] = w;
+    }
     
-  //   updateUser({savedWorkouts});
-  //   router.back();
-  //   // Contact db
-  // }
+    updateUser({savedWorkouts});
+    router.back();
+  }
 
   const updateWorkoutName = (value) => {
     updateWorkout({name: value});
@@ -171,7 +120,7 @@ const EditWorkout = () => {
                 </Pressable>
             </View>
         </View>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150, }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350, }}>
 
           <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
             <Pressable style={{ height: 40, width: 40, justifyContent: "center", alignItems: "center"}} onPress={() => {if (workoutNameInputRef.current) {workoutNameInputRef.current.focus()}}}>

@@ -62,7 +62,7 @@ const IndexWorkout = () => {
                 <Pressable style={[styles.selectWorkout, styles.boxShadow]} onPress={() => openWorkout(workout)} key={workout.id+""+i}>
                   <View style={styles.linearGradient}>
                     <View style={{width: "80%"}}>
-                      <ThemedText style={{fontSize: 17, fontWeight: 700}} title={true}>{truncate(workout.name, 30)}</ThemedText>
+                      <ThemedText style={{fontSize: 17, fontWeight: 700}} title={true}>{truncate(workout.name, 25)}</ThemedText>
                       <WorkoutDescription workout={workout} />
                     </View>
 

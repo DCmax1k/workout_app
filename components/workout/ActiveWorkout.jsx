@@ -1,4 +1,4 @@
-import { Dimensions, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import Timer from '../Timer'
 import Animated from 'react-native-reanimated';
@@ -11,6 +11,7 @@ import AddExercise from './AddExercise';
 import BlueButton from '../BlueButton';
 import { Exercises } from '../../constants/Exercises';
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import ConfirmMenu from '../ConfirmMenu';
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -20,6 +21,16 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen,
     const {closeSheet, showFinishWorkout} = useBottomSheet();
     const [exerciseModal, setExerciseModal] = useState(false);
     const allExercises = [...user.createdExercises, ...Exercises];
+
+    const [confirmMenuActive, setConfirmMenuActive] = useState(false);
+    const [confirmMenuData, setConfirmMenuData] = useState({
+        title: "The title",
+        subTitle: "The description for the confirmation",
+        subTitle2: "Another one here",
+        option1: "Update",
+        option2: "Cancel",
+        confirm: () => {},
+    });
 
     const workout = user.activeWorkout;
     const exercises = workout.exercises;
@@ -54,7 +65,22 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen,
     }
 
     const requestFinish = () => {
-        
+        // Test if any finished sets, if not just cancel workout
+
+
+        finish();
+    }
+
+    const updateWorkoutName = (value) => {
+        updateWorkout({name: value});
+      }
+    const handleEndEditting = () => {
+        if (!workout.name) updateWorkoutName("New workout");
+    }
+
+    const cancelWorkout = () => {
+        closeSheet();
+        updateWorkout({startTime: 0});
     }
 
     const finish = () => {
@@ -86,6 +112,18 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen,
                 usersCompletedExercises[exerciseData.id] = [exerciseData];
             }
         });
+        if (completedExercises.length <= 0) {
+            setConfirmMenuData({
+                title: "Cancel workout?",
+                subTitle: "No sets from any exercises",
+                subTitle2: "are marked as complete.",
+                option1: "Cancel Workout",
+                option2: "Cancel",
+                confirm: cancelWorkout,
+            });
+            setConfirmMenuActive(true);
+            return;
+        }
          // Save each completed exercise
          const currentTime = Date.now();
          const workoutLength = currentTime - workout.startTime;
@@ -103,60 +141,65 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen,
         
         updateWorkout({startTime: 0});
         updateUser({completeExercises: usersCompletedExercises});
-        closeSheet(finishScreenData);
+        closeSheet();
         
         showFinishWorkout(finishScreenData);
     }
 
   return (
        <View style={{flex: 1}}>
-            <Animated.View style={[{flexDirection: "row", justifyContent: "flex-end", position: "absolute", left: 0, top: 0, width: "100%", zIndex: 1, elevation: 1}, animatedFinishOpacity]}>
-                <Pressable onPress={sheetOpen ? finish : null} style={{backgroundColor: "#21863C", paddingVertical: 10, paddingHorizontal: 15, marginRight: 10, borderRadius: 10}}>
-                    <Text style={styles.text}>Finish</Text>
-                </Pressable>
-            </Animated.View>
-
-            <Animated.View style={[{position: "absolute", width: "100%", alignItems: "center"}, animatedHeaderOpacity]}>
-                <Text style={[styles.text, {fontSize: 18, paddingHorizontal: 10, textAlign: "center"}]}>{workout.name}</Text>
-                {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 15, color: "#C4C4C4"}} />}
-            </Animated.View>
-
             <PaperProvider>
-            <BottomSheetScrollView style={{marginTop: 85}} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350, }}>
+                <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
+
+
+                <Animated.View style={[{flexDirection: "row", justifyContent: "flex-end", position: "absolute", left: 0, top: 0, width: "100%", zIndex: 1, elevation: 1}, animatedFinishOpacity]}>
+                    <Pressable onPress={sheetOpen ? requestFinish : null} style={{backgroundColor: "#21863C", paddingVertical: 10, paddingHorizontal: 15, marginRight: 10, borderRadius: 10}}>
+                        <Text style={styles.text}>Finish</Text>
+                    </Pressable>
+                </Animated.View>
+                <Animated.View style={[{position: "absolute", width: "100%", alignItems: "center"}, animatedHeaderOpacity]}>
+                    <Text style={[styles.text, {fontSize: 18, paddingHorizontal: 10, textAlign: "center"}]}>{workout.name}</Text>
+                    {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 15, color: "#C4C4C4"}} />}
+                </Animated.View>
+
+                <PaperProvider>
+                <BottomSheetScrollView style={{marginTop: 85}} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350, }}>
+                    
+                    <View style={[{ paddingHorizontal: 10}]}>
+                        <TextInput selectTextOnFocus onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
+                        {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 20, color: "#C4C4C4"}} />}
+                    </View>
+
+                    <Spacer height={20} />
+
+                    {exercises.map((exercise, i) => (
+                        <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} activeWorkoutStyle={true} />
+                    ))}
+
+                    <Spacer height={20} />
+
+                    <BlueButton title={"Add exercise"} onPress={() => setExerciseModal(true)} />
+                </BottomSheetScrollView>
+                </PaperProvider>
                 
-                <View style={[{ paddingHorizontal: 10}]}>
-                    <Text style={[styles.text, {fontSize: 25}]}>{workout.name}</Text>
-                    {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 20, color: "#C4C4C4"}} />}
-                </View>
-
-                <Spacer height={20} />
-
-                {exercises.map((exercise, i) => (
-                    <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} activeWorkoutStyle={true} />
-                ))}
-
-                <Spacer height={20} />
-
-                <BlueButton title={"Add exercise"} onPress={() => setExerciseModal(true)} />
-            </BottomSheetScrollView>
+                {Platform.OS === 'ios' ? (
+                    <Modal
+                        visible={exerciseModal}
+                        animationType='slide'
+                        presentationStyle='pageSheet'
+                        onRequestClose={() => {
+                        setExerciseModal(false)
+                        }}
+                    >
+                        <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} />
+                    </Modal>
+                ):(
+                    <View style={{position: "absolute", top: exerciseModal ? 0 : screenHeight, left: 0, height: screenHeight, width: "100%", zIndex: 5, elevation: 5}}>
+                        <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} notModal={true} />
+                    </View>
+                )}
             </PaperProvider>
             
-            {Platform.OS === 'ios' ? (
-                <Modal
-                    visible={exerciseModal}
-                    animationType='slide'
-                    presentationStyle='pageSheet'
-                    onRequestClose={() => {
-                    setExerciseModal(false)
-                    }}
-                >
-                    <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} />
-                </Modal>
-            ):(
-                <View style={{position: "absolute", top: exerciseModal ? 0 : screenHeight, left: 0, height: screenHeight, width: "100%", zIndex: 5, elevation: 5}}>
-                    <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} notModal={true} />
-                </View>
-            )}
             
         </View> 
     
@@ -170,5 +213,11 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 18,
         fontWeight: 600,
-    }
+    },
+    workoutNameInput: {
+        fontSize: 23,
+        color: "white",
+        flex: 1,
+        fontWeight: 700
+      }
 })

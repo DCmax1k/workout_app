@@ -22,16 +22,20 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         updateExercise(index, newExercise);
     }
     const completedSet = (setIndex) => {
-        const sets = exercise.sets;
-        sets[setIndex].complete = sets[setIndex].complete ? false : true;
-        const newExercise = {...exercise, sets};
+        exercise.tracks.forEach(track => {
+            if (!exercise.sets[setIndex][track]) {
+                exercise.sets[setIndex][track] = getSetValueBefore(setIndex, track);
+            }
+        })
+        exercise.sets[setIndex].complete = exercise.sets[setIndex].complete ? false : true;
+        const newExercise = {...exercise, sets: exercise.sets};
         updateExercise(index, newExercise);
     }
     const addSet = () => {
         const sets = exercise.sets;
         const set = {};
         exercise.tracks.forEach(track => {
-            set[track] = sets.length < 1 ? "0" : sets[sets.length-1][track];
+            set[track] = sets.length < 1 ? "0" : sets[sets.length-1][track] === "0" ? "" : sets[sets.length-1][track];
         });
         sets.push(set);
         const newExercise = {...exercise, sets};
@@ -59,6 +63,15 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
             noteRef.current.focus();
         }
     }, [showNote]);
+
+    const getSetValueBefore = (setIndex, track) => {
+        if (setIndex === 0) return exercise.sets[setIndex][track] || "0";
+        for (let i = setIndex-1; i >= 0; i--) {
+            const value = exercise.sets[i][track];
+            if (value) return value;
+            if (i===0) return "0";
+        }
+    }
 
   return (
     <View style={{backgroundColor: activeWorkoutStyle ? "":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10}}>
@@ -90,9 +103,10 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                 <View key={setIndex} style={[styles.row, {backgroundColor: set.complete ? "rgba(33, 134, 60, 0.14)":"transparent"}]}>
                     <Text style={[styles.column, styles.column1]}>{setIndex+1}</Text>
                     <>
-                        {exercise.tracks.map(track => (
-                            <TextInput selectTextOnFocus keyboardType='numeric' key={setIndex+""+track} style={[styles.column, styles.valueInput]} value={set[track]} onChangeText={(value) => {updateValue(setIndex, track, value)}} />
-                        ))}
+                        {exercise.tracks.map(track => {
+                            const placeholderValue = setIndex === 0 ? "0" : getSetValueBefore(setIndex, track);
+                            return (<TextInput selectTextOnFocus keyboardType='numeric' key={setIndex+""+track+""+placeholderValue} style={[styles.column, styles.valueInput]} value={set[track]} onChangeText={(value) => {updateValue(setIndex, track, value)}} placeholder={placeholderValue} placeholderTextColor={"#797979"} />)
+                        })}
                     </>
                     {activeWorkoutStyle && (
                         <Pressable onPress={() => {completedSet(setIndex)}} style={[styles.columnForComplete, styles.completeButton, {backgroundColor: set.complete ? "#21863C" : "#1D1D1D",}]}>
