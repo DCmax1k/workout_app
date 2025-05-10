@@ -25,7 +25,8 @@ const Dashboard = () => {
   }, [])
 
   const sheetRef = useRef(null);
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const sheetShouldStartOpen = user.activeWorkout !== null;
+  const [sheetOpen, setSheetOpen] = useState(sheetShouldStartOpen);
 
   const [finishWorkoutData, setFinishWorkoutData] = useState(null);
 
@@ -103,7 +104,7 @@ const Dashboard = () => {
           backgroundStyle={{backgroundColor: "#313131"}}
           handleIndicatorStyle={{backgroundColor: "white", width: 80}}
           animatedPosition={animatedPosition}
-          index={-1}
+          index={sheetShouldStartOpen ? 0 : -1}
           onChange={index => setCurrentPosition(index)}
 
           >
