@@ -56,7 +56,19 @@ const IndexHome = () => {
     updateUser({schedule: {...user.schedule, currentIndex: newIndex}})
   }
 
-  const startEmptyWorkout = () => {
+  const startEmptyWorkout = (bypassCheck = false) => {
+    if (bypassCheck === false && user.activeWorkout !== null) {
+        Alert.alert(
+            "Workout in progress",
+            "If you start a new workout, your current one will be discarded",
+            [
+                {text: "Start new workout", style: "destructive", onPress: () => startEmptyWorkout(true)},
+                {text: "Do Nothing", style: "cancel"}
+            ]
+        )
+        return;
+    } 
+
     const clonedWorkout = {
       name: "New workout",
       exercises: [],
@@ -140,7 +152,7 @@ const IndexHome = () => {
           )}
 
           <ThemedText style={{fontSize: 10, paddingVertical: 10, textAlign: 'center'}}>or</ThemedText>
-          <BlueButton onPress={startEmptyWorkout} title={"Start an empty workout"} />
+          <BlueButton onPress={() => startEmptyWorkout()} title={"Start an empty workout"} />
 
           <Spacer />
           <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Activity</ThemedText>
