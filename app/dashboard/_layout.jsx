@@ -25,7 +25,15 @@ const Dashboard = () => {
   }, [])
 
   const sheetRef = useRef(null);
-  const sheetShouldStartOpen = user.activeWorkout !== null;
+
+  const [sheetShouldStartOpen, setSheetShouldStartOpen] = useState(false);
+  useEffect(() => {
+    setTimeout(() => {
+      setSheetShouldStartOpen(user.activeWorkout !== null);
+    }, 1000)
+    
+  }, []);
+
   const [sheetOpen, setSheetOpen] = useState(sheetShouldStartOpen);
 
   const [finishWorkoutData, setFinishWorkoutData] = useState(null);

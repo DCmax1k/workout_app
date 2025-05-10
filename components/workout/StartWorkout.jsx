@@ -55,6 +55,9 @@ const StartWorkout = ({workout, setModalVisible, ...props}) => {
 
     const startWorkout = (bypassCheck = false) => {
         if (bypassCheck === false && user.activeWorkout !== null) {
+            // Make sure active workout is visible
+            openSheet(0);
+            //Alert
             Alert.alert(
                 "Workout in progress",
                 "If you start a new workout, your current one will be discarded",

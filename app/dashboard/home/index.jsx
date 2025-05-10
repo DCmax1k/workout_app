@@ -58,6 +58,9 @@ const IndexHome = () => {
 
   const startEmptyWorkout = (bypassCheck = false) => {
     if (bypassCheck === false && user.activeWorkout !== null) {
+          // Make sure active workout is visible
+          openSheet(0);
+          //Alert
         Alert.alert(
             "Workout in progress",
             "If you start a new workout, your current one will be discarded",
@@ -135,47 +138,6 @@ const IndexHome = () => {
                 
               </View>
             </LinearGradient>
-          
-          {/* {(isThereWorkout === "yes") ? (
-            <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
-              <View style={{width: "100%"}}>
-                <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>{truncate(continuedWorkout.name, 30)}</Text>
-                <WorkoutDescription style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}} workout={continuedWorkout} />
-              </View>
-              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
-                <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={() => openWorkout(continuedWorkout)}>
-                  <Text style={{fontSize: 14, color: "white"}}>Open workout</Text>
-                </Pressable>
-                <Pressable onPress={rotateNext} style={{padding: 5, backgroundColor: "#656565", borderRadius: 10}}>
-                  <Text style={{fontSize: 12, color: "white"}}>Skip</Text>
-                </Pressable>
-              </View>
-            </LinearGradient>
-          ) : (isThereWorkout==="rest") ? (
-            <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
-              <View style={{width: "100%"}}>
-                <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>Rest Day</Text>
-                <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>Click next for your next workout!</Text>
-              </View>
-              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
-                <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={rotateNext}>
-                  <Text style={{fontSize: 14, color: "white"}}>Next</Text>
-                </Pressable>
-              </View>
-            </LinearGradient>
-          ) : (
-            <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
-              <View style={{width: "100%"}}>
-                <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>Create a schedule</Text>
-                <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>Add or create workouts to add!</Text>
-              </View>
-              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
-                <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={() => router.push('/dashboard/workout')}>
-                  <Text style={{fontSize: 14, color: "white"}}>Go to workouts</Text>
-                </Pressable>
-              </View>
-            </LinearGradient>
-          )} */}
 
           <ThemedText style={{fontSize: 10, paddingVertical: 10, textAlign: 'center'}}>or</ThemedText>
           <BlueButton onPress={() => startEmptyWorkout()} title={"Start an empty workout"} />
