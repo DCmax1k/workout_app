@@ -3,15 +3,28 @@ import React from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
 import TitleWithBack from '../../../components/TitleWithBack'
+import { useUserStore } from '../../../stores/useUserStore'
+import BlueButton from '../../../components/BlueButton'
+import Spacer from '../../../components/Spacer'
 
 const Profile = () => {
-  return (
-    <ThemedView style={styles.container}>
-        <SafeAreaView style={{flex: 1}} >
-            <TitleWithBack title={"Profile"}/>
-        </SafeAreaView>
-    </ThemedView>
-  )
+    const user = useUserStore((state) => state.user);
+    const setUser = useUserStore((state) => state.setUser);
+    const updateUser = useUserStore((state) => state.updateUser);
+
+    const clearUserData = () => {
+      // Clear user data
+      setUser(null);
+    }
+    return (
+      <ThemedView style={styles.container}>
+          <SafeAreaView style={{flex: 1}} >
+              <TitleWithBack title={"Profile"}/>
+              <Spacer />
+              <BlueButton onPress={clearUserData} title={"[FOR BETA]"} subtitle={"RESTORE USER TO DEFAULT"} color={"#DB5454"} style={{marginLeft: 20}} />
+          </SafeAreaView>
+      </ThemedView>
+    )
 }
 
 export default Profile
