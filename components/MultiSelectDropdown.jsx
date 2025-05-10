@@ -8,7 +8,7 @@ import { Portal } from 'react-native-paper';
 const MultiSelectDropdown = ({data, height = 50, maxHeight = 175, style, selectedIds, setSelectedIds,  ...props}) => {
     const [active, setActive] = useState(false);
 
-    const selected = data.filter(d => selectedIds.includes(d.id));
+    const selected = selectedIds.map(id => data.find(d=>d.id===id));
     const notSelected = data.filter(d => !selectedIds.includes(d.id));
 
     let scrollViewHeight = (notSelected.length-1)*height;

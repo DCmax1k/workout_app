@@ -14,7 +14,7 @@ const CreateExercise = ({setCreateExercise, ...props}) => {
 
     const muscleGroupData = [{id: "0", title: "Chest"}, {id: 1, title: "Abs"}, {id: "2", title: 'Back'}, {id: "3", title: "Bicep"}, {id: "4", title: "Tricep"}, {id: "5", title: "Forearm"}, {id: "6", title: "Shoulder"}, {id: "7", title: "Leg"}, {id: "8", title: "Other"}];
     const categoryData = [{id: "0", title: "Strength - [Weight and reps]"}, {id: "1", title: "Cardio - [Time and distance]"}, {id: "2", title: 'Distance only'}, {id: "3", title: "Reps only"}];
-    const categoryDataTracking = [['lbs', 'reps'], ['time', 'mile'], ['mile'], ['reps']];
+    const categoryDataTracking = [['weight', 'reps'], ['time', 'mile'], ['mile'], ['reps']];
 
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
