@@ -95,6 +95,15 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
         }, 300)
     }
 
+    const rotateNext = () => {
+        const current = user.schedule.currentIndex; 
+        let newIndex = current+1;
+        if (newIndex >= user.schedule.rotation.length) {
+        newIndex = 0;
+        }
+        updateUser({schedule: {...user.schedule, currentIndex: newIndex}})
+     }
+
     const finish = () => {
         const ultimateCloneOfActiveWorkout = JSON.parse(JSON.stringify(workout));
 
@@ -143,6 +152,10 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
          }
         closeSheet();
         showFinishWorkout(finishScreenData);
+
+        if (user.schedule.rotation[user.schedule.currentIndex] === ultimateCloneOfActiveWorkout.id) {
+            rotateNext();
+        }
         
         setTimeout(() => {
             updateUser({completeExercises: usersCompletedExercises, activeWorkout: null});

@@ -82,6 +82,8 @@ const IndexHome = () => {
   const truncate = (text, maxLength) =>
     text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 
+  let isThereWorkout = (continuedWorkout !== null && continuedWorkout.id !== "0") ? "yes" : (continuedWorkout !== null && continuedWorkout.id === "0") ? "rest" : "none";
+
   return (
     <ThemedView style={styles.container}> 
       <SafeAreaView style={{flex: 1}} >
@@ -109,8 +111,32 @@ const IndexHome = () => {
 
           <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Quick start</ThemedText>
 
+
           {/* If a schedule, show next in schedule. Else, show create a schedule */}
-          {(continuedWorkout !== null && continuedWorkout.id !== "0") ? (
+          <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
+              <View style={{width: "100%"}}>
+                <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>{isThereWorkout === "yes" ? truncate(continuedWorkout.name, 30) : isThereWorkout === "rest" ? "Rest Day" : "Create a schedule" }</Text>
+                {isThereWorkout === "yes" ? (
+                  <WorkoutDescription style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}} workout={continuedWorkout} />
+                ) : (
+                  <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>{isThereWorkout === "rest" ? "Click next for your next workout!" : "Add or create workouts to add!"}</Text>
+                )}
+                
+              </View>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
+                <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={isThereWorkout==="yes" ?  () => openWorkout(continuedWorkout) : isThereWorkout==="rest" ? rotateNext : () => router.push('/dashboard/workout') }>
+                  <Text style={{fontSize: 14, color: "white"}}>{isThereWorkout==="yes" ?  "Open workout" : isThereWorkout==="rest" ? "Next" : "Go to workouts"}</Text>
+                </Pressable>
+                {isThereWorkout==="yes" && (
+                  <Pressable onPress={rotateNext} style={{padding: 5, backgroundColor: "#656565", borderRadius: 10}}>
+                    <Text style={{fontSize: 12, color: "white"}}>Skip</Text>
+                  </Pressable>
+                )}
+                
+              </View>
+            </LinearGradient>
+          
+          {/* {(isThereWorkout === "yes") ? (
             <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
               <View style={{width: "100%"}}>
                 <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>{truncate(continuedWorkout.name, 30)}</Text>
@@ -125,7 +151,7 @@ const IndexHome = () => {
                 </Pressable>
               </View>
             </LinearGradient>
-          ) : (continuedWorkout !== null && continuedWorkout.id === "0") ? (
+          ) : (isThereWorkout==="rest") ? (
             <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
               <View style={{width: "100%"}}>
                 <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>Rest Day</Text>
@@ -149,7 +175,7 @@ const IndexHome = () => {
                 </Pressable>
               </View>
             </LinearGradient>
-          )}
+          )} */}
 
           <ThemedText style={{fontSize: 10, paddingVertical: 10, textAlign: 'center'}}>or</ThemedText>
           <BlueButton onPress={() => startEmptyWorkout()} title={"Start an empty workout"} />

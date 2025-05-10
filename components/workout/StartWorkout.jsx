@@ -52,6 +52,7 @@ const StartWorkout = ({workout, setModalVisible, ...props}) => {
         router.push("/editworkout");
         setModalVisible(false);
     }
+
     const startWorkout = (bypassCheck = false) => {
         if (bypassCheck === false && user.activeWorkout !== null) {
             Alert.alert(
@@ -69,6 +70,7 @@ const StartWorkout = ({workout, setModalVisible, ...props}) => {
         const complexExercises = exercisesToComplex(clonedWorkout.exercises);
         clonedWorkout.exercises = complexExercises;
         clonedWorkout.startTime = Date.now();
+
         updateUser({activeWorkout: clonedWorkout});
 
         setModalVisible(false);
