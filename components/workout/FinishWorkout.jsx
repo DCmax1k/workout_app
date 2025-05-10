@@ -1,0 +1,200 @@
+import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect } from 'react'
+import ThemedView from '../ThemedView'
+import ThemedText from '../ThemedText'
+import greyX from '../../assets/icons/greyX.png'
+import plus from '../../assets/icons/plus.png'
+import { Colors } from '../../constants/Colors'
+import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSpring, withTiming } from 'react-native-reanimated'
+import party from '../../assets/icons/party.png'
+import Spacer from '../Spacer'
+import clock from '../../assets/icons/clock.png'
+import weight from '../../assets/icons/weight.png'
+
+const FinishWorkout = ({data, closeModal, ...props}) => {
+    const successSound = 
+
+    useEffect(() => {
+
+        
+        setTimeout(() => {
+            // Party png
+            partyScale.value = withSpring(1.5);
+            setTimeout(() => {
+                partyScale.value = withSpring(1);
+
+                // Title opacity
+                titleOpacity.value = withTiming(1, {duration: 1000})
+                // Subtitle opacity
+                setTimeout(() => {
+                    subTitleOpacity.value = withTiming(1, {duration: 1000})
+                    setTimeout(() => {
+                        workoutOpacity.value = withTiming(1, {duration: 1000})
+
+                        // After 1000 ms, ask if workout should be created or updated
+                        
+
+                    }, 300);
+                }, 300);
+            }, 300);
+
+        }, 100);
+
+
+
+        
+    }, [])
+
+    const formatDate = (timestamp) => {
+        const date = new Date(timestamp);
+      
+        const options = { weekday: 'long', month: 'short', day: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+      }
+      function formatDuration(ms) {
+        const totalSeconds = Math.floor(ms / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+      
+        const parts = [];
+        if (hours > 0) parts.push(`${hours}h`);
+        if (minutes > 0 || hours > 0) parts.push(`${minutes}m`);
+        if (seconds > 0 || parts.length === 0) parts.push(`${seconds}s`);
+      
+        return parts.join(' ');
+      }
+
+      // Animations
+      const partyScale = useSharedValue(0.5);
+      const partyAnimationStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{scale: partyScale.value}]
+        }
+      }, [])
+
+      const titleOpacity = useSharedValue(0);
+      const titleAnimationStyle = useAnimatedStyle(() => {
+        return {
+            opacity: titleOpacity.value,
+        }
+      }, [])
+      const subTitleOpacity = useSharedValue(0);
+      const subTitleAnimationStyle = useAnimatedStyle(() => {
+        return {
+            opacity: subTitleOpacity.value,
+        }
+      }, [])
+      const workoutOpacity = useSharedValue(0);
+      const workoutAnimationStyle = useAnimatedStyle(() => {
+        return {
+            opacity: workoutOpacity.value,
+        }
+      }, [])
+
+  return (
+    <ThemedView style={{flex: 1}} {...props}>
+        <SafeAreaView style={{flex: 1}}>
+            <View style={styles.actionButtons}>
+                <View>
+                    <Pressable onPress={closeModal}>
+                        <Image style={{height: 50, width: 50}} source={greyX} />
+                    </Pressable>
+                </View>
+                <View style={{zIndex: 1}}>
+                    <Pressable onPress={() => {}} style={{paddingHorizontal: 20, paddingVertical: 10, backgroundColor: Colors.primaryBlue, borderRadius: 10, }}>
+                        <Text style={{fontSize: 15, color: "white",}}>Share</Text>
+                    </Pressable>
+                </View>
+            </View>
+
+            <View style={[{ alignItems: "center"}]}>
+                <Animated.View style={partyAnimationStyle}>
+                    <Image source={party} style={{height: 150,  width: 150, objectFit: "contain"}} />
+                </Animated.View>
+
+                <Animated.Text title={true} style={[{ fontSize: 25, fontWeight: 700, color: "white"}, titleAnimationStyle]}>Well done!</Animated.Text>
+                <Animated.Text style={[{ fontSize: 15, fontWeight: 400, color: "#848086"}, subTitleAnimationStyle]}>You completed your workout!</Animated.Text>
+
+                <Spacer />
+
+                <View style={{width: "100%", paddingHorizontal: 20}}>
+                    <Animated.View style={[styles.workoutBubble, workoutAnimationStyle]}>
+                        <ThemedText title={true} style={{ fontSize: 18, fontWeight: 700, textAlign: "center"}}>{data.workoutName}</ThemedText>
+                        <ThemedText style={{ fontSize: 14, fontWeight: 400, textAlign: "center"}}>{formatDate(data.currentTime)}</ThemedText>
+                        <View style={styles.quickStats}>
+                            <View style={styles.quickStat}>
+                                <Image source={clock} style={{height: 15, width: 15, objectFit: "contain", tintColor: "white", marginRight: 5}} />
+                                <ThemedText style={{fontSize: 14, fontWeight: 600}}>{formatDuration(data.workoutLength)}</ThemedText>
+                            </View>
+                            <View style={styles.quickStat}>
+                                <Image source={weight} style={{height: 20, width: 20, objectFit: "contain", tintColor: "white", marginRight: 5}} />
+                                <ThemedText style={{fontSize: 14, fontWeight: 600}}>{data.totalWeightLifted} lbs</ThemedText>
+                            </View>
+                        </View>
+                        <View style={[styles.moreDepth]}>
+                            <View style={styles.column}>
+                                <ThemedText title={true} style={{fontSize: 14, fontWeight: 600}}>Exercise</ThemedText>
+                                <>
+                                {data.exercises.map((exercise, i) => {
+                                    return (<ThemedText key={i}>{exercise.sets.length} x {exercise.name}</ThemedText>);
+                                })}
+                                </>
+                            </View>
+                            <View style={styles.column}>
+                                <ThemedText title={true} style={{fontSize: 14, fontWeight: 600}}>Best set</ThemedText>
+                                <>
+                                {data.exercises.map((exercise, ind) => {
+                                    let highestAmount = 0;
+                                    let highestAmountIndex = 0;
+                                    exercise.sets.forEach((s, i) => {
+                                        const group = exercise.tracks.includes("weight") ? "strength" : exercise.tracks.includes("weightPlus") ? "strengthPlus" : (exercise.tracks.includes("mile") && exercise.tracks.includes("time")) ? "cardio" : exercise.tracks.includes("mile") ? "distance" : exercise.tracks.includes("reps") ? "repsOnly" : null;
+                                        const track = group === "strength" ? "weight" : group==="strengthPlus" ? "weightPlus" : group==="cardio" ? "mile" : group==="distance" ? "mile" : group==="repsOnly" ? "reps" : null;
+                                        const value = track ? parseFloat(s[track]) : 0;
+                                        if (value > highestAmount) {
+                                            highestAmountIndex = i;
+                                            highestAmount = value;
+                                        }
+                                    });
+                                    const bestSet = exercise.sets[highestAmountIndex];
+                                    let returnValue = "";
+                                    if (exercise.tracks.includes("mile")) returnValue = `${highestAmount} miles`;
+                                    else if (exercise.tracks.includes("weight") || exercise.tracks.includes("weightPlus")) returnValue = `${highestAmount} lbs`;
+                                    if (exercise.tracks.includes("reps")) returnValue += ` x${bestSet["reps"]}`;
+                                    return (
+                                        <ThemedText key={ind}>{returnValue}</ThemedText>
+                                    )
+                                    
+                                })}
+                                </>
+                            </View>
+                        </View>
+                    </Animated.View>
+                </View>
+            </View>
+            
+            
+        </SafeAreaView>
+      
+    </ThemedView>
+  )
+}
+
+export default FinishWorkout
+
+const styles = StyleSheet.create({
+    actionButtons: {
+        height: 50,
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+        margin: 10,
+    },
+    workoutBubble: {width: "100%", backgroundColor: "#2F3758", borderRadius: 20, alignItems: "center", padding: 30,},
+    quickStats: {flexDirection: "row", justifyContent: "center", marginTop: 10},
+    quickStat: {flexDirection: "row", justifyContent: "center", alignItems: "center", marginHorizontal: 10},
+
+    moreDepth: {flexDirection: "row", justifyContent: "space-between", marginTop: 10, width: "100%"},
+    column: {flexDirection: "column", alignItems: "flex-start"},
+})

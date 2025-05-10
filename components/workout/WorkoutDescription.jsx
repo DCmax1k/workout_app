@@ -16,7 +16,7 @@ const WorkoutDescription = ({workout, style, ...props}) => {
     let exercisesString = "";
     workout.exercises.forEach((ex, i) => {
         const foundExercise = allExercises.find(e => e.id===ex.id);
-        return exercisesString+=`${i!==0?", ":""}${foundExercise.name}`
+        return exercisesString+=`${i!==0?", ":""}${ex.name || foundExercise.name}`
     });
 
   return length === 0 ? (

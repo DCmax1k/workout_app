@@ -15,12 +15,16 @@ import { LinearGradient } from 'expo-linear-gradient'
 import StartWorkout from '../../../components/workout/StartWorkout'
 import { Exercises } from '../../../constants/Exercises'
 import WorkoutDescription from '../../../components/workout/WorkoutDescription'
+import { useBottomSheet } from '../../../context/BottomSheetContext'
+import { generateUniqueId } from '../../../util/uniqueId'
 
 const IndexHome = () => {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
   const updateUser = useUserStore((state) => state.updateUser);
+
+  const { openSheet } = useBottomSheet();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
@@ -51,6 +55,17 @@ const IndexHome = () => {
     }
     updateUser({schedule: {...user.schedule, currentIndex: newIndex}})
   }
+
+  const startEmptyWorkout = () => {
+    const clonedWorkout = {
+      name: "New workout",
+      exercises: [],
+      startTime: Date.now(),
+      id: generateUniqueId(),
+    };
+    updateUser({activeWorkout: clonedWorkout});
+    openSheet(1);
+}
 
   const truncate = (text, maxLength) =>
     text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
@@ -125,7 +140,7 @@ const IndexHome = () => {
           )}
 
           <ThemedText style={{fontSize: 10, paddingVertical: 10, textAlign: 'center'}}>or</ThemedText>
-          <BlueButton onPress={() => Alert.alert("Starting workout")} title={"Start an empty workout"} />
+          <BlueButton onPress={startEmptyWorkout} title={"Start an empty workout"} />
 
           <Spacer />
           <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Activity</ThemedText>
@@ -166,8 +181,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   actionButtonCont: {
-    width: 65,
-    height: 65,
+    width: 50,
+    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 3,

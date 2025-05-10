@@ -1,6 +1,6 @@
 const track = {
-    strength: ['lbs', 'reps'],
-    strengthPlus: ['+lbs', 'reps'],
+    strength: ['weight', 'reps'],
+    strengthPlus: ['weightPlus', 'reps'],
     cardio: ['time', 'mile'],
     distance: ['mile'],
     repsOnly: ['reps'],

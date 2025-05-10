@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, useColorScheme, View } from 'react-native'
+import { Dimensions, Modal, Platform, StyleSheet, Text, useColorScheme, View } from 'react-native'
 import { Redirect, Tabs } from 'expo-router'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {Colors} from '../../constants/Colors'
@@ -7,7 +7,8 @@ import { useUserStore } from '../../stores/useUserStore'
 import BottomSheet from '@gorhom/bottom-sheet'
 import { BottomSheetContext } from '../../context/BottomSheetContext'
 import ActiveWorkout from '../../components/workout/ActiveWorkout'
-import { Extrapolation, interpolate, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated'
+import Animated, { Extrapolation, interpolate, useAnimatedStyle, useDerivedValue, useSharedValue, withTiming } from 'react-native-reanimated'
+import FinishWorkout from '../../components/workout/FinishWorkout'
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -16,8 +17,17 @@ const Dashboard = () => {
   const colorScheme = useColorScheme()
   const theme = Colors[colorScheme];
 
+  const finishWorkoutPositionTop = useSharedValue(screenHeight);
+  const finishWorkoutStyle = useAnimatedStyle(() => {
+    return {
+      top: finishWorkoutPositionTop.value,
+    }
+  }, [])
+
   const sheetRef = useRef(null);
   const [sheetOpen, setSheetOpen] = useState(true);
+
+  const [finishWorkoutData, setFinishWorkoutData] = useState(null);
 
   const tabBarHeight = 115;
   const activePreview = 85;
@@ -52,8 +62,20 @@ const Dashboard = () => {
     return {bottom};
   })
 
+  const showFinishWorkout = (data) => {
+    setFinishWorkoutData(data);
+    // Animate
+    finishWorkoutPositionTop.value = withTiming(0, {duration: 300});
+  }
+
+  const closeFinishWorkout = () => {
+    const animateTime = 300;
+    finishWorkoutPositionTop.value = withTiming(screenHeight, {duration: animateTime});
+    setTimeout(() => {setFinishWorkoutData(null);}, animateTime);
+  }
+
   return user ? (
-    <BottomSheetContext.Provider value={{ openSheet: handleSnapPress, closeSheet: handleCloseSheet }}>
+    <BottomSheetContext.Provider value={{ openSheet: handleSnapPress, closeSheet: handleCloseSheet, showFinishWorkout }}>
 
       <>
         <Tabs tabBar={props => <TabBar animatedTabbarPosition={animatedTabbarPosition} sheetOpen={sheetOpen} {...props} />} screenOptions={{headerShown: false, headerStyle: { backgroundColor: theme.background, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0,}, headerTintColor: theme.title, tabBarStyle: { backgroundColor: "#000" }, tabBarActiveTintColor: theme.title, tabBarInactiveTintColor: "#868686", }}> 
@@ -85,7 +107,16 @@ const Dashboard = () => {
 
           </BottomSheet>
 
+          
+
+          <Animated.View style={[{position: "absolute", /* top: (finishWorkoutData !== null ? true : false) ? 0 : screenHeight, */ left: 0, height: screenHeight, width: "100%", zIndex: 5, elevation: 5}, finishWorkoutStyle]}>
+                    {finishWorkoutData !== null ? (
+                    <FinishWorkout data={finishWorkoutData} closeModal={closeFinishWorkout} />
+                    ) : null}
+                </Animated.View>
+
         </>
+        
 
       </BottomSheetContext.Provider>
   ) : (

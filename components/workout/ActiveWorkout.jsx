@@ -17,7 +17,7 @@ const screenHeight = Dimensions.get("window").height;
 const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen, ...props}) => {
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
-    const {closeSheet} = useBottomSheet();
+    const {closeSheet, showFinishWorkout} = useBottomSheet();
     const [exerciseModal, setExerciseModal] = useState(false);
     const allExercises = [...user.createdExercises, ...Exercises];
 
@@ -35,10 +35,12 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen,
         ex[exerciseIndex] = newExercise;
         updateWorkout({exercises: ex})
     }
-    const removeExercise = (exerciseId) => {
-        const newExercises = workout.exercises.filter(e => e.id !== exerciseId);
+    const removeExercise = (exerciseIndex) => {
+        const newExercises = workout.exercises;
+        newExercises.splice(exerciseIndex, 1);
         updateWorkout({exercises: newExercises});
       }
+    
 
     const addExercises = (exerciseIds) => { // [exerciseId,]
         const completeExercises = exerciseIds.map(id => {
@@ -51,31 +53,86 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, sheetOpen,
 
     }
 
+    const requestFinish = () => {
+        
+    }
+
+    const finish = () => {
+        const ultimateCloneOfActiveWorkout = JSON.parse(JSON.stringify(workout));
+
+        let totalWeightLifted = 0;
+        const completedExercises = [];
+        const usersCompletedExercises = user.completedExercises;
+        workout.exercises.forEach(exercise => {
+            const completeSets = exercise.sets.filter(e => e.complete);
+            if (completeSets.length < 1) return;
+            completeSets.forEach(s => {
+                if (s["weight"]) totalWeightLifted+=parseFloat(s["weight"])*parseInt(s["reps"]);
+                else if (s["weightPlus"]) totalWeightLifted+=parseFloat(s["weightPlus"])*parseInt(s["reps"]);
+            });
+            const dbExercise = allExercises.find(e => e.id === exercise.id);
+            const exerciseData = {
+                id: exercise.id,
+                name: exercise.name || dbExercise.name,
+                date: Date.now(),
+                sets: completeSets,
+                shared: true,
+                tracks: exercise.tracks,
+            }
+            completedExercises.push(exerciseData);
+            if (usersCompletedExercises[exerciseData.id]) {
+                usersCompletedExercises[exerciseData.id].push(exerciseData);
+            } else {
+                usersCompletedExercises[exerciseData.id] = [exerciseData];
+            }
+        });
+         // Save each completed exercise
+         const currentTime = Date.now();
+         const workoutLength = currentTime - workout.startTime;
+ 
+         // Finish screen data
+         const finishScreenData = {
+             workoutName: workout.name, 
+             currentTime,
+             workoutLength,
+             totalWeightLifted,
+             exercises: completedExercises,
+
+             fullWorkout: ultimateCloneOfActiveWorkout,
+         }
+        
+        updateWorkout({startTime: 0});
+        updateUser({completeExercises: usersCompletedExercises});
+        closeSheet(finishScreenData);
+        
+        showFinishWorkout(finishScreenData);
+    }
+
   return (
        <View style={{flex: 1}}>
             <Animated.View style={[{flexDirection: "row", justifyContent: "flex-end", position: "absolute", left: 0, top: 0, width: "100%", zIndex: 1, elevation: 1}, animatedFinishOpacity]}>
-                <Pressable onPress={sheetOpen ? closeSheet : null} style={{backgroundColor: "#21863C", paddingVertical: 10, paddingHorizontal: 15, marginRight: 10, borderRadius: 10}}>
+                <Pressable onPress={sheetOpen ? finish : null} style={{backgroundColor: "#21863C", paddingVertical: 10, paddingHorizontal: 15, marginRight: 10, borderRadius: 10}}>
                     <Text style={styles.text}>Finish</Text>
                 </Pressable>
             </Animated.View>
 
             <Animated.View style={[{position: "absolute", width: "100%", alignItems: "center"}, animatedHeaderOpacity]}>
                 <Text style={[styles.text, {fontSize: 18, paddingHorizontal: 10, textAlign: "center"}]}>{workout.name}</Text>
-                <Timer startTime={startTime} textStyle={{fontSize: 15, color: "#C4C4C4"}} />
+                {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 15, color: "#C4C4C4"}} />}
             </Animated.View>
 
             <PaperProvider>
-            <BottomSheetScrollView style={{marginTop: 85}} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150, }}>
+            <BottomSheetScrollView style={{marginTop: 85}} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350, }}>
                 
                 <View style={[{ paddingHorizontal: 10}]}>
                     <Text style={[styles.text, {fontSize: 25}]}>{workout.name}</Text>
-                    <Timer startTime={startTime} textStyle={{fontSize: 20, color: "#C4C4C4"}} />
+                    {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 20, color: "#C4C4C4"}} />}
                 </View>
 
                 <Spacer height={20} />
 
                 {exercises.map((exercise, i) => (
-                    <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={removeExercise} index={i} activeWorkoutStyle={true} />
+                    <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} activeWorkoutStyle={true} />
                 ))}
 
                 <Spacer height={20} />

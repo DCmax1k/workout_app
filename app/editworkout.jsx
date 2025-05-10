@@ -18,6 +18,7 @@ import keyboardIcon from '../assets/icons/keyboard.png'
 import { PaperProvider } from 'react-native-paper'
 import ActionMenu from '../components/ActionMenu'
 import trashIcon from '../assets/icons/trash.png'
+import { saveWorkout } from '../util/saveWorkout'
 
 const EditWorkout = () => {
   const workoutNameInputRef = useRef(null);
@@ -38,75 +39,74 @@ const EditWorkout = () => {
     ex[exerciseIndex] = newExercise;
     updateWorkout({exercises: ex})
   }
-  const removeExercise = (exerciseId) => {
-    const newExercises = workout.exercises.filter(e => e.id !== exerciseId);
+  const removeExercise = (exerciseIndex) => {
+    const newExercises = workout.exercises;
+    newExercises.splice(exerciseIndex, 1);
     updateWorkout({exercises: newExercises});
   }
-  const updateCreatedExercise = (exerciseId, newExercise) => {
-      const created = user.createdExercises;
-      const indexOfEx = created.findIndex(e => e.id === exerciseId);
-      created[indexOfEx] = newExercise;
-      updateUser({createdExercises: created});
+
+  const requestSaveWorkout = () => {
+    saveWorkout(workout);
   }
 
-  const saveWorkout = () => {
-    // Last minute changes to workout before save
-    if (!workout.name) workout.name = "New workout";
-    const newExercises = workout.exercises.map(ex => {
-      // Find any modified exercises, update their data in createdExercises. Create the exercise if modified id not found
-      if (ex.modified) {
-        const createdExerciseId = user.createdExercises.findIndex(e => e.id === ex.id);
-        if (createdExerciseId < 0) {
-          // Didnt find id, so make data, and change id of exercise in workout
-          const modifiedExercise = {
-              name: ex.name,
-              group: ex.group,
-              tracks: ex.tracks,
-              description: ex.description,
-              image: ex.image,
-              muscleGroups: ex.muscleGroups,
-              difficulty: ex.difficulty,
-              previousId: ex.id,
-              id: generateUniqueId(),
-          };
-          const newCreatedExercises = user.createdExercises;
-          newCreatedExercises.unshift(modifiedExercise);
-          updateUser({createdExercises: newCreatedExercises});
+  // const saveWorkout = (w) => {
+  //   // Last minute changes to workout before save
+  //   if (!w.name) w.name = "New workout";
+  //   const newExercises = w.exercises.map(ex => {
+  //     // Find any modified exercises, update their data in createdExercises. Create the exercise if modified id not found
+  //     if (ex.modified) {
+  //       const createdExerciseId = user.createdExercises.findIndex(e => e.id === ex.id);
+  //       if (createdExerciseId < 0) {
+  //         // Didnt find id, so make data, and change id of exercise in workout
+  //         const modifiedExercise = {
+  //             name: ex.name,
+  //             group: ex.group,
+  //             tracks: ex.tracks,
+  //             description: ex.description,
+  //             image: ex.image,
+  //             muscleGroups: ex.muscleGroups,
+  //             difficulty: ex.difficulty,
+  //             previousId: ex.id,
+  //             id: generateUniqueId(),
+  //         };
+  //         const newCreatedExercises = user.createdExercises;
+  //         newCreatedExercises.unshift(modifiedExercise);
+  //         updateUser({createdExercises: newCreatedExercises});
 
           
-          const exerciseIndex = workout.exercises.findIndex(of => of.id === ex.id);
-          workout.exercises[exerciseIndex].id = modifiedExercise.id;
-        } else {
-          // Finds id, so change data
-          const {sets, note, ...rest} = ex;
-          console.log(rest);
-          updateCreatedExercise(ex.id, rest);
-        }
-      }
-      // Set exercises back to simple data
-      return {
-        id: ex.id,
-        sets: ex.sets,
-        name: ex.name,
-        note: ex.note,
-      }
-    });
-    workout.exercises = newExercises;
-    // Find saved workout
-    const savedWorkouts = user.savedWorkouts;
-    const workoutIndex = savedWorkouts.findIndex(wk => wk.id === workout.id);
-    if (workoutIndex < 0) {
-      // If not found, unshift workout
-      savedWorkouts.unshift(workout);
-    } else {
-      // If found, set saved workout
-      savedWorkouts[workoutIndex] = workout;
-    }
+  //         const exerciseIndex = w.exercises.findIndex(of => of.id === ex.id);
+  //         w.exercises[exerciseIndex].id = modifiedExercise.id;
+  //       } else {
+  //         // Finds id, so change data
+  //         const {sets, note, ...rest} = ex;
+  //         console.log(rest);
+  //         updateCreatedExercise(ex.id, rest);
+  //       }
+  //     }
+  //     // Set exercises back to simple data
+  //     return {
+  //       id: ex.id,
+  //       sets: ex.sets,
+  //       name: ex.name,
+  //       note: ex.note,
+  //     }
+  //   });
+  //   w.exercises = newExercises;
+  //   // Find saved workout
+  //   const savedWorkouts = user.savedWorkouts;
+  //   const workoutIndex = savedWorkouts.findIndex(wk => wk.id === w.id);
+  //   if (workoutIndex < 0) {
+  //     // If not found, unshift workout
+  //     savedWorkouts.unshift(w);
+  //   } else {
+  //     // If found, set saved workout
+  //     savedWorkouts[workoutIndex] = w;
+  //   }
     
-    updateUser({savedWorkouts});
-    router.back();
-    // Contact db
-  }
+  //   updateUser({savedWorkouts});
+  //   router.back();
+  //   // Contact db
+  // }
 
   const updateWorkoutName = (value) => {
     updateWorkout({name: value});
@@ -166,7 +166,7 @@ const EditWorkout = () => {
                 </Pressable>
             </View>
             <View>
-                <Pressable onPress={saveWorkout} style={{paddingHorizontal: 20, paddingVertical: 10, backgroundColor: Colors.primaryBlue, borderRadius: 10, }}>
+                <Pressable onPress={requestSaveWorkout} style={{paddingHorizontal: 20, paddingVertical: 10, backgroundColor: Colors.primaryBlue, borderRadius: 10, }}>
                     <Text style={{fontSize: 15, color: "white",}}>Save</Text>
                 </Pressable>
             </View>
@@ -183,7 +183,7 @@ const EditWorkout = () => {
           </View>
 
           {exercises.map((exercise, i) => (
-            <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={removeExercise} index={i} />
+            <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} />
           ))}
 
           <Spacer height={20} />

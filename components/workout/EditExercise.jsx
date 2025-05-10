@@ -8,7 +8,7 @@ import trashIcon from '../../assets/icons/trash.png'
 import pencilIcon from '../../assets/icons/pencil.png'
 import check from '../../assets/icons/check.png'
 
-const EditExercise = ({exercise, updateExercise, index, removeExercise,activeWorkoutStyle, ...props}) => {
+const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWorkoutStyle, ...props}) => {
 
     const exerciseNameRef = useRef(null);
     const noteRef = useRef(null);
@@ -64,7 +64,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise,activeWor
     <View style={{backgroundColor: activeWorkoutStyle ? "":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
             <TextInput ref={exerciseNameRef} value={exercise.name} onChangeText={changeExerciseName} style={{fontSize: 15, fontWeight: 500, color: activeWorkoutStyle?"white":"#DB8854", }} />
-            <ActionMenu offset={activeWorkoutStyle} backgroundColor={activeWorkoutStyle?"transparent":"#DB8854"} data={[{title: "Add note", icon: fileIcon, onPress: openNoteAndFocus, }, {title: "Rename exercise", icon: pencilIcon, onPress: () => exerciseNameRef.current?.focus()}, {title: "Delete exercise", icon: trashIcon, onPress: () => removeExercise(exercise.id)}]} />
+            <ActionMenu offset={activeWorkoutStyle} backgroundColor={activeWorkoutStyle?"transparent":"#DB8854"} data={[{title: "Add note", icon: fileIcon, onPress: openNoteAndFocus, }, {title: "Rename exercise", icon: pencilIcon, onPress: () => exerciseNameRef.current?.focus()}, {title: "Delete exercise", icon: trashIcon, onPress: removeExercise}]} />
         </View>
 
         {(showNote || exercise.note) && <View>
@@ -76,7 +76,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise,activeWor
             <View style={styles.row}>
                 <Text style={[styles.column, styles.column1]}>Sets</Text>
                 <>
-                {exercise.tracks.map(track => ( <Text key={track} style={styles.column}>{track}</Text> ))}
+                {exercise.tracks.map(track => ( <Text key={track} style={styles.column}>{track==="weight" ? "lbs" : track==="weightPlus" ? "+lbs" : track}</Text> ))}
                 </>
                 {activeWorkoutStyle && (
                     <View style={[styles.columnForComplete, styles.completeButton]}>

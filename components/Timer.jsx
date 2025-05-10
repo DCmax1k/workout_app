@@ -4,11 +4,16 @@ import { View, Text } from 'react-native';
 const Timer = ({ startTime, textStyle, style, ...props }) => {
   const [elapsedTime, setElapsedTime] = useState(0); // in seconds
 
-  useEffect(() => {
-    const interval = setInterval(() => {
+  const runUpdate = () => {
       const now = Date.now();
       const diff = Math.floor((now - startTime) / 1000); // seconds
       setElapsedTime(diff);
+  }
+
+  useEffect(() => {
+    runUpdate();
+    const interval = setInterval(() => {
+      runUpdate();
     }, 1000);
 
     return () => clearInterval(interval); // cleanup on unmount
