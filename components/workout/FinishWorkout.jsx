@@ -17,7 +17,7 @@ import { PaperProvider } from 'react-native-paper'
 import { deepEqual } from '../../util/deepEqual'
 import { workoutToSimple } from '../../util/workoutToSimple'
 
-const audioSource = require("../../assets/sounds/success1.wav");
+const audioSource = require("../../assets/sounds/success.wav");
 
 const FinishWorkout = ({data, closeModal, ...props}) => {
     const successPlayer = useAudioPlayer(audioSource);

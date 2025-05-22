@@ -38,9 +38,9 @@ function customTitle(title) {
 }
 
 function shouldShowExerciseForFilter(exercise, searchValue) {
-    const name = exercise.name.toLowerCase();
-    const muscles = exercise.muscleGroups.join(" ");
-    const group = exercise.group;
+    const name = exercise.name.toLowerCase() || '';
+    const muscles = exercise.muscleGroups.join(" ") || '';
+    const group = exercise.group || '';
     let s = searchValue.toLowerCase().trim();
     if (s.length>1 && s[s.length-1]==="s") s = s.split('').splice(0, s.length-1).join('');
     return name.includes(s) || muscles.includes(s) || group.includes(s);
