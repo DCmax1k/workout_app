@@ -26,6 +26,7 @@ export const workoutToSimple = (w) => {
         name: ex.name,
       }
       ex.note ? exData.note = ex.note : null;
+      ex.unit ? exData.unit = ex.unit : null;
       return exData;
     });
     w.exercises = newExercises;

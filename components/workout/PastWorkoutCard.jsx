@@ -10,10 +10,19 @@ import { Colors } from '../../constants/Colors'
 import rightCarrot from '../../assets/icons/rightCarrot.png'
 
 
-const PastWorkoutCard = ({style, data, ...props}) => {
+const PastWorkoutCard = ({style, data, setConfirmMenuData, setConfirmMenuActive, ...props}) => {
+
+    const showComingSoon = () => {
+        setConfirmMenuData({
+            title: "Coming soon!",
+            option1: "Close",
+            confirm: () => {},
+        });
+        setConfirmMenuActive(true);
+    }
 
   return (
-    <Pressable style={{flex: 1}}>
+    <Pressable style={{flex: 1}} onPress={showComingSoon}>
         <View style={[style, styles.card]}>
             {/* Top side */}
         <View style={[styles.side, styles.top]}>
@@ -31,7 +40,7 @@ const PastWorkoutCard = ({style, data, ...props}) => {
                 </View>
                 <View style={[styles.quickStat, {marginLeft: 10}]}>
                     <Image source={weight} style={{height: 20, width: 20, objectFit: "contain", tintColor: "white", marginRight: 5}} />
-                    <ThemedText style={{fontSize: 14, fontWeight: 600}}>{data.totalWeightLifted} lbs</ThemedText>
+                    <ThemedText style={{fontSize: 14, fontWeight: 600}}>{parseInt(data.totalWeightLifted)} lbs</ThemedText>
                 </View>
             </View>
         </View>

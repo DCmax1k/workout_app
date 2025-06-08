@@ -25,20 +25,20 @@ const StartWorkout = ({workout, setModalVisible, ...props}) => {
 
     const exercisesToComplex = (exercises) => {
         const complexExercises = exercises.map(ex => {
-        const usersInfo = user.createdExercises.find(e => {
-            return e.id === ex.id
-        });
-        if (usersInfo) {
-            return {
-            ...usersInfo,
-            ...ex,
+            const usersInfo = user.createdExercises.find(e => {
+                return e.id === ex.id
+            });
+            if (usersInfo) {
+                return {
+                ...usersInfo,
+                ...ex,
+                }
             }
-        }
-        const info = Exercises.find(e => e.id === ex.id);
-        return {
-            ...info,
-            ...ex,
-        }
+            const info = Exercises.find(e => e.id === ex.id);
+            return {
+                ...info,
+                ...ex,
+            }
         });
         return complexExercises;
     }

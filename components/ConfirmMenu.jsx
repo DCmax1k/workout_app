@@ -42,9 +42,9 @@ const ConfirmMenu = ({ style, data, active, setActive, ...props }) => {
                 <Pressable onPress={closeAndConfirm} style={[styles.button, {backgroundColor: data.option1color || Colors.primaryBlue}]}>
                     <Text style={[styles.title]}>{data.option1}</Text>
                 </Pressable>
-                <Pressable onPress={() => {setActive(false)}} style={styles.button}>
+                {data.option2 && <Pressable onPress={() => {setActive(false)}} style={styles.button}>
                     <Text style={[styles.title]}>{data.option2}</Text>
-                </Pressable>
+                </Pressable>}
               </View>
 
             </View>

@@ -18,6 +18,7 @@ import { deepEqual } from '../../util/deepEqual'
 import { workoutToSimple } from '../../util/workoutToSimple'
 import formatDate from '../../util/formatDate'
 import formatDuration from '../../util/formatDuration'
+import { truncate } from '../../util/truncate'
 
 const audioSource = require("../../assets/sounds/success.wav");
 
@@ -179,7 +180,7 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
                                 </View>
                                 <View style={styles.quickStat}>
                                     <Image source={weight} style={{height: 20, width: 20, objectFit: "contain", tintColor: "white", marginRight: 5}} />
-                                    <ThemedText style={{fontSize: 14, fontWeight: 600}}>{data.totalWeightLifted} lbs</ThemedText>
+                                    <ThemedText style={{fontSize: 14, fontWeight: 600}}>{parseInt(data.totalWeightLifted)} lbs</ThemedText>
                                 </View>
                             </View>
                             <View style={[styles.moreDepth]}>
@@ -187,7 +188,7 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
                                     <ThemedText title={true} style={{fontSize: 14, fontWeight: 600}}>Exercise</ThemedText>
                                     <>
                                     {data.exercises.map((exercise, i) => {
-                                        return (<ThemedText key={i}>{exercise.sets.length} x {exercise.name}</ThemedText>);
+                                        return (<ThemedText key={i}>{truncate(`${exercise.sets.length} x ${exercise.name}`, 25)}</ThemedText>);
                                     })}
                                     </>
                                 </View>

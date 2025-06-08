@@ -7,6 +7,7 @@ import fileIcon from '../../assets/icons/file.png'
 import trashIcon from '../../assets/icons/trash.png'
 import pencilIcon from '../../assets/icons/pencil.png'
 import check from '../../assets/icons/check.png'
+import dumbellIcon from '../../assets/icons/weight.png'
 
 const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWorkoutStyle, ...props}) => {
 
@@ -73,11 +74,21 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         }
     }
 
+    const switchUnit = () => {
+        const newUnit = exercise.unit === "metric" ? "imperial" : "metric";
+        const newExercise = {...exercise, unit: newUnit,};
+        updateExercise(index, newExercise);
+    }
+
   return (
     <View style={{backgroundColor: activeWorkoutStyle ? "":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
             <TextInput ref={exerciseNameRef} value={exercise.name} onChangeText={changeExerciseName} style={{fontSize: 15, fontWeight: 500, color: activeWorkoutStyle?"white":"#DB8854", }} />
-            <ActionMenu offset={activeWorkoutStyle} backgroundColor={activeWorkoutStyle?"transparent":"#DB8854"} data={[{title: "Add note", icon: fileIcon, onPress: openNoteAndFocus, }, {title: "Rename exercise", icon: pencilIcon, onPress: () => exerciseNameRef.current?.focus()}, {title: "Delete exercise", icon: trashIcon, onPress: removeExercise}]} />
+            <ActionMenu offset={activeWorkoutStyle} backgroundColor={activeWorkoutStyle?"transparent":"#DB8854"} data={[
+                {title: "Add note", icon: fileIcon, onPress: openNoteAndFocus, },
+                {title: "Rename exercise", icon: pencilIcon, onPress: () => exerciseNameRef.current?.focus()},
+                {title: exercise.unit === "metric" ? "Imperial unit (lb)" : "Metric unit (kg)", icon: dumbellIcon, onPress: switchUnit},
+                {title: "Delete exercise", icon: trashIcon, onPress: removeExercise}]} />
         </View>
 
         {(showNote || exercise.note) && <View>
@@ -89,7 +100,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
             <View style={styles.row}>
                 <Text style={[styles.column, styles.column1]}>Sets</Text>
                 <>
-                {exercise.tracks.map(track => ( <Text key={track} style={styles.column}>{track==="weight" ? "lbs" : track==="weightPlus" ? "+lbs" : track}</Text> ))}
+                {exercise.tracks.map(track => ( <Text key={track} style={styles.column}>{track==="weight" ? `${exercise.unit === "metric" ? "kgs" : "lbs"}` : track==="weightPlus" ? "+lbs" : track}</Text> ))}
                 </>
                 {activeWorkoutStyle && (
                     <View style={[styles.columnForComplete, styles.completeButton]}>

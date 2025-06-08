@@ -558,6 +558,16 @@ export const Exercises = [
         "id": "55"
     },
     {
+        "name": "Viking Press",
+        "group": "shoulders",
+        "tracks": track.strength,
+        "description": "The Viking Press targets the shoulders and triceps using a standing overhead press motion with neutral grip, often performed with a landmine setup or specialized equipment.",
+        "image": require("../assets/exercises/vikingPress.jpg"),
+        "muscleGroups": ["shoulders", "triceps", "upper back"],
+        "difficulty": "intermediate",
+        "id": "551"
+    },
+    {
         "name": "Machine Reverse Fly",
         "group": "shoulder",
         "tracks": track.strength,
