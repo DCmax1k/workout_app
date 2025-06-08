@@ -76,14 +76,14 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
         if (!workout.name) updateWorkoutName("New workout");
     }
 
-    const cancelWorkout = (confirmation = false) => {
+    const cancelWorkout = (confirmation = false, message="All progress will be lost") => {
         if (confirmation) {
             setConfirmMenuData({
                 title: "Cancel workout?",
-                subTitle: "All progress will be lost",
+                subTitle: message,
                 option1: "Cancel Workout",
                 option1color: "#DB5454",
-                option2: "Cancel",
+                option2: "Go back",
                 confirm: cancelWorkout,
             });
             setConfirmMenuActive(true);
@@ -134,7 +134,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
             }
         });
         if (completedExercises.length <= 0) {
-            return cancelWorkout(true);
+            return cancelWorkout(true, "There are no sets marked as complete in this workout.");
         }
          // Save each completed exercise
          const currentTime = Date.now();
@@ -143,12 +143,12 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
          // Finish screen data
          const finishScreenData = {
              workoutName: workout.name, 
-             currentTime,
+             time: currentTime,
              workoutLength,
              totalWeightLifted,
              exercises: completedExercises,
 
-             fullWorkout: ultimateCloneOfActiveWorkout,
+             fullWorkout: ultimateCloneOfActiveWorkout, // Used to save if user chooses to
          }
         closeSheet();
         showFinishWorkout(finishScreenData);
@@ -156,9 +156,15 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
         if (user.schedule.rotation[user.schedule.currentIndex] === ultimateCloneOfActiveWorkout.id) {
             rotateNext();
         }
-        
+        if (!user.pastWorkouts) {
+            updateUser({pastWorkouts: []});
+        }
         setTimeout(() => {
-            updateUser({completeExercises: usersCompletedExercises, activeWorkout: null});
+            updateUser({
+                pastWorkouts: [finishScreenData, ...user.pastWorkouts, ],
+                completeExercises: usersCompletedExercises,
+                activeWorkout: null
+            });
         }, 300)
         
     }

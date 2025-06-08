@@ -59,6 +59,8 @@ const USER = {
       hydration: [ {date: 235234, amount: 2.5, }, {date: 235235, amount: 2.2, }, {date: 235236, amount: 2.5, }, {date: 235237, amount: 2.4, }, {date: 235238, amount: 2.2, }, {date: 235239, amount: 2, }, {date: 235240, amount: 2.4, } ],
     },
 
+    pastWorkouts: [], // [{workoutName, time, workoutLength, totalWeightLifted, exercises, fullWorkout}, {workoutName, time, workoutLength, totalWeightLifted, exercises, fullWorkout}, ],
+
     // Only local not in live db
     activeWorkout: null,
     editActiveWorkout: null,

@@ -16,6 +16,8 @@ import ConfirmMenu from '../ConfirmMenu'
 import { PaperProvider } from 'react-native-paper'
 import { deepEqual } from '../../util/deepEqual'
 import { workoutToSimple } from '../../util/workoutToSimple'
+import formatDate from '../../util/formatDate'
+import formatDuration from '../../util/formatDuration'
 
 const audioSource = require("../../assets/sounds/success.wav");
 
@@ -111,26 +113,6 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
         }
     }
 
-    const formatDate = (timestamp) => {
-        const date = new Date(timestamp);
-      
-        const options = { weekday: 'long', month: 'short', day: 'numeric' };
-        return date.toLocaleDateString('en-US', options);
-      }
-      function formatDuration(ms) {
-        const totalSeconds = Math.floor(ms / 1000);
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-      
-        const parts = [];
-        if (hours > 0) parts.push(`${hours}h`);
-        if (minutes > 0 || hours > 0) parts.push(`${minutes}m`);
-        if (seconds > 0 || parts.length === 0) parts.push(`${seconds}s`);
-      
-        return parts.join(' ');
-      }
-
       // Animations
       const partyScale = useSharedValue(0.5);
       const partyAnimationStyle = useAnimatedStyle(() => {
@@ -189,7 +171,7 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
                     <View style={{width: "100%", paddingHorizontal: 20}}>
                         <Animated.View style={[styles.workoutBubble, workoutAnimationStyle]}>
                             <ThemedText title={true} style={{ fontSize: 18, fontWeight: 700, textAlign: "center"}}>{data.workoutName}</ThemedText>
-                            <ThemedText style={{ fontSize: 14, fontWeight: 400, textAlign: "center"}}>{formatDate(data.currentTime)}</ThemedText>
+                            <ThemedText style={{ fontSize: 14, fontWeight: 400, textAlign: "center"}}>{formatDate(data.time)}</ThemedText>
                             <View style={styles.quickStats}>
                                 <View style={styles.quickStat}>
                                     <Image source={clock} style={{height: 15, width: 15, objectFit: "contain", tintColor: "white", marginRight: 5}} />

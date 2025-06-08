@@ -131,7 +131,10 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props})
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (<Exercise exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />)}
                 renderSectionHeader={({ section: { title } }) => (
-                    <ThemedText style={styles.header}>{capitalizeFirstLetter(customTitle(title))}</ThemedText>
+                    <ThemedView>
+                        <ThemedText style={styles.header}>{capitalizeFirstLetter(customTitle(title))}</ThemedText>
+                    </ThemedView>
+                    
                 )}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 50 }}
@@ -142,7 +145,9 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props})
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (<Exercise exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />)}
                 renderSectionHeader={({ section: { title } }) => (
-                    <ThemedText style={styles.header}>{capitalizeFirstLetter(customTitle(title))}</ThemedText>
+                    <ThemedView>
+                        <ThemedText style={styles.header}>{capitalizeFirstLetter(customTitle(title))}</ThemedText>
+                    </ThemedView>
                 )}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 50 }}

@@ -1,7 +1,7 @@
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { truncate } from '../../util/truncate';
-
+import noimage from '../../assets/icons/noimage.png';
 
 
 const Exercise = ({exercise, selected = false, onPress = () => {}, ...props}) => {
@@ -10,10 +10,12 @@ const Exercise = ({exercise, selected = false, onPress = () => {}, ...props}) =>
     const capitalizeFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
+
+    const isImage = exercise.image ? true : false;
   return (
     <Pressable onPress={onPress} style={[styles.cont, {backgroundColor: selected ? "#283878" : "#1C1C1C"}]} {...props}>
       <View style={styles.imageCont}>
-        <Image style={styles.image} source={exercise.image} />
+        <Image style={[styles.image, isImage ? {} : {width: 30, height: 30, margin: "auto"}]} source={exercise.image || noimage} />
       </View>
       <View style={styles.rightCont}>
         <Text style={{color: "white", fontSize: 15, fontWeight: 700}}>{exercise.name}</Text>

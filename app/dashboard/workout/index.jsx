@@ -1,4 +1,4 @@
-import { Dimensions, Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
@@ -11,15 +11,28 @@ import StartWorkout from '../../../components/workout/StartWorkout'
 import rightArrow from '../../../assets/icons/rightArrow.png'
 import { generateUniqueId } from '../../../util/uniqueId'
 import WorkoutDescription from '../../../components/workout/WorkoutDescription'
+import TitleWithBack from '../../../components/TitleWithBack'
 
 const IndexWorkout = () => {
     const user = useUserStore((state) => state.user);
     const updateUser = useUserStore((state) => state.updateUser);
+    const [searchValue, setSearchValue] = useState("");
     const workouts = user.savedWorkouts;
+    const filteredWorkouts = workouts.filter(workout => {
+        if (searchValue.length === 0) return true;
+        const name = workout.name.toLowerCase() || '';  
+        const search = searchValue.toLowerCase().trim();
+        if (search.length > 1 && search[search.length - 1] === "s") {
+            return name.includes(search.slice(0, -1));
+        }
+        return name.includes(search);
+    });
     const workoutsInRotation = user.schedule.rotation.filter(id => id !== "0").length;
 
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedWorkout, setSelectedWorkout] = useState(null);
+
+    
 
     const openSchedule = () => {
         // Open schedule view
@@ -44,7 +57,8 @@ const IndexWorkout = () => {
     <ThemedView  style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
-          <ThemedText style={{fontSize: 20, fontWeight: 700, marginTop: 20,  textAlign: 'center'}}>Workout</ThemedText>
+          {/* <ThemedText style={{fontSize: 20, fontWeight: 700, marginTop: 20,  textAlign: 'center'}}>Workout</ThemedText> */}
+          <TitleWithBack style={{marginHorizontal: 20}} backBtn={false} title={"Workout"} actionBtn={{active: true, image: require("../../../assets/icons/history.png"), action: () => router.push("/workouthistory")}} />
           <View style={{padding: 20}}>
             
             <Spacer height={20} />
@@ -53,11 +67,13 @@ const IndexWorkout = () => {
 
             <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>My Workouts</ThemedText>
             <BlueButton title={"Create a new workout"} onPress={createNewWorkout} style={{marginBottom: 20}} />
+
+            <TextInput style={[styles.search, {flex: 1}]} placeholder='Search workouts' placeholderTextColor={"#A6A6A6"} value={searchValue} onChangeText={(e) => setSearchValue(e)} />
             
           </View>
             
             <View style={{paddingHorizontal: 20}}>
-              {workouts.map((workout, i) => {
+              {filteredWorkouts.map((workout, i) => {
                 return(
                 <Pressable style={[styles.selectWorkout, styles.boxShadow]} onPress={() => openWorkout(workout)} key={workout.id+""+i}>
                   <View style={styles.linearGradient}>
@@ -136,5 +152,14 @@ const styles = StyleSheet.create({
       shadowRadius: 2,
       elevation: 10,
 
+    },
+    search: {
+        height: 50,
+        fontSize: 20,
+        color: "white",
+        backgroundColor: "#1C1C1C",
+        borderRadius: 99999,
+        paddingLeft: 20,
+        paddingRight: 10,
     }
   })
