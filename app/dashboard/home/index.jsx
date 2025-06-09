@@ -17,6 +17,7 @@ import { Exercises } from '../../../constants/Exercises'
 import WorkoutDescription from '../../../components/workout/WorkoutDescription'
 import { useBottomSheet } from '../../../context/BottomSheetContext'
 import { generateUniqueId } from '../../../util/uniqueId'
+import playCircle from '../../../assets/icons/playCircle.png'
 
 const IndexHome = () => {
   const router = useRouter();
@@ -140,7 +141,7 @@ const IndexHome = () => {
             </LinearGradient>
 
           <ThemedText style={{fontSize: 10, paddingVertical: 10, textAlign: 'center'}}>or</ThemedText>
-          <BlueButton onPress={() => startEmptyWorkout()} title={"Start an empty workout"} />
+          <BlueButton onPress={() => startEmptyWorkout()} title={"Start an empty workout"} icon={playCircle}/>
 
           <Spacer />
           <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Activity</ThemedText>

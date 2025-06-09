@@ -3,20 +3,36 @@ import React from 'react'
 import { Colors } from '../constants/Colors'
 import rightCarrot from '../assets/icons/rightCarrot.png'
 
-const BlueButton = ({style, title, showRight = false, ...props}) => {
+const BlueButton = ({style, title, showRight = false, icon, ...props }) => {
   return (
-    <TouchableOpacity
-      style={[styles.button, { backgroundColor: props.color || Colors.primaryBlue, flexDirection: 'row', justifyContent: showRight ? 'space-between' : 'center' }, style]}
-      {...props}
-    >
-      <View style={{alignItems: showRight ? 'flex-start' : 'center'}}>
-        <Text style={styles.buttonText}>{title}</Text>
-        {props.subtitle && (
-          <Text style={[styles.buttonText, { fontSize: 12, fontWeight: 400, color: "#D0D0D0" }]}>{props.subtitle}</Text>
-        )}
-      </View>
+    <TouchableOpacity style={[style]} {...props}
       
+    >
+      <View style={[styles.button, { backgroundColor: props.color || Colors.primaryBlue, flexDirection: 'row', justifyContent: showRight ? 'space-between' : 'center' ,}]}
+      >
+        {/* Icon */}
+        {icon && (
+          <View style={{position: "absolute", top: 10, left: 10, height: 20, width: 20,  alignItems: "center", justifyContent: "center"}}>
+            <Image source={icon} style={{height: 20, width: 20, objectFit: "contain"}} />
+          </View>
+          
+        )}
+
+        <View style={{alignItems: showRight ? 'flex-start' : 'center'}}>
+          <Text style={styles.buttonText}>{title}</Text>
+          {props.subtitle && (
+            <Text style={[styles.buttonText, { fontSize: 12, fontWeight: 400, color: "#D0D0D0" }]}>{props.subtitle}</Text>
+          )}
+
+      </View>
       {showRight && (<Image style={{height: 20, width: 20}} source={rightCarrot} />)}
+        
+      </View>
+
+        
+
+
+      
     </TouchableOpacity>
   )
 }
@@ -30,6 +46,7 @@ const styles = StyleSheet.create({
         color: "#fff",
         borderRadius: 10,
         alignItems: 'center',
+        position: "relative",
     }, 
     buttonText: {
         color: "#fff",

@@ -66,7 +66,16 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
 
     const requestFinish = () => {
 
-        finish();
+        setConfirmMenuData({
+                title: "Finish workout?",
+                subTitle: "Are you sure you want to finish this workout?",
+                option1: "Finish!",
+                option1color: "#21863C",
+                option2: "Go back",
+                confirm: finish,
+            });
+            setConfirmMenuActive(true);
+            return;
     }
 
     const updateWorkoutName = (value) => {
@@ -136,6 +145,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
         if (completedExercises.length <= 0) {
             return cancelWorkout(true, "There are no sets marked as complete in this workout.");
         }
+        
          // Save each completed exercise
          const currentTime = Date.now();
          const workoutLength = currentTime - workout.startTime;

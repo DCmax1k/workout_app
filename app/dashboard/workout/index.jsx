@@ -12,6 +12,7 @@ import rightArrow from '../../../assets/icons/rightArrow.png'
 import { generateUniqueId } from '../../../util/uniqueId'
 import WorkoutDescription from '../../../components/workout/WorkoutDescription'
 import TitleWithBack from '../../../components/TitleWithBack'
+import plus from '../../../assets/icons/plus.png'
 
 const IndexWorkout = () => {
     const user = useUserStore((state) => state.user);
@@ -66,9 +67,12 @@ const IndexWorkout = () => {
             <BlueButton title={"Schedule Rotation"} showRight={true} subtitle={`${workoutsInRotation} workout${workoutsInRotation === 1 ? '':"s"} in rotation`} onPress={openSchedule} style={{marginBottom: 40}} />
 
             <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Saved Workouts</ThemedText>
-            <BlueButton title={"Create a new workout"} onPress={createNewWorkout} style={{marginBottom: 20}} />
 
             <TextInput style={[styles.search, {flex: 1}]} placeholder='Search workouts' placeholderTextColor={"#A6A6A6"} value={searchValue} onChangeText={(e) => setSearchValue(e)} />
+
+            <Spacer height={20} />
+
+            <BlueButton title={"Create a new workout"} onPress={createNewWorkout} icon={plus} />
             
           </View>
             
@@ -84,7 +88,7 @@ const IndexWorkout = () => {
 
                     <View style={[styles.boxShadow, {shadowRadius: 5, backgroundColor: "#546FDB", height: 40, width: 40, borderRadius: 99999, justifyContent: "center", alignItems: "center"}]}>
                       <View style={{backgroundColor: "#3D52A6", height: 35, width: 35, borderRadius: 99999, justifyContent: "center", alignItems: "center"}}>
-                        <Image style={{height: 20, width: 20}} source={rightArrow} />
+                        <Image style={{height: 20, width: 20}} source={rightArrow}/>
                       </View>
                     </View>
                     
