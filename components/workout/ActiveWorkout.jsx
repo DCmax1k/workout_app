@@ -161,7 +161,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
         }
         setTimeout(() => {
             updateUser({
-                pastWorkouts: [finishScreenData, ...user.pastWorkouts, ],
+                pastWorkouts: user.pastWorkouts ? [finishScreenData, ...user.pastWorkouts, ] : [finishScreenData],
                 completeExercises: usersCompletedExercises,
                 activeWorkout: null
             });

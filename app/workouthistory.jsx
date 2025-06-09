@@ -28,7 +28,7 @@ const WorkoutHistory = () => {
       confirm: () => {setConfirmMenuActive(false);},
   });
 
-  const grouped = user.pastWorkouts.reduce((acc, workout) => {
+  const grouped = user.pastWorkouts ? user.pastWorkouts.reduce((acc, workout) => {
     const dateObj = new Date(workout.time);
     //const dateKeyTemp = dateObj.toISOString().split('T')[0]; // "YYYY-MM-DD"
     const dateKey = formatMonthYear(dateObj);
@@ -38,7 +38,7 @@ const WorkoutHistory = () => {
     }
     acc[dateKey].push(workout);
     return acc;
-  }, {});
+  }, {}) : {};
 
   const sectionalData = Object.entries(grouped)
     .map(([date, workouts]) => ({
