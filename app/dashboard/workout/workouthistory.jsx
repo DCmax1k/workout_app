@@ -1,12 +1,12 @@
 import { SafeAreaView, SectionList, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
-import ThemedView from '../components/ThemedView'
-import TitleWithBack from '../components/TitleWithBack'
-import { useUserStore } from '../stores/useUserStore'
-import ThemedText from '../components/ThemedText'
-import PastWorkoutCard from '../components/workout/PastWorkoutCard'
-import Spacer from '../components/Spacer'
-import ConfirmMenu from '../components/ConfirmMenu'
+import ThemedView from '../../../components/ThemedView'
+import TitleWithBack from '../../../components/TitleWithBack'
+import { useUserStore } from '../../../stores/useUserStore'
+import ThemedText from '../../../components/ThemedText'
+import PastWorkoutCard from '../../../components/workout/PastWorkoutCard'
+import Spacer from '../../../components/Spacer'
+import ConfirmMenu from '../../../components/ConfirmMenu'
 import { Provider } from 'react-native-paper'
 
 function formatMonthYear(date) {
@@ -57,6 +57,7 @@ const WorkoutHistory = () => {
               <Spacer size={20} />
 
               <SectionList
+              
                   sections={sectionalData}
                   keyExtractor={(item, i) => i}
                   renderItem={({ item }) => {
@@ -67,7 +68,7 @@ const WorkoutHistory = () => {
                       </ThemedView>
                   )}
                   showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{ paddingBottom: 50 }}
+                  contentContainerStyle={{ paddingBottom: 120 }}
                   
               />
 

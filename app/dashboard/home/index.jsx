@@ -101,9 +101,9 @@ const IndexHome = () => {
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               {/* Profile Icon */}
-              <Pressable style={styles.actionButtonCont} onPress={() => router.push('/dashboard/home/search')} >
+              {/* <Pressable style={styles.actionButtonCont} onPress={() => router.push('/dashboard/home/search')} >
                   <Image style={{width: "70%", height: "70%"}} source={search} />
-              </Pressable>
+              </Pressable> */}
               <Pressable style={styles.actionButtonCont} onPress={() => router.push('/dashboard/home/profile')}>
                   <Image style={{width: "100%", height: "100%"}} source={profileIcon} />
               </Pressable>

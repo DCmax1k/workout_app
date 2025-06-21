@@ -4,50 +4,91 @@ import dropdown from '../assets/icons/dropdown.png'
 import { Image } from 'react-native';
 import whiteX from '../assets/icons/whiteX.png'
 import { Portal } from 'react-native-paper';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-const MultiSelectDropdown = ({data, height = 50, maxHeight = 175, style, selectedIds, setSelectedIds,  ...props}) => {
+const MultiSelectDropdown = ({data, height = 50, maxHeight = 225, style, selectedIds, setSelectedIds,  ...props}) => {
     const [active, setActive] = useState(false);
 
     const selected = selectedIds.map(id => data.find(d=>d.id===id));
     const notSelected = data.filter(d => !selectedIds.includes(d.id));
 
-    let scrollViewHeight = (notSelected.length-1)*height;
+    let scrollViewHeight = (notSelected.length)*height;
     if (scrollViewHeight > maxHeight) scrollViewHeight = maxHeight;
 
-    const addItem = (id) => {
-        const newSelected = [...selectedIds, id];
-        setActive(false);
-        setSelectedIds(newSelected);
-    }
+
+    // Ahnimation slide
+    const h = active ? height*data.length > (maxHeight+height) ? (maxHeight+height) : height*data.length : height;
+
+    const slideTiming = (destination) => {
+            return withTiming(destination, {
+                duration: 300,
+                easing: Easing.bezier(0.45, 0.78, 0.34, 0.98),
+            });
+        }
+
     const removeItem = (id) => {
+        if (active) {
+            heightAnim.value = slideTiming((height*notSelected.length+height) > (maxHeight) ? (maxHeight) : height*notSelected.length+height);
+        }
+        
+
         const newSelected = selectedIds.filter(it => it !== id);
-        setActive(false);
+        //setActive(false);
         setSelectedIds(newSelected);
     }
+
+    const heightAnim = useSharedValue(0);
+        const heightAnimationStyle = useAnimatedStyle(() => {
+                return {
+                    height: heightAnim.value,
+                }
+              }, [])
+
+    const toggleItems = () => {
+        if (active) {
+            setActive(false);
+            heightAnim.value = slideTiming(0);
+            return;
+        }
+        setActive(!active);
+        heightAnim.value = slideTiming(height*notSelected.length > (maxHeight) ? (maxHeight) : height*notSelected.length);
+    }
+
+    const selectItem = (id) => {
+        heightAnim.value = slideTiming((height*notSelected.length-height) > (maxHeight) ? (maxHeight) : height*notSelected.length-height);
+        const newSelected = [...selectedIds, id];
+        //setActive(false);
+        setSelectedIds(newSelected);
+
+    }
+
 
   return (
     <View>
         {/* Dropdown */}
-        <View style={[styles.mainCont, {height: active ? height*data.length > (maxHeight+height) ? (maxHeight+height) : height*data.length : height, overflow: "visible", zIndex: active ? 10 : 0}, style]} >
-            <Pressable key={selected.id} style={[styles.item, {height: height, fontSize: 18, backgroundColor: "#3D3D3D", borderTopWidth: 0, borderRadius: 10}]} onPress={() => setActive(!active)}>
+        <View style={[styles.mainCont, {overflow: "visible", zIndex: active ? 10 : 0}, style]} >
+            <Pressable key={selected.id} style={[styles.item, {height: height, fontSize: 18, backgroundColor: "#3D3D3D", borderTopWidth: 0, borderRadius: 10}]} onPress={toggleItems}>
                 <Text style={[styles.itemText]}>Pick from selection</Text>
             </Pressable>
 
-            {active && (
-                <View style={{maxHeight: maxHeight, position: "absolute", top: height, left: 0, width: "100%", elevation: 100, zIndex: 100}}>
-                    <ScrollView style={{height: scrollViewHeight, backgroundColor: "#595959", borderBottomRightRadius: 10, borderBottomLeftRadius: 10}} >
+            {(
+                <Animated.View style={[{width: "100%", elevation: 100, zIndex: 100}, heightAnimationStyle]}>
+                    <View style={{flex: 1,}}>
+                        <ScrollView style={{ backgroundColor: "#323232", borderBottomRightRadius: 10, borderBottomLeftRadius: 10}} >
                     {notSelected.map((item, i) => {
-                        return (<Pressable key={item.id} style={[styles.item, {height: height, fontSize: 18,},]} onPress={() => {addItem(item.id)}}>
+                        return (<Pressable key={item.id} style={[styles.item, {height: height, fontSize: 18,},]} onPress={() => {selectItem(item.id);}}>
                                 <Text style={[styles.itemText]}>{item.title}</Text>
                             </Pressable>
                         )})}
                     </ScrollView>
-                </View>
+                    </View>
+                    
+                </Animated.View>
             )}
             
             
 
-            <Image style={{position: 'absolute', height: 20, width: 20, objectFit: "contain", right: 10, top: 15}} source={dropdown} />
+            <Image style={{position: 'absolute', height: 20, width: 20, objectFit: "contain", right: 10, top: 15, tintColor: "#546FDB"}} source={dropdown} />
             
         </View>
                 
@@ -72,7 +113,7 @@ export default MultiSelectDropdown
 
 const styles = StyleSheet.create({
     mainCont: {
-        backgroundColor: "#595959",
+        backgroundColor: "#323232",
         borderRadius: 10,
         marginBottom: 5,
     },
@@ -80,8 +121,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "flex-start",
         borderTopWidth: 1,
-        borderTopColor: "grey",
-        backgroundColor: "#595959",
+        borderTopColor: "#565656",
+        backgroundColor: "#323232",
     },
     itemText: {
         color: "white",

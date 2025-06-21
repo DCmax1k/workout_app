@@ -7,7 +7,9 @@ import { Colors } from '../constants/Colors';
 // import multiple images from assets/tabBarIcons
 import Home from '../assets/tabBarIcons/home.png';
 import Progress from '../assets/tabBarIcons/progress.png';
-import Workout from '../assets/tabBarIcons/workout.png';
+import Workout from '../assets/tabBarIcons/workoutCircle.png';
+import Exercises from '../assets/tabBarIcons/exercises.png';
+import Friends from '../assets/tabBarIcons/friends.png';
 import Animated from 'react-native-reanimated';
 
 function TabBar({animatedTabbarPosition, state, descriptors, navigation }) {
@@ -31,7 +33,7 @@ function TabBar({animatedTabbarPosition, state, descriptors, navigation }) {
 
         const isFocused = state.index === index;
 
-        const isMiddleTab = index === 1; // Check if the current tab is the middle tab
+        const isMiddleTab = index === 2; // Check if the current tab is the middle tab
 
         const onPress = () => {
           const event = navigation.emit({
@@ -63,7 +65,7 @@ function TabBar({animatedTabbarPosition, state, descriptors, navigation }) {
             onLongPress={onLongPress}
             style={[styles.tabbarItem, , isMiddleTab ? styles.middleTab : null, { opacity: 1 }]}
           >
-            <Image style={[styles.tabBarIcon, isMiddleTab ? styles.middleTabIcon : null, {tintColor: isFocused ? theme.title : "grey"}]} source={(route.name === 'home' ? Home : route.name === 'workout' ? Workout : Progress)} />
+            <Image style={[styles.tabBarIcon, isMiddleTab ? styles.middleTabIcon : null, {tintColor: isFocused ? theme.title : "grey"}]} source={(route.name === 'home' ? Home : route.name === 'workout' ? Workout : route.name === 'exercises' ? Exercises : route.name === 'friends' ? Friends : Progress)} />
 
 
             {!isMiddleTab && (
@@ -98,15 +100,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingVertical: 10,
-        marginBottom: 20
+        marginBottom: 20,
+        marginBottom: 30,
     }, 
     tabBarIcon: {
         width: 40,
         height: 40,
         marginBottom: 5,
-    },
-    middleTab: {
-        marginBottom: 30,
+        
     },
     middleTabIcon: {
         height: 60,

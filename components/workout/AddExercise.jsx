@@ -94,7 +94,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props})
         <ThemedView style={{flex: 1, padding: 20}}>
 
             <View style={{position: "absolute", width: screenWidth-20, top: 30, left: 10, zIndex: 2, display: createExercise ? "block" : "none" }}>
-                <CreateExercise setCreateExercise={setCreateExercise} />
+                <CreateExercise setCreateExercise={setCreateExercise} callback={(exerciseID) => selectExercise(exerciseID) } />
             </View>
 
             <View style={styles.actionButtons}>

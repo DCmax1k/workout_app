@@ -8,7 +8,7 @@ import MultiSelectDropdown from '../MultiSelectDropdown'
 import { generateUniqueId } from '../../util/uniqueId'
 import { useUserStore } from '../../stores/useUserStore'
 
-const CreateExercise = ({setCreateExercise, ...props}) => {
+const CreateExercise = ({setCreateExercise, callback = () => {}, ...props}) => {
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
 
@@ -44,6 +44,7 @@ const CreateExercise = ({setCreateExercise, ...props}) => {
         setDescription("");
         setMuscleGroupIds([]);
         setCategoryIdSelected("0");
+        callback(exercise.id);
 
         setCreateExercise(false);
 
@@ -71,6 +72,10 @@ const CreateExercise = ({setCreateExercise, ...props}) => {
       <Text style={styles.screenText}>Description of exercise - optional</Text>
       <TextInput style={styles.input} value={description} onChangeText={(e) => setDescription(e)} placeholder="ex. It's an exercise for building upper body..." placeholderTextColor={"#A6A6A6"} />
       
+      <Spacer height={10} />
+
+      <Text style={styles.screenText}>Category</Text>
+      <Dropdown style={{marginTop: 5}} selectedId={categoryIdSelected} setSelectedId={setCategoryIdSelected} data={categoryData} />
 
       <Spacer height={10} />
 
@@ -78,10 +83,6 @@ const CreateExercise = ({setCreateExercise, ...props}) => {
       <MultiSelectDropdown style={{marginTop: 5}} selectedIds={muscleGroupIds} setSelectedIds={setMuscleGroupIds} data={muscleGroupData} />
       
 
-      <Spacer height={10} />
-
-      <Text style={styles.screenText}>Category</Text>
-      <Dropdown style={{marginTop: 5}} selectedId={categoryIdSelected} setSelectedId={setCategoryIdSelected} data={categoryData} />
     </View>
   )
 }
