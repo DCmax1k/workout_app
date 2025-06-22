@@ -16,6 +16,7 @@ import { Colors } from '../../../constants/Colors';
 import CreateExercise from '../../../components/workout/CreateExercise';
 import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from 'react-native-reanimated';
 import { filter } from 'd3';
+import { PaperProvider, Portal, Provider } from 'react-native-paper';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -66,17 +67,21 @@ const ExercisesIndex = () => {
   };
 
   return (
+    // <PaperProvider>
     <ThemedView style={styles.container}>
         <SafeAreaView style={{flex: 1,}} >
 
             {createExercise && (
-              <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}}>
+              <Portal>
+                <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}}>
 
                   <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
                     <CreateExercise setCreateExercise={setCreateExercise} />
                   </Animated.View>
 
               </Animated.View>
+              </Portal>
+              
             )}
               
 
@@ -113,6 +118,7 @@ const ExercisesIndex = () => {
             
         </SafeAreaView>
     </ThemedView>
+    // </PaperProvider>
   )
 }
 

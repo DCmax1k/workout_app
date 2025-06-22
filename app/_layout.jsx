@@ -6,6 +6,7 @@ import { useUserStore } from '../stores/useUserStore'
 import keyboardIcon from '../assets/icons/keyboard.png'
 import { PaperProvider, Portal } from 'react-native-paper'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { FadeIn } from 'react-native-reanimated'
 
 const RootLayout = () => {
   const colorScheme = useColorScheme()
@@ -31,23 +32,28 @@ const RootLayout = () => {
   const isIos = Platform.OS === 'ios';
   
   return (
-    <GestureHandlerRootView>
-    <Stack>
-        <Stack.Screen name='index' options={{ headerShown: false }} />
-        <Stack.Screen name="dashboard" options={{ headerShown: false }} />
-        <Stack.Screen name="editworkout" options={{ headerShown: false }} />
-        <Stack.Screen name="loading" options={{ headerShown: true }} />
-        <Stack.Screen name="login" options={{ headerShown: true }} />
-      </Stack>
-    
-        <KeyboardAvoidingView style={{position: "absolute", bottom: -10, right: 20, paddingBottom: 10, marginBottom: isIos ? -50 : 0,}} behavior={isIos ? 'position' : 'height'}>
-          <Pressable style={[styles.disKeyboard, { display: isIos ? "block" : keyboardVisible ? "block" : "none"}]} onPress={() => {Keyboard.dismiss(); setKeyboardVisible(false)}} >
-            <Image style={{height: 30, width: 30, objectFit: 'contain'}} source={keyboardIcon} />
-          </Pressable>
-        </KeyboardAvoidingView>
+    <PaperProvider>
+      <GestureHandlerRootView>
+      <Stack>
+          <Stack.Screen name='index' options={{ headerShown: false }} />
+          <Stack.Screen name="dashboard" options={{ headerShown: false }} />
+          <Stack.Screen name="editworkout" options={{ headerShown: false }} />
+          <Stack.Screen name="loading" options={{ headerShown: true }} />
+          <Stack.Screen name="login" options={{ headerShown: true }} />
 
+          <Stack.Screen name="GlowImageCont" options={{ headerShown: false, animation: "fade_from_bottom" }} />
+        </Stack>
       
-    </GestureHandlerRootView>
+          <KeyboardAvoidingView style={{position: "absolute", bottom: -10, right: 20, paddingBottom: 10, marginBottom: isIos ? -50 : 0,}} behavior={isIos ? 'position' : 'height'}>
+            <Pressable style={[styles.disKeyboard, { display: isIos ? "block" : keyboardVisible ? "block" : "none"}]} onPress={() => {Keyboard.dismiss(); setKeyboardVisible(false)}} >
+              <Image style={{height: 30, width: 30, objectFit: 'contain'}} source={keyboardIcon} />
+            </Pressable>
+          </KeyboardAvoidingView>
+
+        
+      </GestureHandlerRootView>
+    </PaperProvider>
+    
       
   )
 }

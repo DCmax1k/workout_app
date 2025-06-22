@@ -1,5 +1,5 @@
 import { Alert, Button, Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, Slot, Stack, useRouter } from 'expo-router'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
@@ -31,6 +31,7 @@ const IndexHome = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [cardFlipAnimation, setCardFlipAnimation] = useState(false);
+  const [switchContinuedWorkouts, setSwitchContinuedWorkouts] = useState(false);
 
   // Rotate to next workout in schedule
   const findNextScheduleIndex = () => {
@@ -44,7 +45,23 @@ const IndexHome = () => {
   }
 
   //const continuedWorkout = {name: 'test', id: "32", exercises: []}
-  const [continuedWorkout, setContinuedWorkout] = useState(user.schedule.rotation.length > 0 ? user.schedule.rotation[user.schedule.currentIndex] === "0" ? {name: "Rest Day", id: "0",} : user.savedWorkouts.find(w => w.id === user.schedule.rotation[user.schedule.currentIndex]) : null);
+  const [continuedWorkout, setContinuedWorkout] = useState(null);
+
+  useEffect(() => {
+    if (user?.schedule?.rotation.length > 0) {
+      const currentId = user.schedule.rotation[user.schedule.currentIndex];
+      if (currentId === "0") {
+        setContinuedWorkout({ name: "Rest Day", id: "0" });
+      } else {
+        const workout = user.savedWorkouts.find(w => w.id === currentId);
+        setContinuedWorkout(workout || null);
+      }
+    } else {
+      setContinuedWorkout(null);
+    }
+  }, [user]);
+  //const [continuedWorkout, setContinuedWorkout] = useState(user.schedule.rotation.length > 0 ? user.schedule.rotation[user.schedule.currentIndex] === "0" ? {name: "Rest Day", id: "0",} : user.savedWorkouts.find(w => w.id === user.schedule.rotation[user.schedule.currentIndex]) : null);
+  //let continuedWorkout = user.schedule.rotation.length > 0 ? user.schedule.rotation[user.schedule.currentIndex] === "0" ? {name: "Rest Day", id: "0",} : user.savedWorkouts.find(w => w.id === user.schedule.rotation[user.schedule.currentIndex]) : null;
   const continuedWorkoutNext = user.schedule.rotation.length > 0 ? user.schedule.rotation[findNextScheduleIndex()] === "0" ? {name: "Rest Day", id: "0",} : user.savedWorkouts.find(w => w.id === user.schedule.rotation[findNextScheduleIndex()]) : null;
 
 
@@ -68,7 +85,7 @@ const IndexHome = () => {
   const topCardScale = useSharedValue(1); // to 180deg
   const [topCardZIndex, setTopCardZIndex] = useState(1);
 
-  const behindCardOffset = useSharedValue(0); // behind card offset
+  const behindCardOffset = useSharedValue(-15); // behind card offset
   const behindCardScale = useSharedValue(0.9);
 
   const topCardAnimatedStyle = useAnimatedStyle(() => {
@@ -91,40 +108,51 @@ const IndexHome = () => {
 
     // Start animation
     // Beginning animation, lasts 150
-    topCardOffset.value = withTiming(50, { duration: ANIMATION_DURATION/2, easing: Easing.bezier(0.42, 0.57, 0.21, 1.03), });
-    behindCardScale.value = withTiming(1, { duration: ANIMATION_DURATION/2 });
+    topCardOffset.value = withTiming(80, { duration: ANIMATION_DURATION/2, easing: Easing.bezier(0.42, 0.57, 0.21, 1.03), });
+    behindCardScale.value = withTiming(1, { duration: ANIMATION_DURATION / 2 });
     behindCardOffset.value = withTiming(0, { duration: ANIMATION_DURATION/2 });
+    topCardScale.value = withTiming(0.3, { duration: ANIMATION_DURATION/2 });
     setTimeout(() => {
 
-      // Halfway
+      // Halfway - these set top card back to ceil, top card scale smaller, and behind card scale 1
       setTopCardZIndex(-1);
+
       topCardOffset.value = withTiming(0, { duration: ANIMATION_DURATION/2 });
-      topCardScale.value = withTiming(0.9, { duration: ANIMATION_DURATION/2 });
       behindCardScale.value = withTiming(1, { duration: ANIMATION_DURATION/2 });
+      topCardScale.value = withTiming(0.5, { duration: ANIMATION_DURATION/2 });
 
       setTimeout(() => {
         // Make both the next one
         setContinuedWorkout(continuedWorkoutNext);
+        //setSwitchContinuedWorkouts(true);
 
         setTimeout(() => {
           // Reset positions ecept top
           topCardScale.value = withTiming(1, { duration: 0 });
-          setTopCardZIndex(1);
+
           setTimeout(() => {
-            behindCardOffset.value = withTiming(0, { duration: 0 });
-            behindCardScale.value = withTiming(0.9, { duration: 0 });
+            setTopCardZIndex(1);
+            //console.log(continuedWorkout);
             setTimeout(() => {
-              // Small adjust at end
-              behindCardOffset.value = withTiming(-10, { duration: 300 })
-              setTimeout(() => {  
-                // Update state
-                updateUser({schedule: {...user.schedule, currentIndex: newIndex}});
-                setCardFlipAnimation(false);
-                
-              }, 5)
-            }, 5);
-          }, 5)
-          
+              // Broken because the back one is not correct for some reason.
+              behindCardOffset.value = withTiming(0, { duration: 0 });
+              behindCardScale.value = withTiming(0.9, { duration: 0 });
+              setTimeout(() => {
+                // Small adjust at end
+                behindCardOffset.value = withTiming(-15, { duration: 100 })
+                setTimeout(() => {  
+                  // Update state
+                  updateUser({schedule: {...user.schedule, currentIndex: newIndex}});
+                  //setSwitchContinuedWorkouts(false);
+                  setCardFlipAnimation(false);
+                  
+                }, 5)
+              }, 5);
+            }, 5)
+
+
+
+          }, 5);
         }, 5)
         
       }, (ANIMATION_DURATION/2))
@@ -172,6 +200,12 @@ const IndexHome = () => {
   let isThereWorkout = (continuedWorkout !== null && continuedWorkout.id !== "0") ? "yes" : (continuedWorkout !== null && continuedWorkout.id === "0") ? "rest" : "none";
   let isThereWorkoutNext = (continuedWorkoutNext !== null && continuedWorkoutNext.id !== "0") ? "yes" : (continuedWorkoutNext !== null && continuedWorkoutNext.id === "0") ? "rest" : "none";
 
+  // if (switchContinuedWorkouts) {
+  //   console.log("")
+  //   console.log(continuedWorkout);
+  //   console.log(continuedWorkoutNext)
+  //   continuedWorkout = continuedWorkoutNext || {name: "Rest Day", id: "0",};
+  // }
   return (
     <ThemedView style={styles.container}> 
       <SafeAreaView style={{flex: 1}} >
@@ -235,7 +269,7 @@ const IndexHome = () => {
                     {isThereWorkout === "yes" ? (
                       <WorkoutDescription style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}} workout={continuedWorkout} />
                     ) : (
-                      <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>{isThereWorkout === "rest" ? "Click next for your next workout!*" : "Add or create workouts to add!"}</Text>
+                      <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>{isThereWorkout === "rest" ? "Click next for your next workout!" : "Add or create workouts to add!"}</Text>
                     )}
                     
                   </View>

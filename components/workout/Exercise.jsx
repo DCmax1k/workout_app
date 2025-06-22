@@ -2,6 +2,7 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import React from 'react'
 import { truncate } from '../../util/truncate';
 import noimage from '../../assets/icons/noimage.png';
+import GlowImage from '../GlowImage';
 
 
 const Exercise = ({style, exercise, selected = false, onPress = () => {}, ...props}) => {
@@ -15,7 +16,7 @@ const Exercise = ({style, exercise, selected = false, onPress = () => {}, ...pro
   return (
     <Pressable onPress={onPress} style={[styles.cont, {backgroundColor: selected ? "#283878" : "#1C1C1C"}, style]} {...props}>
       <View style={styles.imageCont}>
-        <Image style={[styles.image, isImage ? {} : {width: 30, height: 30, margin: "auto"}]} source={exercise.image || noimage} />
+        <GlowImage style={[styles.image, isImage ? {} : {width: 30, height: 30, margin: "auto"}]} source={exercise.image || noimage} id={exercise.id} />
       </View>
       <View style={styles.rightCont}>
         <Text style={{color: "white", fontSize: 15, fontWeight: 700}}>{exercise.name}</Text>
@@ -49,6 +50,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#82AF8C",
         borderRadius: 10,
         overflow: 'hidden',
+        justifyContent: "center",
+        alignItems: "center",
     },
     image: {
         height: 60,

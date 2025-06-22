@@ -9,6 +9,7 @@ import { BottomSheetContext } from '../../context/BottomSheetContext'
 import ActiveWorkout from '../../components/workout/ActiveWorkout'
 import Animated, { Extrapolation, interpolate, useAnimatedStyle, useDerivedValue, useSharedValue, withTiming } from 'react-native-reanimated'
 import FinishWorkout from '../../components/workout/FinishWorkout'
+import { PaperProvider, Provider } from 'react-native-paper'
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -96,48 +97,48 @@ const Dashboard = () => {
 
   return user ? (
     <BottomSheetContext.Provider value={{ openSheet: handleSnapPress, closeSheet: handleCloseSheet, showFinishWorkout }}>
+        <>
+          <Tabs tabBar={props => <TabBar animatedTabbarPosition={animatedTabbarPosition} {...props} />} screenOptions={{headerShown: false, headerStyle: { backgroundColor: theme.background, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0,}, headerTintColor: theme.title, tabBarStyle: { backgroundColor: "#000" }, tabBarActiveTintColor: theme.title, tabBarInactiveTintColor: "#868686", }}> 
+              <Tabs.Screen name="home" options={{ title: 'Home', headerTintColor: "transparent"  }} />
+              <Tabs.Screen name="friends" options={{ title: 'Friends' }} />
+              <Tabs.Screen name="workout" options={{ title: 'Workout' }} />
+              <Tabs.Screen name="exercises" options={{ title: 'Exercises' }} />
+              <Tabs.Screen name="progress" options={{ title: 'Progress' }} />
+            </Tabs>
 
-      <>
-        <Tabs tabBar={props => <TabBar animatedTabbarPosition={animatedTabbarPosition} {...props} />} screenOptions={{headerShown: false, headerStyle: { backgroundColor: theme.background, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0,}, headerTintColor: theme.title, tabBarStyle: { backgroundColor: "#000" }, tabBarActiveTintColor: theme.title, tabBarInactiveTintColor: "#868686", }}> 
-            <Tabs.Screen name="home" options={{ title: 'Home', headerTintColor: "transparent"  }} />
-            <Tabs.Screen name="friends" options={{ title: 'Friends' }} />
-            <Tabs.Screen name="workout" options={{ title: 'Workout' }} />
-            <Tabs.Screen name="exercises" options={{ title: 'Exercises' }} />
-            <Tabs.Screen name="progress" options={{ title: 'Progress' }} />
-          </Tabs>
+            <BottomSheet
+            ref={sheetRef}
+            snapPoints={snapPoints}
+            enableDynamicSizing={false}
+            onClose={() => setSheetOpen(false)}
+            backgroundStyle={{backgroundColor: "#313131"}}
+            handleIndicatorStyle={{backgroundColor: "white", width: 80}}
+            animatedPosition={animatedPosition}
+            index={sheetShouldStartOpen ? 0 : -1}
+            onChange={index => setCurrentPosition(index)}
 
-          <BottomSheet
-          ref={sheetRef}
-          snapPoints={snapPoints}
-          enableDynamicSizing={false}
-          onClose={() => setSheetOpen(false)}
-          backgroundStyle={{backgroundColor: "#313131"}}
-          handleIndicatorStyle={{backgroundColor: "white", width: 80}}
-          animatedPosition={animatedPosition}
-          index={sheetShouldStartOpen ? 0 : -1}
-          onChange={index => setCurrentPosition(index)}
+            >
+                {user.activeWorkout && (
+                  <ActiveWorkout
+                  animatedFinishOpacity={animatedFinishOpacity}
+                  animatedHeaderOpacity={animatedHeaderOpacity}
+                  currentPosition={currentPosition}
+                />
+                )}
+                
 
-          >
-              {user.activeWorkout && (
-                <ActiveWorkout
-                animatedFinishOpacity={animatedFinishOpacity}
-                animatedHeaderOpacity={animatedHeaderOpacity}
-                currentPosition={currentPosition}
-              />
-              )}
-              
+            </BottomSheet>
 
-          </BottomSheet>
+            
 
-          
+            <Animated.View style={[{position: "absolute", /* top: (finishWorkoutData !== null ? true : false) ? 0 : screenHeight, */ left: 0, height: screenHeight, width: "100%", zIndex: 5, elevation: 5}, finishWorkoutStyle]}>
+                      {finishWorkoutData !== null ? (
+                      <FinishWorkout data={finishWorkoutData} closeModal={closeFinishWorkout} />
+                      ) : null}
+                  </Animated.View>
 
-          <Animated.View style={[{position: "absolute", /* top: (finishWorkoutData !== null ? true : false) ? 0 : screenHeight, */ left: 0, height: screenHeight, width: "100%", zIndex: 5, elevation: 5}, finishWorkoutStyle]}>
-                    {finishWorkoutData !== null ? (
-                    <FinishWorkout data={finishWorkoutData} closeModal={closeFinishWorkout} />
-                    ) : null}
-                </Animated.View>
-
-        </>
+          </>
+      
         
 
       </BottomSheetContext.Provider>

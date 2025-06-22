@@ -1,4 +1,4 @@
-import { Alert, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, FlatList, Image, LayoutAnimation, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
@@ -6,6 +6,7 @@ import Spacer from '../../../components/Spacer'
 import { useUserStore } from '../../../stores/useUserStore'
 import TitleWithBack from '../../../components/TitleWithBack'
 import { router } from 'expo-router'
+import Animated, { FadeIn, FadeOut, Layout, LinearTransition, StretchInY, StretchOutY } from 'react-native-reanimated'
 const { getState } = useUserStore
 const rightArrow = require('../../../assets/icons/rightArrow.png')
 const hamburger = require('../../../assets/icons/hamburger.png')
@@ -59,7 +60,7 @@ const Schedule = () => {
   return (
     <ThemedView style={styles.container}>
         <SafeAreaView style={{flex: 1}}>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 100}}>
+            <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 100}}>
                 <TitleWithBack title={"Schedule"}/>
                 <Spacer />
 
@@ -67,29 +68,42 @@ const Schedule = () => {
                 {rotation.map((workout, index) => {
                     const isRestDay = workout.id === "0";
                     return (
-                        <Pressable key={workout.id+index} style={[styles.listItem, isRestDay ? styles.restDay : null]} onPress={() => removeFromRotation(workout.id, index)}>
-                            <Image style={[styles.listItemIcon, styles.rotationItemIcon]} source={remove} />
-                            <ThemedText style={{fontSize: 15, fontWeight: 700,}} title={true} >{truncate(workout.name, 30)}</ThemedText>
-                        </Pressable>
+                        <Animated.View key={`${workout.id}+${index}`} layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
+                            <Pressable  style={[styles.listItem, isRestDay ? styles.restDay : null]} onPress={() => removeFromRotation(workout.id, index)}>
+                                <Image style={[styles.listItemIcon, styles.rotationItemIcon]} source={remove} />
+                                <ThemedText style={{fontSize: 15, fontWeight: 700,}} title={true} >{truncate(workout.name, 30)}</ThemedText>
+                            </Pressable>
+                        </Animated.View>
+                        
                     )
                 })}
-                <Pressable style={[styles.addRestDay]} onPress={addRestDay}>
-                    <ThemedText color={"#636363"} style={{fontSize: 16, fontWeight: 700, textAlign: "center"}}>Add Rest Day</ThemedText>
-                    <ThemedText color={"#636363"} style={{fontSize: 13, fontWeight: 400, textAlign: "center"}}>or select a workout from below</ThemedText>
-                </Pressable>
+                <Animated.View layout={LinearTransition}>
+                    <Pressable style={[styles.addRestDay]} onPress={addRestDay}>
+                        <ThemedText color={"#636363"} style={{fontSize: 16, fontWeight: 700, textAlign: "center"}}>Add Rest Day</ThemedText>
+                        <ThemedText color={"#636363"} style={{fontSize: 13, fontWeight: 400, textAlign: "center"}}>or select a workout from below</ThemedText>
+                    </Pressable>
+                </Animated.View>
 
                 <Spacer />
-                <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Unused</ThemedText>
+
+                <Animated.View  layout={LinearTransition}>
+                   <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Unused</ThemedText> 
+                </Animated.View>
+                
+
                 {unused.map((workout, index) => {
                     return (
-                        <Pressable key={workout.id+index} style={styles.listItem} onPress={() => addToRotation(workout.id)}>
-                            <Image style={styles.listItemIcon} source={rightArrow} />
-                            <ThemedText style={{fontSize: 15, fontWeight: 700,}} title={true} >{truncate(workout.name, 30)}</ThemedText>
-                        </Pressable>
+                        <Animated.View key={`${workout.id}+${index}`} entering={FadeIn} exiting={FadeOut} layout={LinearTransition} >
+                            <Pressable style={styles.listItem} onPress={() => addToRotation(workout.id)}>
+                                <Image style={styles.listItemIcon} source={rightArrow} />
+                                <ThemedText style={{fontSize: 15, fontWeight: 700,}} title={true} >{truncate(workout.name, 30)}</ThemedText>
+                            </Pressable>
+                        </Animated.View>
+                        
                     )
                 })}
 
-            </ScrollView>
+            </Animated.ScrollView>
         </SafeAreaView>
     </ThemedView>
   )

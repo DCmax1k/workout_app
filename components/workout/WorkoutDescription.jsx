@@ -11,7 +11,8 @@ const WorkoutDescription = ({workout, style, ...props}) => {
     const truncate = (text, maxLength) =>
         text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 
-    if (!workout) return (<ThemedText>None</ThemedText>)
+    if (!workout) return (<ThemedText>None</ThemedText>);
+      if (!workout.exercises) return  (<ThemedText>None</ThemedText>);
     const length = workout.exercises.length;
     let exercisesString = "";
     workout.exercises.forEach((ex, i) => {
