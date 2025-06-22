@@ -44,8 +44,9 @@ const IndexHome = () => {
   }
 
   //const continuedWorkout = {name: 'test', id: "32", exercises: []}
-  const continuedWorkout = user.schedule.rotation.length > 0 ? user.schedule.rotation[user.schedule.currentIndex] === "0" ? {name: "Rest Day", id: "0",} : user.savedWorkouts.find(w => w.id === user.schedule.rotation[user.schedule.currentIndex]) : null;
+  const [continuedWorkout, setContinuedWorkout] = useState(user.schedule.rotation.length > 0 ? user.schedule.rotation[user.schedule.currentIndex] === "0" ? {name: "Rest Day", id: "0",} : user.savedWorkouts.find(w => w.id === user.schedule.rotation[user.schedule.currentIndex]) : null);
   const continuedWorkoutNext = user.schedule.rotation.length > 0 ? user.schedule.rotation[findNextScheduleIndex()] === "0" ? {name: "Rest Day", id: "0",} : user.savedWorkouts.find(w => w.id === user.schedule.rotation[findNextScheduleIndex()]) : null;
+
 
   const clearUserData = () => {
     // Clear user data
@@ -67,7 +68,7 @@ const IndexHome = () => {
   const topCardScale = useSharedValue(1); // to 180deg
   const [topCardZIndex, setTopCardZIndex] = useState(1);
 
-  const behindCardOffset = useSharedValue(-10); // behind card offset
+  const behindCardOffset = useSharedValue(0); // behind card offset
   const behindCardScale = useSharedValue(0.9);
 
   const topCardAnimatedStyle = useAnimatedStyle(() => {
@@ -81,8 +82,11 @@ const IndexHome = () => {
     };
   });
 
-  const ANIMATION_DURATION = 400;
+  const ANIMATION_DURATION = 500;
   const rotateNext = () => {
+    if (cardFlipAnimation) return;
+    setCardFlipAnimation(true);
+
     const newIndex = findNextScheduleIndex();
 
     // Start animation
@@ -92,23 +96,40 @@ const IndexHome = () => {
     behindCardOffset.value = withTiming(0, { duration: ANIMATION_DURATION/2 });
     setTimeout(() => {
 
-      // End animation, lasts 150
+      // Halfway
       setTopCardZIndex(-1);
-      topCardOffset.value = withTiming(-10, { duration: ANIMATION_DURATION/2 });
+      topCardOffset.value = withTiming(0, { duration: ANIMATION_DURATION/2 });
       topCardScale.value = withTiming(0.9, { duration: ANIMATION_DURATION/2 });
       behindCardScale.value = withTiming(1, { duration: ANIMATION_DURATION/2 });
 
       setTimeout(() => {
-        // Reset animation
-        updateUser({schedule: {...user.schedule, currentIndex: newIndex}});
-        topCardOffset.value = withTiming(0, { duration: 0 });
-        topCardScale.value = withTiming(1, { duration: 0 });
-        behindCardOffset.value = withTiming(-10, { duration: 0 });
-        behindCardScale.value = withTiming(0.9, { duration: 0 });
-        setTopCardZIndex(1);
-      }, ANIMATION_DURATION/2)
+        // Make both the next one
+        setContinuedWorkout(continuedWorkoutNext);
 
-    }, ANIMATION_DURATION/2);
+        setTimeout(() => {
+          // Reset positions ecept top
+          topCardScale.value = withTiming(1, { duration: 0 });
+          setTopCardZIndex(1);
+          setTimeout(() => {
+            behindCardOffset.value = withTiming(0, { duration: 0 });
+            behindCardScale.value = withTiming(0.9, { duration: 0 });
+            setTimeout(() => {
+              // Small adjust at end
+              behindCardOffset.value = withTiming(-10, { duration: 300 })
+              setTimeout(() => {  
+                // Update state
+                updateUser({schedule: {...user.schedule, currentIndex: newIndex}});
+                setCardFlipAnimation(false);
+                
+              }, 5)
+            }, 5);
+          }, 5)
+          
+        }, 5)
+        
+      }, (ANIMATION_DURATION/2))
+
+    }, (ANIMATION_DURATION/2));
 
 
 

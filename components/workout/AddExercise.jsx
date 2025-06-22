@@ -161,6 +161,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props})
             
             {notModal ? (
                <BottomSheetSectionList 
+               keyboardDismissMode={"on-drag"}
                sections={sectionalData}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (<Exercise exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />)}
@@ -175,6 +176,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props})
                />
             ) : (
                 <SectionList
+                keyboardDismissMode={"on-drag"}
                 sections={sectionalData}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (<Exercise exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />)}
