@@ -10,6 +10,7 @@ import {
 import { Portal } from 'react-native-paper';
 import Spacer from './Spacer';
 import { Colors } from '../constants/Colors';
+import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from 'react-native-reanimated';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -23,7 +24,7 @@ const ConfirmMenu = ({ style, data, active, setActive, ...props }) => {
     <>
       <Portal>
           {active && (
-          <View style={styles.fullScreenOverlay}>
+          <Animated.View entering={FadeIn} exiting={FadeOut} style={styles.fullScreenOverlay}>
             {/* BACKDROP - dismisses when tapped */}
             {/* <Pressable
               style={StyleSheet.absoluteFill}
@@ -31,7 +32,7 @@ const ConfirmMenu = ({ style, data, active, setActive, ...props }) => {
             /> */}
 
             {/* MENU - not affected by backdrop press */}
-            <View style={[ styles.menu,]}>
+            <Animated.View entering={FadeInDown} exiting={FadeOutDown}  style={[ styles.menu,]}>
 
               <Text style={[styles.title]}>{data.title}</Text>
               <Spacer height={10} />
@@ -47,8 +48,8 @@ const ConfirmMenu = ({ style, data, active, setActive, ...props }) => {
                 </Pressable>}
               </View>
 
-            </View>
-          </View>
+            </Animated.View>
+          </Animated.View>
         )}
       </Portal>
     </>

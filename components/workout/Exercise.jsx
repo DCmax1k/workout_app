@@ -4,7 +4,7 @@ import { truncate } from '../../util/truncate';
 import noimage from '../../assets/icons/noimage.png';
 
 
-const Exercise = ({exercise, selected = false, onPress = () => {}, ...props}) => {
+const Exercise = ({style, exercise, selected = false, onPress = () => {}, ...props}) => {
 
 
     const capitalizeFirstLetter = (string) => {
@@ -13,7 +13,7 @@ const Exercise = ({exercise, selected = false, onPress = () => {}, ...props}) =>
 
     const isImage = exercise.image ? true : false;
   return (
-    <Pressable onPress={onPress} style={[styles.cont, {backgroundColor: selected ? "#283878" : "#1C1C1C"}]} {...props}>
+    <Pressable onPress={onPress} style={[styles.cont, {backgroundColor: selected ? "#283878" : "#1C1C1C"}, style]} {...props}>
       <View style={styles.imageCont}>
         <Image style={[styles.image, isImage ? {} : {width: 30, height: 30, margin: "auto"}]} source={exercise.image || noimage} />
       </View>

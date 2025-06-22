@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         // backgroundColor: "red",
-        zIndex: 10,
+        zIndex: 1,
     },
     actionBtnIcon: {
         width: 20,

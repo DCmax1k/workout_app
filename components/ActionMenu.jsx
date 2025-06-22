@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Portal } from 'react-native-paper';
 import threeEllipses from '../assets/icons/threeEllipses.png';
+import Animated, { FadeIn, FadeOut, LightSpeedInRight, ZoomInRight, ZoomOutRight } from 'react-native-reanimated';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 const MENU_WIDTH = 250;
@@ -54,7 +55,7 @@ const ActionMenu = ({ data, backgroundColor, style, offset = false, ...props }) 
 
       <Portal>
           {active && (
-          <View style={styles.fullScreenOverlay}>
+          <Animated.View entering={FadeIn} exiting={FadeOut} style={styles.fullScreenOverlay}>
             {/* BACKDROP - dismisses when tapped */}
             <Pressable
               style={StyleSheet.absoluteFill}
@@ -62,7 +63,7 @@ const ActionMenu = ({ data, backgroundColor, style, offset = false, ...props }) 
             />
 
             {/* MENU - not affected by backdrop press */}
-            <View style={[ styles.menu, { top: menuPos.y, left: menuPos.x,},]}>
+            <Animated.View entering={ZoomInRight.duration(200) } exiting={ZoomOutRight.duration(400)} style={[ styles.menu, { top: menuPos.y, left: menuPos.x,},]}>
 
               {data.map((item, i) => (
               <Pressable key={i} onPress={() => {setActive(false); item.onPress()}} style={[styles.menuItem, {height: ITEM_HEIGHT}]}>
@@ -71,8 +72,8 @@ const ActionMenu = ({ data, backgroundColor, style, offset = false, ...props }) 
               </Pressable>
               ))}
 
-            </View>
-          </View>
+            </Animated.View>
+          </Animated.View>
         )}
       </Portal>
     </>

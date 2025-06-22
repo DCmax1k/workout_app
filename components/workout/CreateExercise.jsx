@@ -39,6 +39,7 @@ const CreateExercise = ({setCreateExercise, callback = () => {}, ...props}) => {
         const createdExercises = user.createdExercises;
         createdExercises.unshift(exercise);
         updateUser({createdExercises});
+        console.log("Created exercise id: ", exercise.id);
 
         setName("");
         setDescription("");

@@ -40,13 +40,11 @@ const RootLayout = () => {
         <Stack.Screen name="login" options={{ headerShown: true }} />
       </Stack>
     
-
-        <KeyboardAvoidingView style={{position: "absolute", bottom: 0, right: 20, paddingBottom: 10, marginBottom: isIos ? -50 : 0,}} behavior={isIos ? 'position' : 'height'}>
-          <Pressable style={{paddingVertical: 5, paddingHorizontal: 10, backgroundColor: "#828282", borderRadius: 10, display: isIos ? "block" : keyboardVisible ? "block" : "none"}} onPress={() => {Keyboard.dismiss(); setKeyboardVisible(false)}} >
+        <KeyboardAvoidingView style={{position: "absolute", bottom: -10, right: 20, paddingBottom: 10, marginBottom: isIos ? -50 : 0,}} behavior={isIos ? 'position' : 'height'}>
+          <Pressable style={[styles.disKeyboard, { display: isIos ? "block" : keyboardVisible ? "block" : "none"}]} onPress={() => {Keyboard.dismiss(); setKeyboardVisible(false)}} >
             <Image style={{height: 30, width: 30, objectFit: 'contain'}} source={keyboardIcon} />
           </Pressable>
         </KeyboardAvoidingView>
-
 
       
     </GestureHandlerRootView>
@@ -56,4 +54,13 @@ const RootLayout = () => {
 
 export default RootLayout
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  disKeyboard:{
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    backgroundColor: Colors.primaryOrange,
+    borderRadius: 10,
+    borderColor: Colors.dark.background,
+    borderWidth: 2,
+  }
+})

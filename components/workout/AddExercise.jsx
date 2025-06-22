@@ -1,4 +1,4 @@
-import { Dimensions, FlatList, Image, Pressable, ScrollView, SectionList, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Dimensions, FlatList, Image, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, SectionList, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import ThemedView from '../ThemedView'
 import ThemedText from '../ThemedText'
@@ -13,6 +13,11 @@ import ActionMenu from '../ActionMenu'
 import { Portal } from 'react-native-paper'
 import CreateExercise from './CreateExercise'
 import { BottomSheetSectionList } from '@gorhom/bottom-sheet'
+import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from 'react-native-reanimated'
+import Search from '../Search'
+import searchExercise from '../../util/searchExercise'
+import keyboardIcon from '../../assets/icons/keyboard.png';
+
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -37,14 +42,28 @@ function customTitle(title) {
     return title === 'leg' ? "legs" : title === 'shoulder' ? "shoulders" : title === 'forearm' ? "forearms" : title === 'bicep' ? "biceps" : title === 'tricep' ? "triceps" : title;
 }
 
-function shouldShowExerciseForFilter(exercise, searchValue) {
-    const name = exercise.name.toLowerCase() || '';
-    const muscles = exercise.muscleGroups.join(" ") || '';
-    const group = exercise.group || '';
-    let s = searchValue.toLowerCase().trim();
-    if (s.length>1 && s[s.length-1]==="s") s = s.split('').splice(0, s.length-1).join('');
-    return name.includes(s) || muscles.includes(s) || group.includes(s);
-}
+// function shouldShowExerciseForFilter(exercise, searchValue) {
+//     const name = exercise.name.toLowerCase() || '';
+//     const muscles = exercise.muscleGroups.join(" ") || '';
+//     const group = exercise.group || '';
+//     let s = searchValue.toLowerCase().trim();
+//     if (s.length>1 && s[s.length-1]==="s") s = s.split('').splice(0, s.length-1).join('');
+//     return name.includes(s) || muscles.includes(s) || group.includes(s);
+// }
+
+// Optimized search function to reduce complexity - imported
+// function SearchExerciseFilter(exercises, searchValue) {
+//     if (!searchValue) return exercises;
+//     return exercises.filter(exercise => {
+//         const name = exercise.name.toLowerCase() || '';
+//         const muscles = exercise.muscleGroups.join(" ") || '';
+//         const group = exercise.group || '';
+//         let s = searchValue.toLowerCase().trim();
+//         if (s.length>1 && s[s.length-1]==="s") s = s.split('').splice(0, s.length-1).join('');
+//         return name.includes(s) || muscles.includes(s) || group.includes(s);
+//     });
+// }
+
 
 const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props}) => {
     const user = useUserStore((state) => state.user);
@@ -53,13 +72,19 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props})
     const [searchValue, setSearchValue] = useState("");
     const [createExercise, setCreateExercise] = useState(false);
 
-    const createdExercisesFiltered = searchValue ? user.createdExercises.filter(ex => {
-        return shouldShowExerciseForFilter(ex, searchValue);
-    }) : user.createdExercises;
-    const dbExercisesFiltered = searchValue ? Exercises.filter(ex => {
-        return shouldShowExerciseForFilter(ex, searchValue);
 
-    }) : Exercises;
+    // Old search function, kept for reference
+    // const createdExercisesFiltered = searchValue ? user.createdExercises.filter(ex => {
+    //     return shouldShowExerciseForFilter(ex, searchValue);
+    // }) : user.createdExercises;
+    // const dbExercisesFiltered = searchValue ? Exercises.filter(ex => {
+    //     return shouldShowExerciseForFilter(ex, searchValue);
+
+    // }) : Exercises;
+
+    // Using optimized search function
+    const createdExercisesFiltered = searchExercise(user.createdExercises, searchValue);
+    const dbExercisesFiltered = searchExercise(Exercises, searchValue);
 
     const dbExercisesFilteredOrganized = groupExercisesBySection(dbExercisesFiltered);
 
@@ -89,13 +114,21 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props})
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
+    const isIos = Platform.OS === 'ios';
   return (
     <Portal.Host>
         <ThemedView style={{flex: 1, padding: 20}}>
 
-            <View style={{position: "absolute", width: screenWidth-20, top: 30, left: 10, zIndex: 2, display: createExercise ? "block" : "none" }}>
-                <CreateExercise setCreateExercise={setCreateExercise} callback={(exerciseID) => selectExercise(exerciseID) } />
-            </View>
+            {createExercise && (
+            <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}}>
+
+                    <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 30, left: 10, zIndex: 2}}>
+                        <CreateExercise setCreateExercise={setCreateExercise} callback={(exerciseID) => selectExercise(exerciseID) } />
+                    </Animated.View>
+
+            </Animated.View>
+            )}
+
 
             <View style={styles.actionButtons}>
                 <View>
@@ -116,10 +149,11 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props})
 
             <Spacer height={10} />
 
-            <View style={{flexDirection: "row", alignItems: "center"}}>
+            {/* <View style={{flexDirection: "row", alignItems: "center"}}>
                 <TextInput style={[styles.search, {flex: 1}]} placeholder='Search' placeholderTextColor={"#A6A6A6"} value={searchValue} onChangeText={(e) => setSearchValue(e)} />
                 <ActionMenu style={{marginLeft: 10}} data={[ {title: "Create new exercise", icon: plus, onPress: () => setCreateExercise(true)}]} />
-            </View>
+            </View> */}
+            <Search dismissKeyboard={true} value={searchValue} onChangeText={(e) => setSearchValue(e)} actionMenuData={[ {title: "Create new exercise", icon: plus, onPress: () => setCreateExercise(true)}]} />
             
 
             <Spacer height={10} />
@@ -188,5 +222,15 @@ const styles = StyleSheet.create({
         borderRadius: 99999,
         paddingLeft: 20,
         paddingRight: 10,
-    }
+    },
+        //  KeyboardAvoidingView styles
+    cont:{
+      paddingVertical: 5,
+      paddingHorizontal: 10,
+      backgroundColor: Colors.primaryOrange,
+      borderRadius: 10,
+      borderColor: Colors.dark.backgroundColor,
+      borderWidth: 2,
+      marginBottom: 50,
+  }
 })
