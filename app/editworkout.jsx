@@ -14,6 +14,7 @@ import { PaperProvider } from 'react-native-paper'
 import ActionMenu from '../components/ActionMenu'
 import trashIcon from '../assets/icons/trash.png'
 import { workoutToSimple } from '../util/workoutToSimple'
+import ConfirmMenu from '../components/ConfirmMenu'
 
 const EditWorkout = () => {
   const workoutNameInputRef = useRef(null);
@@ -24,7 +25,18 @@ const EditWorkout = () => {
   const exercises = workout.exercises;
   const allExercises = [...user.createdExercises, ...Exercises];
 
+  
   const [exerciseModal, setExerciseModal] = useState(false);
+  const [confirmMenuActive, setConfirmMenuActive] = useState(false);
+  const [confirmMenuData, setConfirmMenuData] = useState({
+          title: "The title",
+          subTitle: "The description for the confirmation",
+          subTitle2: "Another one here",
+          option1: "Update",
+          
+          option2: "Cancel",
+          confirm: () => {},
+      });
 
   const updateWorkout = (updates) => {
     updateUser({editActiveWorkout: {...workout, ...updates}});
@@ -74,86 +86,99 @@ const EditWorkout = () => {
     updateWorkout({exercises: exercisesAddedTo});
 
   }
+
+  // COPIED TO index\workout
   const removeFromRotation = (workoutId) => {
     let schedule = user.schedule;
     const newRotation = user.schedule.rotation.filter(id => id !== workoutId);
     schedule = {...schedule, rotation: newRotation}
     schedule = {...schedule, currentIndex: 0}
     updateUser({schedule});
-}
-
-  const deleteWorkout = () => {
+  }
+  const deleteWorkout = (workoutID) => {
     const userWorkouts = user.savedWorkouts;
-    const workoutToDeleteIndex = userWorkouts.findIndex(w => w.id === workout.id);
+    const workoutToDeleteIndex = userWorkouts.findIndex(w => w.id === workoutID);
     if (workoutToDeleteIndex >= 0) {
       // Delete workout from saved workouts, and from rotation if in rotation
       userWorkouts.splice(workoutToDeleteIndex, 1);
-      removeFromRotation(workout.id);
+      removeFromRotation(workoutID);
     }
     router.back();
-  }
+  } // end copied
+
   const requestDeleteWorkout = () => {
-    Alert.alert(
-        "Delete workout?",
-        "",
-        [
-            {text: "Cancel", style: "cancel"},
-            {text: "Delete", onPress: deleteWorkout}
-        ]
-    );
+    // Alert.alert(
+    //     "Delete workout?",
+    //     "",
+    //     [
+    //         {text: "Cancel", style: "cancel"},
+    //         {text: "Delete", onPress: deleteWorkout}
+    //     ]
+    // );
+    setConfirmMenuData({
+        title: "Delete workout?",
+        subTitle: "Are you sure you would like to delete this workout?",
+        subTitle2: "This action cannot be undone.",
+        option1: "Delete workout",
+        option1color: "#DB5454",
+        option2: "Go back",
+        confirm: () => deleteWorkout(workout.id),
+    });
+    setConfirmMenuActive(true);
   }
 
   return (
     <PaperProvider>
       <ThemedView style={{flex: 1, padding: 20}}>
-      <SafeAreaView style={{flex: 1}}>
+        <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
+        <SafeAreaView style={{flex: 1}}>
 
-        <View style={styles.actionButtons}>
-            <View>
-              <Pressable onPress={() => {router.back()}} style={{paddingHorizontal: 20, paddingVertical: 10, backgroundColor: "#4B4B4B", borderRadius: 10, }}>
-                    <Text style={{fontSize: 15, color: "white",}}>Cancel</Text>
-                </Pressable>
-            </View>
-            <View>
-                <Pressable onPress={requestSaveWorkout} style={{paddingHorizontal: 20, paddingVertical: 10, backgroundColor: Colors.primaryBlue, borderRadius: 10, }}>
-                    <Text style={{fontSize: 15, color: "white",}}>Save</Text>
-                </Pressable>
-            </View>
-        </View>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350, }}>
-
-          <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-            <Pressable style={{ height: 40, width: 40, justifyContent: "center", alignItems: "center"}} onPress={() => {if (workoutNameInputRef.current) {workoutNameInputRef.current.focus()}}}>
-              <Image style={{height: 15, width: 15, marginRight: 10}} source={pencil} />
-            </Pressable>
-            
-            <TextInput selectTextOnFocus ref={workoutNameInputRef} onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
-            <ActionMenu data={[{title: "Delete workout", icon: trashIcon, onPress: requestDeleteWorkout,}]} />
+          <View style={styles.actionButtons}>
+              <View>
+                <Pressable onPress={() => {router.back()}} style={{paddingHorizontal: 20, paddingVertical: 10, backgroundColor: "#4B4B4B", borderRadius: 10, }}>
+                      <Text style={{fontSize: 15, color: "white",}}>Cancel</Text>
+                  </Pressable>
+              </View>
+              <View>
+                  <Pressable onPress={requestSaveWorkout} style={{paddingHorizontal: 20, paddingVertical: 10, backgroundColor: Colors.primaryBlue, borderRadius: 10, }}>
+                      <Text style={{fontSize: 15, color: "white",}}>Save</Text>
+                  </Pressable>
+              </View>
           </View>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350, }}>
 
-          {exercises.map((exercise, i) => (
-            <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} />
-          ))}
+            <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+              <Pressable style={{ height: 40, width: 40, justifyContent: "center", alignItems: "center"}} onPress={() => {if (workoutNameInputRef.current) {workoutNameInputRef.current.focus()}}}>
+                <Image style={{height: 15, width: 15, marginRight: 10}} source={pencil} />
+              </Pressable>
+              
+              <TextInput selectTextOnFocus ref={workoutNameInputRef} onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
+              <ActionMenu data={[{title: "Delete workout", icon: trashIcon, onPress: requestDeleteWorkout,}]} />
+            </View>
 
-          <Spacer height={20} />
+            {exercises.map((exercise, i) => (
+              <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} />
+            ))}
 
-          <BlueButton title={"Add exercise"} onPress={() => setExerciseModal(true)} />
+            <Spacer height={20} />
 
-        </ScrollView>
-      </SafeAreaView>
+            <BlueButton title={"Add exercise"} onPress={() => setExerciseModal(true)} />
 
-      <Modal
-            visible={exerciseModal}
-            animationType='slide'
-            presentationStyle='pageSheet'
-            onRequestClose={() => {
-              setExerciseModal(false)
-            }}
-        >
-            <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} />
-      </Modal>
-      
-    </ThemedView>
+          </ScrollView>
+        </SafeAreaView>
+
+        <Modal
+              visible={exerciseModal}
+              animationType='slide'
+              presentationStyle='pageSheet'
+              onRequestClose={() => {
+                setExerciseModal(false)
+              }}
+          >
+              <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} />
+        </Modal>
+        
+      </ThemedView>
     </PaperProvider>
     
   )

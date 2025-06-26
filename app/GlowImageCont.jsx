@@ -10,16 +10,14 @@ const GlowImageCont = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)" }}>
-      {source && (
-        <View style={{flex: 1, position: 'relative', justifyContent: "center", alignItems: "center"}}>
+        <Animated.View style={{flex: 1, position: 'relative', justifyContent: "center", alignItems: "center"}} sharedTransitionTag={tag}>
             <Animated.Image
-                sharedTransitionTag={tag}
+                
                 source={source}
                 style={{ width: 200, height: 200 }}
                 />
-        </View>
+        </Animated.View>
         
-      )}
     </View>
   )
 }

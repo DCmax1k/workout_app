@@ -14,10 +14,16 @@ import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from 'react-native
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-const ConfirmMenu = ({ style, data, active, setActive, ...props }) => {
+const ConfirmMenu = ({ style, active, setActive, data, ...props }) => {
+
     const closeAndConfirm = () => {
         setActive(false);
         data.confirm();
+    }
+
+    const closeAndCancel = () => {
+      setActive(false);
+      data.goback ? data.goback() : null;
     }
 
   return (
@@ -43,7 +49,7 @@ const ConfirmMenu = ({ style, data, active, setActive, ...props }) => {
                 <Pressable onPress={closeAndConfirm} style={[styles.button, {backgroundColor: data.option1color || Colors.primaryBlue}]}>
                     <Text style={[styles.title]}>{data.option1}</Text>
                 </Pressable>
-                {data.option2 && <Pressable onPress={() => {setActive(false)}} style={styles.button}>
+                {data.option2 && <Pressable onPress={() => {closeAndCancel()}} style={styles.button}>
                     <Text style={[styles.title]}>{data.option2}</Text>
                 </Pressable>}
               </View>

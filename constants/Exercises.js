@@ -8,6 +8,106 @@ const track = {
 // Groups: chest, abs, back, bicep, tricep, forearm, shoulder, leg
 export const Exercises = [
     {
+        "name": "Treadmill Walking",
+        "group": "cardio",
+        "tracks": track.cardio,
+        "description": "A low-impact cardiovascular exercise that helps improve heart health and endurance by walking on a treadmill at a steady pace.",
+        // "image": require("../assets/exercises/treadmillWalking.png"),
+        "muscleGroups": ["legs", "glutes", "core"],
+        "difficulty": "beginner",
+        "id": "101"
+    },
+    {
+        "name": "Outdoor Running",
+        "group": "cardio",
+        "tracks": track.cardio,
+        "description": "A high-impact aerobic exercise that strengthens the cardiovascular system, boosts endurance, and burns calories.",
+        // "image": require("../assets/exercises/outdoorRunning.png"),
+        "muscleGroups": ["legs", "glutes", "core"],
+        "difficulty": "intermediate",
+        "id": "102"
+    },
+    {
+        "name": "Outdoor Walking",
+        "group": "cardio",
+        "tracks": track.distance,
+        "description": "A moderate cardiovascular activity that helps maintain overall fitness, reduce stress, and promote heart health.",
+        // "image": require("../assets/exercises/outdoorWalking.png"),
+        "muscleGroups": ["legs", "glutes", "core"],
+        "difficulty": "beginner",
+        "id": "106"
+    },
+    {
+        "name": "Stationary Bike",
+        "group": "cardio",
+        "tracks": track.cardio,
+        "description": "A low-impact cycling exercise that improves cardiovascular health, tones leg muscles, and enhances endurance.",
+        // "image": require("../assets/exercises/stationaryBike.png"),
+        "muscleGroups": ["quads", "hamstrings", "glutes"],
+        "difficulty": "beginner",
+        "id": "103"
+    },
+    {
+        "name": "Elliptical Trainer",
+        "group": "cardio",
+        "tracks": track.cardio,
+        "description": "A full-body cardio workout that mimics stair climbing and walking, reducing joint stress while boosting stamina and strength.",
+        // "image": require("../assets/exercises/ellipticalTrainer.png"),
+        "muscleGroups": ["legs", "glutes", "arms"],
+        "difficulty": "intermediate",
+        "id": "104"
+    },
+    {
+        "name": "Stairmaster",
+        "group": "cardio",
+        "tracks": track.cardio,
+        "description": "A cardio workout involving stair climbing that targets the glutes, hamstrings, and calves while improving endurance.",
+        // "image": require("../assets/exercises/stairmaster.png"),
+        "muscleGroups": ["glutes", "hamstrings", "calves"],
+        "difficulty": "intermediate",
+        "id": "105"
+    },
+    {
+        "name": "Incline Treadmill Walk",
+        "group": "cardio",
+        "tracks": track.cardio,
+        "description": "Walking on an inclined treadmill to increase intensity and muscle engagement in the lower body, especially the glutes and calves.",
+        // "image": require("../assets/exercises/inclineTreadmillWalk.png"),
+        "muscleGroups": ["glutes", "calves", "hamstrings"],
+        "difficulty": "intermediate",
+        "id": "107"
+    },
+    {
+        "name": "Jogging",
+        "group": "cardio",
+        "tracks": track.cardio,
+        "description": "A steady, moderate-paced aerobic exercise that improves heart health, stamina, and burns fat.",
+        // "image": require("../assets/exercises/jogging.png"),
+        "muscleGroups": ["legs", "glutes", "core"],
+        "difficulty": "intermediate",
+        "id": "108"
+    },
+    {
+        "name": "Hiking",
+        "group": "cardio",
+        "tracks": track.distance,
+        "description": "A cardiovascular and endurance activity that challenges the entire body while navigating natural terrain.",
+        // "image": require("../assets/exercises/hiking.png"),
+        "muscleGroups": ["legs", "glutes", "core"],
+        "difficulty": "intermediate",
+        "id": "109"
+    },
+    {
+        "name": "High-Intensity Sprint Intervals",
+        "group": "cardio",
+        "tracks": track.cardio,
+        "description": "A high-intensity training method involving short bursts of sprinting followed by brief rest periods, boosting cardiovascular capacity and metabolism.",
+        // "image": require("../assets/exercises/sprintIntervals.png"),
+        "muscleGroups": ["legs", "glutes", "core"],
+        "difficulty": "advanced",
+        "id": "110"
+    },
+    {
         "name": "Barbell Bench Press",
         "group": "chest",
         "tracks": track.strength,

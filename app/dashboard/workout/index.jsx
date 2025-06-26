@@ -13,6 +13,8 @@ import { generateUniqueId } from '../../../util/uniqueId'
 import WorkoutDescription from '../../../components/workout/WorkoutDescription'
 import TitleWithBack from '../../../components/TitleWithBack'
 import plus from '../../../assets/icons/plus.png'
+import SwipeToDelete from '../../../components/SwipeToDelete'
+import ConfirmMenu from '../../../components/ConfirmMenu'
 
 const IndexWorkout = () => {
     const user = useUserStore((state) => state.user);
@@ -32,7 +34,6 @@ const IndexWorkout = () => {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedWorkout, setSelectedWorkout] = useState(null);
-
     
 
     const openSchedule = () => {
@@ -51,8 +52,32 @@ const IndexWorkout = () => {
       router.push("/editworkout");
     }
 
+    const requestDeleteWorkoutConfirmation = (workoutID) => {
+      deleteWorkout(workoutID);
+    }
+
+    // COPIED TO editworkout
+      const removeFromRotation = (workoutId) => {
+        let schedule = user.schedule;
+        const newRotation = user.schedule.rotation.filter(id => id !== workoutId);
+        schedule = {...schedule, rotation: newRotation}
+        schedule = {...schedule, currentIndex: 0}
+        updateUser({schedule});
+      }
+      const deleteWorkout = (workoutID) => {
+        const userWorkouts = user.savedWorkouts;
+        const workoutToDeleteIndex = userWorkouts.findIndex(w => w.id === workoutID);
+        if (workoutToDeleteIndex >= 0) {
+          // Delete workout from saved workouts, and from rotation if in rotation
+          userWorkouts.splice(workoutToDeleteIndex, 1);
+          removeFromRotation(workoutID);
+        }
+        //router.back();
+      } // end copied
+
     const truncate = (text, maxLength) =>
       text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+
 
   return (
     <ThemedView  style={styles.container}>
@@ -76,24 +101,30 @@ const IndexWorkout = () => {
             
           </View>
             
-            <View style={{paddingHorizontal: 20}}>
+            <View style={{width: "100%", alignItems: "center"}}>
               {filteredWorkouts.map((workout, i) => {
                 return(
-                <Pressable style={[styles.selectWorkout, styles.boxShadow]} onPress={() => openWorkout(workout)} key={workout.id+""+i}>
-                  <View style={styles.linearGradient}>
-                    <View style={{width: "80%"}}>
-                      <ThemedText style={{fontSize: 17, fontWeight: 700}} title={true}>{truncate(workout.name, 25)}</ThemedText>
-                      <WorkoutDescription workout={workout} />
-                    </View>
+                  <SwipeToDelete key={workout.id+""+i}  openedRight={() => requestDeleteWorkoutConfirmation(workout.id)} >
+                    <Pressable onPress={() => openWorkout(workout)}>
+                      <View style={[styles.selectWorkout, styles.boxShadow]} >
+                        <View style={styles.linearGradient}>
+                          <View style={{width: "80%"}}>
+                            <ThemedText style={{fontSize: 17, fontWeight: 700}} title={true}>{truncate(workout.name, 25)}</ThemedText>
+                            <WorkoutDescription workout={workout} />
+                          </View>
 
-                    <View style={[styles.boxShadow, {shadowRadius: 5, backgroundColor: "#546FDB", height: 40, width: 40, borderRadius: 99999, justifyContent: "center", alignItems: "center"}]}>
-                      <View style={{backgroundColor: "#3D52A6", height: 35, width: 35, borderRadius: 99999, justifyContent: "center", alignItems: "center"}}>
-                        <Image style={{height: 20, width: 20}} source={rightArrow}/>
+                          <View style={[styles.boxShadow, {shadowRadius: 5, backgroundColor: "#546FDB", height: 40, width: 40, borderRadius: 99999, justifyContent: "center", alignItems: "center"}]}>
+                            <View style={{backgroundColor: "#3D52A6", height: 35, width: 35, borderRadius: 99999, justifyContent: "center", alignItems: "center"}}>
+                              <Image style={{height: 20, width: 20}} source={rightArrow}/>
+                            </View>
+                          </View>
+                          
+                        </View>
                       </View>
-                    </View>
+                    </Pressable>
                     
-                  </View>
-                </Pressable>
+                  </SwipeToDelete>
+                
                 
               )})}
             </View>
@@ -132,8 +163,7 @@ const styles = StyleSheet.create({
       // padding: 20,
     },
     selectWorkout: {
-      width: '100%',
-      
+      marginHorizontal: 20,
     },
     linearGradient: {
       flex: 1,

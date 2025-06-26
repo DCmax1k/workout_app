@@ -25,7 +25,10 @@ const GlowImage = ({ style, source, id = 0, ...props }) => {
           });
           
         }}>
-        <Animated.Image sharedTransitionTag={tag} source={source} style={style} />
+          <Animated.View sharedTransitionTag={tag} >
+            <Animated.Image source={source} style={style} />
+          </Animated.View>
+        
       </Pressable>
 
       {/* {active && (
