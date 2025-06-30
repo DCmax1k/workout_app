@@ -8,6 +8,7 @@ import PastWorkoutCard from '../../../components/workout/PastWorkoutCard'
 import Spacer from '../../../components/Spacer'
 import ConfirmMenu from '../../../components/ConfirmMenu'
 import { Provider } from 'react-native-paper'
+import SwipeToDelete from '../../../components/SwipeToDelete'
 
 function formatMonthYear(date) {
   const month = date.toLocaleString('default', { month: 'long' }).toUpperCase(); // "MAY"
@@ -52,16 +53,24 @@ const WorkoutHistory = () => {
           <SafeAreaView style={{flex: 1}}>
               <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
 
-              <TitleWithBack title={"Workout History"} />
+              <TitleWithBack title={"Workout History"} style={{marginLeft: -20}} />
 
               <Spacer size={20} />
+
+              
 
               <SectionList
               
                   sections={sectionalData}
                   keyExtractor={(item, i) => i}
                   renderItem={({ item }) => {
-                    return (<PastWorkoutCard data={item} setConfirmMenuData={setConfirmMenuData} setConfirmMenuActive={setConfirmMenuActive} />)}}
+                    return (
+                        <PastWorkoutCard
+                          data={item}
+                          setConfirmMenuData={setConfirmMenuData}
+                          setConfirmMenuActive={setConfirmMenuActive}
+                          />
+                    )}}
                   renderSectionHeader={({ section: { title } }) => (
                       <ThemedView>
                           <ThemedText style={styles.header}>{title}</ThemedText>

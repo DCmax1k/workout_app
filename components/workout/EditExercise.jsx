@@ -8,6 +8,7 @@ import trashIcon from '../../assets/icons/trash.png'
 import pencilIcon from '../../assets/icons/pencil.png'
 import check from '../../assets/icons/check.png'
 import dumbellIcon from '../../assets/icons/weight.png'
+import Animated, { LinearTransition } from 'react-native-reanimated'
 
 const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWorkoutStyle, ...props}) => {
 
@@ -111,7 +112,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
             </View>
             {/* Each set */}
             {exercise.sets.map((set, setIndex) => (
-                <View key={setIndex} style={[styles.row, {backgroundColor: set.complete ? "rgba(33, 134, 60, 0.14)":"transparent"}]}>
+                <Animated.View key={setIndex} style={[styles.row, {backgroundColor: set.complete ? "rgba(33, 134, 60, 0.14)":"transparent"}]} layout={LinearTransition}>
                     <Text style={[styles.column, styles.column1]}>{setIndex+1}</Text>
                     <>
                         {exercise.tracks.map(track => {
@@ -127,7 +128,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                     <Pressable onPress={() => {removeSet(setIndex)}} style={styles.columnForComplete}>
                         {setIndex !== 0 && (<Image style={{height: 20, width: 20}} source={greyX}  />)}
                     </Pressable>
-                </View>
+                </Animated.View>
             ))}
             {/* Add set */}
             <Pressable onPress={addSet} style={{paddingVertical: 5, paddingHorizontal: 35, backgroundColor: "#2D2D2D", alignSelf: 'center', marginTop: 10, marginBottom: 5, borderRadius: 10}}>

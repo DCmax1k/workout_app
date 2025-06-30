@@ -60,9 +60,11 @@ const Schedule = () => {
   return (
     <ThemedView style={styles.container}>
         <SafeAreaView style={{flex: 1}}>
-            <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 100}}>
-                <TitleWithBack title={"Schedule"}/>
-                <Spacer />
+            <TitleWithBack title={"Schedule"} style={{marginLeft: -20}} />
+            <Spacer height={20} />
+            <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 100,}}>
+                
+                <Spacer height={20} />
 
                 <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Schedule Rotation</ThemedText>
                 {rotation.map((workout, index) => {

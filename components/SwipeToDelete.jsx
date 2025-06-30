@@ -1,5 +1,5 @@
 import { Dimensions, Image, Pressable, StyleSheet, Text, View } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
   SharedValue,
@@ -35,40 +35,40 @@ function RightAction({prog, drag, isOpen, setIsOpen}) {
   );
 }
 
-const SwipeToDelete = ({children, style, onPress, openedRight, ...props}) => {
+
+
+const SwipeToDelete = forwardRef(({children, style, onPress, openedRight, showConfirmation=false, confirmationData={}, ...props}, ref) => {
 
     const swipeRef = useRef(null);
 
     const [isOpen, setIsOpen] = useState(false);
     const [confirmMenuActive, setConfirmMenuActive] = useState(false);
-    const [confirmMenuData, setConfirmMenuData] = useState({
-            title: "Delete workout?",
-            subTitle: "Are you sure you would like to delete this workout?",
-            subTitle2: "This action cannot be undone.",
-            option1: "Delete workout",
-            option1color: "#DB5454",
-            option2: "Go back",
-            confirm: () => openedRight(),
-            goback: () => closeSwipeable(),
-        });
+    const [confirmMenuData, setConfirmMenuData] = useState();
 
-    const requestDeleteConfirmation = () => {
-        setConfirmMenuData({
-            title: "Delete workout?",
-            subTitle: "Are you sure you would like to delete this workout?",
-            subTitle2: "This action cannot be undone.",
-            option1: "Delete workout",
-            option1color: "#DB5454",
-            option2: "Go back",
-            confirm: () => openedRight(),
-            goback: () => closeSwipeable(),
-        });
-        setConfirmMenuActive(true);
-    }
+     useImperativeHandle(ref, () => ({
+      getIsOpen: () => isOpen,
+    }));
 
     const closeSwipeable = () => {
         swipeRef.current.close();
         
+    }
+
+    const defaultConfirmationData={
+        title: "Delete exercise?",
+        subTitle: "Are you sure you would like to delete this exercise?",
+        subTitle2: "This action cannot be undone.",
+        option1: "Delete exercise",
+        option1color: "#DB5454",
+        option2: "Go back",
+        confirm: () => console.log("confirmed"),
+        goback: () => closeSwipeable(),
+    }
+                
+    const requestDeleteConfirmation = () => {
+      if (!showConfirmation) return openedRight();
+        setConfirmMenuData({...defaultConfirmationData, ...confirmationData});
+        setConfirmMenuActive(true);
     }
 
   return (
@@ -98,7 +98,7 @@ const SwipeToDelete = ({children, style, onPress, openedRight, ...props}) => {
 
     </View>
   )
-}
+})
 
 export default SwipeToDelete
 

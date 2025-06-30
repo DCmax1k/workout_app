@@ -15,6 +15,8 @@ import ActionMenu from '../components/ActionMenu'
 import trashIcon from '../assets/icons/trash.png'
 import { workoutToSimple } from '../util/workoutToSimple'
 import ConfirmMenu from '../components/ConfirmMenu'
+import Animated, { LinearTransition } from 'react-native-reanimated'
+import SwipeToDelete from '../components/SwipeToDelete'
 
 const EditWorkout = () => {
   const workoutNameInputRef = useRef(null);
@@ -145,7 +147,7 @@ const EditWorkout = () => {
                   </Pressable>
               </View>
           </View>
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350, }}>
+          <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350, }}>
 
             <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
               <Pressable style={{ height: 40, width: 40, justifyContent: "center", alignItems: "center"}} onPress={() => {if (workoutNameInputRef.current) {workoutNameInputRef.current.focus()}}}>
@@ -157,14 +159,21 @@ const EditWorkout = () => {
             </View>
 
             {exercises.map((exercise, i) => (
-              <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} />
+                <SwipeToDelete key={exercise.id+""+i} openedRight={() => removeExercise(i)} >
+                  <EditExercise exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} />
+                </SwipeToDelete>
+
+              
             ))}
 
             <Spacer height={20} />
 
-            <BlueButton title={"Add exercise"} onPress={() => setExerciseModal(true)} />
+            <Animated.View layout={LinearTransition} >
+              <BlueButton title={"Add exercise"} onPress={() => setExerciseModal(true)} />
+            </Animated.View>
+            
 
-          </ScrollView>
+          </Animated.ScrollView>
         </SafeAreaView>
 
         <Modal

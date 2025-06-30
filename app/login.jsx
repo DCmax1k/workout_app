@@ -42,7 +42,7 @@ const USER = {
   //     name: "Bench Press Modifed",
   //     group: "chest"
   //     modified: true,
-  //     tracks: ['lbs', 'reps'],
+  //     tracks: ['weight', 'reps'],
   //     description: "A compound exercise that targets the chest, shoulders, and triceps.",
   //     image: require("../assets/exercises/benchPress.png"),
   //     muscleGroups: ["chest", "shoulders", "triceps"],

@@ -16,17 +16,22 @@ const GlowImage = ({ style, source, id = 0, ...props }) => {
       <Pressable onPress={() => {
           console.log('clicked'); setActive(true);
           console.log("Pushing with tag", tag, "and source", source)
+
+          const data = JSON.stringify({
+            source,
+            tag,
+          });
+
           router.push({
             pathname: "/GlowImageCont",
             params: {
-              source: source, // pass the actual image data
-              tag,
+              data,
             },
           });
           
         }}>
-          <Animated.View sharedTransitionTag={tag} >
-            <Animated.Image source={source} style={style} />
+          <Animated.View  >
+            <Animated.Image source={source} style={style} sharedTransitionTag={tag} />
           </Animated.View>
         
       </Pressable>

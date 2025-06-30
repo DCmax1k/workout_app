@@ -1,5 +1,5 @@
 import { Dimensions, Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
 import Spacer from '../../../components/Spacer'
@@ -15,6 +15,7 @@ import TitleWithBack from '../../../components/TitleWithBack'
 import plus from '../../../assets/icons/plus.png'
 import SwipeToDelete from '../../../components/SwipeToDelete'
 import ConfirmMenu from '../../../components/ConfirmMenu'
+import Animated, { LinearTransition } from 'react-native-reanimated'
 
 const IndexWorkout = () => {
     const user = useUserStore((state) => state.user);
@@ -34,6 +35,8 @@ const IndexWorkout = () => {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedWorkout, setSelectedWorkout] = useState(null);
+
+    const swipeRefs = useRef([]);
     
 
     const openSchedule = () => {
@@ -51,6 +54,8 @@ const IndexWorkout = () => {
       updateUser({editActiveWorkout: newWorkoutData});
       router.push("/editworkout");
     }
+
+    
 
     const requestDeleteWorkoutConfirmation = (workoutID) => {
       deleteWorkout(workoutID);
@@ -82,12 +87,12 @@ const IndexWorkout = () => {
   return (
     <ThemedView  style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
+        <TitleWithBack style={{marginHorizontal: 0}} backBtn={false} title={"Workout"} actionBtn={{active: true, image: require("../../../assets/icons/history.png"), action: () => router.push("/dashboard/workout/workouthistory")}} />
+        <Spacer height={20} />
+        <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
           {/* <ThemedText style={{fontSize: 20, fontWeight: 700, marginTop: 20,  textAlign: 'center'}}>Workout</ThemedText> */}
-          <TitleWithBack style={{marginHorizontal: 20}} backBtn={false} title={"Workout"} actionBtn={{active: true, image: require("../../../assets/icons/history.png"), action: () => router.push("/dashboard/workout/workouthistory")}} />
+          
           <View style={{padding: 20}}>
-            
-            <Spacer height={20} />
 
             <BlueButton title={"Schedule Rotation"} showRight={true} subtitle={`${workoutsInRotation} workout${workoutsInRotation === 1 ? '':"s"} in rotation`} onPress={openSchedule} style={{marginBottom: 40}} />
 
@@ -101,11 +106,28 @@ const IndexWorkout = () => {
             
           </View>
             
-            <View style={{width: "100%", alignItems: "center"}}>
+            <View style={{width: "100%", alignItems: "center",}}>
               {filteredWorkouts.map((workout, i) => {
+                if (!swipeRefs.current[i]) swipeRefs.current[i] = React.createRef();
+
                 return(
-                  <SwipeToDelete key={workout.id+""+i}  openedRight={() => requestDeleteWorkoutConfirmation(workout.id)} >
-                    <Pressable onPress={() => openWorkout(workout)}>
+                  <Animated.View key={workout.id+""+i} layout={LinearTransition} style={{width: "100%"}}>
+                    <SwipeToDelete ref={swipeRefs.current[i]}  showConfirmation={true} confirmationData={{
+                    title: "Delete workout?",
+                    subTitle: "Are you sure you would like to delete this workout?",
+                    subTitle2: "This action cannot be undone.",
+                    option1: "Delete workout",
+                    option1color: "#DB5454",
+                    option2: "Go back",
+                    confirm: () => requestDeleteWorkoutConfirmation(workout.id),
+                }}>
+                    <Pressable onPress={() => {
+                      setTimeout(() => {
+                        if (swipeRefs.current[i].current?.getIsOpen()) return;
+                        openWorkout(workout);
+                      }, 100);
+                      
+                      }}>
                       <View style={[styles.selectWorkout, styles.boxShadow]} >
                         <View style={styles.linearGradient}>
                           <View style={{width: "80%"}}>
@@ -124,6 +146,8 @@ const IndexWorkout = () => {
                     </Pressable>
                     
                   </SwipeToDelete>
+                  </Animated.View>
+                  
                 
                 
               )})}
@@ -137,7 +161,7 @@ const IndexWorkout = () => {
             ) : (null)}
             
 
-        </ScrollView>
+        </Animated.ScrollView>
       </SafeAreaView>
       <Modal
         visible={modalVisible}

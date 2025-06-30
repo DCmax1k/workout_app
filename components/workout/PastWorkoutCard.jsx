@@ -8,6 +8,7 @@ import weight from '../../assets/icons/weight.png'
 import { truncate } from '../../util/truncate'
 import { Colors } from '../../constants/Colors'
 import rightCarrot from '../../assets/icons/rightCarrot.png'
+import { router } from 'expo-router'
 
 
 const PastWorkoutCard = ({style, data, setConfirmMenuData, setConfirmMenuActive, ...props}) => {
@@ -21,8 +22,17 @@ const PastWorkoutCard = ({style, data, setConfirmMenuData, setConfirmMenuActive,
         setConfirmMenuActive(true);
     }
 
+    const openWorkout = () => {
+        router.push({
+                    pathname: "/previewWorkout",
+                    params: {
+                      data: JSON.stringify(data),
+                    },
+                  });
+    }
+
   return (
-    <Pressable style={{flex: 1}} onPress={showComingSoon}>
+    <Pressable style={{flex: 1}} onPress={openWorkout}>
         <View style={[style, styles.card]}>
             {/* Top side */}
         <View style={[styles.side, styles.top]}>

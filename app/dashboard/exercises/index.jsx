@@ -17,6 +17,7 @@ import CreateExercise from '../../../components/workout/CreateExercise';
 import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from 'react-native-reanimated';
 import { filter } from 'd3';
 import { PaperProvider, Portal, Provider } from 'react-native-paper';
+import SwipeToDelete from '../../../components/SwipeToDelete';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -66,6 +67,7 @@ const ExercisesIndex = () => {
     }
   };
 
+
   return (
     // <PaperProvider>
     <ThemedView style={styles.container}>
@@ -85,7 +87,7 @@ const ExercisesIndex = () => {
             )}
               
 
-            <TitleWithBack style={{marginHorizontal: 20}} title={"Exercises"} backBtn={false} actionBtn={{active: true, image: require("../../../assets/icons/plus.png"), action: () => openCreateExercise()}}/>
+            <TitleWithBack title={"Exercises"} backBtn={false} actionBtn={{active: true, image: require("../../../assets/icons/plus.png"), action: () => openCreateExercise()}}/>
 
             <Spacer height={20} />
 
@@ -104,7 +106,9 @@ const ExercisesIndex = () => {
                 indexLetterColor='white'
                 indexLetterSize={12}
                 renderItem={(item) => (
-                  <Exercise exercise={item} onPress={() => selectExercise(item.id)} style={styles.exercise} />
+
+                    <Exercise exercise={item} onPress={() => selectExercise(item.id)} style={styles.exercise} />
+
                 )}
                 sectionHeaderHeight={30}
                 renderSectionHeader={(section) => (

@@ -297,7 +297,10 @@ const IndexHome = () => {
 
           <Spacer />
           <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Activity</ThemedText>
+
           <NotificationCard header={"3 min ago"} title={"User2 started a workout"} subtitle={"Chest and shoulders"} />
+          
+
         </ScrollView>
 
       </SafeAreaView>

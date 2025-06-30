@@ -40,6 +40,7 @@ const RootLayout = () => {
           <Stack.Screen name="editworkout" options={{ headerShown: false }} />
           <Stack.Screen name="loading" options={{ headerShown: true }} />
           <Stack.Screen name="login" options={{ headerShown: true }} />
+          <Stack.Screen name="previewWorkout" options={{ headerShown: false }} />
 
           <Stack.Screen name="GlowImageCont" options={{ headerShown: false, animation: "fade_from_bottom" }} />
         </Stack>
