@@ -23,7 +23,7 @@ export default function Index() {
   }
 
   // If user exists, show user info
-  console.log(user);
+  //console.log(user);
   if (user?._id) {
     return <Redirect href={"/dashboard"} />;
   }

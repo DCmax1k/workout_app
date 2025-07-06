@@ -164,7 +164,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props})
                keyboardDismissMode={"on-drag"}
                sections={sectionalData}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (<Exercise exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />)}
+                renderItem={({ item }) => (<Exercise disablePress={true} exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />)}
                 renderSectionHeader={({ section: { title } }) => (
                     <ThemedView>
                         <ThemedText style={styles.header}>{capitalizeFirstLetter(customTitle(title))}</ThemedText>
@@ -179,7 +179,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props})
                 keyboardDismissMode={"on-drag"}
                 sections={sectionalData}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (<Exercise exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />)}
+                renderItem={({ item }) => (<Exercise disablePress={true} exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />)}
                 renderSectionHeader={({ section: { title } }) => (
                     <ThemedView>
                         <ThemedText style={styles.header}>{capitalizeFirstLetter(customTitle(title))}</ThemedText>

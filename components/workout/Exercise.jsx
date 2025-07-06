@@ -1,12 +1,19 @@
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { Dimensions, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import React, { useState } from 'react'
 import { truncate } from '../../util/truncate';
 import noimage from '../../assets/icons/noimage.png';
 import GlowImage from '../GlowImage';
+import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from 'react-native-reanimated';
+import OpenExercise from './OpenExercise';
+import { Portal } from 'react-native-paper';
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
+
+const Exercise = ({style, exercise, selected = false, disablePress = false, onPress = false, ...props}) => {
 
 
-const Exercise = ({style, exercise, selected = false, onPress = () => {}, ...props}) => {
-
+  const [openExercise, setOpenExercise] = useState(false);
 
     const capitalizeFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -14,9 +21,28 @@ const Exercise = ({style, exercise, selected = false, onPress = () => {}, ...pro
 
     const isImage = exercise.image ? true : false;
   return (
-    <Pressable onPress={onPress} style={[styles.cont, {backgroundColor: selected ? "#283878" : "#1C1C1C"}, style]} {...props}>
+    <View>
+
+      {openExercise && (
+        <Portal >
+          <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
+
+
+
+              <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
+                <OpenExercise exercise={exercise} setOpenExercise={setOpenExercise} />
+              </Animated.View>
+
+            
+
+          </Animated.View>
+        </Portal>
+        
+      )}
+
+    <Pressable onPress={() => disablePress ? (onPress ? onPress() : null) : setOpenExercise(true)} style={[styles.cont, {backgroundColor: selected ? "#283878" : "#1C1C1C"}, style]} {...props}>
       <View style={styles.imageCont}>
-        <GlowImage style={[styles.image, isImage ? {} : {width: 30, height: 30, margin: "auto"}]} source={exercise.image || noimage} id={exercise.id} />
+        <Image style={[styles.image, isImage ? {} : {width: 30, height: 30, margin: "auto"}]} source={exercise.image || noimage} id={exercise.id} />
       </View>
       <View style={styles.rightCont}>
         <Text style={{color: "white", fontSize: 15, fontWeight: 700}}>{exercise.name}</Text>
@@ -29,6 +55,8 @@ const Exercise = ({style, exercise, selected = false, onPress = () => {}, ...pro
         
       </View>
     </Pressable>
+    </View>
+    
   )
 }
 

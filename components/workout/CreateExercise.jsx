@@ -49,6 +49,8 @@ const CreateExercise = ({setCreateExercise, callback = () => {}, ...props}) => {
 
         setCreateExercise(false);
 
+        
+
     }
 
   return (
@@ -56,7 +58,7 @@ const CreateExercise = ({setCreateExercise, callback = () => {}, ...props}) => {
     <View style={{flex: 1, backgroundColor: "#4C4C4C", borderRadius: 20, padding: 10,}} {...props}>
       <View style={{flexDirection: "row", alignItems: "center"}}>
         <Pressable onPress={() => setCreateExercise(false)}>
-            <Image source={whiteX} style={{ height: 30, width: 30, marginRight: 5}} />
+            <Image source={whiteX} style={{ height: 30, width: 30, marginRight: 5,}} />
         </Pressable>
         
         <Text style={[styles.screenText, {flex: 1}]}>Create an exercise</Text>

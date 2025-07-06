@@ -44,12 +44,14 @@ const RootLayout = () => {
 
           <Stack.Screen name="GlowImageCont" options={{ headerShown: false, animation: "fade_from_bottom" }} />
         </Stack>
-      
-          <KeyboardAvoidingView style={{position: "absolute", bottom: -10, right: 20, paddingBottom: 10, marginBottom: isIos ? -50 : 0,}} behavior={isIos ? 'position' : 'height'}>
+
+        <KeyboardAvoidingView style={{position: "absolute", bottom: -10, right: 20, paddingBottom: 10, zIndex: 100, marginBottom: isIos ? -50 : 0,}} behavior={isIos ? 'position' : 'height'}>
             <Pressable style={[styles.disKeyboard, { display: isIos ? "block" : keyboardVisible ? "block" : "none"}]} onPress={() => {Keyboard.dismiss(); setKeyboardVisible(false)}} >
               <Image style={{height: 30, width: 30, objectFit: 'contain'}} source={keyboardIcon} />
             </Pressable>
           </KeyboardAvoidingView>
+
+          
 
         
       </GestureHandlerRootView>

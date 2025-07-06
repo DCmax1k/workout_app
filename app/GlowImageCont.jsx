@@ -16,13 +16,16 @@ const GlowImageCont = () => {
     <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)" }}>
 
         <Spacer height={60} />
-        <Animated.View style={{flex: 1, alignItems: "center", }} >
+        <Animated.View  style={{flex: 1, alignItems: "center", }} >
           <TitleWithBack backBtn={true} title={"Go back"} />
-            <Animated.Image
-                sharedTransitionTag={tag}
+          <Animated.View  sharedTransitionTag={tag}>
+              <Animated.Image
+                
                 source={source}
                 style={{ width: 200, height: 200 }}
                 />
+          </Animated.View>
+            
         </Animated.View>
 
         

@@ -7,13 +7,14 @@ import { router } from 'expo-router';
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
-const GlowImage = ({ style, source, id = 0, ...props }) => {
+const GlowImage = ({ style, disable = false, source, id = 0, ...props }) => {
   const [active, setActive] = useState(false);
 
   const tag = 'image-'+id;
   return (
-    <View {...props}>
+    <View >
       <Pressable onPress={() => {
+        if (disable) return;
           console.log('clicked'); setActive(true);
           console.log("Pushing with tag", tag, "and source", source)
 
@@ -30,8 +31,9 @@ const GlowImage = ({ style, source, id = 0, ...props }) => {
           });
           
         }}>
-          <Animated.View  >
-            <Animated.Image source={source} style={style} sharedTransitionTag={tag} />
+          
+          <Animated.View  sharedTransitionTag={tag} >
+            <Animated.Image shared source={source} style={style} {...props} />
           </Animated.View>
         
       </Pressable>

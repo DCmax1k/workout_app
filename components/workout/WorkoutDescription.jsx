@@ -4,7 +4,7 @@ import ThemedText from '../ThemedText';
 import { Exercises } from '../../constants/Exercises';
 import { useUserStore } from '../../stores/useUserStore';
 
-const WorkoutDescription = ({workout, style, ...props}) => {
+const WorkoutDescription = ({workout, style, truncateAmount = 50, ...props}) => {
     const user = useUserStore((state) => state.user);
     const allExercises = [...user.createdExercises, ...Exercises];
 
@@ -23,7 +23,7 @@ const WorkoutDescription = ({workout, style, ...props}) => {
   return length === 0 ? (
     <ThemedText style={style}>Add workouts!</ThemedText>
   ) : (
-    <ThemedText style={style}>{length} exercise{length===1 ? '':'s'} - {truncate(exercisesString, 50)}</ThemedText>
+    <ThemedText style={style}>{length} exercise{length===1 ? '':'s'} - {truncate(exercisesString, truncateAmount)}</ThemedText>
   )
 }
 

@@ -111,7 +111,7 @@ const StartWorkout = ({workout, setModalVisible, ...props}) => {
             <FlatList
                 data={exercises}
                 keyExtractor={(item, i) => item.id+""+i}
-                renderItem={({item}) => (<Exercise exercise={item} />)}
+                renderItem={({item}) => (<Exercise disablePress={true} exercise={item} />)}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 120, paddingTop: 20 }}
             />

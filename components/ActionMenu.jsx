@@ -62,7 +62,7 @@ const ActionMenu = ({ data, backgroundColor, style, offset = false, ...props }) 
               onPress={() => setActive(false)}
             />
 
-            {/* MENU - not affected by backdrop press */}
+            {/* MENU */}
             <Animated.View entering={ZoomInRight.duration(200) } exiting={ZoomOutRight.duration(400)} style={[ styles.menu, { top: menuPos.y, left: menuPos.x,},]}>
 
               {data.map((item, i) => (

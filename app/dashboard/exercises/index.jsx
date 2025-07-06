@@ -45,13 +45,6 @@ const ExercisesIndex = () => {
   });
 
 
-  const selectExercise = (id) => {
-    // Navigate to the exercise details page
-    // For example, using React Navigation:
-    // navigation.navigate('ExerciseDetails', { exerciseId: id });
-    console.log("Selected Exercise ID:", id);
-  }
-
   const openCreateExercise = () => {
     setCreateExercise(true);
   }
@@ -85,6 +78,8 @@ const ExercisesIndex = () => {
               </Portal>
               
             )}
+
+            
               
 
             <TitleWithBack title={"Exercises"} backBtn={false} actionBtn={{active: true, image: require("../../../assets/icons/plus.png"), action: () => openCreateExercise()}}/>
@@ -107,7 +102,7 @@ const ExercisesIndex = () => {
                 indexLetterSize={12}
                 renderItem={(item) => (
 
-                    <Exercise exercise={item} onPress={() => selectExercise(item.id)} style={styles.exercise} />
+                    <Exercise exercise={item} style={styles.exercise} />
 
                 )}
                 sectionHeaderHeight={30}
