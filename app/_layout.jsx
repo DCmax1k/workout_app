@@ -7,6 +7,7 @@ import keyboardIcon from '../assets/icons/keyboard.png'
 import { PaperProvider, Portal } from 'react-native-paper'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { FadeIn } from 'react-native-reanimated'
+import { StatusBar } from 'expo-status-bar'
 
 const RootLayout = () => {
   const colorScheme = useColorScheme()
@@ -33,8 +34,9 @@ const RootLayout = () => {
   
   return (
     <PaperProvider>
+      <StatusBar style="light" />
       <GestureHandlerRootView>
-      <Stack>
+      <Stack screenOptions={{contentStyle: {backgroundColor: theme.background,}}}>
           <Stack.Screen name='index' options={{ headerShown: false }} />
           <Stack.Screen name="dashboard" options={{ headerShown: false }} />
           <Stack.Screen name="editworkout" options={{ headerShown: false }} />

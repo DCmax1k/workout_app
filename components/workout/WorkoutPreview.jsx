@@ -6,6 +6,7 @@ import { Colors } from '../../constants/Colors';
 import formatDuration from '../../util/formatDuration';
 import clock from '../../assets/icons/clock.png';
 import weight from '../../assets/icons/weight.png';
+import whiteRunner from '../../assets/icons/whiteRunner.png';
 import formatDate from '../../util/formatDate';
 
 const screenHeight = Dimensions.get("window").height;
@@ -26,18 +27,28 @@ const WorkoutPreview = ({style, data, ...props}) => {
         <Spacer />
 
         <View style={{flexDirection: "row", }}>
-          <View style={{marginHorizontal: 30, alignItems: "center"}}>
+
+          <View style={{marginHorizontal: 5, alignItems: "center", minWidth: 100}}>
             <View style={{height: 30, width: 30, overflow: "visible", justifyContent: "center", alignItems: "center", marginBottom: 5}}>
               <Image style={{height: 30, width: 30, objectFit: "contain"}} source={clock} />
             </View>
             <ThemedText style={{color: "white", fontSize: 17}}>{formatDuration(data.workoutLength)}</ThemedText>
           </View>
-          <View style={{marginHorizontal: 30, alignItems: "center"}}>
+
+          {data.totalWeightLifted > 0 && (<View style={{marginHorizontal: 5, alignItems: "center", minWidth: 100}}>
             <View style={{height: 30, width: 30, overflow: "visible", justifyContent: "center", alignItems: "center", marginBottom: 5}}>
               <Image style={{height: 40, width: 40, objectFit: "contain"}} source={weight} />
             </View>
-            <ThemedText style={{color: "white", fontSize: 17}}>{parseInt(data.totalWeightLifted)} lbs</ThemedText>
-          </View>
+            <ThemedText style={{color: "white", fontSize: 17}}>{`${parseInt(data.totalWeightLifted)} lbs`}</ThemedText>
+          </View>)}
+
+          {data.totalDistanceTraveled > 0 && (<View style={{marginHorizontal: 5, alignItems: "center", minWidth: 100}}>
+            <View style={{height: 30, width: 30, overflow: "visible", justifyContent: "center", alignItems: "center", marginBottom: 5}}>
+              <Image style={{height: 40, width: 40, objectFit: "contain"}} source={whiteRunner} />
+            </View>
+            <ThemedText style={{color: "white", fontSize: 17}}>{`${parseInt(data.totalDistanceTraveled)} miles`}</ThemedText>
+          </View>)}
+
         </View>
       </View>
 

@@ -14,7 +14,7 @@ import { useBottomSheet } from '../../context/BottomSheetContext'
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-const StartWorkout = ({workout, setModalVisible, ...props}) => {
+const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, ...props}) => {
     const user = useUserStore((state) => state.user);
     const updateUser = useUserStore((state) => state.updateUser);
     const availableExercises = [...user.createdExercises, ...Exercises.filter(ex => !user.createdExercises.map(e => e.id).includes(ex.id))];
@@ -80,8 +80,16 @@ const StartWorkout = ({workout, setModalVisible, ...props}) => {
         setModalVisible(false);
         openSheet(1);
     }
+
+    const openExerciseFromModal = (exercise) => {
+        setModalVisible(false);
+        openExercise(exercise);
+    }
+
   return (
-        <ThemedView style={{ padding: 20, position: 'relative', height: screenHeight-50}}>
+        <ThemedView style={{ padding: 20, position: 'relative', height: screenHeight-50, width: screenWidth,}} {...props}>
+
+
             <View style={styles.actionButtons}>
                 <View>
                     <Pressable onPress={() => setModalVisible(false)}>
@@ -111,7 +119,7 @@ const StartWorkout = ({workout, setModalVisible, ...props}) => {
             <FlatList
                 data={exercises}
                 keyExtractor={(item, i) => item.id+""+i}
-                renderItem={({item}) => (<Exercise disablePress={true} exercise={item} />)}
+                renderItem={({item}) => (<Exercise disablePress={true} onPress={() => openExerciseFromModal(item)} exercise={item} />)}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 120, paddingTop: 20 }}
             />

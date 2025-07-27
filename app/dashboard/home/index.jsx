@@ -1,4 +1,4 @@
-import { Alert, Button, Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, Button, Dimensions, Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Link, Slot, Stack, useRouter } from 'expo-router'
 import ThemedView from '../../../components/ThemedView'
@@ -18,7 +18,12 @@ import WorkoutDescription from '../../../components/workout/WorkoutDescription'
 import { useBottomSheet } from '../../../context/BottomSheetContext'
 import { generateUniqueId } from '../../../util/uniqueId'
 import playCircle from '../../../assets/icons/playCircle.png'
-import Animated, { Easing, FadeIn, FlipInXUp, FlipOutXDown, runOnJS, useAnimatedStyle, useSharedValue, withSequence, withTiming, ZoomIn } from 'react-native-reanimated'
+import Animated, { Easing, FadeIn, FadeInDown, FadeOut, FadeOutDown, FlipInXUp, FlipOutXDown, runOnJS, useAnimatedStyle, useSharedValue, withSequence, withTiming, ZoomIn } from 'react-native-reanimated'
+import { Portal } from 'react-native-paper'
+import OpenExercise from '../../../components/workout/OpenExercise'
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 const IndexHome = () => {
   const router = useRouter();
@@ -32,6 +37,8 @@ const IndexHome = () => {
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [cardFlipAnimation, setCardFlipAnimation] = useState(false);
   const [switchContinuedWorkouts, setSwitchContinuedWorkouts] = useState(false);
+  const [openExercise, setOpenExercise] = useState(false);
+  const [exerciseOpen, setExerciseOpen] = useState({});
 
   // Rotate to next workout in schedule
   const findNextScheduleIndex = () => {
@@ -197,6 +204,22 @@ const IndexHome = () => {
   const truncate = (text, maxLength) =>
     text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 
+  const openTheExerciseFromWorkout = (exercise, workout) => {
+      //console.log(workout);
+      workoutToComeBackTo = workout;
+      setExerciseOpen(exercise);
+      setOpenExercise(true);
+    }
+
+    
+    const setOpenExerciseExtra = (value) => { // To set close from the openWorkout
+      setOpenExercise(value);
+      // Callback when closing
+      if (value===false) {
+        setModalVisible(true);
+      }
+    }
+
   let isThereWorkout = (continuedWorkout !== null && continuedWorkout.id !== "0") ? "yes" : (continuedWorkout !== null && continuedWorkout.id === "0") ? "rest" : "none";
   let isThereWorkoutNext = (continuedWorkoutNext !== null && continuedWorkoutNext.id !== "0") ? "yes" : (continuedWorkoutNext !== null && continuedWorkoutNext.id === "0") ? "rest" : "none";
 
@@ -208,6 +231,26 @@ const IndexHome = () => {
   // }
   return (
     <ThemedView style={styles.container}> 
+
+
+
+      {openExercise && (
+        <Portal >
+          <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
+
+
+
+              <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
+                <OpenExercise exercise={exerciseOpen} setOpenExercise={setOpenExerciseExtra} />
+              </Animated.View>
+
+            
+
+          </Animated.View>
+        </Portal>
+        
+      )}
+
       <SafeAreaView style={{flex: 1}} >
         <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}} contentContainerStyle={{paddingBottom: 120}}>
           {/* <BlueButton onPress={clearUserData} title={"[BETA] RESET USER DATA"} style={{marginLeft: 20}} /> */}
@@ -313,7 +356,7 @@ const IndexHome = () => {
         }}
       >
         {selectedWorkout !== null ? (
-        <StartWorkout workout={selectedWorkout} setModalVisible={setModalVisible} />
+        <StartWorkout workout={selectedWorkout} setModalVisible={setModalVisible}  openExercise={(e) => openTheExerciseFromWorkout(e, selectedWorkout)} />
         ) : null}
       </Modal>
 

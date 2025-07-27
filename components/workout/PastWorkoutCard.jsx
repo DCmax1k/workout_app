@@ -5,6 +5,7 @@ import formatDate from '../../util/formatDate'
 import formatDuration from '../../util/formatDuration'
 import clock from '../../assets/icons/clock.png'
 import weight from '../../assets/icons/weight.png'
+import whiteRunner from '../../assets/icons/whiteRunner.png'
 import { truncate } from '../../util/truncate'
 import { Colors } from '../../constants/Colors'
 import rightCarrot from '../../assets/icons/rightCarrot.png'
@@ -31,6 +32,17 @@ const PastWorkoutCard = ({style, data, setConfirmMenuData, setConfirmMenuActive,
                   });
     }
 
+    let showDistInstead = false;
+    if (!data.totalDistanceTraveled) {
+        showDistInstead = false;
+    } else if (data.totalWeightLifted === 0 && data.totalDistanceTraveled > 0) {
+        showDistInstead = true;
+    } else if (data.totalWeightLifted > 0 && data.totalDistanceTraveled === 0) {
+        showDistInstead = false;
+    } else if (data.totalWeightLifted === 0 && data.totalDistanceTraveled === 0) {
+        showDistInstead = false;
+    }
+
   return (
     <Pressable style={{flex: 1}} onPress={openWorkout}>
         <View style={[style, styles.card]}>
@@ -42,16 +54,25 @@ const PastWorkoutCard = ({style, data, setConfirmMenuData, setConfirmMenuActive,
         {/* Bottom side */}
         <View style={[styles.side, styles.bottom]}>
             <ThemedText style={{fontSize: 13}}>{formatDate(data.time)}</ThemedText>
+
             {/* Quick stats */}
             <View style={styles.quickStats}>
+
                 <View style={styles.quickStat}>
                     <Image source={clock} style={{height: 15, width: 15, objectFit: "contain", tintColor: "white", marginRight: 5}} />
                     <ThemedText style={{fontSize: 14, fontWeight: 600}}>{formatDuration(data.workoutLength)}</ThemedText>
                 </View>
-                <View style={[styles.quickStat, {marginLeft: 10}]}>
+
+                {!showDistInstead && (<View style={[styles.quickStat, {marginLeft: 10}]}>
                     <Image source={weight} style={{height: 20, width: 20, objectFit: "contain", tintColor: "white", marginRight: 5}} />
                     <ThemedText style={{fontSize: 14, fontWeight: 600}}>{parseInt(data.totalWeightLifted)} lbs</ThemedText>
-                </View>
+                </View>)}
+
+                {showDistInstead && (<View style={[styles.quickStat, {marginLeft: 10}]}>
+                    <Image source={whiteRunner} style={{height: 20, width: 20, objectFit: "contain", tintColor: "white", marginRight: 5}} />
+                    <ThemedText style={{fontSize: 14, fontWeight: 600}}>{parseInt(data.totalDistanceTraveled)} miles</ThemedText>
+                </View>)}
+
             </View>
         </View>
         {/* Absolute */}

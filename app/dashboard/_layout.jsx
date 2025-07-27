@@ -95,10 +95,11 @@ const Dashboard = () => {
     setTimeout(() => {setFinishWorkoutData(null);}, animateTime);
   }
 
+
   return user ? (
     <BottomSheetContext.Provider value={{ openSheet: handleSnapPress, closeSheet: handleCloseSheet, showFinishWorkout }}>
         <>
-          <Tabs tabBar={props => <TabBar animatedTabbarPosition={animatedTabbarPosition} {...props} />} screenOptions={{headerShown: false, headerStyle: { backgroundColor: theme.background, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0,}, headerTintColor: theme.title, tabBarStyle: { backgroundColor: "#000" }, tabBarActiveTintColor: theme.title, tabBarInactiveTintColor: "#868686", }}> 
+          <Tabs tabBar={props => <TabBar animatedTabbarPosition={animatedTabbarPosition} {...props} />} screenOptions={{animation: 'fade', headerShown: false, headerStyle: { backgroundColor: theme.background, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0,}, headerTintColor: theme.title, tabBarStyle: { backgroundColor: "#000" }, tabBarActiveTintColor: theme.title, tabBarInactiveTintColor: "#868686", }}> 
               <Tabs.Screen name="home" options={{ title: 'Home', headerTintColor: "transparent"  }} />
               <Tabs.Screen name="friends" options={{ title: 'Friends' }} />
               <Tabs.Screen name="workout" options={{ title: 'Workout' }} />

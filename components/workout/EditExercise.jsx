@@ -81,6 +81,15 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         updateExercise(index, newExercise);
     }
 
+    const metricTag = exercise.tracks.includes("weight") === "weight" ? "kgs" : "km";
+    const imperialTag = exercise.tracks.includes("weight") === "weight" ? "lbs" : "mile";
+
+    const getTrackingTag = (track) => {
+        if (track === "weight" || track === "weightPlus" || track === "mile") return exercise.unit === "metric" ? metricTag : imperialTag;
+        if (track === "weightPlus") return exercise.unit === "metric" ? (metricTag + "+") : (imperialTag + "+");
+        return track;
+    }
+
   return (
     <View style={{backgroundColor: activeWorkoutStyle ? "":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
@@ -88,7 +97,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
             <ActionMenu offset={activeWorkoutStyle} backgroundColor={activeWorkoutStyle?"transparent":"#DB8854"} data={[
                 {title: "Add note", icon: fileIcon, onPress: openNoteAndFocus, },
                 {title: "Rename exercise", icon: pencilIcon, onPress: () => exerciseNameRef.current?.focus()},
-                {title: exercise.unit === "metric" ? "Imperial unit (lb)" : "Metric unit (kg)", icon: dumbellIcon, onPress: switchUnit},
+                {title: exercise.unit === "metric" ? ("Imperial unit (" + imperialTag + ")") : ("Metric unit (" + metricTag + ")"), icon: dumbellIcon, onPress: switchUnit},
                 {title: "Delete exercise", icon: trashIcon, onPress: removeExercise}]} />
         </View>
 
@@ -99,9 +108,9 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         <View>
             {/* Top row, labels */}
             <View style={styles.row}>
-                <Text style={[styles.column, styles.column1]}>Sets</Text>
+                    <Text style={[styles.column, styles.column1]}>Sets</Text>
                 <>
-                {exercise.tracks.map(track => ( <Text key={track} style={styles.column}>{track==="weight" ? `${exercise.unit === "metric" ? "kgs" : "lbs"}` : track==="weightPlus" ? "+lbs" : track}</Text> ))}
+                    {exercise.tracks.map(track => ( <Text key={track} style={styles.column}>{getTrackingTag(track)}</Text> ))}
                 </>
                 {activeWorkoutStyle && (
                     <View style={[styles.columnForComplete, styles.completeButton]}>

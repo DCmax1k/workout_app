@@ -9,6 +9,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSpring, wit
 import party from '../../assets/icons/party.png'
 import Spacer from '../Spacer'
 import clock from '../../assets/icons/clock.png'
+import whiteRunner from '../../assets/icons/whiteRunner.png'
 import weight from '../../assets/icons/weight.png'
 import { useAudioPlayer } from 'expo-audio'
 import { useUserStore } from '../../stores/useUserStore'
@@ -26,6 +27,7 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
     const successPlayer = useAudioPlayer(audioSource);
 
     const user = useUserStore(state => state.user);
+    
     const updateUser = useUserStore(state => state.updateUser);
 
     const [confirmMenuActive, setConfirmMenuActive] = useState(false);
@@ -178,10 +180,14 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
                                     <Image source={clock} style={{height: 15, width: 15, objectFit: "contain", tintColor: "white", marginRight: 5}} />
                                     <ThemedText style={{fontSize: 14, fontWeight: 600}}>{formatDuration(data.workoutLength)}</ThemedText>
                                 </View>
-                                <View style={styles.quickStat}>
+                                {data.totalWeightLifted > 0 && (<View style={styles.quickStat}>
                                     <Image source={weight} style={{height: 20, width: 20, objectFit: "contain", tintColor: "white", marginRight: 5}} />
-                                    <ThemedText style={{fontSize: 14, fontWeight: 600}}>{parseInt(data.totalWeightLifted)} lbs</ThemedText>
-                                </View>
+                                    <ThemedText style={{fontSize: 14, fontWeight: 600}}>{`${parseInt(data.totalWeightLifted)} lbs`}</ThemedText>
+                                </View>)}
+                                {data.totalDistanceTraveled > 0 && (<View style={styles.quickStat}>
+                                    <Image source={whiteRunner} style={{height: 20, width: 20, objectFit: "contain", tintColor: "white", marginRight: 5}} />
+                                    <ThemedText style={{fontSize: 14, fontWeight: 600}}>{`${parseInt(data.totalDistanceTraveled)} miles`}</ThemedText>
+                                </View>)}
                             </View>
                             <View style={[styles.moreDepth]}>
                                 <View style={styles.column}>

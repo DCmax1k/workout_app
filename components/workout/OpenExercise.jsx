@@ -9,6 +9,7 @@ import Spacer from '../Spacer';
 import noimage from '../../assets/icons/noimage.png';
 import GlowImage from '../GlowImage';
 import WorkoutDescription from './WorkoutDescription';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -40,20 +41,22 @@ const OpenExercise = ({style, exercise, setOpenExercise, ...props}) => {
       </View>
 
       <Spacer height={20} />
-      
-      
+
       <SectionSelect section={section} setSection={setSection} sections={["About", "Progress", "History"]} />
 
       <Spacer height={20} />
+      
+      {/* Screens differ here */}
+      {section === "About" && <Animated.View entering={FadeIn} exiting={FadeOut}>
 
-      {/* IMAGE */}
+        {/* IMAGE */}
         <View style={styles.imageContCont}>
           <View style={styles.imageCont}>
             <GlowImage disable={true} style={[styles.image, isImage ? {} : {width: 30, height: 30, margin: "auto"}]} source={exercise.image || noimage} id={exercise.id} />
           </View>
         </View>
 
-      <Spacer height={10} />
+        <Spacer height={10} />
 
         {/* Muscle groups */}
         <View style={{flexDirection: 'row', marginTop: 5, flexWrap: 'wrap', justifyContent: "center"}}>
@@ -63,10 +66,24 @@ const OpenExercise = ({style, exercise, setOpenExercise, ...props}) => {
         </View>
 
         <Spacer height={5} />
-        
+          
         {/* Description */}
         <Text style={{color: "white", fontSize: 14, fontWeight: 300, padding: 10, textAlign: "center"}}>{exercise.description || ''}</Text>
-        
+          
+      </Animated.View>}
+
+      {/* Progress screen - Charts and graphs */}
+      {section === "Progress" && <Animated.View entering={FadeIn} exiting={FadeOut}>
+          <Text>Progress</Text>
+      </Animated.View>}
+
+      {/* History screen - Past workouts with exercise */}
+      {section === "History" && <Animated.View entering={FadeIn} exiting={FadeOut}>
+          <Text>History</Text>
+      </Animated.View>}
+
+      
+      
 
     </View>
   )

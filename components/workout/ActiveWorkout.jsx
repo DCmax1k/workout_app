@@ -115,8 +115,10 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
 
     const finish = () => {
         const ultimateCloneOfActiveWorkout = JSON.parse(JSON.stringify(workout));
+        const currentTime = Date.now();
 
         let totalWeightLifted = 0;
+        let totalDistanceTraveled = 0;
         const completedExercises = [];
         const usersCompletedExercises = user.completedExercises;
         workout.exercises.forEach(exercise => {
@@ -124,13 +126,14 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
             if (completeSets.length < 1) return;
             completeSets.forEach(s => {
                 if (s["weight"]) totalWeightLifted+=parseFloat(s["weight"])*parseInt(s["reps"]);
-                else if (s["weightPlus"]) totalWeightLifted+=parseFloat(s["weightPlus"])*parseInt(s["reps"]);
+                if (s["weightPlus"]) totalWeightLifted+=parseFloat(s["weightPlus"])*parseInt(s["reps"]);
+                if (s["mile"]) totalDistanceTraveled+=parseFloat(s["mile"]);
             });
             const dbExercise = allExercises.find(e => e.id === exercise.id);
             const exerciseData = {
                 id: exercise.id,
                 name: exercise.name || dbExercise.name,
-                date: Date.now(),
+                date: currentTime,
                 sets: completeSets,
                 shared: true,
                 tracks: exercise.tracks,
@@ -147,7 +150,6 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
         }
         
          // Save each completed exercise
-         const currentTime = Date.now();
          const workoutLength = currentTime - workout.startTime;
  
          // Finish screen data
@@ -156,6 +158,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
              time: currentTime,
              workoutLength,
              totalWeightLifted,
+             totalDistanceTraveled,
              exercises: completedExercises,
 
              fullWorkout: ultimateCloneOfActiveWorkout, // Used to save if user chooses to

@@ -1,4 +1,4 @@
-import { Dimensions, Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Dimensions, Image, Modal, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
@@ -15,7 +15,12 @@ import TitleWithBack from '../../../components/TitleWithBack'
 import plus from '../../../assets/icons/plus.png'
 import SwipeToDelete from '../../../components/SwipeToDelete'
 import ConfirmMenu from '../../../components/ConfirmMenu'
-import Animated, { LinearTransition } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown, LinearTransition } from 'react-native-reanimated'
+import { Portal } from 'react-native-paper'
+import OpenExercise from '../../../components/workout/OpenExercise'
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 const IndexWorkout = () => {
     const user = useUserStore((state) => state.user);
@@ -33,8 +38,12 @@ const IndexWorkout = () => {
     });
     const workoutsInRotation = user.schedule.rotation.filter(id => id !== "0").length;
 
+    let workoutToComeBackTo = null;
+
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedWorkout, setSelectedWorkout] = useState(null);
+    const [openExercise, setOpenExercise] = useState(false);
+    const [exerciseOpen, setExerciseOpen] = useState({});
 
     const swipeRefs = useRef([]);
     
@@ -83,9 +92,45 @@ const IndexWorkout = () => {
     const truncate = (text, maxLength) =>
       text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 
+    const openTheExerciseFromWorkout = (exercise, workout) => {
+      //console.log(workout);
+      workoutToComeBackTo = workout;
+      setExerciseOpen(exercise);
+      setOpenExercise(true);
+    }
+
+    
+    const setOpenExerciseExtra = (value) => { // To set close from the openWorkout
+      setOpenExercise(value);
+      // Callback when closing
+      if (value===false) {
+        setModalVisible(true);
+      }
+    }
+
 
   return (
     <ThemedView  style={styles.container}>
+
+
+
+      {openExercise && (
+        <Portal >
+          <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
+
+
+
+              <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
+                <OpenExercise exercise={exerciseOpen} setOpenExercise={setOpenExerciseExtra} />
+              </Animated.View>
+
+            
+
+          </Animated.View>
+        </Portal>
+        
+      )}
+
       <SafeAreaView style={{ flex: 1 }}>
         <TitleWithBack style={{marginHorizontal: 0}} backBtn={false} title={"Workout"} actionBtn={{active: true, image: require("../../../assets/icons/history.png"), action: () => router.push("/dashboard/workout/workouthistory")}} />
         <Spacer height={20} />
@@ -163,7 +208,9 @@ const IndexWorkout = () => {
 
         </Animated.ScrollView>
       </SafeAreaView>
-      <Modal
+
+
+    <Modal
         visible={modalVisible}
         animationType='slide'
         presentationStyle='pageSheet'
@@ -172,9 +219,11 @@ const IndexWorkout = () => {
         }}
       >
         {selectedWorkout !== null ? (
-        <StartWorkout workout={selectedWorkout} setModalVisible={setModalVisible} />
+        <StartWorkout workout={selectedWorkout} setModalVisible={setModalVisible} openExercise={(e) => openTheExerciseFromWorkout(e, selectedWorkout)} />
         ) : null}
       </Modal>
+
+      
     </ThemedView>
   )
 }
