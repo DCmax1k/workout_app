@@ -1,4 +1,4 @@
-import { Alert, Dimensions, FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, Dimensions, FlatList, Image, InteractionManager, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import ThemedView from '../ThemedView'
 import ThemedText from '../ThemedText'
@@ -10,11 +10,13 @@ import Exercise from './Exercise'
 import { router } from 'expo-router'
 import Spacer from '../Spacer'
 import { useBottomSheet } from '../../context/BottomSheetContext'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { runOnJS, runOnUI } from 'react-native-reanimated'
 
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
+const screenWidth = Dimensions.get('screen').width;
+const screenHeight = Dimensions.get('screen').height;
 
-const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, ...props}) => {
+const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, openSheetForAndroid = () => {}, ...props}) => {
     const user = useUserStore((state) => state.user);
     const updateUser = useUserStore((state) => state.updateUser);
     const availableExercises = [...user.createdExercises, ...Exercises.filter(ex => !user.createdExercises.map(e => e.id).includes(ex.id))];
@@ -77,8 +79,14 @@ const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, ...pr
 
         updateUser({activeWorkout: clonedWorkout});
 
-        setModalVisible(false);
         openSheet(1);
+        openSheetForAndroid();
+
+
+        setModalVisible(false);
+
+        
+        
     }
 
     const openExerciseFromModal = (exercise) => {
@@ -87,9 +95,9 @@ const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, ...pr
     }
 
   return (
-        <ThemedView style={{ padding: 20, position: 'relative', height: screenHeight-50, width: screenWidth,}} {...props}>
+        <ThemedView style={{ paddingHorizontal: 20, paddingTop: Platform.OS === 'ios' ? 20 : 0, position: 'relative', height: screenHeight, width: screenWidth, elevation: 20}} {...props}>
 
-
+            <SafeAreaView></SafeAreaView>
             <View style={styles.actionButtons}>
                 <View>
                     <Pressable onPress={() => setModalVisible(false)}>
@@ -161,7 +169,7 @@ const styles = StyleSheet.create({
 
         position: "absolute",
         width: screenWidth,
-        bottom: 50,
+        bottom: 100,
         left: 0,
         justifyContent: 'center',
         alignItems: "center",

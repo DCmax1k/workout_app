@@ -8,6 +8,7 @@ import { PaperProvider, Portal } from 'react-native-paper'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { FadeIn } from 'react-native-reanimated'
 import { StatusBar } from 'expo-status-bar'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 const RootLayout = () => {
   const colorScheme = useColorScheme()
@@ -33,31 +34,38 @@ const RootLayout = () => {
   const isIos = Platform.OS === 'ios';
   
   return (
-    <PaperProvider>
-      <StatusBar style="light" />
-      <GestureHandlerRootView>
-      <Stack screenOptions={{contentStyle: {backgroundColor: theme.background,}}}>
-          <Stack.Screen name='index' options={{ headerShown: false }} />
-          <Stack.Screen name="dashboard" options={{ headerShown: false }} />
-          <Stack.Screen name="editworkout" options={{ headerShown: false }} />
-          <Stack.Screen name="loading" options={{ headerShown: true }} />
-          <Stack.Screen name="login" options={{ headerShown: true }} />
-          <Stack.Screen name="previewWorkout" options={{ headerShown: false }} />
+    <View style={{ flex: 1, backgroundColor: "#000" }}>
+      <PaperProvider>
+        <StatusBar style="light" />
+        <GestureHandlerRootView>
+        
+          <SafeAreaProvider>
+            <Stack screenOptions={{contentStyle: {backgroundColor: theme.background,}}}>
+              <Stack.Screen name='index' options={{ headerShown: false }} />
+              <Stack.Screen name="dashboard" options={{ headerShown: false }} />
+              <Stack.Screen name="editworkout" options={{ headerShown: false }} />
+              <Stack.Screen name="loading" options={{ headerShown: true }} />
+              <Stack.Screen name="login" options={{ headerShown: true }} />
+              <Stack.Screen name="previewWorkout" options={{ headerShown: false }} />
 
-          <Stack.Screen name="GlowImageCont" options={{ headerShown: false, animation: "fade_from_bottom" }} />
-        </Stack>
+              <Stack.Screen name="GlowImageCont" options={{ headerShown: false, animation: "fade" }} />
+            </Stack>
 
-        <KeyboardAvoidingView style={{position: "absolute", bottom: -10, right: 20, paddingBottom: 10, zIndex: 100, marginBottom: isIos ? -50 : 0,}} behavior={isIos ? 'position' : 'height'}>
-            <Pressable style={[styles.disKeyboard, { display: isIos ? "block" : keyboardVisible ? "block" : "none"}]} onPress={() => {Keyboard.dismiss(); setKeyboardVisible(false)}} >
-              <Image style={{height: 30, width: 30, objectFit: 'contain'}} source={keyboardIcon} />
-            </Pressable>
-          </KeyboardAvoidingView>
+            <KeyboardAvoidingView style={{position: "absolute", bottom: -10, right: 20, paddingBottom: 10, zIndex: 100, marginBottom: isIos ? -50 : 0,}} behavior={isIos ? 'position' : 'height'}>
+                <Pressable style={[styles.disKeyboard, { display: isIos ? "block" : keyboardVisible ? "block" : "none"}]} onPress={() => {Keyboard.dismiss(); setKeyboardVisible(false)}} >
+                  <Image style={{height: 30, width: 30, objectFit: 'contain'}} source={keyboardIcon} />
+                </Pressable>
+            </KeyboardAvoidingView>
+
+            
+          </SafeAreaProvider>
+        
 
           
-
-        
-      </GestureHandlerRootView>
-    </PaperProvider>
+        </GestureHandlerRootView>
+      </PaperProvider>
+      
+    </View>
     
       
   )

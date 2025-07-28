@@ -1,4 +1,4 @@
-import { Alert, Dimensions, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
@@ -6,6 +6,7 @@ import BlueButton from '../../../components/BlueButton'
 import { router } from 'expo-router'
 import PreviewData from '../../../components/PreviewData'
 import { useUserStore } from '../../../stores/useUserStore'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 
 const screenWidth = Dimensions.get('window').width;

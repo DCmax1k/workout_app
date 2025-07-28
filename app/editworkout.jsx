@@ -1,4 +1,4 @@
-import { Alert, Image, Keyboard, KeyboardAvoidingView, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, Dimensions, Image, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import ThemedView from '../components/ThemedView'
 import { useUserStore } from '../stores/useUserStore'
@@ -15,8 +15,12 @@ import ActionMenu from '../components/ActionMenu'
 import trashIcon from '../assets/icons/trash.png'
 import { workoutToSimple } from '../util/workoutToSimple'
 import ConfirmMenu from '../components/ConfirmMenu'
-import Animated, { LinearTransition } from 'react-native-reanimated'
+import Animated, { LinearTransition, SlideInDown, SlideOutDown } from 'react-native-reanimated'
 import SwipeToDelete from '../components/SwipeToDelete'
+import { SafeAreaView } from 'react-native-safe-area-context'
+
+const screenHeight = Dimensions.get("screen").height;
+const screenWidth = Dimensions.get("screen").width;
 
 const EditWorkout = () => {
   const workoutNameInputRef = useRef(null);
@@ -176,7 +180,8 @@ const EditWorkout = () => {
           </Animated.ScrollView>
         </SafeAreaView>
 
-        <Modal
+            {Platform.OS === 'ios' ? (
+              <Modal
               visible={exerciseModal}
               animationType='slide'
               presentationStyle='pageSheet'
@@ -184,8 +189,14 @@ const EditWorkout = () => {
                 setExerciseModal(false)
               }}
           >
-              <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} />
-        </Modal>
+                <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} />
+          </Modal>
+            ) : (exerciseModal === true ? (
+                    <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{position: "absolute", top: 0, left: 0, height: screenHeight, width: screenWidth, zIndex: 5, elevation: 5}}>
+                        <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} notModal={true} />
+                    </Animated.View>
+                ) : null)}
+        
         
       </ThemedView>
     </PaperProvider>

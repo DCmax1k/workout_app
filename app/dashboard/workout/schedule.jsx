@@ -1,4 +1,4 @@
-import { Alert, FlatList, Image, LayoutAnimation, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, FlatList, Image, LayoutAnimation, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
@@ -7,6 +7,7 @@ import { useUserStore } from '../../../stores/useUserStore'
 import TitleWithBack from '../../../components/TitleWithBack'
 import { router } from 'expo-router'
 import Animated, { FadeIn, FadeOut, Layout, LinearTransition, StretchInY, StretchOutY } from 'react-native-reanimated'
+import { SafeAreaView } from 'react-native-safe-area-context'
 const { getState } = useUserStore
 const rightArrow = require('../../../assets/icons/rightArrow.png')
 const hamburger = require('../../../assets/icons/hamburger.png')
@@ -116,7 +117,7 @@ export default Schedule
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: 20,
+      paddingHorizontal: 20,
     },  
     listItem: {
         padding: 10,

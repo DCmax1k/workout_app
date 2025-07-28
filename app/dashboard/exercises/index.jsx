@@ -1,4 +1,4 @@
-import { Dimensions, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Dimensions, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 // import { AlphabetList } from "react-native-section-alphabet-list";
 import AlphabetList from "react-native-flatlist-alphabet";
@@ -18,9 +18,10 @@ import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from 'react-native
 import { filter } from 'd3';
 import { PaperProvider, Portal, Provider } from 'react-native-paper';
 import SwipeToDelete from '../../../components/SwipeToDelete';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
+const screenWidth = Dimensions.get("screen").width;
+const screenHeight = Dimensions.get("screen").height;
 
 const ExercisesIndex = () => {
   const user = useUserStore((state) => state.user);

@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
@@ -6,6 +6,7 @@ import TitleWithBack from '../../../components/TitleWithBack'
 import { useUserStore } from '../../../stores/useUserStore'
 import BlueButton from '../../../components/BlueButton'
 import Spacer from '../../../components/Spacer'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Profile = () => {
     const user = useUserStore((state) => state.user);
@@ -32,7 +33,7 @@ export default Profile
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: 20,
+      paddingHorizontal: 20,
     },
     
   })

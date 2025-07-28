@@ -11,7 +11,7 @@ import Animated, { Extrapolation, interpolate, useAnimatedStyle, useDerivedValue
 import FinishWorkout from '../../components/workout/FinishWorkout'
 import { PaperProvider, Provider } from 'react-native-paper'
 
-const screenHeight = Dimensions.get("window").height;
+const screenHeight = Dimensions.get("screen").height;
 
 const Dashboard = () => {
   const user = useUserStore((state) => state.user);

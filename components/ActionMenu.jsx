@@ -11,7 +11,7 @@ import { Portal } from 'react-native-paper';
 import threeEllipses from '../assets/icons/threeEllipses.png';
 import Animated, { FadeIn, FadeOut, LightSpeedInRight, ZoomInRight, ZoomOutRight } from 'react-native-reanimated';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 const MENU_WIDTH = 250;
 const ITEM_HEIGHT = 40;
 

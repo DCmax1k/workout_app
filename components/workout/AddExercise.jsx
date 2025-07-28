@@ -17,6 +17,7 @@ import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from 'react-native
 import Search from '../Search'
 import searchExercise from '../../util/searchExercise'
 import keyboardIcon from '../../assets/icons/keyboard.png';
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 
 const screenWidth = Dimensions.get("window").width;
@@ -65,7 +66,7 @@ function customTitle(title) {
 // }
 
 
-const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props}) => {
+const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomSheet=false, ...props}) => {
     const user = useUserStore((state) => state.user);
 
     const [exercisesToAdd, setExercisesToAdd] = useState([]);
@@ -118,8 +119,8 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props})
   return (
     <Portal.Host>
         <ThemedView style={{flex: 1, padding: 20}}>
-
-            {createExercise && (
+            <SafeAreaView>
+                {createExercise && (
             <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}}>
 
                     <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 0, left: 10, zIndex: 2}}>
@@ -159,7 +160,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props})
             <Spacer height={10} />
 
             
-            {notModal ? (
+            {bottomSheet ? (
                <BottomSheetSectionList 
                keyboardDismissMode={"on-drag"}
                sections={sectionalData}
@@ -190,6 +191,11 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, ...props})
                 
             />
             )}
+
+            
+            </SafeAreaView>
+
+            
             
 
 

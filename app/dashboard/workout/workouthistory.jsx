@@ -1,4 +1,4 @@
-import { SafeAreaView, SectionList, StyleSheet, Text, View } from 'react-native'
+import { SectionList, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import TitleWithBack from '../../../components/TitleWithBack'
@@ -9,6 +9,7 @@ import Spacer from '../../../components/Spacer'
 import ConfirmMenu from '../../../components/ConfirmMenu'
 import { Provider } from 'react-native-paper'
 import SwipeToDelete from '../../../components/SwipeToDelete'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 function formatMonthYear(date) {
   const month = date.toLocaleString('default', { month: 'long' }).toUpperCase(); // "MAY"
@@ -49,7 +50,7 @@ const WorkoutHistory = () => {
 
   return (
     <Provider>
-        <ThemedView style={{flex: 1, padding: 20}}>
+        <ThemedView style={{flex: 1, paddingHorizontal: 20}}>
           <SafeAreaView style={{flex: 1}}>
               <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
 

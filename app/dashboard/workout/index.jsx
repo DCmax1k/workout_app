@@ -1,4 +1,4 @@
-import { Dimensions, Image, Modal, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Dimensions, Image, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
@@ -15,12 +15,14 @@ import TitleWithBack from '../../../components/TitleWithBack'
 import plus from '../../../assets/icons/plus.png'
 import SwipeToDelete from '../../../components/SwipeToDelete'
 import ConfirmMenu from '../../../components/ConfirmMenu'
-import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown, LinearTransition } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown, LinearTransition, SlideInDown, SlideOutDown } from 'react-native-reanimated'
 import { Portal } from 'react-native-paper'
 import OpenExercise from '../../../components/workout/OpenExercise'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { useBottomSheet } from '../../../context/BottomSheetContext'
 
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
+const screenWidth = Dimensions.get("screen").width;
+const screenHeight = Dimensions.get("screen").height;
 
 const IndexWorkout = () => {
     const user = useUserStore((state) => state.user);
@@ -106,6 +108,11 @@ const IndexWorkout = () => {
       if (value===false) {
         setModalVisible(true);
       }
+    }
+
+    const { openSheet } = useBottomSheet();
+    const openSheetForAndroid = () => {
+      openSheet(1);
     }
 
 
@@ -209,19 +216,32 @@ const IndexWorkout = () => {
         </Animated.ScrollView>
       </SafeAreaView>
 
+          {Platform.OS === 'ios' ? (
+            <Modal
+              visible={modalVisible}
+              animationType='slide'
+              presentationStyle='pageSheet'
+              onRequestClose={() => {
+                setModalVisible(false)
+              }}
+            >
+              {selectedWorkout !== null ? (
+              <StartWorkout workout={selectedWorkout} setModalVisible={setModalVisible} openExercise={(e) => openTheExerciseFromWorkout(e, selectedWorkout)} />
+              ) : null}
+            </Modal>
+          ) : ( modalVisible === true ? (
+            <Portal>
+              <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{position: "absolute", top: 0, left: 0, height: screenHeight, width: screenWidth, zIndex: 5, elevation: 5}}>
+                    {selectedWorkout !== null ? (
+                      <StartWorkout workout={selectedWorkout} setModalVisible={setModalVisible} openExercise={(e) => openTheExerciseFromWorkout(e, selectedWorkout)} openSheetForAndroid={openSheetForAndroid} />
+                    ) : null}
+                </Animated.View>
+            </Portal>
+              
 
-    <Modal
-        visible={modalVisible}
-        animationType='slide'
-        presentationStyle='pageSheet'
-        onRequestClose={() => {
-          setModalVisible(false)
-        }}
-      >
-        {selectedWorkout !== null ? (
-        <StartWorkout workout={selectedWorkout} setModalVisible={setModalVisible} openExercise={(e) => openTheExerciseFromWorkout(e, selectedWorkout)} />
-        ) : null}
-      </Modal>
+              
+          ) : null)}
+    
 
       
     </ThemedView>

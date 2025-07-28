@@ -1,4 +1,4 @@
-import { Alert, Button, Dimensions, Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, Button, Dimensions, Image, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Link, Slot, Stack, useRouter } from 'expo-router'
 import ThemedView from '../../../components/ThemedView'
@@ -18,9 +18,10 @@ import WorkoutDescription from '../../../components/workout/WorkoutDescription'
 import { useBottomSheet } from '../../../context/BottomSheetContext'
 import { generateUniqueId } from '../../../util/uniqueId'
 import playCircle from '../../../assets/icons/playCircle.png'
-import Animated, { Easing, FadeIn, FadeInDown, FadeOut, FadeOutDown, FlipInXUp, FlipOutXDown, runOnJS, useAnimatedStyle, useSharedValue, withSequence, withTiming, ZoomIn } from 'react-native-reanimated'
+import Animated, { Easing, FadeIn, FadeInDown, FadeOut, FadeOutDown, FlipInXUp, FlipOutXDown, runOnJS, SlideInDown, SlideOutDown, useAnimatedStyle, useSharedValue, withSequence, withTiming, ZoomIn } from 'react-native-reanimated'
 import { Portal } from 'react-native-paper'
 import OpenExercise from '../../../components/workout/OpenExercise'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -220,6 +221,10 @@ const IndexHome = () => {
       }
     }
 
+    const openSheetForAndroid = () => {
+      openSheet(1);
+    }
+
   let isThereWorkout = (continuedWorkout !== null && continuedWorkout.id !== "0") ? "yes" : (continuedWorkout !== null && continuedWorkout.id === "0") ? "rest" : "none";
   let isThereWorkoutNext = (continuedWorkoutNext !== null && continuedWorkoutNext.id !== "0") ? "yes" : (continuedWorkoutNext !== null && continuedWorkoutNext.id === "0") ? "rest" : "none";
 
@@ -347,7 +352,9 @@ const IndexHome = () => {
         </ScrollView>
 
       </SafeAreaView>
-      <Modal
+
+
+      {/* <Modal
         visible={modalVisible}
         animationType='slide'
         presentationStyle='pageSheet'
@@ -358,7 +365,32 @@ const IndexHome = () => {
         {selectedWorkout !== null ? (
         <StartWorkout workout={selectedWorkout} setModalVisible={setModalVisible}  openExercise={(e) => openTheExerciseFromWorkout(e, selectedWorkout)} />
         ) : null}
-      </Modal>
+      </Modal> */}
+      {Platform.OS === 'ios' ? (
+            <Modal
+              visible={modalVisible}
+              animationType='slide'
+              presentationStyle='pageSheet'
+              onRequestClose={() => {
+                setModalVisible(false)
+              }}
+            >
+              {selectedWorkout !== null ? (
+              <StartWorkout workout={selectedWorkout} setModalVisible={setModalVisible} openExercise={(e) => openTheExerciseFromWorkout(e, selectedWorkout)} />
+              ) : null}
+            </Modal>
+          ) : ( modalVisible === true ? (
+            <Portal>
+              <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{position: "absolute", top: 0, left: 0, height: screenHeight, width: "100%", zIndex: 5, elevation: 5}}>
+                    {selectedWorkout !== null ? (
+                      <StartWorkout workout={selectedWorkout} setModalVisible={setModalVisible} openExercise={(e) => openTheExerciseFromWorkout(e, selectedWorkout)} openSheetForAndroid={openSheetForAndroid} />
+                    ) : null}
+                </Animated.View>
+            </Portal>
+              
+
+              
+          ) : null)}
 
 
     </ThemedView>
@@ -375,7 +407,7 @@ const styles = StyleSheet.create({
   welcomeCont: {
     width: '100%',
     flexDirection: 'row',
-    marginTop: 40,
+    marginTop: 10,
     justifyContent: 'space-between',
     alignItems: 'center',
   },

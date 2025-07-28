@@ -1,4 +1,4 @@
-import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import ThemedView from '../ThemedView'
 import ThemedText from '../ThemedText'
@@ -20,6 +20,7 @@ import { workoutToSimple } from '../../util/workoutToSimple'
 import formatDate from '../../util/formatDate'
 import formatDuration from '../../util/formatDuration'
 import { truncate } from '../../util/truncate'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const audioSource = require("../../assets/sounds/success.wav");
 

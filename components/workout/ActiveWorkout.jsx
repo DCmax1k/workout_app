@@ -1,7 +1,7 @@
 import { Alert, Dimensions, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import Timer from '../Timer'
-import Animated from 'react-native-reanimated';
+import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated';
 import { useUserStore } from '../../stores/useUserStore';
 import { useBottomSheet } from '../../context/BottomSheetContext'
 import EditExercise from './EditExercise';
@@ -13,7 +13,8 @@ import { Exercises } from '../../constants/Exercises';
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import ConfirmMenu from '../ConfirmMenu';
 
-const screenHeight = Dimensions.get("window").height;
+const screenHeight = Dimensions.get("screen").height;
+const screenWidth = Dimensions.get("screen").width;
 
 const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPosition, ...props}) => {
     const user = useUserStore(state => state.user);
@@ -231,11 +232,11 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                     >
                         <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} />
                     </Modal>
-                ):(
-                    <View style={{position: "absolute", top: exerciseModal ? 0 : screenHeight, left: 0, height: screenHeight, width: "100%", zIndex: 5, elevation: 5}}>
-                        <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} notModal={true} />
-                    </View>
-                )}
+                ): ( exerciseModal === true ? (
+                    <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{position: "absolute", top: 0, left: 0, height: screenHeight, width: screenWidth, zIndex: 5, elevation: 5}}>
+                        <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} bottomSheet={true} notModal={true} />
+                    </Animated.View>
+                ) : null)}
             </PaperProvider>
             
             

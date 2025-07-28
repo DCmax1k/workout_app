@@ -1,4 +1,4 @@
-import { Dimensions, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import ThemedView from '../components/ThemedView'
 import TitleWithBack from '../components/TitleWithBack'
@@ -6,6 +6,7 @@ import WorkoutPreview from '../components/workout/WorkoutPreview'
 import { router, useLocalSearchParams } from 'expo-router'
 import ConfirmMenu from '../components/ConfirmMenu'
 import { useUserStore } from '../stores/useUserStore'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
