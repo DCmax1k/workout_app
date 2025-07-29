@@ -81,8 +81,8 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         updateExercise(index, newExercise);
     }
 
-    const metricTag = exercise.tracks.includes("weight") === "weight" ? "kgs" : "km";
-    const imperialTag = exercise.tracks.includes("weight") === "weight" ? "lbs" : "mile";
+    const metricTag = exercise.tracks.includes("weight") ? "kgs" : "km";
+    const imperialTag = exercise.tracks.includes("weight") ? "lbs" : "mile";
 
     const getTrackingTag = (track) => {
         if (track === "weight" || track === "weightPlus" || track === "mile") return exercise.unit === "metric" ? metricTag : imperialTag;

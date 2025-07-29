@@ -14,7 +14,7 @@ const CreateExercise = ({setCreateExercise, callback = () => {}, ...props}) => {
 
     const muscleGroupData = [{id: "0", title: "Chest"}, {id: 1, title: "Abs"}, {id: "2", title: 'Back'}, {id: "3", title: "Bicep"}, {id: "4", title: "Tricep"}, {id: "5", title: "Forearm"}, {id: "6", title: "Shoulder"}, {id: "7", title: "Leg"}, {id: "8", title: "Other"}];
     const categoryData = [{id: "0", title: "Strength - [Weight and reps]"}, {id: "1", title: "Cardio - [Time and distance]"}, {id: "2", title: 'Distance only'}, {id: "3", title: "Reps only"}];
-    const categoryDataTracking = [['weight', 'reps'], ['time', 'mile'], ['mile'], ['reps']];
+    const categoryDataTracking = [['weight', 'reps'], ['mile', 'time'], ['mile'], ['reps']];
 
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -26,7 +26,7 @@ const CreateExercise = ({setCreateExercise, callback = () => {}, ...props}) => {
         const muscleGroups = muscleGroupIds.map(id => muscleGroupData.find(d => d.id === id).title);
 
         if (name.length < 1) return Alert.alert("Please add a name");
-        if (muscleGroupIds.length < 1) return Alert.alert("Please choose at least 1 muscle group");
+        //if (muscleGroupIds.length < 1) return Alert.alert("Please choose at least 1 muscle group");
 
         const exercise = {
             name,

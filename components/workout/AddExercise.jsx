@@ -20,8 +20,8 @@ import keyboardIcon from '../../assets/icons/keyboard.png';
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
+const screenWidth = Dimensions.get("screen").width;
+const screenHeight = Dimensions.get("screen").height;
 
 function groupExercisesBySection(exercises) {
     const grouped = {};
@@ -119,9 +119,8 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
   return (
     <Portal.Host>
         <ThemedView style={{flex: 1, padding: 20}}>
-            <SafeAreaView>
-                {createExercise && (
-            <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}}>
+            {createExercise && (
+            <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", left: 0, top: 0, width: screenWidth, height: screenHeight, zIndex: 2}}>
 
                     <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 0, left: 10, zIndex: 2}}>
                         <CreateExercise setCreateExercise={setCreateExercise} callback={(exerciseID) => selectExercise(exerciseID) } />
@@ -129,6 +128,8 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
 
             </Animated.View>
             )}
+            <SafeAreaView>
+                
 
 
             <View style={styles.actionButtons}>
