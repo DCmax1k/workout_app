@@ -24,7 +24,7 @@ function formatMonthYear(date) {
   return `${month} ${year}`; // "MAY 2025"
 }
 
-const ExerciseHistory = ({style, exercise, forceCloseOpenExercise, ...props}) => {
+const ExerciseHistory = ({style, exercise, forceCloseOpenExercise = () => {}, ...props}) => {
   const user = useUserStore(state => state.user);
   
   const pastWorkouts = user.pastWorkouts || [];
