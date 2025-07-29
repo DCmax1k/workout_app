@@ -16,7 +16,7 @@ import { runOnJS, runOnUI } from 'react-native-reanimated'
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 
-const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, openSheetForAndroid = () => {}, ...props}) => {
+const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, setExerciseOpen = () => {}, openSheetForAndroid = () => {}, ...props}) => {
     const user = useUserStore((state) => state.user);
     const updateUser = useUserStore((state) => state.updateUser);
     const availableExercises = [...user.createdExercises, ...Exercises.filter(ex => !user.createdExercises.map(e => e.id).includes(ex.id))];

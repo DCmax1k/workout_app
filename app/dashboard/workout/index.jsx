@@ -128,7 +128,7 @@ const IndexWorkout = () => {
 
 
               <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
-                <OpenExercise exercise={exerciseOpen} setOpenExercise={setOpenExerciseExtra} />
+                <OpenExercise exercise={exerciseOpen} setOpenExercise={setOpenExerciseExtra} forceCloseOpenExercise={() => setOpenExercise(false)} />
               </Animated.View>
 
             
@@ -226,14 +226,14 @@ const IndexWorkout = () => {
               }}
             >
               {selectedWorkout !== null ? (
-              <StartWorkout workout={selectedWorkout} setModalVisible={setModalVisible} openExercise={(e) => openTheExerciseFromWorkout(e, selectedWorkout)} />
+              <StartWorkout workout={selectedWorkout} setModalVisible={setModalVisible} openExercise={(e) => openTheExerciseFromWorkout(e, selectedWorkout)} setExerciseOpen={setExerciseOpen} />
               ) : null}
             </Modal>
           ) : ( modalVisible === true ? (
             <Portal>
               <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{position: "absolute", top: 0, left: 0, height: screenHeight, width: screenWidth, zIndex: 5, elevation: 5}}>
                     {selectedWorkout !== null ? (
-                      <StartWorkout workout={selectedWorkout} setModalVisible={setModalVisible} openExercise={(e) => openTheExerciseFromWorkout(e, selectedWorkout)} openSheetForAndroid={openSheetForAndroid} />
+                      <StartWorkout workout={selectedWorkout} setModalVisible={setModalVisible} openExercise={(e) => openTheExerciseFromWorkout(e, selectedWorkout)} setExerciseOpen={setExerciseOpen} openSheetForAndroid={openSheetForAndroid} />
                     ) : null}
                 </Animated.View>
             </Portal>

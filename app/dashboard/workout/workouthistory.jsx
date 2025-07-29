@@ -56,7 +56,7 @@ const WorkoutHistory = () => {
 
               <TitleWithBack title={"Workout History"} style={{marginLeft: -20}} />
 
-              <Spacer size={20} />
+              <Spacer size={10} />
 
               
 
@@ -68,8 +68,6 @@ const WorkoutHistory = () => {
                     return (
                         <PastWorkoutCard
                           data={item}
-                          setConfirmMenuData={setConfirmMenuData}
-                          setConfirmMenuActive={setConfirmMenuActive}
                           />
                     )}}
                   renderSectionHeader={({ section: { title } }) => (

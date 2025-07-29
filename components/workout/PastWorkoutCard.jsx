@@ -12,18 +12,12 @@ import rightCarrot from '../../assets/icons/rightCarrot.png'
 import { router } from 'expo-router'
 
 
-const PastWorkoutCard = ({style, data, setConfirmMenuData, setConfirmMenuActive, ...props}) => {
+const PastWorkoutCard = ({style, data, onPress = () => {}, ...props}) => {
 
-    const showComingSoon = () => {
-        setConfirmMenuData({
-            title: "Coming soon!",
-            option1: "Close",
-            confirm: () => {},
-        });
-        setConfirmMenuActive(true);
-    }
+    
 
     const openWorkout = () => {
+        onPress();
         router.push({
                     pathname: "/previewWorkout",
                     params: {
@@ -45,7 +39,7 @@ const PastWorkoutCard = ({style, data, setConfirmMenuData, setConfirmMenuActive,
 
   return (
     <Pressable style={{flex: 1}} onPress={openWorkout}>
-        <View style={[style, styles.card]}>
+        <View style={[styles.card, style]}>
             {/* Top side */}
         <View style={[styles.side, styles.top]}>
             <ThemedText title={true} style={{fontSize: 17, fontWeight: "bold"}} >{truncate(data.workoutName, 22)}</ThemedText>
