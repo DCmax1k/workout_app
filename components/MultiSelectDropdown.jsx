@@ -6,7 +6,7 @@ import whiteX from '../assets/icons/whiteX.png'
 import { Portal } from 'react-native-paper';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-const MultiSelectDropdown = ({data, height = 50, maxHeight = 225, style, selectedIds, setSelectedIds,  ...props}) => {
+const MultiSelectDropdown = ({data, height = 50, maxHeight = 225, style, selectedIds, setSelectedIds, locked = false,  ...props}) => {
     const [active, setActive] = useState(false);
 
     const selected = selectedIds.map(id => data.find(d=>d.id===id));
@@ -67,7 +67,7 @@ const MultiSelectDropdown = ({data, height = 50, maxHeight = 225, style, selecte
     <View>
         {/* Dropdown */}
         <View style={[styles.mainCont, {overflow: "visible", zIndex: active ? 10 : 0}, style]} >
-            <Pressable key={selected.id} style={[styles.item, {height: height, fontSize: 18, backgroundColor: "#3D3D3D", borderTopWidth: 0, borderRadius: 10}]} onPress={toggleItems}>
+            <Pressable key={selected.id} style={[styles.item, {height: height, fontSize: 18, backgroundColor: "#3D3D3D", borderTopWidth: 0, borderRadius: 10}]} onPress={locked ? () => {} : toggleItems}>
                 <Text style={[styles.itemText]}>Pick from selection</Text>
             </Pressable>
 
@@ -96,7 +96,7 @@ const MultiSelectDropdown = ({data, height = 50, maxHeight = 225, style, selecte
         <View style={{flexDirection: "row", flexWrap: 'wrap', }}>
             {selected.map(item => {
                 return (
-                <Pressable onPress={() => {removeItem(item.id)}} key={item.id} style={{flexDirection: 'row', alignItems: 'center', marginRight: 5, marginBottom: 5, paddingVertical: 2, paddingHorizontal: 10, backgroundColor: "#3C3C3C", borderRadius: 9999,}}>
+                <Pressable onPress={locked ? () => {} : () => {removeItem(item.id)}} key={item.id} style={{flexDirection: 'row', alignItems: 'center', marginRight: 5, marginBottom: 5, paddingVertical: 2, paddingHorizontal: 10, backgroundColor: "#3C3C3C", borderRadius: 9999,}}>
                     <Image style={{height: 15, width: 15, objectFit: "contain", marginLeft: -5, marginRight: 3, tintColor: "grey", }} source={whiteX} />
                     <Text style={{ fontSize: 14, color: "white"}}>{item.title}</Text>
                     

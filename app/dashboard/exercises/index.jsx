@@ -40,7 +40,7 @@ const ExercisesIndex = () => {
       group: ex.group,
       muscleGroups: ex.muscleGroups,
       description: ex.description,
-      equipment: ex.equipment,
+      tracks: ex.tracks,
       image: ex.image,
     };
   });
@@ -127,7 +127,7 @@ export default ExercisesIndex
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingBottom: 115,
+      paddingBottom: 50,
     },
 
     search: {

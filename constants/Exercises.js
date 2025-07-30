@@ -5,7 +5,7 @@ const track = {
     distance: ['mile'],
     repsOnly: ['reps'],
 }
-// Groups: chest, abs, back, bicep, tricep, forearm, shoulder, leg
+// Groups: chest, abs, back, bicep, tricep, forearm, shoulder, leg, other
 export const Exercises = [
     {
         "name": "Treadmill Walking",

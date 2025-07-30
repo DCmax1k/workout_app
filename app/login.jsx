@@ -37,6 +37,7 @@ const USER = {
         //"234" // Id of workout 1, 0's are rest days
       ],
     },
+    archivedExercises: [], // [exerciseId, exerciseId, ...],
     createdExercises: [],
   //   [{
   //     name: "Bench Press Modifed",

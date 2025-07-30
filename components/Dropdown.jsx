@@ -5,7 +5,7 @@ import { Image } from 'react-native';
 import { Portal } from 'react-native-paper';
 import Animated, { Easing, useAnimatedRef, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-const Dropdown = ({data, height = 50,maxHeight = 225, style, selectedId, setSelectedId,  ...props}) => {
+const Dropdown = ({data, height = 50,maxHeight = 225, style, selectedId, setSelectedId, locked = false,  ...props}) => {
     const [active, setActive] = useState(false);
 
     const selected = data.find(d => d.id === selectedId);
@@ -59,7 +59,7 @@ const Dropdown = ({data, height = 50,maxHeight = 225, style, selectedId, setSele
 
   return (
     <Animated.View style={[styles.mainCont, {overflow: "hidden", zIndex: active ? 10 : 0}, style, heightAnimationStyle]} >
-        <Pressable key={selected.id} style={[styles.item, {height: height, fontSize: 18, backgroundColor: "#3D3D3D", borderTopWidth: 0, borderRadius: 10}]} onPress={toggleItems}>
+        <Pressable key={selected.id} style={[styles.item, {height: height, fontSize: 18, backgroundColor: "#3D3D3D", borderTopWidth: 0, borderRadius: 10}]} onPress={locked ? () => {} : toggleItems}>
             <Text style={[styles.itemText, {fontWeight: 700}]}>{selected.title}</Text>
         </Pressable>
 

@@ -189,7 +189,7 @@ const IndexWorkout = () => {
 
                           <View style={[styles.boxShadow, {shadowRadius: 5, backgroundColor: "#546FDB", height: 40, width: 40, borderRadius: 99999, justifyContent: "center", alignItems: "center"}]}>
                             <View style={{backgroundColor: "#3D52A6", height: 35, width: 35, borderRadius: 99999, justifyContent: "center", alignItems: "center"}}>
-                              <Image style={{height: 20, width: 20}} source={rightArrow}/>
+                              <Image style={{height: 20, width: 20, transform: [{rotate: "-90deg"}]}} source={rightArrow}/>
                             </View>
                           </View>
                           

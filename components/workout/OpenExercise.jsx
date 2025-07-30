@@ -9,11 +9,12 @@ import Spacer from '../Spacer';
 import noimage from '../../assets/icons/noimage.png';
 import GlowImage from '../GlowImage';
 import WorkoutDescription from './WorkoutDescription';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
 import { useUserStore } from '../../stores/useUserStore';
 import PastWorkoutCard from './PastWorkoutCard';
 import ThemedView from '../ThemedView';
 import ThemedText from '../ThemedText';
+import CreateExercise from './CreateExercise';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -47,7 +48,15 @@ const ExerciseHistory = ({style, exercise, forceCloseOpenExercise = () => {}, ..
     }));
   return (
     <View style={[{flex: 1,}, style]} {...props}>
-      <SectionList
+      {sectionalData.length < 1 && (
+        <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+          <Spacer height={10} />
+          <Text style={{color: "#B1B1B1", fontSize: 16, textAlign: "center"}}>No past workouts with this exercise.</Text>
+          <Spacer height={30} />
+        </View>
+
+      )}
+      {sectionalData.length > 0 && (<View style={{maxHeight: screenHeight-320}}><SectionList
               
           sections={sectionalData}
           keyExtractor={(item, i) => i}
@@ -69,7 +78,7 @@ const ExerciseHistory = ({style, exercise, forceCloseOpenExercise = () => {}, ..
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 120 }}
           
-      />
+      /></View>)}
     </View>
       
   )
@@ -80,8 +89,16 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
 
     const [section, setSection] = useState("About"); // About, Progress, History
 
+    const [editModeActive, setEditModeActive] = useState(false);
+
     const editExercise = () => {
-        console.log(exercise);
+        if (editModeActive) {
+            // Save changes
+            setEditModeActive(false);
+        } else {
+            // Enter edit mode
+            setEditModeActive(true);
+        }
     }
 
     const capitalizeFirstLetter = (string) => {
@@ -91,7 +108,7 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
     const isImage = exercise.image ? true : false;
     
   return (
-    <View style={[styles.cont, style]} {...props}>
+    <Animated.View layout={LinearTransition.springify().mass(0.5).damping(10)} style={[styles.cont, style]} {...props}>
       <View style={{flexDirection: "row", alignItems: "center"}}>
         <Pressable onPress={() => setOpenExercise(false)}>
             <Image source={whiteX} style={{ height: 30, width: 30, marginRight: 5}} />
@@ -99,19 +116,20 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
         
         <Text adjustsFontSizeToFit style={[styles.screenText, {flex: 1,}]}>{exercise.name}</Text>
 
-        <BlueButton color={Colors.primaryOrange} onPress={editExercise} title={"Edit"} />
+        <BlueButton color={editModeActive ? Colors.primaryBlue : Colors.primaryOrange} onPress={editExercise} title={editModeActive ? "Save" : "Edit"} style={{width: 80}} />
       </View>
 
       <Spacer height={20} />
 
-      <SectionSelect section={section} setSection={setSection} sections={["About", "Progress", "History"]} />
+      {!editModeActive && <Animated.View entering={FadeIn} exiting={FadeOut}><SectionSelect section={section} setSection={setSection} sections={["About", "Progress", "History"]} /></Animated.View>}
 
-      <Spacer height={20} />
+      {!editModeActive &&<Spacer height={20} />}
       
-      {/* Screens differ here */}
-      {section === "About" && <Animated.View entering={FadeIn} exiting={FadeOut}>
+      {/* SCREENS DIFFER HERE */}
+      {!editModeActive && section === "About" &&(
+      <Animated.View entering={FadeIn} exiting={FadeOut}>
 
-        {/* IMAGE */}
+        {/* Big image */}
         <View style={styles.imageContCont}>
           <View style={styles.imageCont}>
             <GlowImage disable={true} style={[styles.image, isImage ? {} : {width: 30, height: 30, margin: "auto"}]} source={exercise.image || noimage} id={exercise.id} />
@@ -132,22 +150,29 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
         {/* Description */}
         <Text style={{color: "white", fontSize: 14, fontWeight: 300, padding: 10, textAlign: "center"}}>{exercise.description || ''}</Text>
           
-      </Animated.View>}
+      </Animated.View>)}
 
       {/* Progress screen - Charts and graphs */}
-      {section === "Progress" && <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1}}>
+      {!editModeActive && section === "Progress" && <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1}}>
           <Text>Progress</Text>
       </Animated.View>}
 
       {/* History screen - Past workouts with exercise */}
-      {section === "History" && <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1}}>
+      {!editModeActive && section === "History" && <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1}}>
           <ExerciseHistory exercise={exercise} forceCloseOpenExercise={forceCloseOpenExercise} />
       </Animated.View>}
 
-      
-      
+      {/* EDIT EXERCISE WITH CREATE EXERCISE */}
+      {editModeActive && <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1}}>
+        <CreateExercise editMode={true} editData={exercise} locked={true} />
 
-    </View>
+        <Spacer />
+
+        <BlueButton title={"Archive exercise"} color={"#651B1B"} style={{marginHorizontal: 50}} />
+        <Spacer height={20} />
+      </Animated.View>}
+
+    </Animated.View>
   )
 }
 
@@ -159,7 +184,8 @@ const styles = StyleSheet.create({
          borderRadius: 20,
          padding: 10,
          paddingBottom: 0,
-         height: screenHeight-200,
+         minHeight: 100,
+        //  maxHeight: screenHeight,
          overflow: 'hidden',
     },
     screenText: {

@@ -12,6 +12,8 @@ const { getState } = useUserStore
 const rightArrow = require('../../../assets/icons/rightArrow.png')
 const hamburger = require('../../../assets/icons/hamburger.png')
 const remove = require('../../../assets/icons/remove.png')
+const scheduleRotationArrow = require('../../../assets/icons/scheduleRotationArrow.png')
+const scheduleRotationArrowLength = require('../../../assets/icons/scheduleRotationArrowLength.png')
 
 const Schedule = () => {
     const user = useUserStore((state) => state.user);
@@ -67,27 +69,33 @@ const Schedule = () => {
                 
                 <Spacer height={20} />
 
-                <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Schedule Rotation</ThemedText>
+                <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Rotation</ThemedText>
                 {rotation.map((workout, index) => {
                     const isRestDay = workout.id === "0";
                     return (
-                        <Animated.View key={`${workout.id}+${index}`} layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
-                            <Pressable  style={[styles.listItem, isRestDay ? styles.restDay : null]} onPress={() => removeFromRotation(workout.id, index)}>
+                        <Animated.View style={{flex: 1, position: "relative", }} key={`${workout.id}+${index}`} layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
+                            <Pressable  style={[styles.listItem, isRestDay ? styles.restDay : null, {marginRight: 30}]} onPress={() => removeFromRotation(workout.id, index)}>
                                 <Image style={[styles.listItemIcon, styles.rotationItemIcon]} source={remove} />
                                 <ThemedText style={{fontSize: 15, fontWeight: 700,}} title={true} >{truncate(workout.name, 30)}</ThemedText>
                             </Pressable>
+                            <View style={{position: "absolute", right: 0, top: 0, height: "120%",}}>
+                                <Image source={scheduleRotationArrowLength} style={{height: "100%", width: 20, objectFit: "fill"}} />
+                            </View>
                         </Animated.View>
                         
                     )
                 })}
-                <Animated.View layout={LinearTransition}>
-                    <Pressable style={[styles.addRestDay]} onPress={addRestDay}>
+                <Animated.View layout={LinearTransition} style={{flex: 1, position: "relative", }}>
+                    <Pressable style={[styles.addRestDay, {marginRight: 30, marginBottom: 10}]} onPress={addRestDay}>
                         <ThemedText color={"#636363"} style={{fontSize: 16, fontWeight: 700, textAlign: "center"}}>Add Rest Day</ThemedText>
                         <ThemedText color={"#636363"} style={{fontSize: 13, fontWeight: 400, textAlign: "center"}}>or select a workout from below</ThemedText>
                     </Pressable>
+                    <View style={{position: "absolute", right: 0, top: 0, height: "100%",}}>
+                        <Image source={scheduleRotationArrow} style={{height: "100%", width: 20, objectFit: "fill"}} />
+                    </View>
                 </Animated.View>
 
-                <Spacer />
+                <Spacer height={25} />
 
                 <Animated.View  layout={LinearTransition}>
                    <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Unused</ThemedText> 
