@@ -1,4 +1,4 @@
-import { Dimensions, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Dimensions, Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 // import { AlphabetList } from "react-native-section-alphabet-list";
 import AlphabetList from "react-native-flatlist-alphabet";
@@ -19,9 +19,26 @@ import { filter } from 'd3';
 import { PaperProvider, Portal, Provider } from 'react-native-paper';
 import SwipeToDelete from '../../../components/SwipeToDelete';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import getAllExercises from '../../../util/getAllExercises';
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
+
+function groupExercisesByLetter(exercises) {
+    const grouped = {};
+  
+    exercises.forEach(ex => {
+      if (!grouped[ex.name.charAt(0).toUpperCase()]) {
+        grouped[ex.name.charAt(0).toUpperCase()] = [];
+      }
+      grouped[ex.name.charAt(0).toUpperCase()].push(ex);
+    });
+  
+    return Object.keys(grouped).map(groupName => ({
+      title: groupName,
+      data: grouped[groupName]
+    })).sort((a, b) => a.title.localeCompare(b.title));
+}
 
 const ExercisesIndex = () => {
   const user = useUserStore((state) => state.user);
@@ -29,19 +46,16 @@ const ExercisesIndex = () => {
   const [searchValue, setSearchValue] = useState("");
   const [createExercise, setCreateExercise] = useState(false);
 
+  const sectionalData = groupExercisesByLetter(searchExercise(getAllExercises(user), searchValue));
 
-  const allExercises = [...user.createdExercises, ...Exercises ];
+
+  const allExercises = getAllExercises(user);
   const filteredExercises = searchExercise(allExercises, searchValue).map(ex => {
     return {
+      time: Date.now(),
       value: ex.name,
       key: ex.id,
-      name: ex.name,
-      id: ex.id,
-      group: ex.group,
-      muscleGroups: ex.muscleGroups,
-      description: ex.description,
-      tracks: ex.tracks,
-      image: ex.image,
+      ...ex,
     };
   });
 
@@ -51,8 +65,7 @@ const ExercisesIndex = () => {
   }
 
   const scrollToExerciseByKey = (keyToFind) => {
-    console.log("Looking for key: ", keyToFind);
-    console.log("Filtered Exercises: ", filteredExercises.map(e => e.key));
+
     const index = filteredExercises.findIndex(item => item.key === keyToFind);
     if (index !== -1 && listRef.current) {
       listRef.current.scrollToIndex({ index, animated: true });
@@ -93,11 +106,12 @@ const ExercisesIndex = () => {
             <Spacer height={20} />
 
             <View style={{flex: 1,}}>
-              <AlphabetList
+              {/* <AlphabetList
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingTop: 20, paddingBottom: 120 }}
 
                 data={filteredExercises}
+                
                 getItemHeight={() => 120}
                 indexLetterColor='white'
                 indexLetterSize={12}
@@ -112,6 +126,22 @@ const ExercisesIndex = () => {
                     <Text style={styles.sectionHeaderLabel}>{section.title}</Text>
                   </View>
                 )}
+              /> */}
+              {/* TRYING REGULAR LIST INCASE THE ALPHABET ONE DOESNT UPDATE EXERCISES */}
+              <SectionList
+                keyboardDismissMode={"on-drag"}
+                sections={sectionalData}
+                keyExtractor={(item) => item.id}
+                renderItem={({item}) => (
+                  <Exercise exercise={item} style={styles.exercise} />
+                )}
+                showsVerticalScrollIndicator={false}
+                renderSectionHeader={({section: {title}}) => (
+                  <View style={styles.sectionHeaderContainer}>
+                    <Text style={styles.sectionHeaderLabel}>{title}</Text>
+                  </View>
+                )}
+                contentContainerStyle={{ paddingBottom: 50 }}
               />
             </View>
             

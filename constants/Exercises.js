@@ -5,6 +5,9 @@ const track = {
     distance: ['mile'],
     repsOnly: ['reps'],
 }
+
+// FETCH from db, images have to be web if not local, check size of exercises before deciding
+
 // Groups: chest, abs, back, bicep, tricep, forearm, shoulder, leg, other
 export const Exercises = [
     {

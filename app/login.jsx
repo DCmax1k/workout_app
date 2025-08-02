@@ -37,7 +37,7 @@ const USER = {
         //"234" // Id of workout 1, 0's are rest days
       ],
     },
-    archivedExercises: [], // [exerciseId, exerciseId, ...],
+    archivedExercises: {}, // {exerciseId: true, exerciseId: false, ...},
     createdExercises: [],
   //   [{
   //     name: "Bench Press Modifed",
@@ -53,11 +53,17 @@ const USER = {
   // },],
     completedExercises:{},// { "2": [{date: 23235235, sets: [{weight: "135", reps: "10"}], shared: true,}] }, // by exerciseId
     savedWorkouts:[],// [{name: "Legs", id: "234", exercises: [ {id: "2", note:"", sets: [{lbs: "135", reps: "10"}]},] }, {name: "Chest and Shoulders", id: "2344", exercises: [ {id: "2314234", note:"", sets: [{lbs: "135", reps: "10"}]},{id: "4", note:"", sets: [{lbs: "135", reps: "10"}]}] }, {name: "Back", id: "345", exercises: [ {id: "4", note:"", sets: [{lbs: "135", reps: "10"}]},] }],
-    analytics: {
+    analytics: 
+    {
       weight: [ {date: 235234, amount: 190.5, }, {date: 235235, amount: 188.5, }, {date: 235236, amount: 185.5, }, {date: 235237, amount: 185, }, {date: 235238, amount: 187, }, {date: 235239, amount: 185.5, }, {date: 235240, amount: 183.5, } ],	
       expenditure: [ {date: 235234, amount: 2500, }, {date: 235235, amount: 2525, }, {date: 235236, amount: 2520, }, {date: 235237, amount: 2500, }, {date: 235238, amount: 2490, }, {date: 235239, amount: 2480, }, {date: 235240, amount: 2525, } ],	
       sleep: [ {date: 235234, amount: 7.5, }, {date: 235235, amount: 8, }, {date: 235236, amount: 7.5, }, {date: 235237, amount: 7.5, }, {date: 235238, amount: 8, }, {date: 235239, amount: 7.5, }, {date: 235240, amount: 8, } ],
       hydration: [ {date: 235234, amount: 2.5, }, {date: 235235, amount: 2.2, }, {date: 235236, amount: 2.5, }, {date: 235237, amount: 2.4, }, {date: 235238, amount: 2.2, }, {date: 235239, amount: 2, }, {date: 235240, amount: 2.4, } ],
+    },
+    progress: {
+      sections: [
+        {title: "Analytics", data: {weight: {active: false, subData: [{title: "Goal", value: 200}]}, } }
+      ]
     },
 
     pastWorkouts: [], // [{workoutName, time, workoutLength, totalWeightLifted, exercises, fullWorkout}, {workoutName, time, workoutLength, totalWeightLifted, exercises, fullWorkout}, ],

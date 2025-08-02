@@ -18,6 +18,7 @@ import Search from '../Search'
 import searchExercise from '../../util/searchExercise'
 import keyboardIcon from '../../assets/icons/keyboard.png';
 import { SafeAreaView } from 'react-native-safe-area-context'
+import getAllExercises from '../../util/getAllExercises'
 
 
 const screenWidth = Dimensions.get("screen").width;
@@ -43,28 +44,6 @@ function customTitle(title) {
     return title === 'leg' ? "legs" : title === 'shoulder' ? "shoulders" : title === 'forearm' ? "forearms" : title === 'bicep' ? "biceps" : title === 'tricep' ? "triceps" : title;
 }
 
-// function shouldShowExerciseForFilter(exercise, searchValue) {
-//     const name = exercise.name.toLowerCase() || '';
-//     const muscles = exercise.muscleGroups.join(" ") || '';
-//     const group = exercise.group || '';
-//     let s = searchValue.toLowerCase().trim();
-//     if (s.length>1 && s[s.length-1]==="s") s = s.split('').splice(0, s.length-1).join('');
-//     return name.includes(s) || muscles.includes(s) || group.includes(s);
-// }
-
-// Optimized search function to reduce complexity - imported
-// function SearchExerciseFilter(exercises, searchValue) {
-//     if (!searchValue) return exercises;
-//     return exercises.filter(exercise => {
-//         const name = exercise.name.toLowerCase() || '';
-//         const muscles = exercise.muscleGroups.join(" ") || '';
-//         const group = exercise.group || '';
-//         let s = searchValue.toLowerCase().trim();
-//         if (s.length>1 && s[s.length-1]==="s") s = s.split('').splice(0, s.length-1).join('');
-//         return name.includes(s) || muscles.includes(s) || group.includes(s);
-//     });
-// }
-
 
 const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomSheet=false, ...props}) => {
     const user = useUserStore((state) => state.user);
@@ -74,29 +53,22 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
     const [createExercise, setCreateExercise] = useState(false);
 
 
-    // Old search function, kept for reference
-    // const createdExercisesFiltered = searchValue ? user.createdExercises.filter(ex => {
-    //     return shouldShowExerciseForFilter(ex, searchValue);
-    // }) : user.createdExercises;
-    // const dbExercisesFiltered = searchValue ? Exercises.filter(ex => {
-    //     return shouldShowExerciseForFilter(ex, searchValue);
-
-    // }) : Exercises;
-
     // Using optimized search function
-    const createdExercisesFiltered = searchExercise(user.createdExercises, searchValue);
-    const dbExercisesFiltered = searchExercise(Exercises, searchValue);
+    const sectionalData = groupExercisesBySection(searchExercise(getAllExercises(user), searchValue));
+    // Old way for reference
+    // const createdExercisesFiltered = searchExercise(user.createdExercises, searchValue);
+    // const dbExercisesFiltered = searchExercise(Exercises, searchValue);
 
-    const dbExercisesFilteredOrganized = groupExercisesBySection(dbExercisesFiltered);
+    // const dbExercisesFilteredOrganized = groupExercisesBySection(dbExercisesFiltered);
 
-    const sectionalData = createdExercisesFiltered.length === 0 ? dbExercisesFilteredOrganized :
-    [
-        {
-            title: 'Created',
-            data: createdExercisesFiltered,
-        },
-        ...dbExercisesFilteredOrganized,
-    ];
+    // const sectionalData = createdExercisesFiltered.length === 0 ? dbExercisesFilteredOrganized :
+    // [
+    //     {
+    //         title: 'Created',
+    //         data: createdExercisesFiltered,
+    //     },
+    //     ...dbExercisesFilteredOrganized,
+    // ];
 
     const selectExercise = (exerciseId) => {
         if (exercisesToAdd.includes(exerciseId)) {

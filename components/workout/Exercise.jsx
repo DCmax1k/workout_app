@@ -12,7 +12,6 @@ const screenHeight = Dimensions.get("screen").height;
 
 const Exercise = ({style, exercise, selected = false, disablePress = false, onPress = false, ...props}) => {
 
-
   const [openExercise, setOpenExercise] = useState(false);
 
     const capitalizeFirstLetter = (string) => {

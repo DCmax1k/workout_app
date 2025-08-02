@@ -3,21 +3,24 @@ import React from 'react'
 import ThemedText from '../ThemedText';
 import { Exercises } from '../../constants/Exercises';
 import { useUserStore } from '../../stores/useUserStore';
+import getAllExercises from '../../util/getAllExercises';
 
 const WorkoutDescription = ({workout, style, truncateAmount = 50, ...props}) => {
     const user = useUserStore((state) => state.user);
-    const allExercises = [...user.createdExercises, ...Exercises];
+    const allExercises = getAllExercises(user);
+    const exercises = workout.exercises.filter(ex => !user.archivedExercises?.[ex.id]);
 
     const truncate = (text, maxLength) =>
         text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 
     if (!workout) return (<ThemedText>None</ThemedText>);
-      if (!workout.exercises) return  (<ThemedText>None</ThemedText>);
-    const length = workout.exercises.length;
+      if (!exercises) return  (<ThemedText>None</ThemedText>);
+    const length = exercises.length;
     let exercisesString = "";
-    workout.exercises.forEach((ex, i) => {
+    exercises.forEach((ex, i) => {
         const foundExercise = allExercises.find(e => e.id===ex.id);
-        return exercisesString+=`${i!==0?", ":""}${ex.name || foundExercise.name}`
+        if (!foundExercise) return;
+        return exercisesString+=`${exercisesString.length!==0?", ":""}${ex.name || foundExercise.name}`
     });
 
   return length === 0 ? (

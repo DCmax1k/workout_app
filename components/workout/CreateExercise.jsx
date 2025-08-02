@@ -1,5 +1,5 @@
 import { Alert, Image, KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useImperativeHandle, useState } from 'react'
 import whiteX from '../../assets/icons/whiteX.png'
 import lock from '../../assets/icons/lock.png'
 import BlueButton from '../BlueButton'
@@ -9,7 +9,7 @@ import MultiSelectDropdown from '../MultiSelectDropdown'
 import { generateUniqueId } from '../../util/uniqueId'
 import { useUserStore } from '../../stores/useUserStore'
 
-const CreateExercise = ({setCreateExercise, callback = () => {}, editMode, editData, locked = false, editBackgroundColor = "#282828", ...props}) => {
+const CreateExercise = React.forwardRef(({setCreateExercise, callback = () => {}, editData, setEditModeActive, editMode, locked = false, editBackgroundColor = "#282828", ...props}, ref) => {
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
 
@@ -17,27 +17,67 @@ const CreateExercise = ({setCreateExercise, callback = () => {}, editMode, editD
     const categoryData = [{id: "0", title: "Strength - [Weight and reps]"}, {id: "1", title: "Cardio - [Time and distance]"}, {id: "2", title: 'Distance only'}, {id: "3", title: "Reps only"}];
     const categoryDataTracking = [['weight', 'reps'], ['mile', 'time'], ['mile'], ['reps']];
 
-    const [name, setName] = useState( editMode ? editData.name : "");
-    const [description, setDescription] = useState( editMode ? editData.description : "");
-    const [muscleGroupIds, setMuscleGroupIds] = useState(editMode ? (muscleGroupData.map((d =>  (editData.muscleGroups.includes(d.title.toLowerCase())) ? d.id : null ))?.filter(e => e !== null)) : []);
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [muscleGroupIds, setMuscleGroupIds] = useState([]);
+    const [categoryIdSelected, setCategoryIdSelected] = useState("0");
 
-    const categoryToFillIndex = editMode ? categoryDataTracking.findIndex(d => {
+    useEffect(() => {
+      if (editMode && editData) {
+        editData = JSON.parse(JSON.stringify(editData)); // Deep copy to avoid mutating original data
+        setName(editData.name);
+        setDescription(editData.description);
+        const muscleGroupIdsToFill = muscleGroupData.map((d =>  {
+          if (editData.muscleGroups.map(e => e.toLowerCase()).includes(d.title.toLowerCase())) {
+            return d.id;
+          } else {
+            return null;
+          }
+        } ))?.filter(e => e !== null );
+        setMuscleGroupIds(muscleGroupIdsToFill);
 
-      if ((d.length === editData.tracks.length) && (d[0] === editData.tracks[0])) {
-        return true;
-      }
-    }  ) : null;
-    const categoryToFill = categoryToFillIndex > 0 ? JSON.stringify(categoryToFillIndex) : null;
-    const [categoryIdSelected, setCategoryIdSelected] = useState(categoryToFill !== null ? categoryToFill : "0");
+        const categoryToFillIndex = editMode ? categoryDataTracking.findIndex(d => {
+          if ((d.length === editData.tracks.length) && (d[0] === editData.tracks[0])) {
+            return true;
+          }
+        }  ) : null;
+        const categoryToFill = categoryToFillIndex !== -1 ? JSON.stringify(categoryToFillIndex) : null;
+          setCategoryIdSelected(categoryToFill);
+        }
+    }, []);
+      
+    
+      
+
+    // const [name, setName] = useState( editMode ? editData.name : "");
+    // const [description, setDescription] = useState( editMode ? editData.description : "");
+
+    // const muscleGroupIdsToFill = muscleGroupData.map((d =>  {
+    //   if (editData.muscleGroups.map(e => e.toLowerCase()).includes(d.title.toLowerCase())) {
+    //     return d.id;
+    //   } else {
+    //     return null;
+    //   }
+    // } ))?.filter(e => e !== null );
+    // const [muscleGroupIds, setMuscleGroupIds] = useState(editMode ? (muscleGroupIdsToFill) : []);
+
+    // const categoryToFillIndex = editMode ? categoryDataTracking.findIndex(d => {
+    //   if ((d.length === editData.tracks.length) && (d[0] === editData.tracks[0])) {
+    //     return true;
+    //   }
+    // }  ) : null;
+    // const categoryToFill = categoryToFillIndex > 0 ? JSON.stringify(categoryToFillIndex) : null;
+    // const [categoryIdSelected, setCategoryIdSelected] = useState(categoryToFill !== null ? categoryToFill : "0");
 
     const saveExercise = () => {
         const tracks = categoryDataTracking[categoryData.findIndex(d => d.id === categoryIdSelected)];
-        const muscleGroups = muscleGroupIds.map(id => muscleGroupData.find(d => d.id === id).title);
+        const muscleGroups = muscleGroupIds.map(id => muscleGroupData.find(d => d.id === id)?.title).filter(e => e !== undefined);
 
         if (name.length < 1) return Alert.alert("Please add a name");
         //if (muscleGroupIds.length < 1) return Alert.alert("Please choose at least 1 muscle group");
 
         const exercise = {
+            group: "created",
             name,
             tracks,
             description,
@@ -48,8 +88,7 @@ const CreateExercise = ({setCreateExercise, callback = () => {}, editMode, editD
         const createdExercises = user.createdExercises;
         createdExercises.unshift(exercise);
         updateUser({createdExercises});
-        console.log("Created exercise id: ", exercise.id);
-
+        
         setName( "");
         setDescription("");
         setMuscleGroupIds([]);
@@ -61,6 +100,20 @@ const CreateExercise = ({setCreateExercise, callback = () => {}, editMode, editD
         
 
     }
+
+    const getData = () => {
+        return {
+            name,
+            description,
+            muscleGroupIds: muscleGroupIds,
+            categoryIdSelected,
+        }
+    }
+
+
+    useImperativeHandle(ref, () => ({
+        getData: getData,
+    }));
 
   return (
     
@@ -133,7 +186,7 @@ const CreateExercise = ({setCreateExercise, callback = () => {}, editMode, editD
 
     </View>
   )
-}
+});
 
 export default CreateExercise
 

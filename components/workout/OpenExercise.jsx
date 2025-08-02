@@ -1,5 +1,5 @@
-import { Dimensions, Image, Pressable, SectionList, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import { Alert, Dimensions, Image, Pressable, SectionList, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 
 import whiteX from '../../assets/icons/whiteX.png';
 import BlueButton from '../BlueButton';
@@ -86,18 +86,64 @@ const ExerciseHistory = ({style, exercise, forceCloseOpenExercise = () => {}, ..
 
 
 const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise, ...props}) => {
+  const user = useUserStore(state => state.user);
+  const updateUser = useUserStore(state => state.updateUser);
+  const archivedExercises = user.archivedExercises || [];
+  const createExerciseRef = React.useRef(null);
 
     const [section, setSection] = useState("About"); // About, Progress, History
-
     const [editModeActive, setEditModeActive] = useState(false);
 
+    const muscleGroupData = [{id: "0", title: "Chest"}, {id: "1", title: "Abs"}, {id: "2", title: 'Back'}, {id: "3", title: "Bicep"}, {id: "4", title: "Tricep"}, {id: "5", title: "Forearm"}, {id: "6", title: "Shoulder"}, {id: "7", title: "Leg"}, {id: "8", title: "Other"}];
+    const categoryData = [{id: "0", title: "Strength - [Weight and reps]"}, {id: "1", title: "Cardio - [Time and distance]"}, {id: "2", title: 'Distance only'}, {id: "3", title: "Reps only"}];
+    const categoryDataTracking = [['weight', 'reps'], ['mile', 'time'], ['mile'], ['reps']];
+
+    const saveExerciseFromEdit = () => {
+      //console.log(exercise);
+      if (exercise.group !== "created") return setEditModeActive(false);
+      const {name, description, muscleGroupIds, categoryIdSelected} = createExerciseRef.current?.getData();
+        if (name.length < 1) return Alert.alert("Please add a name");
+        //if (muscleGroupIds.length < 1) return Alert.alert("Please choose at least 1 muscle group");
+
+        const tracks = categoryDataTracking[categoryData.findIndex(d => d.id === categoryIdSelected)];
+        const muscleGroups = muscleGroupIds.map(id => muscleGroupData.find(d => d.id === id)?.title).filter(e => e !== undefined);
+
+        const newExercise = {
+            ...exercise,
+            name,
+            tracks,
+            description,
+            muscleGroups,
+        }
+        
+        const newCreatedExercises = user.createdExercises.map(ex => {
+          if (ex.id === exercise.id) {
+            return newExercise;
+          }
+          return ex;
+        });
+        updateUser({createdExercises: newCreatedExercises});
+        //console.log("Updated exercise: ", newExercise);
+        
+        // setName( "");
+        // setDescription("");
+        // setMuscleGroupIds([]);
+        // setCategoryIdSelected("0");
+        //callback(exercise.id);
+
+        setEditModeActive(false);
+    }
+
+    
     const editExercise = () => {
         if (editModeActive) {
             // Save changes
-            setEditModeActive(false);
+            saveExerciseFromEdit();
+            //setEditModeActive(false);
         } else {
             // Enter edit mode
             setEditModeActive(true);
+            //createExerciseRef.current?.fillData(exercise);
         }
     }
 
@@ -106,6 +152,18 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
     }
 
     const isImage = exercise.image ? true : false;
+
+    const archiveExercise = () => {
+      if (archivedExercises && archivedExercises[exercise.id]) return Alert.alert("This exercise is already archived.");
+      Alert.alert("Archive Exercise", "The exercise will be removed from your exercises. It can always be added back from Profile > Settings > Archived", [
+        { text: "Cancel", style: "cancel" },
+        { text: "Archive", onPress: () => {
+          archivedExercises[exercise.id] = true;
+          updateUser({ archivedExercises });
+          setOpenExercise(false);
+        }, style: "destructive" }
+      ]);
+    }
     
   return (
     <Animated.View layout={LinearTransition.springify().mass(0.5).damping(10)} style={[styles.cont, style]} {...props}>
@@ -164,11 +222,11 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
 
       {/* EDIT EXERCISE WITH CREATE EXERCISE */}
       {editModeActive && <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1}}>
-        <CreateExercise editMode={true} editData={exercise} locked={true} />
+        <CreateExercise ref={createExerciseRef} editMode={true} setEditModeActive={setEditModeActive} editData={exercise} locked={exercise.group !== "created"} />
 
         <Spacer />
 
-        <BlueButton title={"Archive exercise"} color={"#651B1B"} style={{marginHorizontal: 50}} />
+        <BlueButton title={"Archive exercise"} color={"#651B1B"} style={{marginHorizontal: 50}} onPress={archiveExercise} />
         <Spacer height={20} />
       </Animated.View>}
 

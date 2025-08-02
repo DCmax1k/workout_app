@@ -12,6 +12,7 @@ import Spacer from '../Spacer'
 import { useBottomSheet } from '../../context/BottomSheetContext'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { runOnJS, runOnUI } from 'react-native-reanimated'
+import getAllExercises from '../../util/getAllExercises'
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -19,30 +20,25 @@ const screenHeight = Dimensions.get('screen').height;
 const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, setExerciseOpen = () => {}, openSheetForAndroid = () => {}, ...props}) => {
     const user = useUserStore((state) => state.user);
     const updateUser = useUserStore((state) => state.updateUser);
-    const availableExercises = [...user.createdExercises, ...Exercises.filter(ex => !user.createdExercises.map(e => e.id).includes(ex.id))];
-    const exercises = workout.exercises.map(ex => {
+    const availableExercises = getAllExercises(user);
+    const workoutExercises = workout.exercises.filter(ex => !user.archivedExercises?.[ex.id]);
+    const exercises = workoutExercises.map(ex => {
+        const foundExercise = availableExercises.find(e => e.id === ex.id);
+        if (!foundExercise) return null;
         return availableExercises.find(e => e.id === ex.id);
-    });
+    }).filter(ex => ex !== null);
 
     const { openSheet } = useBottomSheet();
 
-    const exercisesToComplex = (exercises) => {
-        const complexExercises = exercises.map(ex => {
-            const usersInfo = user.createdExercises.find(e => {
-                return e.id === ex.id
-            });
-            if (usersInfo) {
-                return {
-                ...usersInfo,
-                ...ex,
-                }
-            }
-            const info = Exercises.find(e => e.id === ex.id);
+    const exercisesToComplex = (clonedWorkoutExercises) => {
+        const complexExercises = clonedWorkoutExercises.map(ex => {
+            const info = availableExercises.find(e => e.id === ex.id);
+            if (!info) return null; // If not found, return the original exercise
             return {
                 ...info,
                 ...ex,
             }
-        });
+        }).filter(ex => ex !== null); // Filter out any null values
         return complexExercises;
     }
 
@@ -113,7 +109,7 @@ const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, setEx
 
             <View style={[styles.header]}>
                 <ThemedText title={true} style={{fontSize: 23, fontWeight: 700, textAlign: "center"}}>{workout.name}</ThemedText>
-                <ThemedText style={{color: "#848484", fontSize: 15}}>{workout.exercises.length} exercise{workout.exercises.length === 1 ? '':'s'}</ThemedText>
+                <ThemedText style={{color: "#848484", fontSize: 15}}>{workoutExercises.length} exercise{workoutExercises.length === 1 ? '':'s'}</ThemedText>
             </View>
 
             {/* <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
