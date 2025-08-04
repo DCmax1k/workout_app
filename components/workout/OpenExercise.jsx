@@ -15,6 +15,7 @@ import PastWorkoutCard from './PastWorkoutCard';
 import ThemedView from '../ThemedView';
 import ThemedText from '../ThemedText';
 import CreateExercise from './CreateExercise';
+import GraphWidget from '../GraphWidget';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -164,6 +165,27 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
         }, style: "destructive" }
       ]);
     }
+      const completedExercises = user.completedExercises[exercise.id] || [];
+      const bestData =  completedExercises.map((exer, ind) => {
+        let highestAmount = 0;
+        let highestAmountIndex = 0;
+        exer.sets.forEach((s, i) => {
+            const group = exer.tracks.includes("weight") ? "strength" : exer.tracks.includes("weightPlus") ? "strengthPlus" : (exer.tracks.includes("mile") && exer.tracks.includes("time")) ? "cardio" : exer.tracks.includes("mile") ? "distance" : exer.tracks.includes("reps") ? "repsOnly" : null;
+            const track = group === "strength" ? "weight" : group==="strengthPlus" ? "weightPlus" : group==="cardio" ? "mile" : group==="distance" ? "mile" : group==="repsOnly" ? "reps" : null;
+            const value = track ? parseFloat(s[track]) : 0;
+            if (value > highestAmount) {
+                highestAmountIndex = i;
+                highestAmount = value;
+            }
+        });
+        const bestSet = exer.sets[highestAmountIndex];
+        let returnValue = "";
+        if (exer.tracks.includes("mile")) returnValue = `${highestAmount} miles`;
+        else if (exer.tracks.includes("weight") || exer.tracks.includes("weightPlus")) returnValue = `${highestAmount} lbs`;
+        if (exer.tracks.includes("reps")) returnValue += ` x${bestSet["reps"]}`;
+        return {date: exer.date, amount: highestAmount,}
+        
+    });
     
   return (
     <Animated.View layout={LinearTransition.springify().mass(0.5).damping(10)} style={[styles.cont, style]} {...props}>
@@ -212,7 +234,39 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
 
       {/* Progress screen - Charts and graphs */}
       {!editModeActive && section === "Progress" && <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1}}>
-          <Text>Progress</Text>
+
+          {completedExercises.length < 1 === true ? (
+            // No completed exercises
+            <GraphWidget
+
+
+                        data={[7, 2, 3, 6, 4, 1, 8, 9, 5, 1]}
+                        dates={[Date.now(), Date.now()]}
+                        title={"No data yet"}
+                        subtitle={"Lift amount"}
+                        unit={""}
+                        timeframe={"7 days"}
+                        color={"#546FDB"}
+                        fullWidget={true}
+                      />
+          ) : (
+            // Show completed exercise widgets
+            <GraphWidget
+
+
+                        data={bestData.map((item) => item.amount)}
+                        dates={bestData.map((item) => item.date)}
+                        title={"Best set"}
+                        subtitle={"Lift amount"}
+                        unit={""}
+                        timeframe={"7 days"}
+                        color={"#546FDB"}
+                        fullWidget={true}
+                      />
+          )}
+
+          <Spacer height={20} />
+          
       </Animated.View>}
 
       {/* History screen - Past workouts with exercise */}
