@@ -23,7 +23,7 @@
 //     <View style={[{}]} onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
       
 //       <Svg width={width} height={height}>
-//         <View style={{width: "95%", height: "95%", overflow: "visible"}}>
+//         <View style={{width: "100%", height: "100%", overflow: "visible"}}>
 //           <Path d={svgLine} fill={"none"} stroke={props.color} strokeWidth={10} />
 //         </View>
         
@@ -35,6 +35,11 @@
 // export default LineGraph
 
 // const styles = StyleSheet.create({})
+
+
+
+
+
 import { StyleSheet, View } from 'react-native';
 import React from 'react';
 import Svg, { Path } from 'react-native-svg';
@@ -70,10 +75,10 @@ const LineGraph = ({ data, aspectRatio = 0.5, color = 'black', strokeWidth = 7 }
   const svgLine = lineFn(data);
 
   return (
-    <View style={{ width: '100%' }} onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
+    <View style={{ width: '100%',  }} onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
       {width > 0 && (
         <Svg width={width} height={height}>
-          <Path d={svgLine} fill="none" stroke={color} strokeWidth={strokeWidth} />
+          <Path d={svgLine} fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
         </Svg>
       )}
     </View>

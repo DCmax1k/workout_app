@@ -240,7 +240,7 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
             <GraphWidget
 
 
-                        data={[7, 2, 3, 6, 4, 1, 8, 9, 5, 1]}
+                        data={[0]}
                         dates={[Date.now(), Date.now()]}
                         title={"No data yet"}
                         subtitle={"Lift amount"}
