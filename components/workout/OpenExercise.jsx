@@ -201,7 +201,9 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
 
       <Spacer height={20} />
 
-      {!editModeActive && <Animated.View entering={FadeIn} exiting={FadeOut}><SectionSelect section={section} setSection={setSection} sections={["About", "Progress", "History"]} /></Animated.View>}
+      {!editModeActive && <Animated.View entering={FadeIn} exiting={FadeOut}>
+        <SectionSelect section={section} setSection={setSection} sections={["About", "Progress", "History"]} />
+      </Animated.View>}
 
       {!editModeActive &&<Spacer height={20} />}
       
@@ -257,8 +259,8 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
                         data={bestData.map((item) => item.amount)}
                         dates={bestData.map((item) => item.date)}
                         title={"Best set"}
-                        subtitle={"Lift amount"}
-                        unit={""}
+                        subtitle={(exercise.tracks.includes("weight") || exercise.tracks.includes("weightPlus")) ? "Lift amount" : "Distance" }
+                        unit={"lb"}
                         timeframe={"7 days"}
                         color={"#546FDB"}
                         fullWidget={true}
