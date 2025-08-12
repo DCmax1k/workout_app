@@ -82,6 +82,7 @@ const USER = {
     // Only local not in live db
     activeWorkout: null,
     editActiveWorkout: null,
+    activeReopenExercise: null,
 };
 
 const Login = () => {

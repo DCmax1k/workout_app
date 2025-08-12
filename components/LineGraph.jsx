@@ -40,6 +40,11 @@
 
 
 
+
+
+
+
+
 import { StyleSheet, View } from 'react-native';
 import React from 'react';
 import Svg, { Path } from 'react-native-svg';
@@ -86,3 +91,5 @@ const LineGraph = ({ data, aspectRatio = 0.5, color = 'black', strokeWidth = 7 }
 };
 
 export default LineGraph;
+
+

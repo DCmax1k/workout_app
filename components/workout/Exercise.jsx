@@ -29,7 +29,7 @@ const Exercise = ({style, exercise, selected = false, disablePress = false, onPr
 
 
               <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
-                <OpenExercise exercise={exercise} setOpenExercise={setOpenExercise} forceCloseOpenExercise={() => setOpenExercise(false)} />
+                <OpenExercise exercise={exercise} setOpenExercise={setOpenExercise} forceCloseOpenExercise={(exer) => {setOpenExercise(false); }} />
               </Animated.View>
 
             

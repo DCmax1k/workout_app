@@ -10,18 +10,20 @@ import { truncate } from '../../util/truncate'
 import { Colors } from '../../constants/Colors'
 import rightCarrot from '../../assets/icons/rightCarrot.png'
 import { router } from 'expo-router'
+import { useUserStore } from '../../stores/useUserStore'
 
 
-const PastWorkoutCard = ({style, data, onPress = () => {}, ...props}) => {
-
-    
+const PastWorkoutCard = ({style, data, reopenExercise = null, onPress = () => {}, ...props}) => {
 
     const openWorkout = () => {
+        
+        
         onPress();
         router.push({
                     pathname: "/previewWorkout",
                     params: {
                       data: JSON.stringify(data),
+                      reopenExercise: JSON.stringify(reopenExercise),
                     },
                   });
     }

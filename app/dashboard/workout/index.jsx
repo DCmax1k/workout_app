@@ -1,5 +1,5 @@
 import { Dimensions, Image, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
 import Spacer from '../../../components/Spacer'
@@ -20,6 +20,7 @@ import { Portal } from 'react-native-paper'
 import OpenExercise from '../../../components/workout/OpenExercise'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useBottomSheet } from '../../../context/BottomSheetContext'
+import { useIsFocused } from '@react-navigation/native'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -49,6 +50,18 @@ const IndexWorkout = () => {
 
     const swipeRefs = useRef([]);
     
+    // Reopen exercise
+    const isFocused = useIsFocused();
+    useEffect(() => {
+      if (isFocused && user.activeReopenExercise) {
+        const theExer = JSON.parse(JSON.stringify(user.activeReopenExercise))
+        setExerciseOpen(theExer);
+        setOpenExercise(true);
+        if (user.activeReopenExercise !== null) {
+          updateUser({ activeReopenExercise: null });
+        }
+      }
+    }, [user, isFocused])
 
     const openSchedule = () => {
         // Open schedule view

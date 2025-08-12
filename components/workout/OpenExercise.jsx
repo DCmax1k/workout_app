@@ -66,6 +66,7 @@ const ExerciseHistory = ({style, exercise, forceCloseOpenExercise = () => {}, ..
                 <PastWorkoutCard
                   data={item}
                   style={{backgroundColor: "#353535"}}
+                  reopenExercise={exercise}
                   onPress={() => {
                     forceCloseOpenExercise();
                   }}

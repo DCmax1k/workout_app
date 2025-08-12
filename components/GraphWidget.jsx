@@ -9,10 +9,27 @@ import SectionSelect from './SectionSelect'
 
 const GraphWidget = ({fullWidget = false, data=[], dates = [], ...props}) => {
 
+    const oriData = JSON.parse(JSON.stringify(data));
+    const oriDates = JSON.parse(JSON.stringify(dates));
+
+    const sectionOptions = ["Past 5", "Past 10", "All time"];
+    const [section, setSection] = useState(sectionOptions[0]);
+
+    if (section === sectionOptions[0]) {
+        // Past 5
+        data = oriData.splice(oriData.length - 5, 5);
+        dates = oriDates.splice(oriDates.length - 5, 5);
+    } else if (section === sectionOptions[1]) {
+        // Past 10
+        data = oriData.splice(oriData.length - 10, 10);
+        dates = oriDates.splice(oriDates.length - 10, 10);
+    } else {
+        data = oriData;
+        dates = oriDates;
+    }
+    
     const firstItem = data[0];
     const lastItem = data[data.length - 1];
-
-    const [section, setSection] = useState("Past 5"); // Weekly, Monthly, All time
 
     const percentDifferenceTemp =  100*((lastItem-firstItem)/firstItem);
     let percentDifference = Math.round(percentDifferenceTemp * 10) / 10; // round to 1 decimal place
@@ -39,7 +56,6 @@ const GraphWidget = ({fullWidget = false, data=[], dates = [], ...props}) => {
         showMiddle = false;
     }
     if (max === min) {
-        console.log("testing ", endBottomPerfentOffset);
         showMax = false;
         showMin = false,
         showMiddle = true;
@@ -142,7 +158,7 @@ const GraphWidget = ({fullWidget = false, data=[], dates = [], ...props}) => {
             height={50}
             section={section}
             setSection={setSection}
-            sections={["Past 5", "Past 10", "All time"]}
+            sections={sectionOptions}
             />
         </View>
 

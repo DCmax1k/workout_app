@@ -20,6 +20,9 @@ import { PaperProvider, Portal, Provider } from 'react-native-paper';
 import SwipeToDelete from '../../../components/SwipeToDelete';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import getAllExercises from '../../../util/getAllExercises';
+import { router, useLocalSearchParams, } from 'expo-router';
+import OpenExercise from '../../../components/workout/OpenExercise';
+import { useIsFocused } from '@react-navigation/native';
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -42,9 +45,28 @@ function groupExercisesByLetter(exercises) {
 
 const ExercisesIndex = () => {
   const user = useUserStore((state) => state.user);
+  const updateUser = useUserStore((state) => state.updateUser);
 
   const [searchValue, setSearchValue] = useState("");
   const [createExercise, setCreateExercise] = useState(false);
+  const [openExercise, setOpenExercise] = useState(false);
+  const [exerciseOpen, setExerciseOpen] = useState({});
+
+  // Reopen exercise
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    if (isFocused && user.activeReopenExercise) {
+      const theExer = JSON.parse(JSON.stringify(user.activeReopenExercise))
+      setExerciseOpen(theExer);
+      setOpenExercise(true);
+      if (user.activeReopenExercise !== null) {
+        updateUser({ activeReopenExercise: null });
+      }
+    }
+  }, [user, isFocused])
+
+
+  
 
   const sectionalData = groupExercisesByLetter(searchExercise(getAllExercises(user), searchValue));
 
@@ -74,6 +96,8 @@ const ExercisesIndex = () => {
     }
   };
 
+  
+
 
   return (
     // <PaperProvider>
@@ -92,6 +116,23 @@ const ExercisesIndex = () => {
               </Portal>
               
             )}
+
+            {openExercise && (
+            <Portal >
+              <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
+
+
+
+                  <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
+                    <OpenExercise exercise={exerciseOpen} setOpenExercise={setOpenExercise} forceCloseOpenExercise={() => setOpenExercise(false)} />
+                  </Animated.View>
+
+                
+
+              </Animated.View>
+            </Portal>
+            
+          )}
 
             
               

@@ -12,17 +12,28 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const PreviewWorkoutPage = () => {
+    const user = useUserStore(state => state.user);
+    const updateUser = useUserStore(state => state.updateUser);
 
-    const { data } = useLocalSearchParams()
-        const newData = JSON.parse(data);
+    const params = useLocalSearchParams();
+    const rawdata = JSON.parse(params.data);
 
-        const user = useUserStore(state => state.user);
-        const updateUser = useUserStore(state => state.updateUser);
+    const reopenExercise = JSON.parse(params.reopenExercise);
+    if (reopenExercise) {
+        // console.log("got to preview page ");
+        // console.log(user.activeReopenExercise);
+        setTimeout(() => {
+            updateUser({activeReopenExercise: reopenExercise})
+        }, 500);
+        
+    }
 
-        const [confirmMenuActive, setConfirmMenuActive] = useState(false);
-            const [confirmMenuData, setConfirmMenuData] = useState();
+    const data = rawdata;
 
-    
+
+    const [confirmMenuActive, setConfirmMenuActive] = useState(false);
+    const [confirmMenuData, setConfirmMenuData] = useState();
+
     const showDeletePastWorkoutConfirmation = (data) => {
         setConfirmMenuData({
             title: "Delete past workout?",
@@ -48,9 +59,9 @@ const PreviewWorkoutPage = () => {
     <ThemedView style={{flex: 1}}>
         <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
         <SafeAreaView zIndex={1} >
-            <TitleWithBack backBtn={true} actionBtn={{actionMenu: true, image: require("../assets/icons/threeEllipses.png"), action: () => showDeletePastWorkoutConfirmation(newData)}} />
+            <TitleWithBack backBtn={true} actionBtn={{actionMenu: true, image: require("../assets/icons/threeEllipses.png"), action: () => showDeletePastWorkoutConfirmation(data)}} />
         </SafeAreaView>
-        <WorkoutPreview style={{position: "absolute", width: screenWidth, height: screenHeight, zIndex: 0}} data={newData} />
+        <WorkoutPreview style={{position: "absolute", width: screenWidth, height: screenHeight, zIndex: 0}} data={data} />
     </ThemedView>
   )
 }

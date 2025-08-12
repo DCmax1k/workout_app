@@ -1,5 +1,5 @@
 import { Dimensions, Image, Pressable, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import ThemedText from './ThemedText'
 
 import rightArrow from '../assets/icons/rightArrow.png'
@@ -11,10 +11,13 @@ import trash from '../assets/icons/trash.png'
 const screenWidth = Dimensions.get("window").width;
 
 const TitleWithBack = ({style, backBtn = true, actionBtn = {active: false, actionMenu: false, image: threeEllipses, action: () => console.log("Pressed")}, ...props}) => {
+
+
+
   return (
     <View style={[{position: "relative",  marginTop: 20, width: screenWidth,}, style]} {...props}>
         {backBtn &&
-        <Pressable onPress={() => {router.back()}} style={styles.backBtn}>
+        <Pressable onPress={() => {router.back(); }} style={styles.backBtn}>
             <Image style={styles.backBtnIcon} source={rightArrow} />
         </Pressable>}
         

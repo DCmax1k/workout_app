@@ -22,6 +22,7 @@ import Animated, { Easing, FadeIn, FadeInDown, FadeOut, FadeOutDown, FlipInXUp, 
 import { Portal } from 'react-native-paper'
 import OpenExercise from '../../../components/workout/OpenExercise'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useIsFocused } from '@react-navigation/native'
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -55,7 +56,21 @@ const IndexHome = () => {
   //const continuedWorkout = {name: 'test', id: "32", exercises: []}
   const [continuedWorkout, setContinuedWorkout] = useState(null);
 
+  // Reopen exercise
+  const isFocused = useIsFocused();
   useEffect(() => {
+    if (isFocused && user.activeReopenExercise) {
+      const theExer = JSON.parse(JSON.stringify(user.activeReopenExercise))
+      setExerciseOpen(theExer);
+      setOpenExercise(true);
+      if (user.activeReopenExercise !== null) {
+        updateUser({ activeReopenExercise: null });
+      }
+    }
+  }, [user, isFocused])
+
+  useEffect(() => {
+
     if (user?.schedule?.rotation.length > 0) {
       const currentId = user.schedule.rotation[user.schedule.currentIndex];
       if (currentId === "0") {
@@ -67,6 +82,8 @@ const IndexHome = () => {
     } else {
       setContinuedWorkout(null);
     }
+
+
   }, [user]);
   //const [continuedWorkout, setContinuedWorkout] = useState(user.schedule.rotation.length > 0 ? user.schedule.rotation[user.schedule.currentIndex] === "0" ? {name: "Rest Day", id: "0",} : user.savedWorkouts.find(w => w.id === user.schedule.rotation[user.schedule.currentIndex]) : null);
   //let continuedWorkout = user.schedule.rotation.length > 0 ? user.schedule.rotation[user.schedule.currentIndex] === "0" ? {name: "Rest Day", id: "0",} : user.savedWorkouts.find(w => w.id === user.schedule.rotation[user.schedule.currentIndex]) : null;
