@@ -109,7 +109,7 @@ const IndexWorkout = () => {
 
     const openTheExerciseFromWorkout = (exercise, workout) => {
       //console.log(workout);
-      workoutToComeBackTo = workout;
+      //workoutToComeBackTo = workout;
       setExerciseOpen(exercise);
       setOpenExercise(true);
     }

@@ -4,6 +4,7 @@ import ThemedText from '../ThemedText';
 import { Exercises } from '../../constants/Exercises';
 import { useUserStore } from '../../stores/useUserStore';
 import getAllExercises from '../../util/getAllExercises';
+import { Colors } from '../../constants/Colors';
 
 const WorkoutDescription = ({workout, style, truncateAmount = 50, ...props}) => {
     const user = useUserStore((state) => state.user);
@@ -26,7 +27,7 @@ const WorkoutDescription = ({workout, style, truncateAmount = 50, ...props}) => 
   return length === 0 ? (
     <ThemedText style={style}>Add workouts!</ThemedText>
   ) : (
-    <ThemedText style={style}>{length} exercise{length===1 ? '':'s'} - {truncate(exercisesString, truncateAmount)}</ThemedText>
+    <ThemedText style={style}>{length} exercise{length===1 ? '':'s'} - <Text style={{color: Colors.primaryOrange}}>{truncate(exercisesString, truncateAmount)}</Text></ThemedText>
   )
 }
 

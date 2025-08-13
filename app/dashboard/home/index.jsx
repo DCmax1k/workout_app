@@ -11,6 +11,9 @@ import NotificationCard from '../../../components/NotificationCard'
 
 import profileIcon from '../../../assets/icons/profileIcon.png'
 import search from '../../../assets/icons/search.png'
+import rightArrow from '../../../assets/icons/rightArrow.png'
+import hollowClock from '../../../assets/icons/hollowClock.png'
+import rotate from '../../../assets/icons/rotate.png'
 import { LinearGradient } from 'expo-linear-gradient'
 import StartWorkout from '../../../components/workout/StartWorkout'
 import { Exercises } from '../../../constants/Exercises'
@@ -26,6 +29,8 @@ import { useIsFocused } from '@react-navigation/native'
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
+
+const QUICK_START_CARD_HEIGHT = 80;
 
 const IndexHome = () => {
   const router = useRouter();
@@ -110,7 +115,8 @@ const IndexHome = () => {
   const topCardScale = useSharedValue(1); // to 180deg
   const [topCardZIndex, setTopCardZIndex] = useState(1);
 
-  const behindCardOffset = useSharedValue(-15); // behind card offset
+  const BHND_CARD_VERTICAL_OFFSET = 0; // -15
+  const behindCardOffset = useSharedValue(BHND_CARD_VERTICAL_OFFSET); // behind card offset
   const behindCardScale = useSharedValue(0.9);
 
   const topCardAnimatedStyle = useAnimatedStyle(() => {
@@ -164,7 +170,7 @@ const IndexHome = () => {
               behindCardScale.value = withTiming(0.9, { duration: 0 });
               setTimeout(() => {
                 // Small adjust at end
-                behindCardOffset.value = withTiming(-15, { duration: 100 })
+                behindCardOffset.value = withTiming(BHND_CARD_VERTICAL_OFFSET, { duration: 100 })
                 setTimeout(() => {  
                   // Update state
                   updateUser({schedule: {...user.schedule, currentIndex: newIndex}});
@@ -224,7 +230,7 @@ const IndexHome = () => {
 
   const openTheExerciseFromWorkout = (exercise, workout) => {
       //console.log(workout);
-      workoutToComeBackTo = workout;
+      //workoutToComeBackTo = workout;
       setExerciseOpen(exercise);
       setOpenExercise(true);
     }
@@ -296,24 +302,38 @@ const IndexHome = () => {
 
           <Spacer />
 
-          <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Quick start</ThemedText>
+          <View style={{flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
+                <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10,}}>Quick start</ThemedText>
+
+                {isThereWorkout !== "none" && (<Pressable onPress={rotateNext} style={{flexDirection: "row", alignItems: "center",  padding: 5}}>
+                  <Text style={{color: "#3D3D3D"}}>Skip </Text>
+                  <Image source={rightArrow} style={{height: 10, width: 10, tintColor: "#3D3D3D"}} />
+                </Pressable>)}
+          </View>
+          
 
 
           {/* If a schedule, show next in schedule. Else, show create a schedule */}
-          <View style={{height: 130, overflow: "visible", }}>
+          <Pressable style={{height: QUICK_START_CARD_HEIGHT, overflow: "visible", }} onPress={isThereWorkout==="yes" ?  () => openWorkout(continuedWorkout) : isThereWorkout==="rest" ? rotateNext : () => router.push('/dashboard/workout') }>
             {/* Behind element to animate */}
               {/* cardFlipAnimation && */(<Animated.View style={[styles.animateQuickCard, {zIndex: 0, elevation: 0,}, behindCardAnimatedStyle ]}>
                 <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
-                  <View style={{width: "100%"}}>
+                  <View style={{height: 80, width: 50, justifyContent: "center", alignItems: "center"}}>
+                    <View style={{height: 40, width: 40, backgroundColor: "#3D52A6", borderWidth: 2, borderColor: Colors.primaryBlue, borderRadius: "50%", marginRight: 3, padding: 7}}>
+                      <Image source={isThereWorkoutNext === "yes" ? rightArrow : isThereWorkoutNext === "rest" ? hollowClock : rotate} style={[{height: "100%", width: "100%"}, isThereWorkoutNext === "yes" ? {transform: [{rotate: "-90deg"}]} : null]} />
+                    </View>
+
+                  </View>
+                  <View style={styles.quickStartTexts}>
                     <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>{isThereWorkoutNext === "yes" ? truncate(continuedWorkoutNext.name, 30) : isThereWorkoutNext === "rest" ? "Rest Day" : "Create a schedule" }</Text>
                     {isThereWorkoutNext === "yes" ? (
                       <WorkoutDescription style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}} workout={continuedWorkoutNext} />
                     ) : (
-                      <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>{isThereWorkoutNext === "rest" ? "Click next for your next workout!" : "Add or create workouts to add!"}</Text>
+                      <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>{isThereWorkoutNext === "rest" ? "Click here for your next workout!" : "Add or create workouts to add!"}</Text>
                     )}
                     
                   </View>
-                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
+                  {/* <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
                     <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={isThereWorkoutNext==="yes" ?  () => openWorkout(continuedWorkoutNext) : isThereWorkoutNext==="rest" ? rotateNext : () => router.push('/dashboard/workout') }>
                       <Text style={{fontSize: 14, color: "white"}}>{isThereWorkoutNext==="yes" ?  "Open workout" : isThereWorkoutNext==="rest" ? "Next" : "Go to workouts"}</Text>
                     </Pressable>
@@ -323,22 +343,28 @@ const IndexHome = () => {
                       </Pressable>
                     )}
                     
-                  </View>
+                  </View> */}
                 </LinearGradient>
               </Animated.View>)}
               {/* Top element to animate */}
               {/*!cardFlipAnimation && */(<Animated.View style={[styles.animateQuickCard, {zIndex: topCardZIndex, elevation: 1,}, topCardAnimatedStyle]} >
                 <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
-                  <View style={{width: "100%"}}>
+                  <View style={{height: 80, width: 50, justifyContent: "center", alignItems: "center"}}>
+                    <View style={{height: 40, width: 40, backgroundColor: "#3D52A6", borderWidth: 2, borderColor: Colors.primaryBlue, borderRadius: "50%", marginRight: 3, padding: 7}}>
+                      <Image source={isThereWorkout === "yes" ? rightArrow : isThereWorkout === "rest" ? hollowClock : rotate} style={[{height: "100%", width: "100%"}, isThereWorkout === "yes" ? {transform: [{rotate: "-90deg"}]} : null]} />
+                    </View>
+
+                  </View>
+                  <View style={styles.quickStartTexts}>
                     <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>{isThereWorkout === "yes" ? truncate(continuedWorkout.name, 30) : isThereWorkout === "rest" ? "Rest Day" : "Create a schedule" }</Text>
                     {isThereWorkout === "yes" ? (
                       <WorkoutDescription style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}} workout={continuedWorkout} />
                     ) : (
-                      <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>{isThereWorkout === "rest" ? "Click next for your next workout!" : "Add or create workouts to add!"}</Text>
+                      <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>{isThereWorkout === "rest" ? "Click here for your next workout!" : "Add or create workouts to add!"}</Text>
                     )}
                     
                   </View>
-                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
+                  {/* <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
                     <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={isThereWorkout==="yes" ?  () => openWorkout(continuedWorkout) : isThereWorkout==="rest" ? rotateNext : () => router.push('/dashboard/workout') }>
                       <Text style={{fontSize: 14, color: "white"}}>{isThereWorkout==="yes" ?  "Open workout" : isThereWorkout==="rest" ? "Next" : "Go to workouts"}</Text>
                     </Pressable>
@@ -348,16 +374,16 @@ const IndexHome = () => {
                       </Pressable>
                     )}
                     
-                  </View>
+                  </View> */}
                 </LinearGradient>
               </Animated.View>)}
             
 
-          </View>
+          </Pressable>
           
             
 
-          <ThemedText style={{fontSize: 10, paddingVertical: 10, textAlign: 'center'}}>or</ThemedText>
+          <ThemedText style={{fontSize: 10, paddingVertical: 20, textAlign: 'center'}}>or</ThemedText>
           <BlueButton onPress={() => startEmptyWorkout()} title={"Start an empty workout"} icon={playCircle}/>
 
           <Spacer />
@@ -437,20 +463,30 @@ const styles = StyleSheet.create({
   },
   gradientView: {
     width: '100%',
-    height: 130,
-    borderRadius: 20,
-    padding: 15,
-    justifyContent: 'space-between',
+    height: QUICK_START_CARD_HEIGHT,
+    borderRadius: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 5,
+    flexDirection: "row",
+    justifyContent: 'flex-start',
     alignItems: 'center',
     borderColor: Colors.primaryBlue,
     borderWidth: 2,
+
   },
   animateQuickCard: {
     position: 'absolute',
     top: 0,
     left: 0,
     width: '100%',
-    height: 130,
+    height: QUICK_START_CARD_HEIGHT,
+    
   },
+  quickStartTexts: {
+    width: "80%",
+    height: "100%",
+    justifyContent: "center",
+    paddingBottom: 5,
+  }
   
 })

@@ -17,12 +17,17 @@ const GraphWidget = ({fullWidget = false, data=[], dates = [], ...props}) => {
 
     if (section === sectionOptions[0]) {
         // Past 5
-        data = oriData.splice(oriData.length - 5, 5);
-        dates = oriDates.splice(oriDates.length - 5, 5);
+        if (data.length > 5) {
+            data = oriData.splice(oriData.length - 5, 5);
+            dates = oriDates.splice(oriDates.length - 5, 5);
+        }
+        
     } else if (section === sectionOptions[1]) {
         // Past 10
-        data = oriData.splice(oriData.length - 10, 10);
-        dates = oriDates.splice(oriDates.length - 10, 10);
+        if (data.length > 10) {
+            data = oriData.splice(oriData.length - 10, 10);
+            dates = oriDates.splice(oriDates.length - 10, 10);
+        }
     } else {
         data = oriData;
         dates = oriDates;
@@ -61,10 +66,19 @@ const GraphWidget = ({fullWidget = false, data=[], dates = [], ...props}) => {
         showMiddle = true;
     }
    
-
+    const initialDateString = new Date(dates[0]).toLocaleDateString();
+    const initialDateStringNoYear = initialDateString.split("").splice(0, initialDateString.length-5).join("");
+    const initialDateStringJustYear = initialDateString.split("").splice(initialDateString.length-5, 5).join("");
+    const isSameYear = initialDateStringJustYear === new Date().getFullYear().toString();
     
   return (
-    <View style={[styles.container, fullWidget ? {flex: 1, width: "100%"} : null]} >
+    <View style={[styles.container, fullWidget ? {flex: 1, width: "100%"} : {width: 200}]} >
+
+        {/* Pressable covesr the entire screen for small widget */}
+        <View>
+
+        </View>
+
         <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
             <View>
                 <Text  style={styles.title}>{props.title}</Text>
@@ -73,12 +87,13 @@ const GraphWidget = ({fullWidget = false, data=[], dates = [], ...props}) => {
                     <Text style={styles.unit}>{props.unit}</Text>
                 </View>
             </View>
-            <View>
+
+            {fullWidget === true && (<View>
                 <Text  style={styles.title}>{props.subtitle}</Text>
                 <View style={{flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end"}}>
                     <Text style={[{fontSize: 16, color: isPositive ? "#86BE79" : "#FF8686", fontWeight: "700"}]}>{isPositive ? "+":""}{percentDifference}%</Text>
                 </View>
-            </View>
+            </View>)}
             
 
 
@@ -86,9 +101,9 @@ const GraphWidget = ({fullWidget = false, data=[], dates = [], ...props}) => {
 
         <Spacer height={30} />
 
-        <View style={{ paddingRight: backGridRightOffset, marginLeft: 10, marginBottom: 50, width: "100%", zIndex: 1}} onLayout={(e) => setGraphHeight(e.nativeEvent.layout.height) }>
+        <View style={{ paddingRight: backGridRightOffset, marginLeft: fullWidget ? 10 : 5, marginBottom: fullWidget ? 50 : 20, width: "100%", zIndex: 1}} onLayout={(e) => setGraphHeight(e.nativeEvent.layout.height) }>
             {/* SVG graph */}
-            <LineGraph data={data} color={props.color} aspectRatio={1/2} />
+            <LineGraph data={data} color={props.color} aspectRatio={fullWidget ? 1/2 : 1/4} />
 
             {/* Back grid Three data horizontal line */}
             <View style={{ paddingVertical: backGridTopOffset, paddingRight: backGridRightOffset, zIndex: -1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", justifyContent: "space-between", alignItems: "center"}}>
@@ -129,7 +144,7 @@ const GraphWidget = ({fullWidget = false, data=[], dates = [], ...props}) => {
             </View>
 
             {/* Dates, beginning and end */}
-            <View style={{ paddingVertical: backGridTopOffset, marginRight: backGridRightOffset, zIndex: -1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+            {fullWidget === true && (<View style={{ paddingVertical: backGridTopOffset, marginRight: backGridRightOffset, zIndex: -1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
 
                 {(<View style={{width: 1, height: 7, backgroundColor: "#585858", borderRadius: 99999, position: "absolute", top: "99%", left: 0,  }} >
                     
@@ -144,12 +159,12 @@ const GraphWidget = ({fullWidget = false, data=[], dates = [], ...props}) => {
                     </View>
                 </View>)}
 
-            </View>
+            </View>)}
             
         </View>
 
         {/* Action tab and buttons */}
-        <View style={{flex: 1, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", zIndex: 2}}>
+        { fullWidget === true && (<View style={{flex: 1, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", zIndex: 2}}>
             <SectionSelect
             fontSize={16}
             backgroundColor={'#5D5D5D'}
@@ -160,19 +175,20 @@ const GraphWidget = ({fullWidget = false, data=[], dates = [], ...props}) => {
             setSection={setSection}
             sections={sectionOptions}
             />
-        </View>
+        </View>)}
 
         
 
 
         {/* Preview footer */}
-        {/* <Spacer height={15} />
-
-        <View style={{flexDirection: "row", alignItems: "center"}}>
-            <Text style={[styles.bottomText, {color: isPositive ? "#86BE79" : "#FF8686", fontWeight: "700"}]}>{isPositive ? "+":""}{percentDifference}%</Text>
-            <Text style={styles.bottomText}>Last {props.timeframe}</Text>
-            <Image style={styles.arrowImage} source={RightArrow} />
-        </View> */}
+        { fullWidget === false && (<View>
+            <View style={{flexDirection: "row", alignItems: "center"}}>
+                <Text style={[styles.bottomText, {color: isPositive ? "#86BE79" : "#FF8686", fontWeight: "700"}]}>{isPositive ? "+":""}{percentDifference}%</Text>
+                <Text style={styles.bottomText}>since {isSameYear ? initialDateStringNoYear : initialDateString}</Text>
+                <Image style={styles.arrowImage} source={RightArrow} />
+            </View>
+        </View>)}
+        
 
     </View>
   )
