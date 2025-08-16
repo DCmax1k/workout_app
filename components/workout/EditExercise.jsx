@@ -5,19 +5,25 @@ import greyX from '../../assets/icons/greyX.png'
 import ActionMenu from '../ActionMenu'
 import fileIcon from '../../assets/icons/file.png'
 import trashIcon from '../../assets/icons/trash.png'
+import plusIcon from '../../assets/icons/plus.png'
 import pencilIcon from '../../assets/icons/pencil.png'
 import check from '../../assets/icons/check.png'
+import lightBulb from '../../assets/icons/lightBulb.png'
+import doubleCheck from '../../assets/icons/doubleCheck.png'
 import dumbellIcon from '../../assets/icons/weight.png'
 import Animated, { LinearTransition } from 'react-native-reanimated'
+import { useUserStore } from '../../stores/useUserStore'
 
 const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWorkoutStyle, ...props}) => {
+    const user = useUserStore((state) => state.user);
 
     const exerciseNameRef = useRef(null);
     const noteRef = useRef(null);
     const [showNote, setShowNote] = useState(false);
 
+    const [suggesstion, setSuggesstion] = useState("");
+
     const removeSet = (setIndex) => {
-        if (setIndex === 0) return;
         const sets = exercise.sets;
         sets.splice(setIndex, 1);
         const newExercise = {...exercise, sets};
@@ -33,16 +39,47 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         const newExercise = {...exercise, sets: exercise.sets};
         updateExercise(index, newExercise);
     }
-    const addSet = () => {
+    const addSet = (amount = 3) => {
         const sets = exercise.sets;
-        const set = {};
-        exercise.tracks.forEach(track => {
-            set[track] = sets.length < 1 ? "0" : sets[sets.length-1][track] === "0" ? "" : sets[sets.length-1][track];
-        });
-        sets.push(set);
+        
+        if (amount === 0) { // Remove all sets
+            const newExercise = {...exercise, sets: []};
+            updateExercise(index, newExercise);
+            return;
+        } else {
+            for (let i = 0; i < amount; i++) {
+                const set = {};
+                exercise.tracks.forEach(track => {
+                    set[track] = sets.length < 1 ? "0" : sets[sets.length-1][track] === "0" ? "" : sets[sets.length-1][track];
+                });
+                sets.push(set);
+            }
+        }
         const newExercise = {...exercise, sets};
         updateExercise(index, newExercise);
     }
+
+    const checkAllSets = () => {
+        let sets = exercise.sets;
+        const allChecked = !exercise.sets.map(s => s.complete || false).includes(false);
+        if (allChecked) {
+            // Uncheck all
+            sets = sets.map(s => {
+                s.complete = false;
+                return s;
+            });
+        } else {
+            // Check all
+            sets = sets.map(s => {
+                s.complete = true;
+                return s;
+            });
+        }
+        const newExercise = {...exercise, sets};
+        updateExercise(index, newExercise);
+    }
+
+
     const updateValue = (setIndex, track, value) => {
         if (value.length > 7) value = value.split("").splice(0, 7).join('');
         const sets = exercise.sets;
@@ -90,7 +127,49 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         return track;
     }
 
-  return (
+    const dismissSuggesstion = () => {
+        setSuggesstion("");
+    }
+
+    // Find rules for suggesstions; Rules order matters, and each suggesstion is first come first serve
+    useEffect(() => {
+        if (activeWorkoutStyle) {
+                const eachCompletedExercise = user.completedExercises[exercise.id] || [];
+                console.log("Current exercise: ", exercise);
+                console.log("Completed: ", eachCompletedExercise);
+
+                // Rules that require:
+                // Is a weight, has at least 2 completed exercises, and at least 1 set in current exercise
+                if (exercise.tracks.includes("weight") &&  eachCompletedExercise.length >= 2 && exercise.sets.length > 0) {
+                    // RULE 1: If a user does 3 sets of 10 reps or more and the weight was the exact same for both completed exercises and the current set, add 5 lbs.
+                    const everyWeightCompleted = [];
+                    const everyRepCompleted = [];
+                    eachCompletedExercise.forEach((ex, i) => {
+                        if (i < eachCompletedExercise.length-2) return;
+                        ex.sets.forEach(s => {
+                            everyWeightCompleted.push(parseFloat(s["weight"]));
+                            everyRepCompleted.push(parseFloat(s["reps"]));
+                        })
+                    });
+                    const minWeight = Math.min(...everyWeightCompleted);
+                    const maxWeight = Math.max(...everyWeightCompleted);
+                    const minRep = Math.min(...everyRepCompleted);
+                    const maxRep = Math.min(...everyRepCompleted);
+                    const sameCurrentWeightCheck = parseFloat(exercise.sets[exercise.sets.length - 1]["weight"]) === everyWeightCompleted[0];
+                    const everyWeightIsSameCheck = minWeight === maxWeight;
+                    const everyRepIsOver = minRep >= 9 && maxRep >= 9;
+                    if (everyRepCompleted.length < 1 || everyWeightCompleted.length < 1) return;
+                    if (sameCurrentWeightCheck === true && everyWeightIsSameCheck === true && everyRepIsOver === true) {
+                        if (suggesstion === "") {
+                            setSuggesstion(`Try ${everyWeightCompleted[0]+5} lbs`);
+                        }
+                    }
+                }   
+                
+        }
+    }, [user.completedExercises])
+
+    return (
     <View style={{backgroundColor: activeWorkoutStyle ? "":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
             <TextInput ref={exerciseNameRef} value={exercise.name} onChangeText={changeExerciseName} style={{fontSize: 15, fontWeight: 500, color: activeWorkoutStyle?"white":"#DB8854", }} />
@@ -113,9 +192,9 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                     {exercise.tracks.map(track => ( <Text key={track} style={styles.column}>{getTrackingTag(track)}</Text> ))}
                 </>
                 {activeWorkoutStyle && (
-                    <View style={[styles.columnForComplete, styles.completeButton]}>
-                        <Image style={{height: 15, width: 15}} source={check}  />
-                    </View>
+                    <Pressable onPress={checkAllSets} style={[styles.columnForComplete, styles.completeButton, {backgroundColor: exercise.sets.map(s => s.complete || false).includes(false)  ? "#1D1D1D" : "#21863C",}]}>
+                        <Image style={{height: 15, width: 15}} source={doubleCheck}  />
+                    </Pressable>
                 )}
                 <View style={styles.columnForComplete}></View>
             </View>
@@ -135,14 +214,41 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                         </Pressable>
                     )}
                     <Pressable onPress={() => {removeSet(setIndex)}} style={styles.columnForComplete}>
-                        {setIndex !== 0 && (<Image style={{height: 20, width: 20}} source={greyX}  />)}
+                        {(<Image style={{height: 20, width: 20}} source={greyX}  />)}
                     </Pressable>
                 </Animated.View>
             ))}
+            {/* Suggestions */}
+            {activeWorkoutStyle === true && suggesstion.length > 0 === true && (<Animated.View style={styles.row} layout={LinearTransition}>
+                <View style={{flex: 1, height: 25, backgroundColor: "#222222", borderRadius: 5, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                    {/* Left side */}
+                    <View style={{flexDirection: "row", height: "100%", alignItems: "center"}}>
+                        <Image source={lightBulb} style={{height: 15, width: 15, objectFit: "contain", marginRight: 5}} />
+
+                        <Text style={{color: "#d3d3d3ff", fontSize: 13,}}>{suggesstion}</Text>
+                    </View>
+                    {/* Right side */}
+                    <View style={{flexDirection: "row", height: "100%", alignItems: "center"}}>
+                        <Pressable onPress={dismissSuggesstion} style={{}}>
+                            <Image style={{height: 20, width: 20}} source={greyX}  />
+                        </Pressable>
+                    </View>
+                </View>
+            </Animated.View>)}
             {/* Add set */}
-            <Pressable onPress={addSet} style={{paddingVertical: 5, paddingHorizontal: 35, backgroundColor: "#2D2D2D", alignSelf: 'center', marginTop: 10, marginBottom: 5, borderRadius: 10}}>
-                <Text style={{color: "white", fontSize: 15, fontWeight: 500}}>Add set</Text>
-            </Pressable>
+            <View style={{flex: 1}}>
+                <Pressable onPress={() => {addSet(3)}} style={{paddingVertical: 5, paddingHorizontal: 35, backgroundColor: "#2D2D2D", alignSelf: 'center', marginTop: 10, marginBottom: 5, borderRadius: 10}}>
+                    <Text style={{color: "white", fontSize: 15, fontWeight: 500}}>Add set (3)</Text>
+                </Pressable>
+                <View style={{position: "absolute", height: "100%", right: 0, top: 0, justifyContent: "center"}}>
+                    <ActionMenu offset={activeWorkoutStyle} backgroundColor={"transparent"} data={[
+                        {title: "Add 1 set", icon: plusIcon, onPress: () => {addSet(1)}, },
+                        {title: "Add 2 sets", icon: plusIcon, onPress: () => {addSet(2)}},
+                        {title: "Remove all sets", icon: trashIcon, onPress: () => {addSet(0)}},
+                        ]} />
+                </View>
+            </View>
+            
             
         </View>
 

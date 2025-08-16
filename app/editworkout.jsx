@@ -163,9 +163,9 @@ const EditWorkout = () => {
             </View>
 
             {exercises.map((exercise, i) => (
-                <SwipeToDelete key={exercise.id+""+i} openedRight={() => removeExercise(i)} >
-                  <EditExercise exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} />
-                </SwipeToDelete>
+                // <SwipeToDelete key={exercise.id+""+i} openedRight={() => removeExercise(i)} >
+                  <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} />
+                // </SwipeToDelete>
 
               
             ))}

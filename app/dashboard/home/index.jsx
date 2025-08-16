@@ -306,8 +306,8 @@ const IndexHome = () => {
                 <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10,}}>Quick start</ThemedText>
 
                 {isThereWorkout !== "none" && (<Pressable onPress={rotateNext} style={{flexDirection: "row", alignItems: "center",  padding: 5}}>
-                  <Text style={{color: "#3D3D3D"}}>Skip </Text>
-                  <Image source={rightArrow} style={{height: 10, width: 10, tintColor: "#3D3D3D"}} />
+                  <Text style={{color: "#5a5a5a"}}>Skip </Text>
+                  <Image source={rightArrow} style={{height: 10, width: 10, tintColor: "#5a5a5a"}} />
                 </Pressable>)}
           </View>
           

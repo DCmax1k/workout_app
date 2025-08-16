@@ -49,7 +49,7 @@ const IndexProgress = () => {
                 <ScrollView style={styles.widgets} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: "flex-start", paddingHorizontal: 20}}>
                   {Object.keys(section.widgets).map((key, index) => {
                     const widget = section.widgets[key];
-                    return (
+                    return widget.active ? (
                       <GraphWidget
 
 
@@ -62,10 +62,8 @@ const IndexProgress = () => {
                         color={widget.color || "#546FDB"}
                       />
 
-                    )
+                    ) : null;
                   })}
-
-                  <GraphWidget data={newData} title={"NEW DATA"} unit={"test"} timeframe={"7 days"} color={"#54dbd4ff"} />
 
                 </ScrollView>
               </View>

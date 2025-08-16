@@ -62,17 +62,17 @@ const USER = {
     },
     progress: {
       sections: [
-        {title: "Analytics", widgets:
-          {weight:
-            {
+        {title: "Analytics",
+          widgets:
+          {
+            weight: {
               data: [ {date: 235234, amount: 190.5, }, {date: 235235, amount: 188.5, }, {date: 235236, amount: 185.5, }, {date: 235237, amount: 185, }, {date: 235238, amount: 187, }, {date: 235239, amount: 185.5, }, {date: 235240, amount: 183.5, } ],
               active: true,
-              subSections: [{title: "Goal", value: 200}],
               unit: "lbs",
-            
+              layout: "weight", // weight, calorie, 
             },
-            }
-          },
+          }
+        },
             
       ]
     },
