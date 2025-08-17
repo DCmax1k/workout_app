@@ -15,13 +15,9 @@ const screenWidth = Dimensions.get('window').width;
 const IndexProgress = () => {
   const user = useUserStore((state) => state.user);
   const updateUser = useUserStore((state) => state.updateUser);
-
-  const weightData = user.analytics.weight.map((item) => item.amount);
-  const expData = user.analytics.expenditure.map((item) => item.amount);
-  const sleepData = user.analytics.sleep.map((item) => item.amount);
-  const hydrationData = user.analytics.hydration.map((item) => item.amount);
-
-  const newData = user.progress.sections[0].widgets["weight"].data.map((item) => item.amount);
+  if (!user.progress) {
+    updateUser({progress: {sections: []}});
+  }
 
   const openProgressExpanded = () => {
     // Open progress expanded view
@@ -69,22 +65,6 @@ const IndexProgress = () => {
               </View>
               
             )}) : null}
-
-            <ThemedText style={[styles.header, {marginTop: 20, fontSize: 15}]} >Insights</ThemedText>
-            <ScrollView style={styles.widgets} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: "flex-start", paddingHorizontal: 20}}>
-              <PreviewData data={weightData} title={"Weight"} unit={"lbs"} timeframe={"7 days"} color={"#546FDB"} onPress={() => {Alert.alert("Coming soon")}} />
-              <PreviewData data={expData} title={"Expenditure"} unit={"kcal"} timeframe={"7 days"} color={"#DB8854"} />
-            </ScrollView>
-
-            <ThemedText style={[styles.header, {marginTop: 40, fontSize: 15}]} >Rest</ThemedText>
-            <ScrollView style={styles.widgets} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: "flex-start", paddingHorizontal: 20}}>
-              <PreviewData data={sleepData} title={"Sleep amount"} unit={"hrs"} timeframe={"7 days"} color={"#54DB78"} />
-            </ScrollView>
-
-            <ThemedText style={[styles.header, {marginTop: 40, fontSize: 15}]}>Hydration</ThemedText>
-            <ScrollView style={styles.widgets} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: "flex-start", paddingHorizontal: 20}}>
-              <PreviewData data={hydrationData} title={"Water"} unit={"liters"} timeframe={"7 days"} color={"#DB54B2"} />
-            </ScrollView>
 
           </ScrollView>
         </SafeAreaView>
