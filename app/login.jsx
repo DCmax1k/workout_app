@@ -93,7 +93,7 @@ const Login = () => {
         const timoutId = setTimeout(() => {
             setUser(JSON.parse(JSON.stringify(USER)));
             router.replace("/dashboard");
-        }, 1000);
+        }, 5000);
 
         return () => clearTimeout(timoutId);
     }, [setUser]);

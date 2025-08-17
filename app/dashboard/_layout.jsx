@@ -1,5 +1,5 @@
 import { Dimensions, Modal, Platform, StyleSheet, Text, useColorScheme, View } from 'react-native'
-import { Redirect, Tabs } from 'expo-router'
+import { Redirect, router, Tabs } from 'expo-router'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {Colors} from '../../constants/Colors'
 import TabBar from '../../components/TabBar'
@@ -29,11 +29,14 @@ const Dashboard = () => {
 
   const [sheetShouldStartOpen, setSheetShouldStartOpen] = useState(false);
   useEffect(() => {
-    setTimeout(() => {
-      setSheetShouldStartOpen(user.activeWorkout !== null);
-    }, 1000)
+    if (user) {
+      setTimeout(() => {
+        setSheetShouldStartOpen(user.activeWorkout !== null);
+      }, 1000)
+    }
     
-  }, []);
+    
+  }, [user]);
 
   const [sheetOpen, setSheetOpen] = useState(sheetShouldStartOpen);
 

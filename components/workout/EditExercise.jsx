@@ -192,7 +192,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                     {exercise.tracks.map(track => ( <Text key={track} style={styles.column}>{getTrackingTag(track)}</Text> ))}
                 </>
                 {activeWorkoutStyle && (
-                    <Pressable onPress={checkAllSets} style={[styles.columnForComplete, styles.completeButton, {backgroundColor: exercise.sets.map(s => s.complete || false).includes(false)  ? "#1D1D1D" : "#21863C",}]}>
+                    <Pressable onPress={checkAllSets} style={[styles.columnForComplete, styles.completeButton, {backgroundColor: exercise.sets.length > 0 ? exercise.sets.map(s => s.complete || false).includes(false)  ? "#1D1D1D" : "#21863C" : "#1D1D1D" }]}>
                         <Image style={{height: 15, width: 15}} source={doubleCheck}  />
                     </Pressable>
                 )}

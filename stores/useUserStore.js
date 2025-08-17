@@ -3,29 +3,74 @@ import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STORAGE_KEY = 'user-storage';
+const DSTORAGE_KEY = 'data-storage';
 
 export const useUserStore = create((set, get) => ({
-  user: null,
+
+  user: null, // loggedInAs user but full details
+  users: {},
+
   setUser: async (user) => {
-    set({ user });
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+    if (user===null) {
+      const data = {users: get().users, user: null};
+      set(data);
+      await AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(data));
+      return;
+    }
+    const state = get();
+    const newUsers = {...state.users, [state.user?._id]: user};
+    const newFullData = {  user, users: newUsers };
+    set(newFullData);
+    await AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
   },
+
   updateUser: async (updates) => {
-    const newUser = { ...get().user, ...updates };
-    set({ user: newUser });
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
+    const state = get();
+    if (!state.user) return;
+    const user = state.user; // state.users[state.loggedInAs];
+    const newUser = {...user, ...updates};
+    const newUsers = {...state.users, [state.user?._id]: newUser};
+    const newFullData = {  user: newUser, users: newUsers };
+    set(newFullData);
+    await AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
   },
+
   clearUser: async () => {
-    set({ user: null });
-    await AsyncStorage.removeItem(STORAGE_KEY);
+    const newFullData = { ...get(), user: null };
+    set(newFullData);
+    await AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
   },
+
   rehydrate: async () => {
-    const savedUser = await AsyncStorage.getItem(STORAGE_KEY);
-    if (savedUser) {
-      set({ user: JSON.parse(savedUser) });
+    const checkData = await AsyncStorage.getItem(DSTORAGE_KEY);
+    if (checkData) {
+      set(JSON.parse(checkData));
+    } else {
+      const checkOldData = await AsyncStorage.getItem(STORAGE_KEY);
+      if (checkOldData) {
+        const oldUserData = JSON.parse(checkData);
+        const newUsers = {[oldUserData._id]: oldUserData};
+        set({users: newUsers, user: oldUserData});
+      }
     }
   },
 }));
+/*
+
+{
+  user: user,
+}
+
+to
+
+{
+  loggedInAs: UserID,
+  users: {
+    "userID": {...user},
+  }
+}
+
+*/
 
 
 

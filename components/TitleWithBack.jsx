@@ -10,14 +10,14 @@ import trash from '../assets/icons/trash.png'
 
 const screenWidth = Dimensions.get("window").width;
 
-const TitleWithBack = ({style, backBtn = true, actionBtn = {active: false, actionMenu: false, image: threeEllipses, action: () => console.log("Pressed")}, ...props}) => {
+const TitleWithBack = ({style, backBtn = true, backFunction = () => router.back(), actionBtn = {active: false, actionMenu: false, image: threeEllipses, action: () => console.log("Pressed")}, ...props}) => {
 
 
 
   return (
     <View style={[{position: "relative",  marginTop: 20, width: screenWidth,}, style]} {...props}>
         {backBtn &&
-        <Pressable onPress={() => {router.back(); }} style={styles.backBtn}>
+        <Pressable onPress={() => {backFunction() }} style={styles.backBtn}>
             <Image style={styles.backBtnIcon} source={rightArrow} />
         </Pressable>}
         

@@ -8,9 +8,12 @@ import TitleWithBack from '../../../components/TitleWithBack'
 import { router } from 'expo-router'
 import Animated, { FadeIn, FadeOut, Layout, LinearTransition, StretchInY, StretchOutY } from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import BlueButton from '../../../components/BlueButton'
+import { generateUniqueId } from '../../../util/uniqueId'
 const { getState } = useUserStore
 const rightArrow = require('../../../assets/icons/rightArrow.png')
 const hamburger = require('../../../assets/icons/hamburger.png')
+const plus = require('../../../assets/icons/plus.png')
 const remove = require('../../../assets/icons/remove.png')
 const scheduleRotationArrow = require('../../../assets/icons/scheduleRotationArrow.png')
 const scheduleRotationArrowLength = require('../../../assets/icons/scheduleRotationArrowLength.png')
@@ -59,6 +62,12 @@ const Schedule = () => {
 
     const truncate = (text, maxLength) =>
         text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+
+    const createNewWorkout = () => {
+        const newWorkoutData = {name: "New workout", id: generateUniqueId(), exercises: [] };
+        updateUser({editActiveWorkout: newWorkoutData});
+        router.push("/editworkout");
+    }
 
   return (
     <ThemedView style={styles.container}>
@@ -113,6 +122,13 @@ const Schedule = () => {
                         
                     )
                 })}
+                {user.savedWorkouts.length < 1 === true && (
+                    <View style={{flex: 1}}>
+                        <ThemedText style={{flex: 1, textAlign: "center", paddingVertical: 10}}>No created workouts.</ThemedText>
+                        <BlueButton title={"Create a new workout"} icon={plus} onPress={createNewWorkout} />
+                    </View>
+                    
+                )}
 
             </Animated.ScrollView>
         </SafeAreaView>
