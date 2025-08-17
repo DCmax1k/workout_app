@@ -1,4 +1,6 @@
 import { Image, Keyboard, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native'
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 import { Stack } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import {Colors} from '../constants/Colors'
@@ -10,6 +12,8 @@ import { FadeIn } from 'react-native-reanimated'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
+SplashScreen.preventAutoHideAsync();
+
 const RootLayout = () => {
   const colorScheme = useColorScheme()
   //console.log(colorScheme);
@@ -17,6 +21,19 @@ const RootLayout = () => {
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
+
+  const [loaded, error] = useFonts({
+    'Bals-Bold': require('../assets/fonts/BalsamiqSans-Bold.ttf'),
+    'Bals-Regular': require('../assets/fonts/BalsamiqSans-Regular.ttf'),
+    'Exo2-Thin': require('../assets/fonts/Exo2-Thin.ttf'),
+    'Exo2-ExtraLight': require('../assets/fonts/Exo2-ExtraLight.ttf'),
+  });
+
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardVisible(true);
@@ -30,6 +47,12 @@ const RootLayout = () => {
       hideSubscription.remove();
     };
   }, []);
+
+  if (!loaded && !error) {
+    return null;
+  }
+
+  
 
   const isIos = Platform.OS === 'ios';
   
@@ -45,7 +68,7 @@ const RootLayout = () => {
               <Stack.Screen name="dashboard" options={{ headerShown: false, animation: "fade" }} />
               <Stack.Screen name="editworkout" options={{ headerShown: false }} />
               <Stack.Screen name="loading" options={{ headerShown: true }} />
-              <Stack.Screen name="login" options={{ headerShown: true }} />
+              <Stack.Screen name="login" options={{ headerShown: false, animation: "fade" }} />
               <Stack.Screen name="previewWorkout" options={{ headerShown: false }} />
 
               <Stack.Screen name="GlowImageCont" options={{ headerShown: false, animation: "fade" }} />

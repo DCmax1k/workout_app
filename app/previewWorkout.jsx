@@ -37,9 +37,9 @@ const PreviewWorkoutPage = () => {
     const showDeletePastWorkoutConfirmation = (data) => {
         setConfirmMenuData({
             title: "Delete past workout?",
-            subTitle: "You will no longer be able to view this workout.",
+            subTitle: "All progress data from exercises from this workout session will be erased and you will no longer be able to view this workout.",
             subTitle2: "",
-            option1: "Delete past workout",
+            option1: "Confirm delete",
             option1color: "#DB5454",
             option2: "Go back",
             confirm: () => deletePastWorkout(data),
@@ -49,9 +49,24 @@ const PreviewWorkoutPage = () => {
 
     const deletePastWorkout = (data) => {
         const pastWorkouts = user.pastWorkouts;
+
+        // Go through each exercise and delete the completed exercise info with the same data as workout
+        const completedExercises = {...user.completedExercises};
+        data.exercises.forEach(exer => {
+            const exTime = exer.date;
+            let completedIndex = completedExercises[exer.id].findIndex(ex => ex.date === exTime); 
+            do {
+               completedExercises[exer.id].splice(completedIndex, 1);
+               completedIndex = completedExercises[exer.id].findIndex(ex => ex.date === exTime); 
+            } while (completedIndex > -1)
+        });
+
+        // Find workout and slice out to delete
         const ind = pastWorkouts.findIndex(w => w.time === data.time);
         pastWorkouts.splice(ind, 1);
-        updateUser(pastWorkouts);
+
+        // Update user
+        updateUser({pastWorkouts, completedExercises});
         router.back();
     }
 

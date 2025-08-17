@@ -12,6 +12,7 @@ import BlueButton from '../BlueButton';
 import { Exercises } from '../../constants/Exercises';
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import ConfirmMenu from '../ConfirmMenu';
+import { truncate } from '../../util/truncate';
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
@@ -138,6 +139,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                 sets: completeSets,
                 shared: true,
                 tracks: exercise.tracks,
+                unit: exercise.unit,
             }
             completedExercises.push(exerciseData);
             if (usersCompletedExercises[exerciseData.id]) {
@@ -195,7 +197,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                     </Pressable>
                 </Animated.View>
                 <Animated.View style={[{position: "absolute", width: "100%", alignItems: "center"}, animatedHeaderOpacity]}>
-                    <Text style={[styles.text, {fontSize: 18, paddingHorizontal: 10, textAlign: "center"}]}>{workout.name}</Text>
+                    <Text style={[styles.text, {fontSize: 18, paddingHorizontal: 10, textAlign: "center"}]}>{truncate(workout.name, 30)}</Text>
                     {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 15, color: "#C4C4C4"}} />}
                 </Animated.View>
 

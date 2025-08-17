@@ -137,7 +137,7 @@ const EditWorkout = () => {
     <PaperProvider>
       <ThemedView style={{flex: 1, padding: 20}}>
         <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{flex: 1, marginBottom: -50}}>
 
           <View style={styles.actionButtons}>
               <View>
@@ -164,7 +164,10 @@ const EditWorkout = () => {
 
             {exercises.map((exercise, i) => (
                 // <SwipeToDelete key={exercise.id+""+i} openedRight={() => removeExercise(i)} >
+                <Animated.View key={exercise.id+""+i} layout={LinearTransition}>
                   <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} />
+                </Animated.View>
+                  
                 // </SwipeToDelete>
 
               

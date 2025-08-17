@@ -22,7 +22,7 @@ const Profile = () => {
           <SafeAreaView style={{flex: 1}} >
               <TitleWithBack title={"Profile"} style={{marginLeft: -20}} />
               <Spacer />
-              <BlueButton onPress={clearUserData} title={"[FOR BETA]"} subtitle={"RESTORE USER TO DEFAULT"} color={"#DB5454"} style={{marginLeft: 20}} />
+              <BlueButton onPress={clearUserData} title={"Log out"} style={{marginLeft: 20}} />
           </SafeAreaView>
       </ThemedView>
     )

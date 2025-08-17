@@ -135,8 +135,8 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
     useEffect(() => {
         if (activeWorkoutStyle) {
                 const eachCompletedExercise = user.completedExercises[exercise.id] || [];
-                console.log("Current exercise: ", exercise);
-                console.log("Completed: ", eachCompletedExercise);
+                //console.log("Current exercise: ", exercise);
+                //console.log("Completed: ", eachCompletedExercise);
 
                 // Rules that require:
                 // Is a weight, has at least 2 completed exercises, and at least 1 set in current exercise

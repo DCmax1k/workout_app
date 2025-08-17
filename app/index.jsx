@@ -29,5 +29,5 @@ export default function Index() {
   }
 
   // If no user, show some fallback or prompt
-  return <Login />;
+  return  <Redirect href={"/login"} />;
 }

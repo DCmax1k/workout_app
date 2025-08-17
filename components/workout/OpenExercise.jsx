@@ -26,6 +26,18 @@ function formatMonthYear(date) {
   return `${month} ${year}`; // "MAY 2025"
 }
 
+function kmToMiles(km) {
+  // miles = kilometers * 0.621371
+  const miles = km * 0.621371;
+  return Math.round(miles * 100) / 100;
+}
+
+function kgToLbs(kg) {
+  // pounds = kilograms * 2.20462
+  const pounds = kg * 2.20462;
+  return Math.round(pounds * 100) / 100;
+}
+
 const ExerciseHistory = ({style, exercise, forceCloseOpenExercise = () => {}, ...props}) => {
   const user = useUserStore(state => state.user);
   
@@ -166,27 +178,30 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
         }, style: "destructive" }
       ]);
     }
-      const completedExercises = user.completedExercises[exercise.id] || [];
-      const bestData =  completedExercises.map((exer, ind) => {
-        let highestAmount = 0;
-        let highestAmountIndex = 0;
-        exer.sets.forEach((s, i) => {
-            const group = exer.tracks.includes("weight") ? "strength" : exer.tracks.includes("weightPlus") ? "strengthPlus" : (exer.tracks.includes("mile") && exer.tracks.includes("time")) ? "cardio" : exer.tracks.includes("mile") ? "distance" : exer.tracks.includes("reps") ? "repsOnly" : null;
-            const track = group === "strength" ? "weight" : group==="strengthPlus" ? "weightPlus" : group==="cardio" ? "mile" : group==="distance" ? "mile" : group==="repsOnly" ? "reps" : null;
-            const value = track ? parseFloat(s[track]) : 0;
-            if (value > highestAmount) {
-                highestAmountIndex = i;
-                highestAmount = value;
-            }
-        });
-        const bestSet = exer.sets[highestAmountIndex];
-        let returnValue = "";
-        if (exer.tracks.includes("mile")) returnValue = `${highestAmount} miles`;
-        else if (exer.tracks.includes("weight") || exer.tracks.includes("weightPlus")) returnValue = `${highestAmount} lbs`;
-        if (exer.tracks.includes("reps")) returnValue += ` x${bestSet["reps"]}`;
-        return {date: exer.date, amount: highestAmount,}
-        
+
+    const completedExercises = user.completedExercises[exercise.id] || [];
+    const bestData =  completedExercises.map((exer, ind) => {
+      let highestAmount = 0;
+      let highestAmountIndex = 0;
+      exer.sets.forEach((s, i) => {
+          const group = exer.tracks.includes("weight") ? "strength" : exer.tracks.includes("weightPlus") ? "strengthPlus" : (exer.tracks.includes("mile") && exer.tracks.includes("time")) ? "cardio" : exer.tracks.includes("mile") ? "distance" : exer.tracks.includes("reps") ? "repsOnly" : null;
+          const track = group === "strength" ? "weight" : group==="strengthPlus" ? "weightPlus" : group==="cardio" ? "mile" : group==="distance" ? "mile" : group==="repsOnly" ? "reps" : null;
+          const value = track ? parseFloat(s[track]) : 0;
+          if (value > highestAmount) {
+              highestAmountIndex = i;
+              highestAmount = value;
+          }
+      });
+      const bestSet = exer.sets[highestAmountIndex];
+      let returnValue = "";
+      if (exer.tracks.includes("mile")) returnValue = `${highestAmount} miles`;
+      else if (exer.tracks.includes("weight") || exer.tracks.includes("weightPlus")) returnValue = `${highestAmount} lbs`;
+      if (exer.tracks.includes("reps")) returnValue += ` x${bestSet["reps"]}`;
+      return {date: exer.date, amount: highestAmount, unit: exer.unit}
+      
     });
+
+    const weightOrDistance = (exercise.tracks.includes("weight") || exercise.tracks.includes("weightPlus"));
     
   return (
     <Animated.View layout={LinearTransition.springify().mass(0.5).damping(10)} style={[styles.cont, style]} {...props}>
@@ -248,21 +263,27 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
                         title={"No data yet"}
                         subtitle={"Lift amount"}
                         unit={""}
-                        timeframe={"7 days"}
                         color={"#546FDB"}
                         fullWidget={true}
                       />
           ) : (
             // Show completed exercise widgets
+            
             <GraphWidget
 
 
-                        data={bestData.map((item) => item.amount)}
+                        data={bestData.map((item) => {
+                          if (item.unit === 'metric') {
+                            return weightOrDistance ? kgToLbs(item.amount) : kmToMiles(item.amount);
+                          } else {
+                            return item.amount
+                          }
+                          
+                        })}
                         dates={bestData.map((item) => item.date)}
                         title={"Best set"}
-                        subtitle={(exercise.tracks.includes("weight") || exercise.tracks.includes("weightPlus")) ? "Lift amount" : "Distance" }
-                        unit={"lb"}
-                        timeframe={"7 days"}
+                        subtitle={weightOrDistance ? "Lift amount" : "Distance" }
+                        unit={weightOrDistance ? "lbs" : "miles"}
                         color={"#546FDB"}
                         fullWidget={true}
                       />

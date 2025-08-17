@@ -36,7 +36,7 @@ const Dashboard = () => {
     }
     
     
-  }, [user]);
+  }, []);
 
   const [sheetOpen, setSheetOpen] = useState(sheetShouldStartOpen);
 
