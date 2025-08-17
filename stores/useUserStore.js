@@ -48,7 +48,7 @@ export const useUserStore = create((set, get) => ({
     } else {
       const checkOldData = await AsyncStorage.getItem(STORAGE_KEY);
       if (checkOldData) {
-        const oldUserData = JSON.parse(checkData);
+        const oldUserData = JSON.parse(checkOldData);
         const newUsers = {[oldUserData._id]: oldUserData};
         set({users: newUsers, user: oldUserData});
       }
