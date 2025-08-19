@@ -100,12 +100,13 @@ const Dashboard = () => {
 
 
   return user ? (
-    <BottomSheetContext.Provider value={{ openSheet: handleSnapPress, closeSheet: handleCloseSheet, showFinishWorkout }}>
+    <View style={{flex: 1, backgroundColor: theme.background}}>
+      <BottomSheetContext.Provider value={{ openSheet: handleSnapPress, closeSheet: handleCloseSheet, showFinishWorkout }}>
         <>
           <Tabs tabBar={props => <TabBar animatedTabbarPosition={animatedTabbarPosition} {...props} />} screenOptions={{animation: 'fade', headerShown: false, headerStyle: { backgroundColor: theme.background, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0,}, headerTintColor: theme.title, tabBarStyle: { backgroundColor: "#000" }, tabBarActiveTintColor: theme.title, tabBarInactiveTintColor: "#868686", }}> 
               <Tabs.Screen name="home" options={{ title: 'Home', headerTintColor: "transparent"  }} />
               <Tabs.Screen name="friends" options={{ title: 'Friends' }} />
-              <Tabs.Screen name="workout" options={{ title: 'Workout' }} />
+              <Tabs.Screen name="workout" options={{ title: 'Workout', popToTopOnBlur: true }} />
               <Tabs.Screen name="exercises" options={{ title: 'Exercises' }} />
               <Tabs.Screen name="progress" options={{ title: 'Progress' }} />
             </Tabs>
@@ -146,8 +147,10 @@ const Dashboard = () => {
         
 
       </BottomSheetContext.Provider>
+    </View>
+    
   ) : (
-    <Redirect href="/login" />
+    <Redirect href="/onboarding" />
   )
 }
 

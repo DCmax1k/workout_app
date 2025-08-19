@@ -248,6 +248,13 @@ const IndexHome = () => {
       openSheet(1);
     }
 
+    const navigateToSchedule = () => {
+      router.navigate('/dashboard/workout');
+      setTimeout(() => {
+        router.push('/dashboard/workout/schedule');
+      }, 100);
+    }
+
   let isThereWorkout = (continuedWorkout !== null && continuedWorkout.id !== "0") ? "yes" : (continuedWorkout !== null && continuedWorkout.id === "0") ? "rest" : "none";
   let isThereWorkoutNext = (continuedWorkoutNext !== null && continuedWorkoutNext.id !== "0") ? "yes" : (continuedWorkoutNext !== null && continuedWorkoutNext.id === "0") ? "rest" : "none";
 
@@ -314,7 +321,7 @@ const IndexHome = () => {
 
 
           {/* If a schedule, show next in schedule. Else, show create a schedule */}
-          <Pressable style={{height: QUICK_START_CARD_HEIGHT, overflow: "visible", }} onPress={isThereWorkout==="yes" ?  () => openWorkout(continuedWorkout) : isThereWorkout==="rest" ? rotateNext : () => router.replace('/dashboard/workout/schedule') }>
+          <Pressable style={{height: QUICK_START_CARD_HEIGHT, overflow: "visible", }} onPress={isThereWorkout==="yes" ?  () => openWorkout(continuedWorkout) : isThereWorkout==="rest" ? rotateNext : navigateToSchedule}>
             {/* Behind element to animate */}
               {/* cardFlipAnimation && */(<Animated.View style={[styles.animateQuickCard, {zIndex: 0, elevation: 0,}, behindCardAnimatedStyle ]}>
                 <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>

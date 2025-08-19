@@ -18,16 +18,21 @@ export default function Index() {
     rehydrate();
   }, []);
 
+  useEffect(() => {
+    if (!loading) {
+      // If user exists, redirect to dashboard
+      if (user?._id) {
+        router.replace('/dashboard');
+      } else {
+        router.replace('/onboarding');
+      }
+    }
+    
+  }, [user, loading, router]);
+
   if (loading) {
     return <Text>Loading...</Text>;
   }
 
-  // If user exists, show user info
-  //console.log(user);
-  if (user?._id) {
-    return <Redirect href={"/dashboard"} />;
-  }
-
-  // If no user, show some fallback or prompt
-  return  <Redirect href={"/login"} />;
+  return null;
 }

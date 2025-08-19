@@ -10,18 +10,18 @@ export const useUserStore = create((set, get) => ({
   user: null, // loggedInAs user but full details
   users: {},
 
-  setUser: async (user) => {
+  setUser: (user) => {
     if (user===null) {
       const data = {users: get().users, user: null};
       set(data);
-      await AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(data));
+      AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(data));
       return;
     }
     const state = get();
-    const newUsers = {...state.users, [state.user?._id]: user};
-    const newFullData = {  user, users: newUsers };
+    const newUsers = {...state.users, [user._id]: user};
+    const newFullData = {  user: {...user}, users: newUsers };
     set(newFullData);
-    await AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
+    AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
   },
 
   updateUser: async (updates) => {

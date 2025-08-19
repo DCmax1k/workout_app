@@ -66,9 +66,10 @@ const RootLayout = () => {
             <Stack screenOptions={{contentStyle: {backgroundColor: theme.background,}}}>
               <Stack.Screen name='index' options={{ headerShown: false }} />
               <Stack.Screen name="dashboard" options={{ headerShown: false, animation: "fade" }} />
+              <Stack.Screen name="onboarding" options={{ headerShown: false, animation: "fade" }} />
               <Stack.Screen name="editworkout" options={{ headerShown: false }} />
               <Stack.Screen name="loading" options={{ headerShown: true }} />
-              <Stack.Screen name="login" options={{ headerShown: false, animation: "fade" }} />
+              {/* <Stack.Screen name="login" options={{ headerShown: false, animation: "fade" }} /> */}
               <Stack.Screen name="previewWorkout" options={{ headerShown: false }} />
 
               <Stack.Screen name="GlowImageCont" options={{ headerShown: false, animation: "fade" }} />
