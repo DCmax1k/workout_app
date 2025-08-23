@@ -21,6 +21,7 @@ import OpenExercise from '../../../components/workout/OpenExercise'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useBottomSheet } from '../../../context/BottomSheetContext'
 import { useIsFocused } from '@react-navigation/native'
+import Search from '../../../components/Search'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -163,7 +164,8 @@ const IndexWorkout = () => {
 
             <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Saved Workouts</ThemedText>
 
-            <TextInput style={[styles.search, {flex: 1}]} placeholder='Search workouts' placeholderTextColor={"#A6A6A6"} value={searchValue} onChangeText={(e) => setSearchValue(e)} />
+            {/* <TextInput style={[styles.search, {flex: 1}]} placeholder='Search workouts' placeholderTextColor={"#A6A6A6"} value={searchValue} onChangeText={(e) => setSearchValue(e)} /> */}
+            <Search value={searchValue} onChangeText={(e) => setSearchValue(e)} placeholder='Search workouts' />
 
             <Spacer height={20} />
 

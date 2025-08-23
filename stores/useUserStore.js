@@ -7,38 +7,48 @@ const DSTORAGE_KEY = 'data-storage';
 
 export const useUserStore = create((set, get) => ({
 
+  options: {
+    loading: false,
+    animateDashboard: false,
+  },
   user: null, // loggedInAs user but full details
   users: {},
 
   setUser: (user) => {
     if (user===null) {
-      const data = {users: get().users, user: null};
+      const data = {...get(), user: null};
       set(data);
       AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(data));
       return;
     }
     const state = get();
     const newUsers = {...state.users, [user._id]: user};
-    const newFullData = {  user: {...user}, users: newUsers };
+    const newFullData = { ...state, user: {...user}, users: newUsers };
     set(newFullData);
     AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
   },
 
-  updateUser: async (updates) => {
+  updateUser: (updates) => {
     const state = get();
     if (!state.user) return;
     const user = state.user; // state.users[state.loggedInAs];
     const newUser = {...user, ...updates};
     const newUsers = {...state.users, [state.user?._id]: newUser};
-    const newFullData = {  user: newUser, users: newUsers };
+    const newFullData = { ...state, user: newUser, users: newUsers };
     set(newFullData);
-    await AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
+    AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
   },
 
-  clearUser: async () => {
+  clearUser: () => {
     const newFullData = { ...get(), user: null };
     set(newFullData);
-    await AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
+    AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
+  },
+
+  updateOptions: (updates) => {
+    const options = { ...get().options, ...updates };
+    set({ options, });
+    AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify({ ...get(), options, }));
   },
 
   rehydrate: async () => {
@@ -50,7 +60,7 @@ export const useUserStore = create((set, get) => ({
       if (checkOldData) {
         const oldUserData = JSON.parse(checkOldData);
         const newUsers = {[oldUserData._id]: oldUserData};
-        set({users: newUsers, user: oldUserData});
+        set({loading: false, users: newUsers, user: oldUserData});
       }
     }
   },

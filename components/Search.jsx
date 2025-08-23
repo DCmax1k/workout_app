@@ -6,7 +6,7 @@ import keyboardIcon from '../assets/icons/keyboard.png';
 import { Colors } from '../constants/Colors';
 import Animated, { BounceInRight, BounceOutRight, FadeIn, FadeInRight, FadeOut, FadeOutRight, SlideOutRight } from 'react-native-reanimated';
 
-const Search = ({style, actionMenuData = false, dismissKeyboard = false, ...props }) => {
+const Search = ({style, actionMenuData = false, dismissKeyboard = false, autoCorrect=false, placeholder="Search", ...props }) => {
 
   const [showDisKeyboard, setShowDisKeyboard] = React.useState(false);
 
@@ -15,7 +15,7 @@ const Search = ({style, actionMenuData = false, dismissKeyboard = false, ...prop
       <View style={[styles.searchCont, {flex: 1}]}>
         
         <Image style={styles.searchIcon} source={searchIcon} />
-        <TextInput {...props} style={[styles.search, {flex: 1}]} placeholder='Search' placeholderTextColor={"#A6A6A6"} onFocus={() => setShowDisKeyboard(true)} onBlur={() => setShowDisKeyboard(false)} />
+        <TextInput {...props} autoCorrect={autoCorrect} style={[styles.search, {flex: 1}]} placeholder={placeholder} placeholderTextColor={"#A6A6A6"} onFocus={() => setShowDisKeyboard(true)} onBlur={() => setShowDisKeyboard(false)} />
         {/* Dismiss keyboard */}
         {dismissKeyboard && showDisKeyboard && (
           <Animated.View style={[styles.disKeyboard,]} entering={BounceInRight} exiting={SlideOutRight}>

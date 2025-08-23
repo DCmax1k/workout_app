@@ -86,7 +86,7 @@ const OnboardingIndex = () => {
 
                             <View style={{alignItems: "center",}}>
 
-                            <Text style={{color: "white", fontSize: 13}}>or continue with email</Text>
+                            <Text style={{color: "white", fontSize: 13, fontFamily: "DoppioOne-Regular"}}>or continue with email</Text>
                             
                             <Spacer />
 
@@ -99,9 +99,9 @@ const OnboardingIndex = () => {
                             <Spacer height={20} />
 
                             <View style={{flexDirection: "row"}}>
-                                <Text style={{color: "white", fontSize: 13}}>You already have an account?</Text>
+                                <Text style={{color: "white", fontSize: 13, fontFamily: "DoppioOne-Regular"}}>You already have an account?</Text>
                                 <Pressable style={{marginLeft: 5}} onPress={goToLogin}>
-                                    <Text style={{color: "#8FA6FF", fontSize: 13}}>Login</Text>
+                                    <Text style={{color: "#8FA6FF", fontSize: 13, fontFamily: "DoppioOne-Regular"}}>Login</Text>
                                 </Pressable>
                             </View>
                             

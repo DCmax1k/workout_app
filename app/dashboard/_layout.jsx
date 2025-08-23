@@ -15,6 +15,8 @@ const screenHeight = Dimensions.get("screen").height;
 
 const Dashboard = () => {
   const user = useUserStore((state) => state.user);
+  const updateOptions = useUserStore((state) => state.updateOptions);
+  const {animateDashboard} = useUserStore((state) => state.options);
   const colorScheme = useColorScheme()
   const theme = Colors[colorScheme];
 
@@ -37,6 +39,16 @@ const Dashboard = () => {
     
     
   }, []);
+
+    useEffect(() => {
+      if (animateDashboard) {
+        // do your animation here
+        // then reset so future visits are default
+        setTimeout(() => {
+            updateOptions({ animateDashboard: false });
+        }, 1000)
+      }
+    }, [animateDashboard]);
 
   const [sheetOpen, setSheetOpen] = useState(sheetShouldStartOpen);
 

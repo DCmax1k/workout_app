@@ -19,6 +19,8 @@ const RootLayout = () => {
   //console.log(colorScheme);
   const theme = Colors[colorScheme];
 
+  const {animateDashboard} = useUserStore((state) => state.options);
+
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
 
@@ -27,6 +29,7 @@ const RootLayout = () => {
     'Bals-Regular': require('../assets/fonts/BalsamiqSans-Regular.ttf'),
     'Exo2-Thin': require('../assets/fonts/Exo2-Thin.ttf'),
     'Exo2-ExtraLight': require('../assets/fonts/Exo2-ExtraLight.ttf'),
+    'DoppioOne-Regular': require('../assets/fonts/DoppioOne-Regular.ttf'),
   });
 
   useEffect(() => {
@@ -58,6 +61,7 @@ const RootLayout = () => {
   
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
+      {/* <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss}> */}
       <PaperProvider>
         <StatusBar style="light" />
         <GestureHandlerRootView>
@@ -65,10 +69,10 @@ const RootLayout = () => {
           <SafeAreaProvider>
             <Stack screenOptions={{contentStyle: {backgroundColor: theme.background,}}}>
               <Stack.Screen name='index' options={{ headerShown: false }} />
-              <Stack.Screen name="dashboard" options={{ headerShown: false, animation: "fade" }} />
-              <Stack.Screen name="onboarding" options={{ headerShown: false, animation: "fade" }} />
+              <Stack.Screen name="dashboard" options={{ headerShown: false, animation: animateDashboard ? "default" : "fade" }} />
+              <Stack.Screen name="onboarding" options={{ headerShown: false, animation: "slide_from_left" }} />
               <Stack.Screen name="editworkout" options={{ headerShown: false }} />
-              <Stack.Screen name="loading" options={{ headerShown: true }} />
+              <Stack.Screen name="loading" options={{ headerShown: true, animation: "slide_from_bottom" }} />
               {/* <Stack.Screen name="login" options={{ headerShown: false, animation: "fade" }} /> */}
               <Stack.Screen name="previewWorkout" options={{ headerShown: false }} />
 
@@ -76,7 +80,11 @@ const RootLayout = () => {
             </Stack>
 
             <KeyboardAvoidingView style={{position: "absolute", bottom: -10, right: 20, paddingBottom: 10, zIndex: 100, marginBottom: isIos ? -50 : 0,}} behavior={isIos ? 'position' : 'height'}>
-                <Pressable style={[styles.disKeyboard, { display: isIos ? "block" : keyboardVisible ? "block" : "none"}]} onPress={() => {Keyboard.dismiss(); setKeyboardVisible(false)}} >
+                <Pressable style={[styles.disKeyboard, { display: isIos ? "flex" : keyboardVisible ? "flex" : "none"}]} onPress={() =>
+                  {
+                    Keyboard.dismiss();
+                    //setKeyboardVisible(false);
+                    }} >
                   <Image style={{height: 30, width: 30, objectFit: 'contain'}} source={keyboardIcon} />
                 </Pressable>
             </KeyboardAvoidingView>
@@ -88,7 +96,7 @@ const RootLayout = () => {
           
         </GestureHandlerRootView>
       </PaperProvider>
-      
+      {/* </Pressable> */}
     </View>
     
       
