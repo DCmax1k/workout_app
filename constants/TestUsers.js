@@ -1,9 +1,5 @@
 
 
-export const TestUsers = [
-    USER, // Default user
-]
-
 const USER = {
     recentActivity: [{  "userId": "1",
       "timestamp": "1746060519969",
@@ -72,9 +68,14 @@ const USER = {
     },
 
     pastWorkouts: [], // [{workoutName, time, workoutLength, totalWeightLifted, exercises, fullWorkout}, {workoutName, time, workoutLength, totalWeightLifted, exercises, fullWorkout}, ],
+    googleId: null,
+    appleId: null,
+    facebookId: null,
 
     // Only local not in live db
     activeWorkout: null,
     editActiveWorkout: null,
     activeReopenExercise: null,
 };
+
+export const TestUsers = [USER];

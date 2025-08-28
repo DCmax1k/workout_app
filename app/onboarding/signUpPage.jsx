@@ -7,9 +7,10 @@ import figureOneWeight from "../../assets/onboarding/figureOneWeight.png";
 import googleIcon from "../../assets/onboarding/googleIcon.png";
 import appleIconWhite from "../../assets/onboarding/appleIconWhite.png";
 import { useUserStore } from '../../stores/useUserStore'
-import { TestUsers } from '../../constants/TestUsers'
+import { TestUsers } from "../../constants/TestUsers";
 import { Redirect, useRouter } from 'expo-router'
 import ThemedTextInput from '../../components/workout/ThemedTextInput'
+import BlueButton from '../../components/BlueButton'
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -45,6 +46,13 @@ const SignUpPage = () => {
 
     const goToLogin = () => {
         router.replace("/onboarding/loginPage");
+    }
+
+    const resetUser = () => {
+        // Reset to default user
+        setUser(JSON.parse(JSON.stringify(USER)));
+        updateOptions({animateDashboard: true});
+        router.replace("/dashboard");
     }
 
     
@@ -117,6 +125,10 @@ const SignUpPage = () => {
                                     <Text style={{color: "#8FA6FF", fontSize: 13, fontFamily: "DoppioOne-Regular"}}>Login</Text>
                                 </Pressable>
                             </View>
+
+                            <Spacer height={120} />
+
+                            <BlueButton title={"RESET AND LOG IN WITH FRESH USER"} color={"red"} onPress={resetUser} />
                             
                             
                             

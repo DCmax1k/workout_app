@@ -42,14 +42,7 @@
     },
     "updates": {
       "url": "https://u.expo.dev/25e0b73e-7b79-4da3-bba6-a652c8220796"
-    },
-    "fonts": [
-      "./assets/fonts/BalsamiqSans-Bold.ttf",
-      "./assets/fonts/BalsamiqSans-Regular.ttf",
-      "./assets/fonts/Exo2-Thin.ttf",
-      "./assets/fonts/Exo2-ExtraLight.ttf",
-      "./assets/fonts/DoppioOne-Regular.ttf"
-  ]
+    }
     
   }
 }

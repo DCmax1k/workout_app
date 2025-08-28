@@ -3,12 +3,12 @@ import React from 'react'
 import { Colors } from '../constants/Colors'
 import rightCarrot from '../assets/icons/rightCarrot.png'
 
-const BlueButton = ({style, title, showRight = false, icon, ...props }) => {
+const BlueButton = ({style, title, showRight = false, icon, color, ...props }) => {
   return (
     <TouchableOpacity style={[style]} {...props}
       
     >
-      <View style={[styles.button, { backgroundColor: props.color || Colors.primaryBlue, flexDirection: 'row', justifyContent: showRight ? 'space-between' : 'center' ,}]}
+      <View style={[styles.button, { backgroundColor: color || Colors.primaryBlue, flexDirection: 'row', justifyContent: showRight ? 'space-between' : 'center' ,}]}
       >
         {/* Icon */}
         {icon && (

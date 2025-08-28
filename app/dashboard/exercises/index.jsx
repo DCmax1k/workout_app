@@ -1,7 +1,5 @@
 import { Dimensions, Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-// import { AlphabetList } from "react-native-section-alphabet-list";
-import AlphabetList from "react-native-flatlist-alphabet";
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
 import TitleWithBack from '../../../components/TitleWithBack'

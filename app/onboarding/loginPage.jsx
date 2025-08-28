@@ -8,7 +8,7 @@ import googleIcon from "../../assets/onboarding/googleIcon.png";
 import appleIconWhite from "../../assets/onboarding/appleIconWhite.png";
 import { useUserStore } from '../../stores/useUserStore';
 import { Redirect, useRouter } from 'expo-router';
-import { TestUsers } from '../../constants/TestUsers';
+import { TestUsers } from "../../constants/TestUsers";
 import ThemedTextInput from '../../components/workout/ThemedTextInput';
 
 const screenWidth = Dimensions.get("window").width;
