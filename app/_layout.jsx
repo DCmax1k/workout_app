@@ -33,10 +33,10 @@ const RootLayout = () => {
   });
 
   useEffect(() => {
-    if (loaded || error) {
+    if (loaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, error]);
+  }, [loaded]);
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardVisible(true);
@@ -51,8 +51,13 @@ const RootLayout = () => {
     };
   }, []);
 
-  if (!loaded && !error) {
-    return null;
+  if (!loaded) {
+    return <View></View>;
+  }
+
+  if (error) {
+    console.error('Font loading error:', error);
+    return <View><Text>Font load failed</Text></View>;
   }
 
   

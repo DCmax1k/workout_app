@@ -52,7 +52,7 @@ const OnboardingIndex = () => {
         : (
             <ThemedView style={{flex: 1, height: screenHeight, width: screenWidth}}>
                 <SafeAreaView style={{flex: 1}}>
-                    <ScrollView style={{flex: 1, padding: 30,}}>
+                    <ScrollView style={{flex: 1, padding: 30,}} showsVerticalScrollIndicator={false}>
                         <View style={{flexDirection: "column",}}>
                             <Spacer height={20} />
 

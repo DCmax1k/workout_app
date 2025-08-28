@@ -18,6 +18,7 @@ import ConfirmMenu from '../components/ConfirmMenu'
 import Animated, { LinearTransition, SlideInDown, SlideOutDown } from 'react-native-reanimated'
 import SwipeToDelete from '../components/SwipeToDelete'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import getAllExercises from '../util/getAllExercises'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
@@ -29,7 +30,8 @@ const EditWorkout = () => {
   const updateUser = useUserStore((state) => state.updateUser);
   const workout = user.editActiveWorkout;
   const exercises = workout.exercises;
-  const allExercises = [...user.createdExercises, ...Exercises];
+  //const allExercises = [...user.createdExercises, ...Exercises];
+  const allExercises = getAllExercises(user);
 
   
   const [exerciseModal, setExerciseModal] = useState(false);
@@ -70,8 +72,7 @@ const EditWorkout = () => {
       // If found, set saved workout
       savedWorkouts[workoutIndex] = w;
     }
-    
-    updateUser({savedWorkouts});
+    updateUser({savedWorkouts: [...savedWorkouts]});
     router.back();
   }
 

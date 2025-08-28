@@ -27,6 +27,8 @@ export const workoutToSimple = (w) => {
       }
       ex.note ? exData.note = ex.note : null;
       ex.unit ? exData.unit = ex.unit : null;
+      ex.tracks ? exData.tracks = ex.tracks : null;
+      ex.group ? exData.group = ex.group : null;
       return exData;
     });
     w.exercises = newExercises;

@@ -199,7 +199,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                 <View style={styles.columnForComplete}></View>
             </View>
             {/* Each set */}
-            {exercise.sets.map((set, setIndex) => (
+            {exercise?.sets.map((set, setIndex) => (
                 <Animated.View key={setIndex} style={[styles.row, {backgroundColor: set.complete ? "rgba(33, 134, 60, 0.14)":"transparent"}]} layout={LinearTransition}>
                     <Text style={[styles.column, styles.column1]}>{setIndex+1}</Text>
                     <>
