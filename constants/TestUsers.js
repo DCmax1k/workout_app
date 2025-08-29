@@ -50,22 +50,38 @@ const USER = {
   // },],
     completedExercises:{},// { "2": [{date: 23235235, sets: [{weight: "135", reps: "10"}], shared: true,}] }, // by exerciseId
     savedWorkouts:[],// [{name: "Legs", id: "234", exercises: [ {id: "2", note:"", sets: [{lbs: "135", reps: "10"}]},] }, {name: "Chest and Shoulders", id: "2344", exercises: [ {id: "2314234", note:"", sets: [{lbs: "135", reps: "10"}]},{id: "4", note:"", sets: [{lbs: "135", reps: "10"}]}] }, {name: "Back", id: "345", exercises: [ {id: "4", note:"", sets: [{lbs: "135", reps: "10"}]},] }],
-    progress: {
-      sections: [
-        {title: "Analytics",
-          widgets:
-          {
-            weight: {
-              data: [ {date: 235234, amount: 190.5, }, {date: 235235, amount: 188.5, }, {date: 235236, amount: 185.5, }, {date: 235237, amount: 185, }, {date: 235238, amount: 187, }, {date: 235239, amount: 185.5, }, {date: 235240, amount: 183.5, } ],
-              active: true,
-              unit: "lbs",
-              layout: "weight", // weight, calorie, 
-            },
-          }
+    tracking: {
+      insights: {
+        expenditure: {
+          data: [ ],
+          active: true,
+          unit: "kcal",
+          layout: "none", // weight, calorie, none, bmi 
         },
-            
-      ]
+        BMI: {
+          data: [ ],
+          active: true,
+          unit: "",
+          layout: "bmi", // weight, calorie, none, bmi 
+        },
+      },
+      logging: {
+        weight: {
+          data: [ {date: 235234, amount: 190.5, }, {date: 235235, amount: 188.5, }, {date: 235236, amount: 185.5, }, {date: 235237, amount: 185, }, {date: 235238, amount: 187, }, {date: 235239, amount: 185.5, }, {date: 235240, amount: 183.5, } ],
+          active: true,
+          unit: "lbs",
+          layout: "weight", // weight, calorie, none, bmi 
+        },
+        
+      }
+
     },
+    health: {
+      height: 70, // inches
+      age: 28,
+      gender: "male",
+    },
+
 
     pastWorkouts: [], // [{workoutName, time, workoutLength, totalWeightLifted, exercises, fullWorkout}, {workoutName, time, workoutLength, totalWeightLifted, exercises, fullWorkout}, ],
     googleId: null,

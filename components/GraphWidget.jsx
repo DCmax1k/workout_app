@@ -7,7 +7,7 @@ import RightArrow from '../assets/icons/rightArrow.png'
 import SectionSelect from './SectionSelect'
 
 
-const GraphWidget = ({fullWidget = false, data=[], dates = [], ...props}) => {
+const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], ...props}) => {
 
     const oriData = JSON.parse(JSON.stringify(data));
     const oriDates = JSON.parse(JSON.stringify(dates));
@@ -33,8 +33,8 @@ const GraphWidget = ({fullWidget = false, data=[], dates = [], ...props}) => {
         dates = oriDates;
     }
     
-    const firstItem = data[0];
-    const lastItem = data[data.length - 1];
+    const firstItem = data[0] || 0;
+    const lastItem = data[data.length - 1] || 0;
 
     const percentDifferenceTemp =  100*((lastItem-firstItem)/firstItem);
     let percentDifference = Math.round(percentDifferenceTemp * 10) / 10; // round to 1 decimal place
@@ -47,8 +47,12 @@ const GraphWidget = ({fullWidget = false, data=[], dates = [], ...props}) => {
     const backGridTopOffset = 0;
     const backGridRightOffset = 40;
 
-    const max = Math.max(...data);
-    const min = Math.min(...data);
+    const noData = data.length === 0;
+
+    const max = !noData ? Math.max(...data) : 0;
+    const min = !noData ? Math.min(...data) : 0;
+
+    console.log(max);
 
     let showMax = true;
     let showMin = true;
@@ -72,7 +76,7 @@ const GraphWidget = ({fullWidget = false, data=[], dates = [], ...props}) => {
     const isSameYear = initialDateStringJustYear === new Date().getFullYear().toString();
     
   return (
-    <View style={[styles.container, fullWidget ? {flex: 1, width: "100%"} : {width: 200}]} >
+    <View style={[styles.container, (fullWidget || fillWidth) ? {flex: 1, width: "100%"} : {width: 200}]} >
 
         {/* Pressable covesr the entire screen for small widget */}
         <View>
@@ -88,7 +92,7 @@ const GraphWidget = ({fullWidget = false, data=[], dates = [], ...props}) => {
                 </View>
             </View>
 
-            {fullWidget === true && (<View>
+            {(fullWidget === true || fillWidth === true) && (<View>
                 <Text  style={styles.title}>{props.subtitle}</Text>
                 <View style={{flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end"}}>
                     <Text style={[{fontSize: 16, color: isPositive ? "#86BE79" : "#FF8686", fontWeight: "700"}]}>{isPositive ? "+":""}{percentDifference}%</Text>

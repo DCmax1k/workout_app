@@ -3,7 +3,7 @@ import { Redirect, router } from 'expo-router';
 import { useUserStore } from '../stores/useUserStore';
 import { useEffect, useState } from 'react';
 import { Text } from 'react-native';
-import Login from './login'
+// import Login from './login'
 
 export default function Index() {
   // Do Login check here
@@ -22,6 +22,7 @@ export default function Index() {
     if (!loading) {
       // If user exists, redirect to dashboard
       if (user?._id) {
+        console.log(user.health);
         router.replace('/dashboard');
       } else {
         router.replace('/onboarding');

@@ -172,7 +172,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
     return (
     <View style={{backgroundColor: activeWorkoutStyle ? "":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
-            <TextInput ref={exerciseNameRef} value={exercise.name} onChangeText={changeExerciseName} style={{fontSize: 15, fontWeight: 500, color: activeWorkoutStyle?"white":"#DB8854", }} />
+            <TextInput ref={exerciseNameRef} value={exercise.name} onChangeText={changeExerciseName} style={{fontSize: 15, flex: 1, fontWeight: 500, color: activeWorkoutStyle?"white":"#DB8854", }} />
             <ActionMenu offset={activeWorkoutStyle} backgroundColor={activeWorkoutStyle?"transparent":"#DB8854"} data={[
                 {title: "Add note", icon: fileIcon, onPress: openNoteAndFocus, },
                 {title: "Rename exercise", icon: pencilIcon, onPress: () => exerciseNameRef.current?.focus()},

@@ -1,11 +1,12 @@
 
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { TestUsers } from '../constants/TestUsers';
 
 const STORAGE_KEY = 'user-storage';
 const DSTORAGE_KEY = 'data-storage';
 
-const PROGRESS_PLACEHOLDER = {sections: [{title: "Analytics",widgets:{  weight: {data: [ {date: 235234, amount: 190.5, }, {date: 235235, amount: 188.5, }, {date: 235236, amount: 185.5, }, {date: 235237, amount: 185, }, {date: 235238, amount: 187, }, {date: 235239, amount: 185.5, }, {date: 235240, amount: 183.5, } ],active: true,unit: "lbs",layout: "weight",},}},]}
+const USER = TestUsers[0]; // Default user
 
 export const useUserStore = create((set, get) => ({
 
@@ -25,8 +26,9 @@ export const useUserStore = create((set, get) => ({
       return;
     }
     const state = get();
-    const newUsers = {...state.users, [user._id]: user};
-    const newFullData = { ...state, user: {...user}, users: newUsers };
+    const fillUser = {...USER, ...user, }; // Fill in any missing data with default user data
+    const newUsers = {...state.users, [user._id]: fillUser};
+    const newFullData = { ...state, user: {...fillUser}, users: newUsers };
     set(newFullData);
     AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
   },
@@ -61,7 +63,7 @@ export const useUserStore = create((set, get) => ({
     } else {
       const checkOldData = await AsyncStorage.getItem(STORAGE_KEY);
       if (checkOldData) {
-        const oldUserData = {archivedExercises: {}, createdExercises: [], completedExercises: {}, savedWorkouts: [], progress: PROGRESS_PLACEHOLDER, ...JSON.parse(checkOldData)}; // Put all data that might not be in the user
+        const oldUserData = {...USER, ...JSON.parse(checkOldData)}; // Put all data that might not be in the user
         const newUsers = {[oldUserData._id]: oldUserData};
         set({loading: false, users: newUsers, user: oldUserData});
       }
