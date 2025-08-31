@@ -11,7 +11,7 @@
 
 // const USER = TestUsers[0]; // Default user
 
-// const Login = () => {
+const Login = () => {
 //     const users = useUserStore((state) => state.users);
 //     const user = useUserStore((state) => state.user);
 //     const setUser = useUserStore((state => state.setUser));
@@ -45,8 +45,8 @@
 //       <WelcomePage />
 //     </View>
 //   )
-// }
+}
 
-// export default Login
+export default Login
 
 // const styles = StyleSheet.create({})

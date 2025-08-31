@@ -11,8 +11,9 @@ import check from '../../assets/icons/check.png'
 import lightBulb from '../../assets/icons/lightBulb.png'
 import doubleCheck from '../../assets/icons/doubleCheck.png'
 import dumbellIcon from '../../assets/icons/weight.png'
-import Animated, { LinearTransition } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated'
 import { useUserStore } from '../../stores/useUserStore'
+import { ScrollView } from 'react-native-gesture-handler'
 
 const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWorkoutStyle, ...props}) => {
     const user = useUserStore((state) => state.user);
@@ -170,7 +171,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
     }, [user.completedExercises])
 
     return (
-    <View style={{backgroundColor: activeWorkoutStyle ? "":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10}}>
+    <Animated.View layout={LinearTransition} entering={FadeIn} exiting={FadeOut} style={{backgroundColor: activeWorkoutStyle ? "":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
             <TextInput ref={exerciseNameRef} value={exercise.name} onChangeText={changeExerciseName} style={{fontSize: 15, flex: 1, fontWeight: 500, color: activeWorkoutStyle?"white":"#DB8854", }} />
             <ActionMenu offset={activeWorkoutStyle} backgroundColor={activeWorkoutStyle?"transparent":"#DB8854"} data={[
@@ -180,11 +181,11 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                 {title: "Delete exercise", icon: trashIcon, onPress: removeExercise}]} />
         </View>
 
-        {(showNote || exercise.note) && <View>
+        {(showNote || exercise.note) ? (<Animated.View layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
             <TextInput style={{color: activeWorkoutStyle ? "#A4A4A4" : "white", fontSize: 16, paddingVertical: 10, paddingHorizontal: 0}} multiline={true} ref={noteRef} value={exercise.note} onChangeText={updateNote} onEndEditing={() => exercise.note ? null : setShowNote(false)} />
-        </View>}
+        </Animated.View>) : null}
         
-        <View>
+        <Animated.View layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
             {/* Top row, labels */}
             <View style={styles.row}>
                     <Text style={[styles.column, styles.column1]}>Sets</Text>
@@ -200,7 +201,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
             </View>
             {/* Each set */}
             {exercise?.sets.map((set, setIndex) => (
-                <Animated.View key={setIndex} style={[styles.row, {backgroundColor: set.complete ? "rgba(33, 134, 60, 0.14)":"transparent"}]} layout={LinearTransition}>
+                <Animated.View key={setIndex} style={[styles.row, {backgroundColor: set.complete ? "rgba(33, 134, 60, 0.14)":"transparent"}]} layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
                     <Text style={[styles.column, styles.column1]}>{setIndex+1}</Text>
                     <>
                         {exercise.tracks.map(track => {
@@ -219,7 +220,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                 </Animated.View>
             ))}
             {/* Suggestions */}
-            {activeWorkoutStyle === true && suggesstion.length > 0 === true && (<Animated.View style={styles.row} layout={LinearTransition}>
+            {activeWorkoutStyle && suggesstion.length > 0 ? (<Animated.View style={styles.row} layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
                 <View style={{flex: 1, height: 25, backgroundColor: "#222222", borderRadius: 5, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
                     {/* Left side */}
                     <View style={{flexDirection: "row", height: "100%", alignItems: "center"}}>
@@ -234,9 +235,9 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                         </Pressable>
                     </View>
                 </View>
-            </Animated.View>)}
+            </Animated.View>) : null}
             {/* Add set */}
-            <View style={{flex: 1}}>
+            <Animated.View layout={LinearTransition} style={{flex: 1}}>
                 <Pressable onPress={() => {addSet(3)}} style={{paddingVertical: 5, paddingHorizontal: 35, backgroundColor: "#2D2D2D", alignSelf: 'center', marginTop: 10, marginBottom: 5, borderRadius: 10}}>
                     <Text style={{color: "white", fontSize: 15, fontWeight: 500}}>Add set (3)</Text>
                 </Pressable>
@@ -247,12 +248,12 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                         {title: "Remove all sets", icon: trashIcon, onPress: () => {addSet(0)}},
                         ]} />
                 </View>
-            </View>
+            </Animated.View>
             
             
-        </View>
+        </Animated.View>
 
-    </View>
+    </Animated.View>
   )
 }
 

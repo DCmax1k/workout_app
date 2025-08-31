@@ -184,7 +184,7 @@ const EditWorkout = () => {
           </Animated.ScrollView>
         </SafeAreaView>
 
-            {Platform.OS === 'ios' ? (
+            {/* {Platform.OS === 'ios' ? (
               <Modal
               visible={exerciseModal}
               animationType='slide'
@@ -199,8 +199,14 @@ const EditWorkout = () => {
                     <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{position: "absolute", top: 0, left: 0, height: screenHeight, width: screenWidth, zIndex: 5, elevation: 5}}>
                         <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} notModal={true} />
                     </Animated.View>
+                ) : null)} */}
+
+                {/* Switch to not using modal for keyboard dismiss button to show */}
+        {(exerciseModal === true ? (
+                    <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{position: "absolute", top: 0, left: 0, height: screenHeight, width: screenWidth, zIndex: 5, elevation: 5}}>
+                        <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} notModal={true} />
+                    </Animated.View>
                 ) : null)}
-        
         
       </ThemedView>
     </PaperProvider>

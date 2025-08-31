@@ -45,7 +45,7 @@ const PastWorkoutCard = ({style, data, reopenExercise = null, onPress = () => {}
             {/* Top side */}
         <View style={[styles.side, styles.top]}>
             <ThemedText title={true} style={{fontSize: 17, fontWeight: "bold"}} >{truncate(data.workoutName, 22)}</ThemedText>
-            <ThemedText style={{fontSize: 13, fontWeight: "bold", color: Colors.primaryOrange}}>{data.exercises.length} EXERCISES</ThemedText>
+            <ThemedText style={{fontSize: 13, fontWeight: "bold", color: Colors.primaryOrange}}>{data.exercises.length} EXERCISE{data.exercises.length === 1 ? "":"S"}</ThemedText>
         </View>
         {/* Bottom side */}
         <View style={[styles.side, styles.bottom]}>

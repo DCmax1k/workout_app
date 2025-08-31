@@ -65,7 +65,7 @@ function TabBar({animatedTabbarPosition, state, descriptors, navigation }) {
             onLongPress={onLongPress}
             style={[styles.tabbarItem, , isMiddleTab ? styles.middleTab : null, { opacity: 1 }]}
           >
-            <Image style={[styles.tabBarIcon, isMiddleTab ? styles.middleTabIcon : null, {tintColor: isFocused ? theme.title : "grey"}]} source={(route.name === 'home' ? Home : route.name === 'workout' ? Workout : route.name === 'exercises' ? Exercises : route.name === 'friends' ? Friends : Progress)} />
+            <Image style={[styles.tabBarIcon, isMiddleTab ? styles.middleTabIcon : null, {tintColor: isFocused ? theme.title : "grey"}]} source={(route.name === 'home' ? Home : route.name === 'workout' ? Workout : route.name === 'exercises' ? Exercises : route.name === 'social' ? Friends : Progress)} />
 
 
             {!isMiddleTab && (

@@ -223,7 +223,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                 </BottomSheetScrollView>
                 </PaperProvider>
                 
-                {Platform.OS === 'ios' ? (
+                {/* {Platform.OS === 'ios' ? (
                     <Modal
                         visible={exerciseModal}
                         animationType='slide'
@@ -238,7 +238,14 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                     <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{position: "absolute", top: 0, left: 0, height: screenHeight, width: screenWidth, zIndex: 5, elevation: 5}}>
                         <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} bottomSheet={true} notModal={true} />
                     </Animated.View>
+                ) : null)} */}
+                {( exerciseModal === true ? (
+                    <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{position: "absolute", top: 0, left: 0, height: screenHeight, width: screenWidth, zIndex: 5, elevation: 5}}>
+                        <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} bottomSheet={true} notModal={true} />
+                    </Animated.View>
                 ) : null)}
+
+
             </PaperProvider>
             
             

@@ -94,7 +94,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
             {createExercise && (
             <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", left: 0, top: 0, width: screenWidth, height: screenHeight, zIndex: 2}}>
 
-                    <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 0, left: 10, zIndex: 2}}>
+                    <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: bottomSheet ? 10 : 50, left: 10, zIndex: 2}}>
                         <CreateExercise setCreateExercise={setCreateExercise} callback={(exerciseID) => selectExercise(exerciseID) } />
                     </Animated.View>
 
@@ -127,7 +127,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
                 <TextInput style={[styles.search, {flex: 1}]} placeholder='Search' placeholderTextColor={"#A6A6A6"} value={searchValue} onChangeText={(e) => setSearchValue(e)} />
                 <ActionMenu style={{marginLeft: 10}} data={[ {title: "Create new exercise", icon: plus, onPress: () => setCreateExercise(true)}]} />
             </View> */}
-            <Search dismissKeyboard={true} value={searchValue} onChangeText={(e) => setSearchValue(e)} actionMenuData={[ {title: "Create new exercise", icon: plus, onPress: () => setCreateExercise(true)}]} />
+            <Search dismissKeyboard={false} value={searchValue} onChangeText={(e) => setSearchValue(e)} actionMenuData={[ {title: "Create new exercise", icon: plus, onPress: () => setCreateExercise(true)}]} />
             
 
             <Spacer height={10} />

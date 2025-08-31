@@ -321,7 +321,7 @@ const IndexHome = () => {
 
 
           {/* If a schedule, show next in schedule. Else, show create a schedule */}
-          <Pressable style={{height: QUICK_START_CARD_HEIGHT, overflow: "visible", }} onPress={isThereWorkout==="yes" ?  () => openWorkout(continuedWorkout) : isThereWorkout==="rest" ? rotateNext : navigateToSchedule}>
+          <Pressable style={{height: QUICK_START_CARD_HEIGHT, overflow: "visible", zIndex: 1}} onPress={isThereWorkout==="yes" ?  () => openWorkout(continuedWorkout) : isThereWorkout==="rest" ? rotateNext : navigateToSchedule}>
             {/* Behind element to animate */}
               {/* cardFlipAnimation && */(<Animated.View style={[styles.animateQuickCard, {zIndex: 0, elevation: 0,}, behindCardAnimatedStyle ]}>
                 <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>

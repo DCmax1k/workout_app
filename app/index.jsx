@@ -22,7 +22,6 @@ export default function Index() {
     if (!loading) {
       // If user exists, redirect to dashboard
       if (user?._id) {
-        console.log(user.health);
         router.replace('/dashboard');
       } else {
         router.replace('/onboarding');

@@ -53,29 +53,114 @@ const USER = {
     tracking: {
       insights: {
         expenditure: {
-          data: [ ],
+          data: [ {date: 1756499105140, amount: 2312, }],
           active: true,
           unit: "kcal",
           layout: "none", // weight, calorie, none, bmi 
+          color: "#DB8854",
+          extraData: {},
         },
         BMI: {
-          data: [ ],
+          data: [ {date: 1756499105140, amount: 20,}],
           active: true,
           unit: "",
           layout: "bmi", // weight, calorie, none, bmi 
+          color: "#54DBA9",
+          extraData: {},
         },
       },
       logging: {
-        weight: {
-          data: [ {date: 235234, amount: 190.5, }, {date: 235235, amount: 188.5, }, {date: 235236, amount: 185.5, }, {date: 235237, amount: 185, }, {date: 235238, amount: 187, }, {date: 235239, amount: 185.5, }, {date: 235240, amount: 183.5, } ],
+        "weight": {
+          data: [  ],
           active: true,
           unit: "lbs",
           layout: "weight", // weight, calorie, none, bmi 
+          color: "#546FDB",
+          extraData: {
+            goal: null,
+          },
+          inputOptions: {
+            increment: 0.1,
+            range: [0, 2000],
+            scrollItemWidth: 10,
+            defaultValue: 150,
+          }
         },
-        
-      }
+        "calories": {
+          data: [ {date: 235234, amount: 1564, }, {date: 235235, amount: 1500, }, {date: 235236, amount: 1660, }, {date: 235237, amount: 2352, }, {date: 235238, amount: 1800, }, {date: 235239, amount: 2844, }, {date: 1756576994961, amount: 2345, } ],
+          active: true,
+          unit: "",
+          layout: "calorie", // weight, calorie, none, bmi 
+          color: "#9a54dbff",
+          extraData: {
+            dailyGoal: 2000,
+            meals: [
+              {
+                name: "Burger",
+                calories: 400,
+              },
+            ]
+          },
+          inputOptions: {
+            increment: 1,
+            range: [0, 20000],
+            scrollItemWidth: 10,
+            defaultValue: 0,
+          }
+        },
+        "sleep amount": {
+          data: [  ],
+          active: true,
+          unit: "hrs",
+          layout: "weight", // weight, calorie, none, bmi
+          color: "#DB5454", 
+          extraData: {
+            goal: null,
+          },
+          inputOptions: {
+            increment: 0.1,
+            range: [0, 30],
+            scrollItemWidth: 20,
+            defaultValue: 8,
+          }
+        },
+        "sleep quality": {
+          data: [ ],
+          active: true,
+          unit: "/10",
+          layout: "weight", // weight, calorie, none, bmi 
+          color: "#DB8854",
+          extraData: {
+            goal: null,
+          },
+          inputOptions: {
+            increment: 0.1,
+            range: [0, 10],
+            scrollItemWidth: 50,
+            defaultValue: 10,
+          }
+        },
+        "water intake": {
+          data: [ {date: 235234, amount: 10, }, {date: 235235, amount: 10, }, {date: 235236, amount: 10, }, {date: 235237, amount: 10, }, {date: 235238, amount: 10, }, {date: 235239, amount: 10, }, {date: 235240, amount: 10, } ],
+          active: true,
+          unit: "cups",
+          layout: "calorie", // weight, calorie, none, bmi 
+          color: "#DBD654",
+          extraData: {
+            dailyGoal: 2000,
+          },
+          inputOptions: {
+            increment: 0.1,
+            range: [0, 100],
+            scrollItemWidth: 10,
+            defaultValue: 0,
+          }
+        },
 
+      }
     },
+
+
     health: {
       height: 70, // inches
       age: 28,

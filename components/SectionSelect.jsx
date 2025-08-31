@@ -50,7 +50,7 @@ const SectionSelect = ({style, sections, section, setSection, paddingHorizontal 
             {sections.map((section, i) => {
                 return (
                     <Pressable onPress={() => setSectionTo(section)} style={[styles.section, {width: sectionWidth}]} key={i}>
-                            <Text style={[styles.sectionText, {color: textColor, fontSize, fontWeight,}]}>{section}</Text>
+                            <Text adjustsFontSizeToFit={true} numberOfLines={1} style={[styles.sectionText, {color: textColor, fontSize, fontWeight, }]}>{section}</Text>
                     </Pressable>
                     
                 )
