@@ -10,7 +10,7 @@ import trash from '../assets/icons/trash.png'
 
 const screenWidth = Dimensions.get("window").width;
 
-const TitleWithBack = ({style, backBtn = true, backFunction = () => router.back(), actionBtn = {active: false, actionMenu: false, image: threeEllipses, action: () => console.log("Pressed")}, ...props}) => {
+const TitleWithBack = ({style, backBtn = true, backFunction = () => router.back(), actionBtn = {active: false, actionMenu: false, image: threeEllipses, options: [{title: "Delete workout", icon: trash, onPress: () => console.log("Pressed"),}], }, ...props}) => {
 
 
 
@@ -24,7 +24,7 @@ const TitleWithBack = ({style, backBtn = true, backFunction = () => router.back(
         <ThemedText style={{fontSize: 20, fontWeight: 700, textAlign: 'center'}}>{props.title}</ThemedText>
 
         {actionBtn.actionMenu === true ? (
-            <ActionMenu style={styles.actionBtn} data={[{title: "Delete workout", icon: trash, onPress: actionBtn.action,}]} />
+            <ActionMenu style={styles.actionBtn} data={actionBtn.options} />
         ) : null }
         {actionBtn.active &&
         <Pressable onPress={actionBtn.action} style={styles.actionBtn}>

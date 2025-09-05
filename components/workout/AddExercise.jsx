@@ -146,7 +146,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
                     
                 )}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 50 }}
+                contentContainerStyle={{ paddingBottom: 200 }}
                />
             ) : (
                 <SectionList
@@ -160,7 +160,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
                     </ThemedView>
                 )}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 50 }}
+                contentContainerStyle={{ paddingBottom: 200 }}
                 
             />
             )}

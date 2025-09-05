@@ -2,7 +2,8 @@
 import { Redirect, router } from 'expo-router';
 import { useUserStore } from '../stores/useUserStore';
 import { useEffect, useState } from 'react';
-import { Text } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 // import Login from './login'
 
 export default function Index() {
@@ -29,6 +30,18 @@ export default function Index() {
     }
     
   }, [user, loading, router]);
+
+    // return (
+    //   <View style={{backgroundColor: "black"}}>
+    //     <SafeAreaView>
+    //       <ScrollView showsVerticalScrollIndicator={false}  >
+    //         <Text selectable={true} style={{color: "white"}}>{JSON.stringify(user)}</Text>
+    //       </ScrollView>
+          
+    //     </SafeAreaView>
+          
+    //   </View>
+    // )
 
   if (loading) {
     return <Text>Loading...</Text>;

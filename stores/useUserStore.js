@@ -2,9 +2,34 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TestUsers } from '../constants/TestUsers';
+import deepMerge from '../util/deepMerge';
 
 const STORAGE_KEY = 'user-storage';
 const DSTORAGE_KEY = 'data-storage';
+
+
+const structuredClone = (value) => JSON.parse(JSON.stringify(value));
+
+const fillMissingKeys = (base, user) => {
+  const filled = deepMerge(structuredClone(base), user || {});
+
+  // ensure intermediate objects exist
+  if (!filled.tracking) filled.tracking = { insights: {}, logging: {} };
+  if (!filled.tracking.insights) filled.tracking.insights = {};
+  if (!filled.tracking.logging) filled.tracking.logging = {};
+  // optionally fill default logging categories if needed
+  Object.keys(USER.tracking.logging).forEach((key) => {
+    if (!filled.tracking.logging[key]) {
+      filled.tracking.logging[key] = structuredClone(USER.tracking.logging[key]);
+    }
+  });
+  // Remove older beta data
+  if (filled?.tracking?.logging["calories"]) {
+    delete filled.tracking.logging["calories"];
+  }
+
+  return filled;
+}
 
 const USER = TestUsers[0]; // Default user
 
@@ -26,7 +51,9 @@ export const useUserStore = create((set, get) => ({
       return;
     }
     const state = get();
-    const fillUser = {...USER, ...user, }; // Fill in any missing data with default user data
+    // Fill in any missing data with default user data
+    //const fillUser = {...USER, ...user, }; // Doesnt merge deep
+    const fillUser = fillMissingKeys(USER, user);
     const newUsers = {...state.users, [user._id]: fillUser};
     const newFullData = { ...state, user: {...fillUser}, users: newUsers };
     set(newFullData);
@@ -37,7 +64,8 @@ export const useUserStore = create((set, get) => ({
     const state = get();
     if (!state.user) return;
     const user = state.user; // state.users[state.loggedInAs];
-    const newUser = {...user, ...updates};
+    //const newUser = {...user, ...updates};
+    const newUser = deepMerge(structuredClone(user), updates);
     const newUsers = {...state.users, [state.user?._id]: newUser};
     const newFullData = { ...state, user: newUser, users: newUsers };
     set(newFullData);
@@ -59,13 +87,24 @@ export const useUserStore = create((set, get) => ({
   rehydrate: async () => {
     const checkData = await AsyncStorage.getItem(DSTORAGE_KEY);
     if (checkData) {
-      set(JSON.parse(checkData));
+      const data = JSON.parse(checkData);
+
+      const userData = fillMissingKeys(structuredClone(USER), data.user);
+      const options = {loading: false, animateDashboard: false, showOnboarding: true, ...data.options };
+      const newUsers = {...data.users, [userData._id]: userData};
+      set({options, users: newUsers, user: userData});
     } else {
       const checkOldData = await AsyncStorage.getItem(STORAGE_KEY);
       if (checkOldData) {
-        const oldUserData = {...USER, ...JSON.parse(checkOldData)}; // Put all data that might not be in the user
+        // Put all data that might not be in the user
+        //const oldUserData = {...USER, ...JSON.parse(checkOldData)};
+        //const oldUserData = deepMerge(structuredClone(USER), JSON.parse(checkOldData));
+        const oldUserData = fillMissingKeys(structuredClone(USER), JSON.parse(checkOldData));
         const newUsers = {[oldUserData._id]: oldUserData};
-        set({loading: false, users: newUsers, user: oldUserData});
+        const options = {loading: false, animateDashboard: false, showOnboarding: true,};
+        const newFullData = {options, users: newUsers, user: oldUserData};
+        set(newFullData);
+        AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
       }
     }
   },

@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Pressable, ScrollView } from 'react-native-gesture-handler'
 import Spacer from '../../components/Spacer'
 import pencilIcon from '../../assets/icons/pencil.png'
+import noEye from '../../assets/icons/noEye.png'
 
 import { EventEmitter } from "expo-modules-core";
 import { useEffect } from 'react'
@@ -46,15 +47,14 @@ const ProgressExpanded = () => {
         if (data.target === "value") {
           const nData = user.tracking.logging[data.widget.category].data;
           const cData = [...nData, {date: Date.now(), amount: data.value}];
-          const updated = {tracking: {...user.tracking, logging: {...user.tracking.logging, [data.widget.category]: {...user.tracking.logging[data.widget.category], data: cData}}}};
+          const updated = {tracking: {logging: {[data.widget.category]: {data: cData}}}};
           updateUser(updated);
           //console.log("updated ", updated);
         } else if (data.target === 'goal') {
-          const updated = {tracking: {...user.tracking, logging: {...user.tracking.logging, [data.widget.category]: {...user.tracking.logging[data.widget.category], extraData: {...user.tracking.logging[data.widget.category].extraData, goal: data.value}}}}};
-          //console.log("udpated",JSON.stringify( updated.tracking.logging[data.widget.category].extraData));
+          const updated = {tracking: {logging: {[data.widget.category]: {extraData: {goal: data.value}}}}};
           updateUser(updated);
         } else {
-          console.log("HERE FOR SOME REASON");
+          console.log("Tried changing value with emit but value not found");
         }
         
 
@@ -123,10 +123,16 @@ const ProgressExpanded = () => {
     });
   }
 
+  const hideWidget = () => {
+      updateUser({tracking: { logging: {[widget.category]: { hidden: true}}}});
+      router.back();
+  }
+
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={{flex: 1,  marginBottom: -50}}>
-        <TitleWithBack title={firstCapital(widget.category)} style={{marginLeft: -20}} />
+        <TitleWithBack title={firstCapital(widget.category)} style={{marginLeft: -20}} actionBtn={{actionMenu: true, image: require("../../assets/icons/threeEllipses.png"), options: [{title: "Hide widget", icon: noEye, onPress: () => hideWidget(),}]}} />
         <Spacer height={20} />
         <ScrollView contentContainerStyle={{paddingBottom: 120}} showsVerticalScrollIndicator={false}>
 

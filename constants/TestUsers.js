@@ -51,10 +51,38 @@ const USER = {
     completedExercises:{},// { "2": [{date: 23235235, sets: [{weight: "135", reps: "10"}], shared: true,}] }, // by exerciseId
     savedWorkouts:[],// [{name: "Legs", id: "234", exercises: [ {id: "2", note:"", sets: [{lbs: "135", reps: "10"}]},] }, {name: "Chest and Shoulders", id: "2344", exercises: [ {id: "2314234", note:"", sets: [{lbs: "135", reps: "10"}]},{id: "4", note:"", sets: [{lbs: "135", reps: "10"}]}] }, {name: "Back", id: "345", exercises: [ {id: "4", note:"", sets: [{lbs: "135", reps: "10"}]},] }],
     tracking: {
+      visibleWidgets: [],
+      nutrition: {
+        meals: [],
+        "calories": {
+          data: [],
+          extraData: {
+            goal: 2000,
+          }
+        },
+        "protein": {
+          data: [],
+          extraData: {
+            goal: 2000,
+          }
+        },
+        "carbs": {
+          data: [],
+          extraData: {
+            goal: 2000,
+          }
+        },
+        "fat": {
+          data: [],
+          extraData: {
+            goal: 2000,
+          }
+        }
+      },
       insights: {
         expenditure: {
           data: [ {date: 1756499105140, amount: 2312, }],
-          active: true,
+          hidden: true,
           unit: "kcal",
           layout: "none", // weight, calorie, none, bmi 
           color: "#DB8854",
@@ -72,7 +100,7 @@ const USER = {
       logging: {
         "weight": {
           data: [  ],
-          active: true,
+          hidden: true,
           unit: "lbs",
           layout: "weight", // weight, calorie, none, bmi 
           color: "#546FDB",
@@ -86,31 +114,31 @@ const USER = {
             defaultValue: 150,
           }
         },
-        "calories": {
-          data: [ {date: 235234, amount: 1564, }, {date: 235235, amount: 1500, }, {date: 235236, amount: 1660, }, {date: 235237, amount: 2352, }, {date: 235238, amount: 1800, }, {date: 235239, amount: 2844, }, {date: 1756576994961, amount: 2345, } ],
-          active: true,
-          unit: "",
-          layout: "calorie", // weight, calorie, none, bmi 
-          color: "#9a54dbff",
-          extraData: {
-            dailyGoal: 2000,
-            meals: [
-              {
-                name: "Burger",
-                calories: 400,
-              },
-            ]
-          },
-          inputOptions: {
-            increment: 1,
-            range: [0, 20000],
-            scrollItemWidth: 10,
-            defaultValue: 0,
-          }
-        },
+        // "calories": {
+        //   data: [ {date: 235234, amount: 1564, }, {date: 235235, amount: 1500, }, {date: 235236, amount: 1660, }, {date: 235237, amount: 2352, }, {date: 235238, amount: 1800, }, {date: 235239, amount: 2844, }, {date: 1756576994961, amount: 2345, } ],
+        //   active: true,
+        //   unit: "",
+        //   layout: "calorie", // weight, calorie, none, bmi 
+        //   color: "#9a54dbff",
+        //   extraData: {
+        //     dailyGoal: 2000,
+        //     meals: [
+        //       {
+        //         name: "Burger",
+        //         calories: 400,
+        //       },
+        //     ]
+        //   },
+        //   inputOptions: {
+        //     increment: 1,
+        //     range: [0, 20000],
+        //     scrollItemWidth: 10,
+        //     defaultValue: 0,
+        //   }
+        // },
         "sleep amount": {
           data: [  ],
-          active: true,
+          hidden: true,
           unit: "hrs",
           layout: "weight", // weight, calorie, none, bmi
           color: "#DB5454", 
@@ -126,7 +154,7 @@ const USER = {
         },
         "sleep quality": {
           data: [ ],
-          active: true,
+          hidden: true,
           unit: "/10",
           layout: "weight", // weight, calorie, none, bmi 
           color: "#DB8854",
@@ -142,7 +170,7 @@ const USER = {
         },
         "water intake": {
           data: [ {date: 235234, amount: 10, }, {date: 235235, amount: 10, }, {date: 235236, amount: 10, }, {date: 235237, amount: 10, }, {date: 235238, amount: 10, }, {date: 235239, amount: 10, }, {date: 235240, amount: 10, } ],
-          active: true,
+          hidden: true,
           unit: "cups",
           layout: "calorie", // weight, calorie, none, bmi 
           color: "#DBD654",

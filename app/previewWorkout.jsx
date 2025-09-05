@@ -7,6 +7,7 @@ import { router, useLocalSearchParams } from 'expo-router'
 import ConfirmMenu from '../components/ConfirmMenu'
 import { useUserStore } from '../stores/useUserStore'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import trash from '../assets/icons/trash.png'
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -74,7 +75,7 @@ const PreviewWorkoutPage = () => {
     <ThemedView style={{flex: 1}}>
         <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
         <SafeAreaView zIndex={1} >
-            <TitleWithBack backBtn={true} actionBtn={{actionMenu: true, image: require("../assets/icons/threeEllipses.png"), action: () => showDeletePastWorkoutConfirmation(data)}} />
+            <TitleWithBack backBtn={true} actionBtn={{actionMenu: true, image: require("../assets/icons/threeEllipses.png"), options: [{title: "Delete workout", icon: trash, onPress: () => showDeletePastWorkoutConfirmation(data),}],}} />
         </SafeAreaView>
         <WorkoutPreview style={{position: "absolute", width: screenWidth, height: screenHeight, zIndex: 0}} data={data} />
     </ThemedView>

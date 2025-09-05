@@ -9,14 +9,18 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import GraphWidget from '../../../components/GraphWidget'
 import Spacer from '../../../components/Spacer'
 import plusIcon from '../../../assets/icons/plus.png'
+import whiteX from '../../../assets/icons/whiteX.png'
 import { Colors } from '../../../constants/Colors'
 import ConfirmMenu from '../../../components/ConfirmMenu'
+import { Portal } from 'react-native-paper'
+import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown, LinearTransition } from 'react-native-reanimated'
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 const IndexProgress = () => {
   const user = useUserStore((state) => state.user);
@@ -24,6 +28,8 @@ const IndexProgress = () => {
 
   const [confirmMenuActive, setConfirmMenuActive] = useState(false);
   const [confirmMenuData, setConfirmMenuData] = useState();
+
+  const [addWidget, setAddWidget] = useState(false);
 
   const showComingSoonMessage = (data) => {
         setConfirmMenuData({
@@ -37,9 +43,6 @@ const IndexProgress = () => {
         setConfirmMenuActive(true);
     }
 
-  if (!user.tracking) {
-    updateUser({progress: {sections: []}});
-  }
 
   const openProgressExpanded = (category, categoryData) => {
     // Open progress expanded view
@@ -54,46 +57,70 @@ const IndexProgress = () => {
         data: JSON.stringify(data),
       },
     });
+  } 
+
+  const widgetsAvailable = ["weight", "sleep amount", "sleep quality", "water intake"];
+  const selectAddWidget = (ind) => {
+    updateUser({tracking: {logging: {[widgetsAvailable[ind]]: {hidden: false}}}});
+    setAddWidget(false);
   }
-
-
 
 
   return (
     <ThemedView style={styles.container}>
         <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
         <SafeAreaView style={{flex: 1}}>
+
+        {addWidget && (
+            <Portal >
+              <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
+                  <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
+                    
+                    <Animated.View layout={LinearTransition.springify().mass(0.5).damping(10)} style={[styles.addWidgetCont]}>
+
+                      <View style={{flexDirection: "row", alignItems: "center", justifyContent: "flex-start", }}>
+                        <Pressable onPress={() => setAddWidget(false)}>
+                            <Image source={whiteX} style={{ height: 30, width: 30, marginRight: 20}} />
+                        </Pressable>
+                        
+                        <Text adjustsFontSizeToFit style={[styles.screenText, { flex: 1, }]}>Add widget</Text>
+
+                        <View style={{width: 80}}></View>
+                      </View>
+
+                      <Spacer height={20} />
+
+                      <View style={{width: "100%", borderRadius: 10, overflow: "hidden"}}>
+                        {widgetsAvailable.map((wid, i) => (
+                          <Pressable key={i} onPress={() => selectAddWidget(i)} style={{backgroundColor:  "#3A3A3A", width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 60, padding: 10}}>
+                            <Text style={{color: "white", fontSize: 17, fontWeight:'800'  }}>{firstCapital(wid)}</Text>
+                            
+                          </Pressable>
+                        ))}
+
+                      </View>
+                      <Spacer height={20} />
+                    
+                    </Animated.View>
+
+                  </Animated.View>
+              </Animated.View>
+            </Portal>
+            
+          )}
+
           <ScrollView contentContainerStyle={{paddingBottom: 120}} showsVerticalScrollIndicator={false}>
 
             <ThemedText style={[styles.header, {marginTop: 20, fontSize: 20,  textAlign: 'center'}]}>Progress</ThemedText>
-            <Spacer height={20} />
-            <ThemedText style={[styles.header, {marginTop: 20, fontSize: 15}]} >Insights</ThemedText>
+            <Spacer height={40} />
+            
 
-            {/* INSIGHTS */}
-            <ScrollView style={styles.widgets} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: "flex-start", paddingHorizontal: 20}}>
-              {Object.keys(user.tracking.insights).map((key, index) => {
-                const widget = user.tracking.insights[key];
-                return widget.active ? (
-                  <GraphWidget
-                    key={index}
-                    data={widget.data.map((item) => item.amount)}
-                    dates={widget.data.map((item) => item.date)}
-                    title={firstCapital(key)}
-                    unit={widget.unit}
-                    color={widget.color || "#546FDB"}
-                    onPress={() => openProgressExpanded(key, widget)}
-                    
-                  />
-                ) : null
-              })}
-            </ScrollView>
-
-            <Spacer />
+            
 
               {/* Add widget button*/}
             <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: "center", marginRight: 20}}>
               <ThemedText style={[styles.header, {fontSize: 15}]} >Logging & Tracking</ThemedText>
-              <Pressable onPress={showComingSoonMessage} style={{flexDirection: 'row', alignItems: 'center', padding: 5, backgroundColor: Colors.primaryBlue, borderRadius: 50, height: 30, paddingHorizontal: 10}} >
+              <Pressable onPress={() => setAddWidget(true)} style={{flexDirection: 'row', alignItems: 'center', padding: 5, backgroundColor: Colors.primaryBlue, borderRadius: 50, height: 30, paddingHorizontal: 10}} >
                 <View style={{height: 20, width: 20, justifyContent: "center", alignItems: "center", marginRight: 10}}>
                   <Image style={{height: 20, width: 20, objectFit: 'contain'}} source={plusIcon} />
                 </View>
@@ -104,10 +131,12 @@ const IndexProgress = () => {
             <Spacer height={20} />
 
             {/* LOGGING and TRACKING */}
-            <View style={{paddingHorizontal: 20}}>
+            <Animated.View style={{paddingHorizontal: 20}} layout={LinearTransition.springify().mass(0.5).damping(10)}>
+              {Object.keys(user.tracking.logging).filter(w => user.tracking.logging[w].hidden === false).length === 0 ? (<ThemedText style={{textAlign: "center"}}>No widgets yet</ThemedText>) : null}
               {Object.keys(user.tracking.logging).map((key, index) => {
                 const widget = user.tracking.logging[key];
-                return widget.active ? (
+                return !widget.hidden ? (
+                  <Animated.View key={key} layout={LinearTransition.springify().mass(0.5).damping(10)} entering={FadeIn} exiting={FadeOut}>
                   <GraphWidget
                     fillWidth={true}
                     key={index}
@@ -119,9 +148,40 @@ const IndexProgress = () => {
                     style={{marginBottom: 20}}
                     onPress={() => openProgressExpanded(key, widget)}
                   />
+                  </Animated.View>
                 ) : null;
               })}
-            </View>
+            </Animated.View>
+
+            <Spacer />
+
+            <Animated.View layout={LinearTransition.springify().mass(0.5).damping(10)}>
+              <ThemedText style={[styles.header, { fontSize: 15}]} >Insights</ThemedText>
+
+              {/* INSIGHTS */}
+              <ScrollView style={styles.widgets} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: "flex-start", paddingHorizontal: 20}} >
+                {Object.keys(user.tracking.insights).map((key, index) => {
+                  const widget = user.tracking.insights[key];
+                  return widget.active ? (
+                    <View key={key} >
+                      <GraphWidget
+                        key={index}
+                        data={widget.data.map((item) => item.amount)}
+                        dates={widget.data.map((item) => item.date)}
+                        title={firstCapital(key)}
+                        unit={widget.unit}
+                        color={widget.color || "#546FDB"}
+                        onPress={() => openProgressExpanded(key, widget)}
+                        
+                      />
+                    </View>
+                    
+                  ) : null
+                })}
+              </ScrollView>
+            </Animated.View>
+
+            
               
 
 
@@ -149,7 +209,20 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       marginTop: 20,
       width: screenWidth,
-    }
-  
+    },
+    addWidgetCont: {
+        backgroundColor: "#282828",
+         borderRadius: 20,
+         padding: 10,
+         paddingBottom: 0,
+         minHeight: 100,
+        //  maxHeight: screenHeight,
+         overflow: 'hidden',
+    },
+    screenText: {
+          color: "white", 
+          fontSize: 16, 
+          textAlign: 'center',
+      },
     
   })
