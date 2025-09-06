@@ -60,8 +60,14 @@ const IndexProgress = () => {
   } 
 
   const widgetsAvailable = ["weight", "sleep amount", "sleep quality", "water intake"];
-  const selectAddWidget = (ind) => {
-    updateUser({tracking: {logging: {[widgetsAvailable[ind]]: {hidden: false}}}});
+  const selectAddWidget = (indx) => {
+    const visibleWidgets = user.tracking.visibleWidgets;
+    const ind = visibleWidgets.indexOf(widgetsAvailable[indx])
+    if (ind >= 0) return setAddWidget(false);
+    
+    visibleWidgets.push(widgetsAvailable[indx])
+
+    updateUser({tracking: { visibleWidgets: visibleWidgets}});
     setAddWidget(false);
   }
 
@@ -74,6 +80,7 @@ const IndexProgress = () => {
         {addWidget && (
             <Portal >
               <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
+                <Pressable onPress={() => setAddWidget(false)} style={{height: "100%", width: "100%", zIndex: 0}}></Pressable>
                   <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
                     
                     <Animated.View layout={LinearTransition.springify().mass(0.5).damping(10)} style={[styles.addWidgetCont]}>
@@ -104,6 +111,7 @@ const IndexProgress = () => {
                     </Animated.View>
 
                   </Animated.View>
+                  
               </Animated.View>
             </Portal>
             
@@ -132,10 +140,10 @@ const IndexProgress = () => {
 
             {/* LOGGING and TRACKING */}
             <Animated.View style={{paddingHorizontal: 20}} layout={LinearTransition.springify().mass(0.5).damping(10)}>
-              {Object.keys(user.tracking.logging).filter(w => user.tracking.logging[w].hidden === false).length === 0 ? (<ThemedText style={{textAlign: "center"}}>No widgets yet</ThemedText>) : null}
-              {Object.keys(user.tracking.logging).map((key, index) => {
+              {user.tracking.visibleWidgets.length === 0 ? (<ThemedText style={{textAlign: "center"}}>No widgets yet</ThemedText>) : null}
+              {user.tracking.visibleWidgets.map((key, index) => {
                 const widget = user.tracking.logging[key];
-                return !widget.hidden ? (
+                return (
                   <Animated.View key={key} layout={LinearTransition.springify().mass(0.5).damping(10)} entering={FadeIn} exiting={FadeOut}>
                   <GraphWidget
                     fillWidth={true}
@@ -149,7 +157,7 @@ const IndexProgress = () => {
                     onPress={() => openProgressExpanded(key, widget)}
                   />
                   </Animated.View>
-                ) : null;
+                );
               })}
             </Animated.View>
 

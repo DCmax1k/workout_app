@@ -1,7 +1,7 @@
 import { Alert, Dimensions, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import Timer from '../Timer'
-import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated';
+import Animated, { LinearTransition, SlideInDown, SlideOutDown } from 'react-native-reanimated';
 import { useUserStore } from '../../stores/useUserStore';
 import { useBottomSheet } from '../../context/BottomSheetContext'
 import EditExercise from './EditExercise';
@@ -213,13 +213,16 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
 
                     {exercises.map((exercise, i) => (
                         <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} activeWorkoutStyle={true} />
+                        
                     ))}
 
                     <Spacer height={20} />
-
-                    <BlueButton title={"Add exercise"} style={{marginRight: 10, marginLeft: 10}} onPress={() => setExerciseModal(true)} />
-                    <Spacer height={40} />
-                    <BlueButton title={"Cancel workout"} color={"#572E32"} style={{marginRight: 30, marginLeft: 30}} onPress={() => cancelWorkout(true)} />
+                    <Animated.View layout={LinearTransition.springify().mass(0.5).damping(10)}>
+                        <BlueButton title={"Add exercise"} style={{marginRight: 10, marginLeft: 10}} onPress={() => setExerciseModal(true)} />
+                        <Spacer height={40} />
+                        <BlueButton title={"Cancel workout"} color={"#572E32"} style={{marginRight: 30, marginLeft: 30}} onPress={() => cancelWorkout(true)} />
+                    </Animated.View>
+                    
                 </BottomSheetScrollView>
                 </PaperProvider>
                 

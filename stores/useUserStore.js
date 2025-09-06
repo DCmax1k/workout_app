@@ -27,6 +27,10 @@ const fillMissingKeys = (base, user) => {
   if (filled?.tracking?.logging["calories"]) {
     delete filled.tracking.logging["calories"];
   }
+  // update data
+  if (filled?.tracking?.logging["water intake"]) {
+    filled.tracking.logging["water intake"].layout = 'water';
+  }
 
   return filled;
 }

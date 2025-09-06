@@ -168,7 +168,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
 
                 {(<View style={{width: 1, height: 7, backgroundColor: "#585858", borderRadius: 99999, position: "absolute", top: "99%", right: 0,}} >
                     <View style={{position: "absolute", height: 25, width: 100,  top: "100%", right: -10,  display: "flex", justifyContent: "center" }}>
-                        <Text style={{textAlign: "right", color: "#848484", fontSize: 12}}>{  new Date(dates[dates.length -1]).toLocaleDateString('en-US', {month: 'numeric', day: '2-digit', ...showYearRecent})}</Text>
+                        <Text style={{textAlign: "right", color: "#848484", fontSize: 12}}>{  new Date(dates[dates.length -1]).toLocaleDateString('en-US', {month: 'numeric', day: 'numeric', ...showYearRecent})}</Text>
                     </View>
                 </View>)}
 

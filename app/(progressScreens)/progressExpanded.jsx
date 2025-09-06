@@ -11,10 +11,12 @@ import { Pressable, ScrollView } from 'react-native-gesture-handler'
 import Spacer from '../../components/Spacer'
 import pencilIcon from '../../assets/icons/pencil.png'
 import noEye from '../../assets/icons/noEye.png'
+import rotate from '../../assets/icons/rotate.png'
 
 import { EventEmitter } from "expo-modules-core";
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useUserStore } from '../../stores/useUserStore'
+import ConfirmMenu from '../../components/ConfirmMenu'
 
 export const emitter = new EventEmitter();
 
@@ -39,6 +41,8 @@ const ProgressExpanded = () => {
     ...wi,
   }
   // console.log("NEW WIDGET", widget);
+
+  
 
   useEffect(() => {
     const sub = emitter.addListener("done", (data) => {
@@ -123,16 +127,43 @@ const ProgressExpanded = () => {
     });
   }
 
+  const openEditPastData = () => {
+    const info = {
+      title: widget.category,
+      target: 'value',
+      value: mostRecentValue || 0,
+      unit: widget.unit,
+      widget,
+      ...widget.inputOptions
+    }
+    router.push({
+      pathname: "/editPastData",
+      params: {
+        data: JSON.stringify(info),
+      },
+    });
+  } 
+
   const hideWidget = () => {
-      updateUser({tracking: { logging: {[widget.category]: { hidden: true}}}});
-      router.back();
+    const visibleWidgets = user.tracking.visibleWidgets;
+    const ind = visibleWidgets.indexOf(widget.category)
+    if (ind < 0) return router.back();
+    
+    visibleWidgets.splice(ind, 1);
+    
+    updateUser({tracking: { visibleWidgets: visibleWidgets}});
+    router.back();
   }
 
+  
+  
+  
 
   return (
     <ThemedView style={styles.container}>
+      
       <SafeAreaView style={{flex: 1,  marginBottom: -50}}>
-        <TitleWithBack title={firstCapital(widget.category)} style={{marginLeft: -20}} actionBtn={{actionMenu: true, image: require("../../assets/icons/threeEllipses.png"), options: [{title: "Hide widget", icon: noEye, onPress: () => hideWidget(),}]}} />
+        <TitleWithBack title={firstCapital(widget.category)} style={{marginLeft: -20}} actionBtn={{actionMenu: true, image: require("../../assets/icons/threeEllipses.png"), options: [{title: "Edit past data", icon: pencilIcon, onPress: () => openEditPastData(),}, {title: "Hide widget", icon: noEye, onPress: () => hideWidget(),}]}} />
         <Spacer height={20} />
         <ScrollView contentContainerStyle={{paddingBottom: 120}} showsVerticalScrollIndicator={false}>
 
@@ -179,7 +210,7 @@ const ProgressExpanded = () => {
                 <View style={{height: 100, width: (screenWidth-80)/3, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
                   <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Last recorded</ThemedText>
                   <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
-                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={showYear ? 2 : 1} style={{fontSize: showYear ? 16 : 20, textAlign: "center", color: "white", fontWeight: '800'}}>{new Date( mostRecentDate).toLocaleDateString('en-US', {month: "short", day: "numeric", ...showYearOptions})}</ThemedText>
+                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={showYear ? 2 : 1} style={{fontSize: showYear ? 16 : 20, textAlign: "center", color: "white", fontWeight: '800'}}>{mostRecentDate ? new Date( mostRecentDate).toLocaleDateString('en-US', {month: "short", day: "numeric", ...showYearOptions}) : "- -"}</ThemedText>
                   </View>
                   
                 </View>
@@ -191,6 +222,7 @@ const ProgressExpanded = () => {
 
           <View style={{marginTop: 20, flex: 1, }}>
             <GraphWidget
+              
               data={widget.data.map((item) => item.amount)}
               dates={widget.data.map((item) => item.date)}
               title={firstCapital(widget.category)}

@@ -171,7 +171,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
     }, [user.completedExercises])
 
     return (
-    <Animated.View layout={LinearTransition} entering={FadeIn} exiting={FadeOut} style={{backgroundColor: activeWorkoutStyle ? "":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10}}>
+    <Animated.View layout={LinearTransition.springify().mass(0.5).damping(10)} entering={FadeIn} exiting={FadeOut} style={{backgroundColor: activeWorkoutStyle ? "":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
             <TextInput ref={exerciseNameRef} value={exercise.name} onChangeText={changeExerciseName} style={{fontSize: 15, flex: 1, fontWeight: 500, color: activeWorkoutStyle?"white":"#DB8854", }} />
             <ActionMenu offset={activeWorkoutStyle} backgroundColor={activeWorkoutStyle?"transparent":"#DB8854"} data={[
