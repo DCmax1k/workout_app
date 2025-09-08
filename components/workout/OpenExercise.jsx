@@ -300,6 +300,11 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
 
       {/* EDIT EXERCISE WITH CREATE EXERCISE */}
       {editModeActive && <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1}}>
+          
+        {exercise.group !== "created" && (
+          <Text style={{textAlign: "center", color: "grey", textDecorationColor: "grey", textDecorationLine: "underline"}}>Only user created exercises are editable.</Text>
+        )}
+
         <CreateExercise ref={createExerciseRef} editMode={true} setEditModeActive={setEditModeActive} editData={exercise} locked={exercise.group !== "created"} />
 
         <Spacer />

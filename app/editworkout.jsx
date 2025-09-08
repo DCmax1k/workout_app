@@ -1,9 +1,9 @@
 import { Alert, Dimensions, Image, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ThemedView from '../components/ThemedView'
 import { useUserStore } from '../stores/useUserStore'
 import { Colors } from '../constants/Colors'
-import { router } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import pencil from '../assets/icons/pencil.png'
 import { Exercises } from '../constants/Exercises'
 import EditExercise from '../components/workout/EditExercise'
@@ -19,6 +19,7 @@ import Animated, { LinearTransition, SlideInDown, SlideOutDown } from 'react-nat
 import SwipeToDelete from '../components/SwipeToDelete'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import getAllExercises from '../util/getAllExercises'
+import deepEqual from '../util/deepEqual'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
@@ -33,6 +34,8 @@ const EditWorkout = () => {
   //const allExercises = [...user.createdExercises, ...Exercises];
   const allExercises = getAllExercises(user);
 
+  const params = useLocalSearchParams();
+  const workoutBeforeEdits = JSON.parse(params.workout);
   
   const [exerciseModal, setExerciseModal] = useState(false);
   const [confirmMenuActive, setConfirmMenuActive] = useState(false);
@@ -134,6 +137,25 @@ const EditWorkout = () => {
     setConfirmMenuActive(true);
   }
 
+  const cancelEdit = () => {
+    // Check if edits were made
+    if ( deepEqual(workoutBeforeEdits, workout) ) {
+      router.back()
+    } else {
+      setConfirmMenuData({
+        title: "Leave?",
+        subTitle: "Any changes to this workout will not be saved.",
+        subTitle2: "This action cannot be undone.",
+        option1: "Leave",
+        option1color: "#DB5454",
+        option2: "Don't leave",
+        confirm: () => router.back(),
+      });
+      setConfirmMenuActive(true);
+    }
+  }
+
+
   return (
     <PaperProvider>
       <ThemedView style={{flex: 1, padding: 20}}>
@@ -142,7 +164,7 @@ const EditWorkout = () => {
 
           <View style={styles.actionButtons}>
               <View>
-                <Pressable onPress={() => {router.back()}} style={{paddingHorizontal: 20, paddingVertical: 10, backgroundColor: "#4B4B4B", borderRadius: 10, }}>
+                <Pressable onPress={cancelEdit} style={{paddingHorizontal: 20, paddingVertical: 10, backgroundColor: "#4B4B4B", borderRadius: 10, }}>
                       <Text style={{fontSize: 15, color: "white",}}>Cancel</Text>
                   </Pressable>
               </View>

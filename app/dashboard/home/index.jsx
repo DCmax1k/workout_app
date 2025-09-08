@@ -12,6 +12,7 @@ import NotificationCard from '../../../components/NotificationCard'
 import profileIcon from '../../../assets/icons/profileIcon.png'
 import search from '../../../assets/icons/search.png'
 import rightArrow from '../../../assets/icons/rightArrow.png'
+import eye from '../../../assets/icons/eye.png'
 import hollowClock from '../../../assets/icons/hollowClock.png'
 import rotate from '../../../assets/icons/rotate.png'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -273,7 +274,7 @@ const IndexHome = () => {
         <Portal >
           <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
 
-
+              <Pressable onPress={() => setOpenExerciseExtra(false)} style={{height: "100%", width: "100%", zIndex: 0}}></Pressable>
 
               <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
                 <OpenExercise exercise={exerciseOpen} setOpenExercise={setOpenExerciseExtra} forceCloseOpenExercise={() => setOpenExercise(false)} />
@@ -327,7 +328,7 @@ const IndexHome = () => {
                 <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
                   <View style={{height: 80, width: 50, justifyContent: "center", alignItems: "center"}}>
                     <View style={{height: 40, width: 40, backgroundColor: "#3D52A6", borderWidth: 2, borderColor: Colors.primaryBlue, borderRadius: "50%", marginRight: 3, padding: 7}}>
-                      <Image source={isThereWorkoutNext === "yes" ? rightArrow : isThereWorkoutNext === "rest" ? hollowClock : rotate} style={[{height: "100%", width: "100%"}, isThereWorkoutNext === "yes" ? {transform: [{rotate: "-90deg"}]} : null]} />
+                      <Image source={isThereWorkoutNext === "yes" ? rightArrow : isThereWorkoutNext === "rest" ? hollowClock : rotate} style={[{height: "100%", width: "100%"}, isThereWorkoutNext === "yes" ? {transform: [{rotate: "0deg"}]} : null]} />
                     </View>
 
                   </View>
@@ -358,7 +359,7 @@ const IndexHome = () => {
                 <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
                   <View style={{height: 80, width: 50, justifyContent: "center", alignItems: "center"}}>
                     <View style={{height: 40, width: 40, backgroundColor: "#3D52A6", borderWidth: 2, borderColor: Colors.primaryBlue, borderRadius: "50%", marginRight: 3, padding: 7}}>
-                      <Image source={isThereWorkout === "yes" ? rightArrow : isThereWorkout === "rest" ? hollowClock : rotate} style={[{height: "100%", width: "100%"}, isThereWorkout === "yes" ? {transform: [{rotate: "-90deg"}]} : null]} />
+                      <Image source={isThereWorkout === "yes" ? rightArrow : isThereWorkout === "rest" ? hollowClock : rotate} style={[{height: "100%", width: "100%"}, isThereWorkout === "yes" ? {transform: [{rotate: "0deg"}]} : null]} />
                     </View>
 
                   </View>
@@ -396,7 +397,7 @@ const IndexHome = () => {
           <Spacer />
           <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Activity</ThemedText>
 
-          <NotificationCard header={"3 min ago"} title={"User2 started a workout"} subtitle={"Chest and shoulders"} />
+          <NotificationCard header={"3 min ago"} title={"{Friend} started a workout"} subtitle={"Chest and shoulders"} />
           
 
         </ScrollView>

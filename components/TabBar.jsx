@@ -7,8 +7,11 @@ import { Colors } from '../constants/Colors';
 // import multiple images from assets/tabBarIcons
 import Home from '../assets/tabBarIcons/home.png';
 import Progress from '../assets/tabBarIcons/progress.png';
-import Workout from '../assets/tabBarIcons/workoutCircle.png';
-import Exercises from '../assets/tabBarIcons/exercises.png';
+// import Workout from '../assets/tabBarIcons/workoutCircle.png';
+import Workout from '../assets/tabBarIcons/dumbbell.png';
+// import Exercises from '../assets/tabBarIcons/exercises.png';
+// import Exercises from '../assets/tabBarIcons/hamburger.png';
+import Exercises from '../assets/icons/list.png';
 import Friends from '../assets/tabBarIcons/friends.png';
 import Animated from 'react-native-reanimated';
 
@@ -56,23 +59,27 @@ function TabBar({animatedTabbarPosition, state, descriptors, navigation }) {
 
         return (
           <Pressable
-          key={route.name}
+            key={route.name}
             href={buildHref(route.name, route.params)}
             accessibilityState={isFocused ? { selected: true } : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}
             testID={options.tabBarButtonTestID}
             onPress={onPress}
             onLongPress={onLongPress}
-            style={[styles.tabbarItem, , isMiddleTab ? styles.middleTab : null, { opacity: 1 }]}
+            style={[styles.tabbarItem, , isMiddleTab ? styles.middleTab : null, { opacity: 1}]}
           >
-            <Image style={[styles.tabBarIcon, isMiddleTab ? styles.middleTabIcon : null, {tintColor: isFocused ? theme.title : "grey"}]} source={(route.name === 'home' ? Home : route.name === 'workout' ? Workout : route.name === 'exercises' ? Exercises : route.name === 'social' ? Friends : Progress)} />
+            <Image style={[styles.tabBarIcon, isMiddleTab ? styles.middleTabIcon : null, {tintColor: isFocused ? theme.title : "grey"}]} source={(route.name === 'home' ? Home : route.name === 'workout' ? Workout : route.name === 'exercises' ? Exercises : route.name === 'friends' ? Friends : Progress)} />
 
 
-            {!isMiddleTab && (
+            {/* {!isMiddleTab && (
                 <ThemedText style={[styles.tabBarText, { color: isFocused ? theme.tabBar.textActive : theme.tabBar.text }]}>
                     {label}
                 </ThemedText>
-            )}
+            )} */}
+
+                <ThemedText style={[styles.tabBarText, { color: isFocused ? theme.tabBar.textActive : theme.tabBar.text }, ]}>
+                    {label === "Workout" ? "Workouts" : label}
+                </ThemedText>
             
           </Pressable>
         );
@@ -108,9 +115,10 @@ const styles = StyleSheet.create({
         height: 40,
         marginBottom: 5,
         
+        
     },
     middleTabIcon: {
-        height: 60,
-        width: 60,
+        height: 40,
+        width: 40,
     },
 });

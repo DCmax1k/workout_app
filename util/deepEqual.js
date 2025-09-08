@@ -1,4 +1,4 @@
-export const deepEqual = (a, b) => {
+export default deepEqual = (a, b) => {
     if (a === b) return true;
   
     if (typeof a !== typeof b) return false;

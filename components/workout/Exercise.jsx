@@ -26,7 +26,7 @@ const Exercise = ({style, exercise, selected = false, disablePress = false, onPr
         <Portal >
           <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
 
-
+              <Pressable onPress={() => setOpenExercise(false)} style={{height: "100%", width: "100%", zIndex: 0}}></Pressable>
 
               <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
                 <OpenExercise exercise={exercise} setOpenExercise={setOpenExercise} forceCloseOpenExercise={(exer) => {setOpenExercise(false); }} />

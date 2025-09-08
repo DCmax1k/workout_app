@@ -9,6 +9,7 @@ import { router } from 'expo-router'
 import { LinearGradient } from 'expo-linear-gradient'
 import StartWorkout from '../../../components/workout/StartWorkout'
 import rightArrow from '../../../assets/icons/rightArrow.png'
+import eye from '../../../assets/icons/eye.png'
 import { generateUniqueId } from '../../../util/uniqueId'
 import WorkoutDescription from '../../../components/workout/WorkoutDescription'
 import TitleWithBack from '../../../components/TitleWithBack'
@@ -139,7 +140,7 @@ const IndexWorkout = () => {
         <Portal >
           <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
 
-
+            <Pressable onPress={() => setOpenExerciseExtra(false)} style={{height: "100%", width: "100%", zIndex: 0}}></Pressable>
 
               <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
                 <OpenExercise exercise={exerciseOpen} setOpenExercise={setOpenExerciseExtra} forceCloseOpenExercise={() => setOpenExercise(false)} />
@@ -165,7 +166,7 @@ const IndexWorkout = () => {
             <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Saved Workouts</ThemedText>
 
             {/* <TextInput style={[styles.search, {flex: 1}]} placeholder='Search workouts' placeholderTextColor={"#A6A6A6"} value={searchValue} onChangeText={(e) => setSearchValue(e)} /> */}
-            <Search value={searchValue} onChangeText={(e) => setSearchValue(e)} placeholder='Search workouts' />
+            <Search value={searchValue} onChangeText={(e) => setSearchValue(e)} placeholder='Search' />
 
             <Spacer height={20} />
 
@@ -204,7 +205,8 @@ const IndexWorkout = () => {
 
                           <View style={[styles.boxShadow, {shadowRadius: 5, backgroundColor: "#546FDB", height: 40, width: 40, borderRadius: 99999, justifyContent: "center", alignItems: "center"}]}>
                             <View style={{backgroundColor: "#3D52A6", height: 35, width: 35, borderRadius: 99999, justifyContent: "center", alignItems: "center"}}>
-                              <Image style={{height: 20, width: 20, transform: [{rotate: "-90deg"}]}} source={rightArrow}/>
+                              <Image style={{height: 20, width: 20, transform: [{rotate: "0deg"}]}} source={rightArrow}/>
+                              {/* <Image style={{height: 20, width: 20,}} source={eye}/> */}
                             </View>
                           </View>
                           

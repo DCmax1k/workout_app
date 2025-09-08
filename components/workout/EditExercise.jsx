@@ -15,6 +15,10 @@ import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanim
 import { useUserStore } from '../../stores/useUserStore'
 import { ScrollView } from 'react-native-gesture-handler'
 
+const firstCapital = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWorkoutStyle, ...props}) => {
     const user = useUserStore((state) => state.user);
 
@@ -120,11 +124,12 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
     }
 
     const metricTag = exercise.tracks.includes("weight") ? "kgs" : "km";
-    const imperialTag = exercise.tracks.includes("weight") ? "lbs" : "mile";
+    const imperialTag = exercise.tracks.includes("weight") ? "lbs" : "miles";
 
     const getTrackingTag = (track) => {
         if (track === "weight" || track === "weightPlus" || track === "mile") return exercise.unit === "metric" ? metricTag : imperialTag;
         if (track === "weightPlus") return exercise.unit === "metric" ? (metricTag + "+") : (imperialTag + "+");
+        
         return track;
     }
 
@@ -188,9 +193,9 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         <Animated.View layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
             {/* Top row, labels */}
             <View style={styles.row}>
-                    <Text style={[styles.column, styles.column1]}>Sets</Text>
+                    <Text style={[styles.column, styles.column1]}>Set</Text>
                 <>
-                    {exercise.tracks.map(track => ( <Text key={track} style={styles.column}>{getTrackingTag(track)}</Text> ))}
+                    {exercise.tracks.map(track => ( <Text key={track} style={styles.column}>{ firstCapital(getTrackingTag(track)) }</Text> ))}
                 </>
                 {activeWorkoutStyle && (
                     <Pressable onPress={checkAllSets} style={[styles.columnForComplete, styles.completeButton, {backgroundColor: exercise.sets.length > 0 ? exercise.sets.map(s => s.complete || false).includes(false)  ? "#1D1D1D" : "#21863C" : "#1D1D1D" }]}>
@@ -215,7 +220,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                         </Pressable>
                     )}
                     <Pressable onPress={() => {removeSet(setIndex)}} style={styles.columnForComplete}>
-                        {(<Image style={{height: 20, width: 20}} source={greyX}  />)}
+                        {(<Image style={{height: 20, width: 20, tintColor: "#673434"}} source={greyX}  />)}
                     </Pressable>
                 </Animated.View>
             ))}
@@ -238,16 +243,16 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
             </Animated.View>) : null}
             {/* Add set */}
             <Animated.View layout={LinearTransition} style={{flex: 1}}>
-                <Pressable onPress={() => {addSet(3)}} style={{paddingVertical: 5, paddingHorizontal: 35, backgroundColor: "#2D2D2D", alignSelf: 'center', marginTop: 10, marginBottom: 5, borderRadius: 10}}>
-                    <Text style={{color: "white", fontSize: 15, fontWeight: 500}}>Add set (3)</Text>
+                <Pressable onPress={() => {addSet(1)}} style={{paddingVertical: 5, paddingHorizontal: 35, backgroundColor: "#2D2D2D", alignSelf: 'center', marginTop: 10, marginBottom: 5, borderRadius: 10}}>
+                    <Text style={{color: "white", fontSize: 15, fontWeight: 500}}>Add Set</Text>
                 </Pressable>
-                <View style={{position: "absolute", height: "100%", right: 0, top: 0, justifyContent: "center"}}>
+                {/* <View style={{position: "absolute", height: "100%", right: 0, top: 0, justifyContent: "center"}}>
                     <ActionMenu offset={activeWorkoutStyle} backgroundColor={"transparent"} data={[
                         {title: "Add 1 set", icon: plusIcon, onPress: () => {addSet(1)}, },
                         {title: "Add 2 sets", icon: plusIcon, onPress: () => {addSet(2)}},
                         {title: "Remove all sets", icon: trashIcon, onPress: () => {addSet(0)}},
                         ]} />
-                </View>
+                </View> */}
             </Animated.View>
             
             

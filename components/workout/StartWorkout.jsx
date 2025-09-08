@@ -3,6 +3,7 @@ import React from 'react'
 import ThemedView from '../ThemedView'
 import ThemedText from '../ThemedText'
 import greyX from '../../assets/icons/greyX.png'
+import rightArrow from '../../assets/icons/rightArrow.png'
 import { Colors } from '../../constants/Colors'
 import { Exercises } from '../../constants/Exercises'
 import { useUserStore } from '../../stores/useUserStore'
@@ -48,7 +49,12 @@ const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, setEx
         const complexExercises = exercisesToComplex(clonedWorkout.exercises);
         clonedWorkout.exercises = complexExercises;
         updateUser({editActiveWorkout: clonedWorkout});
-        router.push("/editworkout");
+        router.push({
+            pathname: "/editworkout",
+            params: {
+                workout: JSON.stringify(clonedWorkout),
+            }
+        });
         setModalVisible(false);
     }
 
@@ -97,7 +103,11 @@ const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, setEx
             <View style={styles.actionButtons}>
                 <View>
                     <Pressable onPress={() => setModalVisible(false)}>
-                        <Image style={{height: 50, width: 50}} source={greyX} />
+                        {/* <Image style={{height: 50, width: 50}} source={greyX} /> */}
+                        <View style={{height: 50, width: 50, justifyContent: "center", alignItems: "center"}}>
+                            <Image style={{height: 30, width: 30, tintColor: "grey", transform: [{rotate: "180deg"}]}} source={rightArrow} />
+                        </View>
+                        
                     </Pressable>
                 </View>
                 <View>

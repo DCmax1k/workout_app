@@ -59,7 +59,12 @@ const WorkoutHistory = () => {
               <Spacer size={10} />
 
               
-
+              {sectionalData.length < 1 === true && (
+                <View>
+                  <ThemedText style={{textAlign: "center"}}>No completed workouts yet.</ThemedText>
+                </View>
+                
+              )}
               <SectionList
               
                   sections={sectionalData}
