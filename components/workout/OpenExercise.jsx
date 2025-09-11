@@ -302,7 +302,7 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
       {editModeActive && <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1}}>
           
         {exercise.group !== "created" && (
-          <Text style={{textAlign: "center", color: "grey", textDecorationColor: "grey", textDecorationLine: "underline"}}>Only user created exercises are editable.</Text>
+          <Text style={{textAlign: "center", color: "grey", textDecorationColor: "grey", textDecorationLine: "underline"}}>Only custom exercises are editable.</Text>
         )}
 
         <CreateExercise ref={createExerciseRef} editMode={true} setEditModeActive={setEditModeActive} editData={exercise} locked={exercise.group !== "created"} />

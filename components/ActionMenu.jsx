@@ -67,8 +67,8 @@ const ActionMenu = ({ data, backgroundColor, style, offset = false, ...props }) 
 
               {data.map((item, i) => (
               <Pressable key={i} onPress={() => {setActive(false); item.onPress()}} style={[styles.menuItem, {height: ITEM_HEIGHT}]}>
-                <Image style={{height: 15, width: 15, objectFit: "contain"}} source={item.icon} />
-                <Text style={styles.menuItemText}>{item.title}</Text>
+                <Image style={{height: 15, width: 15, objectFit: "contain", tintColor: item.color || "white"}} source={item.icon} />
+                <Text style={[styles.menuItemText, {color: item.color || "white"}]}>{item.title}</Text>
               </Pressable>
               ))}
 
@@ -106,6 +106,5 @@ const styles = StyleSheet.create({
   menuItemText: {
     paddingVertical: 8,
     paddingHorizontal: 16,
-    color: "white",
   },
 });

@@ -123,7 +123,7 @@ const Calender = ({initialDate=new Date(), active=true, datesWithData=[], set=()
         {allDates.map((d, i) => {
           const isSelected = compareDates(d, selectedDate);
           const hasData = datesWithData.findIndex(k => new Date(k).toDateString() === d.toDateString()) >= 0;
-          const isPartOfThisMonth = d.getMonth() === dat.getMonth();
+          const isPartOfThisMonth = (d.getMonth() === dat.getMonth()) && (d.getFullYear() === dat.getFullYear());
 
           return (
             <View

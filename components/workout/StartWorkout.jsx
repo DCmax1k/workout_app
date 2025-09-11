@@ -103,10 +103,10 @@ const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, setEx
             <View style={styles.actionButtons}>
                 <View>
                     <Pressable onPress={() => setModalVisible(false)}>
-                        {/* <Image style={{height: 50, width: 50}} source={greyX} /> */}
-                        <View style={{height: 50, width: 50, justifyContent: "center", alignItems: "center"}}>
+                        <Image style={{height: 50, width: 50}} source={greyX} />
+                        {/* <View style={{height: 50, width: 50, justifyContent: "center", alignItems: "center"}}>
                             <Image style={{height: 30, width: 30, tintColor: "grey", transform: [{rotate: "180deg"}]}} source={rightArrow} />
-                        </View>
+                        </View> */}
                         
                     </Pressable>
                 </View>

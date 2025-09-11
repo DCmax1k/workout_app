@@ -145,7 +145,7 @@ const CreateExercise = React.forwardRef(({setCreateExercise, callback = () => {}
 
       <Spacer height={10} />
 
-      <Text style={styles.screenText}>Description of exercise - optional</Text>
+      <Text style={styles.screenText}>Description (optional)</Text>
 
       <View style={{position: "relative"}}>
         {locked === true && (

@@ -35,7 +35,7 @@ const EditWorkout = () => {
   const allExercises = getAllExercises(user);
 
   const params = useLocalSearchParams();
-  const workoutBeforeEdits = JSON.parse(params.workout);
+  const workoutBeforeEdits = params.workout ? JSON.parse(params.workout) : {};
   
   const [exerciseModal, setExerciseModal] = useState(false);
   const [confirmMenuActive, setConfirmMenuActive] = useState(false);
@@ -143,12 +143,12 @@ const EditWorkout = () => {
       router.back()
     } else {
       setConfirmMenuData({
-        title: "Leave?",
-        subTitle: "Any changes to this workout will not be saved.",
+        title: "Leave without saving?",
+        subTitle: "Any changes will be discarded.",
         subTitle2: "This action cannot be undone.",
-        option1: "Leave",
+        option1: "Don't save and leave",
         option1color: "#DB5454",
-        option2: "Don't leave",
+        option2: "Stay",
         confirm: () => router.back(),
       });
       setConfirmMenuActive(true);
@@ -182,7 +182,7 @@ const EditWorkout = () => {
               </Pressable>
               
               <TextInput selectTextOnFocus ref={workoutNameInputRef} onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
-              <ActionMenu data={[{title: "Delete workout", icon: trashIcon, onPress: requestDeleteWorkout,}]} />
+              <ActionMenu data={[{title: "Delete Workout", icon: trashIcon, onPress: requestDeleteWorkout, color: "#FF6C6C"}]} />
             </View>
 
             {exercises.map((exercise, i) => (
@@ -199,7 +199,7 @@ const EditWorkout = () => {
             <Spacer height={20} />
 
             <Animated.View layout={LinearTransition} >
-              <BlueButton title={"Add exercise"} onPress={() => setExerciseModal(true)} />
+              <BlueButton title={"Add Exercise"} onPress={() => setExerciseModal(true)} />
             </Animated.View>
             
 

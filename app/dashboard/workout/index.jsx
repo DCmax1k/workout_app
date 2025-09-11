@@ -78,7 +78,12 @@ const IndexWorkout = () => {
     const createNewWorkout = () => {
       const newWorkoutData = {name: "New workout", id: generateUniqueId(), exercises: [] };
       updateUser({editActiveWorkout: newWorkoutData});
-      router.push("/editworkout");
+      router.push({
+        pathname: "/editworkout",
+        params: {
+          workout: JSON.stringify(newWorkoutData),
+        }
+      });
     }
 
     
@@ -154,7 +159,7 @@ const IndexWorkout = () => {
       )}
 
       <SafeAreaView style={{ flex: 1 }}>
-        <TitleWithBack style={{marginHorizontal: 0}} backBtn={false} title={"Workout"} actionBtn={{active: true, image: require("../../../assets/icons/history.png"), action: () => router.push("/dashboard/workout/workouthistory")}} />
+        <TitleWithBack style={{marginHorizontal: 0}} backBtn={false} title={"Workouts"} actionBtn={{active: true, image: require("../../../assets/icons/history.png"), action: () => router.push("/dashboard/workout/workouthistory")}} />
         <Spacer height={20} />
         <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
           {/* <ThemedText style={{fontSize: 20, fontWeight: 700, marginTop: 20,  textAlign: 'center'}}>Workout</ThemedText> */}

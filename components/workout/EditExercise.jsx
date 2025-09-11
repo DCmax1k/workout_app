@@ -127,8 +127,24 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
     const imperialTag = exercise.tracks.includes("weight") ? "lbs" : "miles";
 
     const getTrackingTag = (track) => {
-        if (track === "weight" || track === "weightPlus" || track === "mile") return exercise.unit === "metric" ? metricTag : imperialTag;
-        if (track === "weightPlus") return exercise.unit === "metric" ? (metricTag + "+") : (imperialTag + "+");
+        const defaultUnit = user.settings.preferences.liftUnit;
+        if (track === "weight" || track === "weightPlus" || track === "mile") {
+            if (exercise.unit) {
+                return exercise.unit === "metric" ? metricTag : imperialTag;
+            } else {
+                return defaultUnit === "kgs" ? metricTag : imperialTag;
+            }
+
+            
+        }
+        if (track === "weightPlus") {
+            if (exercise.unit) {
+                return exercise.unit === "metric" ? (metricTag + "+") : (imperialTag + "+");
+            } else {
+                return defaultUnit === "kgs" ? (metricTag + "+") : (imperialTag + "+");
+            }
+
+        }
         
         return track;
     }
@@ -183,7 +199,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                 {title: "Add note", icon: fileIcon, onPress: openNoteAndFocus, },
                 {title: "Rename exercise", icon: pencilIcon, onPress: () => exerciseNameRef.current?.focus()},
                 {title: exercise.unit === "metric" ? ("Imperial unit (" + imperialTag + ")") : ("Metric unit (" + metricTag + ")"), icon: dumbellIcon, onPress: switchUnit},
-                {title: "Delete exercise", icon: trashIcon, onPress: removeExercise}]} />
+                {title: "Delete exercise", icon: trashIcon, onPress: removeExercise, color: "#FF6C6C"}]} />
         </View>
 
         {(showNote || exercise.note) ? (<Animated.View layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>

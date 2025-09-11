@@ -14,6 +14,10 @@ import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import ConfirmMenu from '../ConfirmMenu';
 import { truncate } from '../../util/truncate';
 
+const lbsToKgs = (lbs) => {
+    return 0.453592*lbs;
+}
+
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
 
@@ -115,21 +119,51 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
         updateUser({schedule: {...user.schedule, currentIndex: newIndex}})
      }
 
+
+     const calculateExerciseExpenditure = (met=0, setTime=0) => {
+        const userWeight = user.tracking.logging["weight"].data[user.tracking.logging["weight"].data.length - 1]?.amount || null;
+        //const userHeight = user.settings.height || null;
+        //const userAge = user.settings.birthday ? (Date.now() - user.settings.birthday)/1000/60/60/24/365 : null; // In years
+        if (userWeight) {
+            const userWeightKgs = user.tracking.logging["weight"].unit === "lbs" ? lbsToKgs(userWeight) : userWeight;
+            const caloriesPerSecond = (met*3.5*userWeightKgs)/200/60;
+            return caloriesPerSecond*setTime;
+        }
+        return 0;
+     }
+
     const finish = () => {
         const ultimateCloneOfActiveWorkout = JSON.parse(JSON.stringify(workout));
         const currentTime = Date.now();
 
         let totalWeightLifted = 0;
         let totalDistanceTraveled = 0;
+        let totalExpenditure = 0;
         const completedExercises = [];
         const usersCompletedExercises = user.completedExercises;
         workout.exercises.forEach(exercise => {
             const completeSets = exercise.sets.filter(e => e.complete);
             if (completeSets.length < 1) return;
+            // Loop complete exercises to 1. get total weight/distance 2. calculate expenditure.
             completeSets.forEach(s => {
-                if (s["weight"]) totalWeightLifted+=parseFloat(s["weight"])*parseInt(s["reps"]);
-                if (s["weightPlus"]) totalWeightLifted+=parseFloat(s["weightPlus"])*parseInt(s["reps"]);
-                if (s["mile"]) totalDistanceTraveled+=parseFloat(s["mile"]);
+                if (s["weight"]) {
+                    totalWeightLifted+=parseFloat(s["weight"])*parseInt(s["reps"]);
+                    const repTime = 3; // 3 seconds per rep
+                    const defaultMET = 3.5;
+                    totalExpenditure+=calculateExerciseExpenditure(exercise.met ? exercise.met : defaultMET, repTime*parseInt(s["reps"]) );
+                }
+                if (s["weightPlus"]) {
+                    totalWeightLifted+=parseFloat(s["weightPlus"])*parseInt(s["reps"]);
+                    const repTime = 3; // 3 seconds per rep
+                    const defaultMET = 3.5;
+                    totalExpenditure+=calculateExerciseExpenditure(exercise.met ? exercise.met : defaultMET, repTime*parseInt(s["reps"]) );
+                }
+                if (s["mile"]) {
+                    totalDistanceTraveled+=parseFloat(s["mile"]);
+                    const cardioTime = parseInt(s["time"])*60; // Saved in minutes, convert to secs
+                    const defaultMET = 3.5;
+                    totalExpenditure+=calculateExerciseExpenditure(exercise.met ? exercise.met : defaultMET, cardioTime );
+                } 
             });
             const dbExercise = allExercises.find(e => e.id === exercise.id);
             const exerciseData = {
@@ -141,12 +175,14 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                 tracks: exercise.tracks,
                 unit: exercise.unit,
             }
+            // Push to completed exercises
             completedExercises.push(exerciseData);
             if (usersCompletedExercises[exerciseData.id]) {
                 usersCompletedExercises[exerciseData.id].push(exerciseData);
             } else {
                 usersCompletedExercises[exerciseData.id] = [exerciseData];
             }
+
         });
         if (completedExercises.length <= 0) {
             return cancelWorkout(true, "There are no sets marked as complete in this workout.");
@@ -175,11 +211,25 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
         if (!user.pastWorkouts) {
             updateUser({pastWorkouts: []});
         }
+        const expenditureData = user.tracking.insights.expenditure.data;
+        const lastEntry = expenditureData[expenditureData.length-1];
+        let newExpenditureData = JSON.parse(JSON.stringify(expenditureData));
+        if (expenditureData.length > 0) {
+            const isSameDayAsLastEntry =  new Date(lastEntry.date).toDateString() === new Date(currentTime).toDateString();
+            if (isSameDayAsLastEntry) {
+                newExpenditureData[newExpenditureData.length-1] = {date: lastEntry.date, amount: lastEntry.amount+totalExpenditure};
+            } else {
+                newExpenditureData.push({date: currentTime, amount:totalExpenditure});
+            }
+        } else {
+            newExpenditureData.push({date: currentTime, amount: totalExpenditure});
+        }
         setTimeout(() => {
             updateUser({
                 pastWorkouts: user.pastWorkouts ? [finishScreenData, ...user.pastWorkouts, ] : [finishScreenData],
                 completeExercises: usersCompletedExercises,
-                activeWorkout: null
+                activeWorkout: null,
+                tracking: {insights: {expenditure: {data: newExpenditureData}}}
             });
         }, 300)
         
@@ -218,9 +268,9 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
 
                     <Spacer height={20} />
                     <Animated.View layout={LinearTransition.springify().mass(0.5).damping(10)}>
-                        <BlueButton title={"Add exercise"} style={{marginRight: 10, marginLeft: 10}} onPress={() => setExerciseModal(true)} />
+                        <BlueButton title={"Add Exercise"} style={{marginRight: 10, marginLeft: 10}} onPress={() => setExerciseModal(true)} />
                         <Spacer height={40} />
-                        <BlueButton title={"Cancel workout"} color={"#572E32"} style={{marginRight: 30, marginLeft: 30}} onPress={() => cancelWorkout(true)} />
+                        <BlueButton title={"Cancel Workout"} color={"#572E32"} style={{marginRight: 30, marginLeft: 30}} onPress={() => cancelWorkout(true)} />
                     </Animated.View>
                     
                 </BottomSheetScrollView>

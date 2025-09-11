@@ -18,7 +18,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/treadmillWalking.png"),
         "muscleGroups": ["legs", "glutes", "core"],
         "difficulty": "beginner",
-        "id": "101"
+        "id": "101",
+        "met": 3.5,
     },
     {
         "name": "Outdoor Running",
@@ -28,7 +29,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/outdoorRunning.png"),
         "muscleGroups": ["legs", "glutes", "core"],
         "difficulty": "intermediate",
-        "id": "102"
+        "id": "102",
+        "met": 9.8,
     },
     {
         "name": "Outdoor Walking",
@@ -38,7 +40,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/outdoorWalking.png"),
         "muscleGroups": ["legs", "glutes", "core"],
         "difficulty": "beginner",
-        "id": "106"
+        "id": "106",
+        "met": 3.3,
     },
     {
         "name": "Stationary Bike",
@@ -48,7 +51,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/stationaryBike.png"),
         "muscleGroups": ["quads", "hamstrings", "glutes"],
         "difficulty": "beginner",
-        "id": "103"
+        "id": "103",
+        "met": 5.5,
     },
     {
         "name": "Elliptical Trainer",
@@ -58,7 +62,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/ellipticalTrainer.png"),
         "muscleGroups": ["legs", "glutes", "arms"],
         "difficulty": "intermediate",
-        "id": "104"
+        "id": "104",
+        "met": 5
     },
     {
         "name": "Stairmaster",
@@ -68,7 +73,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/stairmaster.png"),
         "muscleGroups": ["glutes", "hamstrings", "calves"],
         "difficulty": "intermediate",
-        "id": "105"
+        "id": "105",
+        "met": 8.8
     },
     {
         "name": "Incline Treadmill Walk",
@@ -78,7 +84,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/inclineTreadmillWalk.png"),
         "muscleGroups": ["glutes", "calves", "hamstrings"],
         "difficulty": "intermediate",
-        "id": "107"
+        "id": "107",
+        "met": 6
     },
     {
         "name": "Jogging",
@@ -88,7 +95,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/jogging.png"),
         "muscleGroups": ["legs", "glutes", "core"],
         "difficulty": "intermediate",
-        "id": "108"
+        "id": "108",
+        "met": 7
     },
     {
         "name": "Hiking",
@@ -98,7 +106,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/hiking.png"),
         "muscleGroups": ["legs", "glutes", "core"],
         "difficulty": "intermediate",
-        "id": "109"
+        "id": "109",
+        "met": 6
     },
     {
         "name": "High-Intensity Sprint Intervals",
@@ -108,7 +117,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/sprintIntervals.png"),
         "muscleGroups": ["legs", "glutes", "core"],
         "difficulty": "advanced",
-        "id": "110"
+        "id": "110",
+        "met": 12
     },
     {
         "name": "Barbell Bench Press",
@@ -118,7 +128,8 @@ export const Exercises = [
         "image": require("../assets/exercises/benchPress.png"),
         "muscleGroups": ["chest", "shoulders", "triceps"],
         "difficulty": "intermediate",
-        "id": "1"
+        "id": "1",
+        "met": 6
     },
     {
         "name": "Incline Barbell Bench Press",
@@ -128,7 +139,8 @@ export const Exercises = [
         "image": require("../assets/exercises/inclineBarbellPress.png"),
         "muscleGroups": ["chest", "shoulders", "triceps"],
         "difficulty": "intermediate",
-        "id": "2"
+        "id": "2",
+        "met": 6
     },
     {
         "name": "Decline Barbell Bench Press",
@@ -138,7 +150,8 @@ export const Exercises = [
         //"image": require("../assets/exercises/declineBarbellPress.png"),
         "muscleGroups": ["chest", "shoulders", "triceps"],
         "difficulty": "intermediate",
-        "id": "3"
+        "id": "3",
+        "met": 6
     },
     {
         "name": "Dumbbell Bench Press",
@@ -148,7 +161,8 @@ export const Exercises = [
         "image": require("../assets/exercises/dumbbellBenchPress.png"),
         "muscleGroups": ["chest", "shoulders", "triceps"],
         "difficulty": "intermediate",
-        "id": "4"
+        "id": "4",
+        "met": 5.5
     },
     {
         "name": "Incline Dumbbell Bench Press",
@@ -158,7 +172,8 @@ export const Exercises = [
         "image": require("../assets/exercises/inclineDumbbellPress.png"),
         "muscleGroups": ["chest", "shoulders", "triceps"],
         "difficulty": "intermediate",
-        "id": "5"
+        "id": "5",
+        "met": 5.5
     },
     {
         "name": "Decline Dumbbell Bench Press",
@@ -168,7 +183,8 @@ export const Exercises = [
         //"image": require("../assets/exercises/declineDumbbellPress.png"),
         "muscleGroups": ["chest", "shoulders", "triceps"],
         "difficulty": "intermediate",
-        "id": "6"
+        "id": "6",
+        "met": 5.5
     },
     {
         "name": "Machine Bench Press",
@@ -178,7 +194,8 @@ export const Exercises = [
         "image": require("../assets/exercises/machineBenchPress.png"),
         "muscleGroups": ["chest", "shoulders", "triceps"],
         "difficulty": "beginner",
-        "id": "7"
+        "id": "7",
+        "met": 5
     },
     {
         "name": "Cable Crossover",
@@ -188,7 +205,8 @@ export const Exercises = [
         "image": require("../assets/exercises/cableCrossover.png"),
         "muscleGroups": ["chest"],
         "difficulty": "intermediate",
-        "id": "8"
+        "id": "8",
+        "met": 4.5
     },
     {
         "name": "Machine Fly",
@@ -198,7 +216,8 @@ export const Exercises = [
         "image": require("../assets/exercises/machineFly.png"),
         "muscleGroups": ["chest"],
         "difficulty": "beginner",
-        "id": "9"
+        "id": "9",
+        "met": 4
     },
     {
         "name": "Dumbbell Fly",
@@ -208,7 +227,8 @@ export const Exercises = [
         //"image": require("../assets/exercises/dumbbellFly.png"),
         "muscleGroups": ["chest"],
         "difficulty": "intermediate",
-        "id": "10"
+        "id": "10",
+        "met": 4.5
     },
     {
         "name": "Push-Up",
@@ -218,7 +238,8 @@ export const Exercises = [
         "image": require("../assets/exercises/pushUp.png"),
         "muscleGroups": ["chest", "shoulders", "triceps"],
         "difficulty": "beginner",
-        "id": "11"
+        "id": "11",
+        "met": 8
     },
     {
         "name": "Machine Ab Crunch",
@@ -228,7 +249,8 @@ export const Exercises = [
         "image": require("../assets/exercises/machineAbCrunch.png"),
         "muscleGroups": ["abs"],
         "difficulty": "beginner",
-        "id": "12"
+        "id": "12",
+        "met": 3.5
     },
     {
         "name": "Plank",
@@ -238,7 +260,8 @@ export const Exercises = [
         "image": require("../assets/exercises/plank.png"),
         "muscleGroups": ["abs", "core"],
         "difficulty": "intermediate",
-        "id": "13"
+        "id": "13",
+        "met": 3
     },
     {
         "name": "Crunch",
@@ -248,7 +271,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/crunch.png"),
         "muscleGroups": ["abs"],
         "difficulty": "beginner",
-        "id": "14"
+        "id": "14",
+        "met": 3.8
     },
     {
         "name": "Leg Raise",
@@ -258,7 +282,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/legRaise.png"),
         "muscleGroups": ["abs", "hip flexors"],
         "difficulty": "intermediate",
-        "id": "15"
+        "id": "15",
+        "met": 4
     },
     {
         "name": "Air Bike",
@@ -268,7 +293,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/airBike.png"),
         "muscleGroups": ["abs", "obliques"],
         "difficulty": "intermediate",
-        "id": "16"
+        "id": "16",
+        "met": 4.5
     },
     {
         "name": "Decline Crunch",
@@ -278,7 +304,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/declineCrunch.png"),
         "muscleGroups": ["abs"],
         "difficulty": "intermediate",
-        "id": "17"
+        "id": "17",
+        "met": 4
     },
     {
         "name": "Sit-Up",
@@ -288,7 +315,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/sitUp.png"),
         "muscleGroups": ["abs", "hip flexors"],
         "difficulty": "intermediate",
-        "id": "18"
+        "id": "18",
+        "met": 4
     },
     {
         "name": "Side Plank",
@@ -298,7 +326,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/sidePlank.png"),
         "muscleGroups": ["obliques", "core"],
         "difficulty": "intermediate",
-        "id": "19"
+        "id": "19",
+        "met": 3
     },
     {
         "name": "Mountain Climber",
@@ -308,7 +337,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/mountainClimber.png"),
         "muscleGroups": ["abs", "core", "hip flexors"],
         "difficulty": "intermediate",
-        "id": "20"
+        "id": "20",
+        "met": 8
     },
     {
         "name": "Barbell Deadlift",
@@ -318,7 +348,8 @@ export const Exercises = [
         "image": require("../assets/exercises/barbellDeadlift.png"),
         "muscleGroups": ["back", "glutes", "hamstrings"],
         "difficulty": "advanced",
-        "id": "21"
+        "id": "21",
+        "met": 6
     },
     {
         "name": "Cable Lat Pulldown",
@@ -328,7 +359,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/cableLatPulldown.png"),
         "muscleGroups": ["back", "biceps"],
         "difficulty": "beginner",
-        "id": "22"
+        "id": "22",
+        "met": 5
     },
     {
         "name": "Cable Seated Row",
@@ -338,7 +370,8 @@ export const Exercises = [
         "image": require("../assets/exercises/cableSeatedRow.png"),
         "muscleGroups": ["back", "biceps", "rear delts"],
         "difficulty": "beginner",
-        "id": "23"
+        "id": "23",
+        "met": 5
     },
     {
         "name": "Dumbbell One-Arm Row",
@@ -348,7 +381,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/oneArmRow.png"),
         "muscleGroups": ["back", "biceps"],
         "difficulty": "intermediate",
-        "id": "24"
+        "id": "24",
+        "met": 5
     },
     {
         "name": "Barbell Bent-Over Row",
@@ -358,7 +392,8 @@ export const Exercises = [
         "image": require("../assets/exercises/barbellRow.png"),
         "muscleGroups": ["back", "biceps", "lower back"],
         "difficulty": "intermediate",
-        "id": "25"
+        "id": "25",
+        "met": 6
     },
     {
         "name": "Pull-Up",
@@ -368,7 +403,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/pullUp.png"),
         "muscleGroups": ["back", "biceps"],
         "difficulty": "advanced",
-        "id": "26"
+        "id": "26",
+        "met": 8
     },
     {
         "name": "Cable Rope Face Pull",
@@ -378,7 +414,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/facePull.png"),
         "muscleGroups": ["rear delts", "traps", "upper back"],
         "difficulty": "intermediate",
-        "id": "27"
+        "id": "27",
+        "met": 4.5
     },
     {
         "name": "Dumbbell Shoulder Shrug",
@@ -388,7 +425,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/shoulderShrug.png"),
         "muscleGroups": ["traps"],
         "difficulty": "beginner",
-        "id": "28"
+        "id": "28",
+        "met": 4.5
     },
     {
         "name": "Back Hyperextension",
@@ -398,7 +436,8 @@ export const Exercises = [
         "image": require("../assets/exercises/backHyperextension.png"),
         "muscleGroups": ["lower back", "glutes", "hamstrings"],
         "difficulty": "beginner",
-        "id": "29"
+        "id": "29",
+        "met": 4
     },
     {
         "name": "Machine Lat Pulldown",
@@ -408,7 +447,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/machineLatPulldown.png"),
         "muscleGroups": ["back", "biceps"],
         "difficulty": "beginner",
-        "id": "30"
+        "id": "30",
+        "met": 5
     },
     {
         "name": "Machine Bicep Curl",
@@ -418,7 +458,8 @@ export const Exercises = [
         "image": require("../assets/exercises/machineBicepCurl.png"),
         "muscleGroups": ["biceps"],
         "difficulty": "beginner",
-        "id": "31"
+        "id": "31",
+        "met": 3.5
     },
     {
         "name": "Dumbbell Bicep Curl",
@@ -428,7 +469,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/dumbbellBicepCurl.png"),
         "muscleGroups": ["biceps"],
         "difficulty": "beginner",
-        "id": "32"
+        "id": "32",
+        "met": 3.5
     },
     {
         "name": "Barbell Curl",
@@ -438,7 +480,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/barbellCurl.png"),
         "muscleGroups": ["biceps"],
         "difficulty": "intermediate",
-        "id": "33"
+        "id": "33",
+        "met": 4
     },
     {
         "name": "Dumbbell Hammer Curl",
@@ -448,7 +491,8 @@ export const Exercises = [
         "image": require("../assets/exercises/hammerCurl.png"),
         "muscleGroups": ["biceps", "brachialis"],
         "difficulty": "intermediate",
-        "id": "34"
+        "id": "34",
+        "met": 4
     },
     {
         "name": "Dumbbell Incline Curl",
@@ -458,7 +502,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/inclineCurl.png"),
         "muscleGroups": ["biceps"],
         "difficulty": "intermediate",
-        "id": "35"
+        "id": "35",
+        "met": 4
     },
     {
         "name": "Cable Bicep Curl",
@@ -468,7 +513,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/cableBicepCurl.png"),
         "muscleGroups": ["biceps"],
         "difficulty": "intermediate",
-        "id": "36"
+        "id": "36",
+        "met": 4
     },
     {
         "name": "Preacher Curl Machine",
@@ -478,7 +524,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/preacherCurlMachine.png"),
         "muscleGroups": ["biceps"],
         "difficulty": "beginner",
-        "id": "37"
+        "id": "37",
+        "met": 3.5
     },
     {
         "name": "Barbell Preacher Curl",
@@ -488,7 +535,8 @@ export const Exercises = [
         "image": require("../assets/exercises/barbellPreacherCurl.png"),
         "muscleGroups": ["biceps"],
         "difficulty": "intermediate",
-        "id": "38"
+        "id": "38",
+        "met": 4
     },
     {
         "name": "Dumbbell Preacher Curl",
@@ -498,7 +546,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/dumbbellPreacherCurl.png"),
         "muscleGroups": ["biceps"],
         "difficulty": "intermediate",
-        "id": "39"
+        "id": "39",
+        "met": 4
     },
     {
         "name": "Cable Hammer Curl",
@@ -508,7 +557,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/cableHammerCurl.png"),
         "muscleGroups": ["biceps", "brachialis"],
         "difficulty": "intermediate",
-        "id": "40"
+        "id": "40",
+        "met": 4
     },
     {
         "name": "Cable Tricep Pushdown",
@@ -518,7 +568,8 @@ export const Exercises = [
         "image": require("../assets/exercises/cableTricepPushdown.png"),
         "muscleGroups": ["triceps"],
         "difficulty": "beginner",
-        "id": "41"
+        "id": "41",
+        "met": 3.5
     },
     {
         "name": "Dip",
@@ -528,7 +579,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/dip.png"),
         "muscleGroups": ["triceps", "chest", "shoulders"],
         "difficulty": "intermediate",
-        "id": "42"
+        "id": "42",
+        "met": 8
     },
     {
         "name": "Cable Overhead Tricep Extension",
@@ -538,7 +590,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/cableOverheadTricepExtension.png"),
         "muscleGroups": ["triceps"],
         "difficulty": "intermediate",
-        "id": "43"
+        "id": "43",
+        "met": 3.5
     },
     {
         "name": "Dumbbell Tricep Extension",
@@ -548,7 +601,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/dumbbellTricepExtension.png"),
         "muscleGroups": ["triceps"],
         "difficulty": "intermediate",
-        "id": "44"
+        "id": "44",
+        "met": 4
     },
     {
         "name": "Machine Tricep Extension",
@@ -558,7 +612,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/machineTricepExtension.png"),
         "muscleGroups": ["triceps"],
         "difficulty": "beginner",
-        "id": "45"
+        "id": "45",
+        "met": 3.5
     },
     {
         "name": "Dumbbell One-Arm Tricep Kickback",
@@ -568,7 +623,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/oneArmKickback.png"),
         "muscleGroups": ["triceps"],
         "difficulty": "intermediate",
-        "id": "46"
+        "id": "46",
+        "met": 4
     },
     {
         "name": "Bench Dip",
@@ -578,7 +634,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/benchDip.png"),
         "muscleGroups": ["triceps", "chest", "shoulders"],
         "difficulty": "beginner",
-        "id": "47"
+        "id": "47",
+        "met": 5
     },
     {
         "name": "Barbell Skull Crusher",
@@ -588,7 +645,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/skullCrusher.png"),
         "muscleGroups": ["triceps"],
         "difficulty": "intermediate",
-        "id": "48"
+        "id": "48",
+        "met": 4
     },
     {
         "name": "Barbell Wrist Curl",
@@ -598,7 +656,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/barbellWristCurl.png"),
         "muscleGroups": ["forearms"],
         "difficulty": "beginner",
-        "id": "49"
+        "id": "49",
+        "met": 3
     },
     {
         "name": "Barbell Reverse Curl",
@@ -608,7 +667,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/barbellReverseCurl.png"),
         "muscleGroups": ["forearms", "biceps", "brachialis"],
         "difficulty": "intermediate",
-        "id": "50"
+        "id": "50",
+        "met": 3.5
     },
     {
         "name": "Cable Wrist Curl",
@@ -618,7 +678,8 @@ export const Exercises = [
         "image": require("../assets/exercises/cableWristCurl.png"),
         "muscleGroups": ["forearms"],
         "difficulty": "beginner",
-        "id": "51"
+        "id": "51",
+        "met": 3
     },
     {
         "name": "Dumbbell Lateral Raise",
@@ -628,7 +689,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/dumbbellLateralRaise.png"),
         "muscleGroups": ["shoulders"],
         "difficulty": "intermediate",
-        "id": "52"
+        "id": "52",
+        "met": 4
     },
     {
         "name": "Cable Lateral Raise",
@@ -638,7 +700,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/cableLateralRaise.png"),
         "muscleGroups": ["shoulders"],
         "difficulty": "intermediate",
-        "id": "53"
+        "id": "53",
+        "met": 4
     },
     {
         "name": "Dumbbell Shoulder Press",
@@ -648,7 +711,8 @@ export const Exercises = [
         "image": require("../assets/exercises/dumbbellShoulderPress.png"),
         "muscleGroups": ["shoulders", "triceps"],
         "difficulty": "intermediate",
-        "id": "54"
+        "id": "54",
+        "met": 5
     },
     {
         "name": "Machine Shoulder Press",
@@ -658,7 +722,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/machineShoulderPress.png"),
         "muscleGroups": ["shoulders", "triceps"],
         "difficulty": "beginner",
-        "id": "55"
+        "id": "55",
+        "met": 4.5
     },
     {
         "name": "Viking Press",
@@ -668,7 +733,8 @@ export const Exercises = [
         "image": require("../assets/exercises/vikingPress.jpg"),
         "muscleGroups": ["shoulders", "triceps", "upper back"],
         "difficulty": "intermediate",
-        "id": "551"
+        "id": "551",
+        "met": 5.5
     },
     {
         "name": "Machine Reverse Fly",
@@ -678,7 +744,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/machineReverseFly.png"),
         "muscleGroups": ["shoulders", "upper back"],
         "difficulty": "beginner",
-        "id": "56"
+        "id": "56",
+        "met": 4
     },
     {
         "name": "Machine Deltoid Raise",
@@ -688,7 +755,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/machineDeltoidRaise.png"),
         "muscleGroups": ["shoulders"],
         "difficulty": "beginner",
-        "id": "57"
+        "id": "57",
+        "met": 4
     },
     {
         "name": "Barbell Squat",
@@ -698,7 +766,8 @@ export const Exercises = [
         "image": require("../assets/exercises/barbellSquat.png"),
         "muscleGroups": ["quadriceps", "hamstrings", "glutes"],
         "difficulty": "intermediate",
-        "id": "58"
+        "id": "58",
+        "met": 6
     },
     {
         "name": "Dumbbell Squat",
@@ -708,7 +777,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/dumbbellSquat.png"),
         "muscleGroups": ["quadriceps", "hamstrings", "glutes"],
         "difficulty": "beginner",
-        "id": "59"
+        "id": "59",
+        "met": 5.5
     },
     {
         "name": "Machine Leg Extensions",
@@ -718,7 +788,8 @@ export const Exercises = [
         "image": require("../assets/exercises/legExtension.png"),
         "muscleGroups": ["quadriceps"],
         "difficulty": "beginner",
-        "id": "60"
+        "id": "60",
+        "met": 3.5
     },
     {
         "name": "Machine Leg Press",
@@ -728,7 +799,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/legPress.png"),
         "muscleGroups": ["quadriceps", "glutes", "hamstrings"],
         "difficulty": "beginner",
-        "id": "61"
+        "id": "61",
+        "met": 5
     },
     {
         "name": "Machine Leg Curl",
@@ -738,7 +810,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/legCurl.png"),
         "muscleGroups": ["hamstrings"],
         "difficulty": "beginner",
-        "id": "62"
+        "id": "62",
+        "met": 3.5
     },
     {
         "name": "Machine Calf Raise",
@@ -748,7 +821,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/machineCalfRaise.png"),
         "muscleGroups": ["calves"],
         "difficulty": "beginner",
-        "id": "63"
+        "id": "63",
+        "met": 3.5
     },
     {
         "name": "Dumbbell Calf Raise",
@@ -758,7 +832,8 @@ export const Exercises = [
         // "image": require("../assets/exercises/dumbbellCalfRaise.png"),
         "muscleGroups": ["calves"],
         "difficulty": "beginner",
-        "id": "64"
+        "id": "64",
+        "met": 3.5
     },
     {
         "name": "Dumbbell Lunge",
@@ -768,6 +843,7 @@ export const Exercises = [
         // "image": require("../assets/exercises/dumbbellLunge.png"),
         "muscleGroups": ["quadriceps", "glutes", "hamstrings"],
         "difficulty": "intermediate",
-        "id": "65"
+        "id": "65",
+        "met": 5.5
     }
 ]

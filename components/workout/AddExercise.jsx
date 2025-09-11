@@ -28,6 +28,7 @@ function groupExercisesBySection(exercises) {
     const grouped = {};
   
     exercises.forEach(ex => {
+        if (ex.group === "created") ex.group = "custom";
       if (!grouped[ex.group]) {
         grouped[ex.group] = [];
       }
@@ -90,7 +91,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
     const isIos = Platform.OS === 'ios';
   return (
     <Portal.Host>
-        <ThemedView style={{flex: 1, padding: 20}}>
+        <ThemedView style={[{flex: 1, padding: 20}, bottomSheet && {paddingTop: 0}]}>
             {createExercise && (
             <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", left: 0, top: 0, width: screenWidth, height: screenHeight, zIndex: 2}}>
 
@@ -104,7 +105,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
                 
 
 
-            <View style={styles.actionButtons}>
+            <View style={[styles.actionButtons]}>
                 <View>
                     <Pressable onPress={() => setExerciseModal(false)}>
                         <Image style={{height: 50, width: 50}} source={greyX} />

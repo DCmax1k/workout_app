@@ -20,7 +20,15 @@ const USER = {
     rank: 'user',
     premium: false,
     premiumFeatures: {},
-    settings: {},
+    settings: {
+      preferences: {
+        heightUnit: "feet", // feet, inches, cm
+        liftUnit: "lbs" // lbs, kgs
+      },
+      height: null, // in centimeters
+      birthday: null, // Date.now()
+      gender: null, // Male, Female, Other.
+    },
     prefix: '',
     friendRequests: [],
     friendsAdded: [],
@@ -48,7 +56,7 @@ const USER = {
   //     previousId: "1",
   //     id: "2314234"
   // },],
-    completedExercises:{},// { "2": [{date: 23235235, sets: [{weight: "135", reps: "10"}], shared: true,}] }, // by exerciseId
+    completedExercises:{},// { "2": [{date: 23235235, sets: [{weight: "135", reps: "10"}], shared: true,}] }, // simple data, by exerciseId
     savedWorkouts:[],// [{name: "Legs", id: "234", exercises: [ {id: "2", note:"", sets: [{lbs: "135", reps: "10"}]},] }, {name: "Chest and Shoulders", id: "2344", exercises: [ {id: "2314234", note:"", sets: [{lbs: "135", reps: "10"}]},{id: "4", note:"", sets: [{lbs: "135", reps: "10"}]}] }, {name: "Back", id: "345", exercises: [ {id: "4", note:"", sets: [{lbs: "135", reps: "10"}]},] }],
     tracking: {
       visibleWidgets: [], // ["calories", "ex_89023u42i0jr"]
@@ -81,7 +89,7 @@ const USER = {
       },
       insights: {
         expenditure: {
-          data: [],
+          data: [], // This data holds 3/4 main groups of calculation, leaving resting to be dynamically added
           unit: "kcal",
           layout: "none", // weight, calorie, none, bmi 
           color: "#DB8854",
@@ -98,7 +106,7 @@ const USER = {
       },
       logging: {
         "weight": {
-          data: [  ],
+          data: [  ], // [{date, amount}]
 
           unit: "lbs",
           layout: "weight", // weight, calorie, none, bmi 

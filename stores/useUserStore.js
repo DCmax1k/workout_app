@@ -32,6 +32,10 @@ const fillMissingKeys = (base, user) => {
     filled.tracking.logging["water intake"].layout = 'water';
   }
 
+  // Remove older expenditure data
+  if (filled?.tracking?.insights?.expenditure?.data[0]?.["amount"] === 2312 &&  filled?.tracking?.insights?.expenditure?.data[0]?.["date"] === 1756499105140) {
+    filled.tracking.insights.expenditure.data = [];
+  }
   return filled;
 }
 
@@ -92,7 +96,6 @@ export const useUserStore = create((set, get) => ({
     const checkData = await AsyncStorage.getItem(DSTORAGE_KEY);
     if (checkData) {
       const data = JSON.parse(checkData);
-
       const userData = fillMissingKeys(structuredClone(USER), data.user);
       const options = {loading: false, animateDashboard: false, showOnboarding: true, ...data.options };
       const newUsers = {...data.users, [userData._id]: userData};
