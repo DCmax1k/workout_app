@@ -108,7 +108,7 @@ const USER = {
         "weight": {
           data: [  ], // [{date, amount}]
 
-          unit: "lbs",
+          unit: "lbs", // lbs, kgs
           layout: "weight", // weight, calorie, none, bmi 
           color: "#546FDB",
           extraData: {

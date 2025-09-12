@@ -1,4 +1,4 @@
-export default formatTime = (timestamp) => {
+const formatTime = (timestamp) => {
     const date = new Date(timestamp);
 
   let hours = date.getHours();
@@ -14,3 +14,5 @@ export default formatTime = (timestamp) => {
 
   return `${hours}:${minutesStr}${ampm}`;
 }
+
+export default formatTime;

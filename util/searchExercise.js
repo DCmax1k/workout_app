@@ -1,4 +1,4 @@
-export default function searchExerciseFilter(exercises, searchValue) {
+function searchExerciseFilter(exercises, searchValue) {
     if (!searchValue) return exercises;
     return exercises.filter(exercise => {
         const name = exercise.name.toLowerCase() || '';
@@ -9,3 +9,5 @@ export default function searchExerciseFilter(exercises, searchValue) {
         return name.includes(s) || muscles.includes(s) || group.includes(s);
     });
 }
+
+export default searchExerciseFilter;

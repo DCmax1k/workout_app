@@ -83,7 +83,7 @@ const IndexProgress = () => {
                 <Pressable onPress={() => setAddWidget(false)} style={{height: "100%", width: "100%", zIndex: 0}}></Pressable>
                   <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
                     
-                    <Animated.View layout={LinearTransition.springify().mass(0.5).damping(10)} style={[styles.addWidgetCont]}>
+                    <Animated.View layout={LinearTransition.springify().damping(90)} style={[styles.addWidgetCont]}>
 
                       <View style={{flexDirection: "row", alignItems: "center", justifyContent: "flex-start", }}>
                         <Pressable onPress={() => setAddWidget(false)}>
@@ -144,7 +144,7 @@ const IndexProgress = () => {
               {user.tracking.visibleWidgets.map((key, index) => {
                 const widget = user.tracking.logging[key];
                 return (
-                  <Animated.View key={key} layout={LinearTransition.springify().mass(0.5).damping(10)} entering={FadeIn} exiting={FadeOut}>
+                  <Animated.View key={key} layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut}>
                   <GraphWidget
                     fillWidth={true}
                     key={index}
@@ -163,7 +163,7 @@ const IndexProgress = () => {
 
             <Spacer />
 
-            <Animated.View layout={LinearTransition.springify().mass(0.5).damping(10)}>
+            <Animated.View layout={LinearTransition.springify().damping(90)}>
               <ThemedText style={[styles.header, { fontSize: 15}]} >Insights</ThemedText>
 
               {/* INSIGHTS */}

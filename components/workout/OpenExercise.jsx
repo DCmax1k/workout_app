@@ -204,7 +204,7 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
     const weightOrDistance = (exercise.tracks.includes("weight") || exercise.tracks.includes("weightPlus"));
     
   return (
-    <Animated.View layout={LinearTransition.springify().mass(0.5).damping(10)} style={[styles.cont, style]} {...props}>
+    <Animated.View layout={LinearTransition.springify().damping(90)} style={[styles.cont, style]} {...props}>
       <View style={{flexDirection: "row", alignItems: "center"}}>
         <Pressable onPress={() => setOpenExercise(false)}>
             <Image source={whiteX} style={{ height: 30, width: 30, marginRight: 5}} />

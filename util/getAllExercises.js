@@ -1,6 +1,6 @@
 import { Exercises } from "../constants/Exercises";
 
-export default function getAllExercises(user, sort = "group") { // group, name
+function getAllExercises(user, sort = "group") { // group, name
     const userCreatedExercises = user.createdExercises.map(ex => {
         if (!ex.group) {
             ex.group = "created";
@@ -16,3 +16,5 @@ export default function getAllExercises(user, sort = "group") { // group, name
     }
     return filteredExercises;//.sort((a, b) => a.group.localeCompare(b.group));
 }
+
+export default getAllExercises;

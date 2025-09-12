@@ -12,13 +12,14 @@ import Spacer from '../Spacer'
 import ActionMenu from '../ActionMenu'
 import { Portal } from 'react-native-paper'
 import CreateExercise from './CreateExercise'
-import { BottomSheetSectionList } from '@gorhom/bottom-sheet'
+
 import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from 'react-native-reanimated'
 import Search from '../Search'
 import searchExercise from '../../util/searchExercise'
 import keyboardIcon from '../../assets/icons/keyboard.png';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import getAllExercises from '../../util/getAllExercises'
+import { BottomSheetSectionList } from '@gorhom/bottom-sheet'
 
 
 const screenWidth = Dimensions.get("screen").width;
@@ -118,6 +119,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
                     </Pressable>
                 </View>
             </View>
+
             <View style={[styles.header]}>
                 <ThemedText title={true} style={{fontSize: 23, fontWeight: 700, textAlign: "center"}}>Add exercise</ThemedText>
             </View>
@@ -134,7 +136,8 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
             <Spacer height={10} />
 
             
-            {bottomSheet ? (
+            {/* AFTER SDK 54 BOTTOMSHEETSECTIONLIST THROWS ERRORS */}
+            {/* {bottomSheet ? (
                <BottomSheetSectionList 
                keyboardDismissMode={"on-drag"}
                sections={sectionalData}
@@ -149,7 +152,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 200 }}
                />
-            ) : (
+            ) : ( */}
                 <SectionList
                 keyboardDismissMode={"on-drag"}
                 sections={sectionalData}
@@ -164,7 +167,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
                 contentContainerStyle={{ paddingBottom: 200 }}
                 
             />
-            )}
+            {/* )} */}
 
             
             </SafeAreaView>
@@ -191,7 +194,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     header: {
-        marginTop: 10,
         marginBottom: 10,
         fontSize: 15,
         fontWeight: 600

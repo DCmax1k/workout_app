@@ -1,4 +1,4 @@
-export default deepMerge = (target, source) => {
+const deepMerge = (target, source) => {
   for (const key in source) {
     if (source[key] && typeof source[key] === "object" && !Array.isArray(source[key])) {
       if (!target[key]) target[key] = {};
@@ -9,3 +9,5 @@ export default deepMerge = (target, source) => {
   }
   return target;
 }
+
+export default deepMerge;

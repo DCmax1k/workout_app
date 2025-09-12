@@ -130,8 +130,8 @@ const RootLayout = () => {
                   {/* Using absolute position and animated transition */}
                   {keyboardVisible && (
                     <Animated.View
-                      entering={SlideInDown.springify().damping(15)}
-                      exiting={SlideOutDown.springify().damping(15)}
+                      entering={SlideInDown.springify().damping(90)}
+                      exiting={SlideOutDown.springify().damping(90)}
                       style={{
                         position: "absolute",
                         right: 20,

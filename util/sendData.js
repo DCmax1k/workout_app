@@ -1,7 +1,7 @@
 const server = 'http://192.168.8.195:3012';
 // const server = 'https://pumped.digitalcaldwell.com';
 
-export default async function sendData(path, data) {
+async function sendData(path, data) {
     try {
         const response = await fetch(server+path, {
             method: 'POST',
@@ -16,3 +16,5 @@ export default async function sendData(path, data) {
         console.error(err);
     }
 }
+
+export default sendData;

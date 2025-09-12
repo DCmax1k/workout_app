@@ -252,7 +252,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                 </Animated.View>
 
                 <PaperProvider>
-                <BottomSheetScrollView style={{marginTop: 85}} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350, }}>
+                <BottomSheetScrollView style={{marginTop: 85, height: screenHeight-150,}} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350,}}>
                     
                     <View style={[{ paddingHorizontal: 10}]}>
                         <TextInput selectTextOnFocus onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
@@ -267,7 +267,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                     ))}
 
                     <Spacer height={20} />
-                    <Animated.View layout={LinearTransition.springify().mass(0.5).damping(10)}>
+                    <Animated.View layout={LinearTransition.springify().damping(90)}>
                         <BlueButton title={"Add Exercise"} style={{marginRight: 10, marginLeft: 10}} onPress={() => setExerciseModal(true)} />
                         <Spacer height={40} />
                         <BlueButton title={"Cancel Workout"} color={"#572E32"} style={{marginRight: 30, marginLeft: 30}} onPress={() => cancelWorkout(true)} />
@@ -292,12 +292,13 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                         <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} bottomSheet={true} notModal={true} />
                     </Animated.View>
                 ) : null)} */}
-                {( exerciseModal === true ? (
+
+                
+                {( exerciseModal === true && (
                     <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{position: "absolute", top: 0, left: 0, height: screenHeight, width: screenWidth, zIndex: 5, elevation: 5}}>
                         <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} bottomSheet={true} notModal={true} />
                     </Animated.View>
-                ) : null)}
-
+                ))}
 
             </PaperProvider>
             

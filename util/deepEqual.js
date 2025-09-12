@@ -1,4 +1,4 @@
-export default deepEqual = (a, b) => {
+const deepEqual = (a, b) => {
     if (a === b) return true;
   
     if (typeof a !== typeof b) return false;
@@ -15,3 +15,5 @@ export default deepEqual = (a, b) => {
   
     return aKeys.every(key => deepEqual(a[key], b[key]));
   };
+
+  export default deepEqual;
