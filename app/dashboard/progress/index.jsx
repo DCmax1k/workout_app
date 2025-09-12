@@ -9,6 +9,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import GraphWidget from '../../../components/GraphWidget'
 import Spacer from '../../../components/Spacer'
 import plusIcon from '../../../assets/icons/plus.png'
+import noEye from '../../../assets/icons/noEye.png'
+import pencilIcon from '../../../assets/icons/pencil.png'
 import whiteX from '../../../assets/icons/whiteX.png'
 import { Colors } from '../../../constants/Colors'
 import ConfirmMenu from '../../../components/ConfirmMenu'
@@ -32,20 +34,21 @@ const IndexProgress = () => {
   const [addWidget, setAddWidget] = useState(false);
 
   const showComingSoonMessage = (data) => {
-        setConfirmMenuData({
-            title: "Coming soon!",
-            subTitle: "This feature is not yet available but will be coming in a future update.",
-            subTitle2: "",
-            option1: "Awesome!",
-            option1color: "#546FDB",
-            confirm: () => setConfirmMenuActive(false),
-        });
-        setConfirmMenuActive(true);
-    }
+      setConfirmMenuData({
+          title: "Coming soon!",
+          subTitle: "This feature is not yet available but will be coming in a future update.",
+          subTitle2: "",
+          option1: "Awesome!",
+          option1color: "#546FDB",
+          confirm: () => setConfirmMenuActive(false),
+      });
+      setConfirmMenuActive(true);
+  }
 
+
+  
 
   const openProgressExpanded = (category, categoryData) => {
-    // Open progress expanded view
     const data = {
       category,
       ...categoryData
@@ -139,7 +142,7 @@ const IndexProgress = () => {
             <Spacer height={20} />
 
             {/* LOGGING and TRACKING */}
-            <Animated.View style={{paddingHorizontal: 20}} layout={LinearTransition.springify().mass(0.5).damping(10)}>
+            <Animated.View style={{paddingHorizontal: 20}} layout={LinearTransition.springify().damping(90)}>
               {user.tracking.visibleWidgets.length === 0 ? (<ThemedText style={{textAlign: "center"}}>No widgets yet</ThemedText>) : null}
               {user.tracking.visibleWidgets.map((key, index) => {
                 const widget = user.tracking.logging[key];
@@ -170,7 +173,7 @@ const IndexProgress = () => {
               <ScrollView style={styles.widgets} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: "flex-start", paddingHorizontal: 20}} >
                 {Object.keys(user.tracking.insights).map((key, index) => {
                   const widget = user.tracking.insights[key];
-                  return widget.active ? (
+                  return  (
                     <View key={key} >
                       <GraphWidget
                         key={index}
@@ -184,7 +187,7 @@ const IndexProgress = () => {
                       />
                     </View>
                     
-                  ) : null
+                  ) 
                 })}
               </ScrollView>
             </Animated.View>

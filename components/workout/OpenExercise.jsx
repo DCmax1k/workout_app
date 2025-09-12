@@ -104,7 +104,6 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
   const updateUser = useUserStore(state => state.updateUser);
   const archivedExercises = user.archivedExercises || [];
   const createExerciseRef = React.useRef(null);
-
     const [section, setSection] = useState("About"); // About, Progress, History
     const [editModeActive, setEditModeActive] = useState(false);
 

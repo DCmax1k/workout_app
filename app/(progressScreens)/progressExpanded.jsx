@@ -38,6 +38,7 @@ const ProgressExpanded = () => {
   const wi = user.tracking.logging[w.category] || user.tracking.insights[w.category] || w;
   const widget = {
     category: w.category,
+    menuOptions: w.menuOptions,
     ...wi,
   }
   // console.log("NEW WIDGET", widget);
@@ -127,43 +128,47 @@ const ProgressExpanded = () => {
     });
   }
 
-  const openEditPastData = () => {
-    const info = {
-      title: widget.category,
-      target: 'value',
-      value: mostRecentValue || 0,
-      unit: widget.unit,
-      widget,
-      ...widget.inputOptions
-    }
-    router.push({
-      pathname: "/editPastData",
-      params: {
-        data: JSON.stringify(info),
-      },
-    });
-  } 
-
   const hideWidget = () => {
-    const visibleWidgets = user.tracking.visibleWidgets;
-    const ind = visibleWidgets.indexOf(widget.category)
-    if (ind < 0) return router.back();
-    
-    visibleWidgets.splice(ind, 1);
-    
-    updateUser({tracking: { visibleWidgets: visibleWidgets}});
-    router.back();
-  }
+      const visibleWidgets = user.tracking.visibleWidgets;
+      const ind = visibleWidgets.indexOf(widget.category)
+      if (ind < 0) return router.back();
+      
+      visibleWidgets.splice(ind, 1);
+      
+      updateUser({tracking: { visibleWidgets: visibleWidgets}});
+      router.back();
+    }
+  
+    const openEditPastData = () => {
+      const info = {
+        title: widget.category,
+        target: 'value',
+        value: mostRecentValue || 0,
+        unit: widget.unit,
+        widget,
+        ...widget.inputOptions
+      }
+      router.push({
+        pathname: "/editPastData",
+        params: {
+          data: JSON.stringify(info),
+        },
+      });
+    } 
 
   
-  
-  
 
+  const menuOptions = widget.layout === "weight" ? 
+      [{title: "Edit past data", icon: pencilIcon, onPress: () => openEditPastData(),}, {title: "Hide widget", icon: noEye, onPress: () => hideWidget(),}]
+      : [];
+  
+  
+console.log("Getting this data in progressExpanded", widget.menuOptions);
   return (
     <ThemedView style={styles.container}>
       
       <SafeAreaView style={{flex: 1,  marginBottom: -50}}>
-        <TitleWithBack title={firstCapital(widget.category)} style={{marginLeft: -20}} actionBtn={{actionMenu: true, image: require("../../assets/icons/threeEllipses.png"), options: [{title: "Edit past data", icon: pencilIcon, onPress: () => openEditPastData(),}, {title: "Hide widget", icon: noEye, onPress: () => hideWidget(),}]}} />
+        <TitleWithBack title={firstCapital(widget.category)} style={{marginLeft: -20}} actionBtn={{actionMenu: true, image: require("../../assets/icons/threeEllipses.png"), options: menuOptions}} />
         <Spacer height={20} />
         <ScrollView contentContainerStyle={{paddingBottom: 120}} showsVerticalScrollIndicator={false}>
 

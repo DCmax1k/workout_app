@@ -27,9 +27,8 @@ const screenHeight = Dimensions.get("screen").height;
 
 function groupExercisesBySection(exercises) {
     const grouped = {};
-  
     exercises.forEach(ex => {
-        if (ex.group === "created") ex.group = "custom";
+        if (ex.group === 'custom') ex.group = 'created';
       if (!grouped[ex.group]) {
         grouped[ex.group] = [];
       }
@@ -57,6 +56,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
 
     // Using optimized search function
     const sectionalData = groupExercisesBySection(searchExercise(getAllExercises(user), searchValue));
+
     // Old way for reference
     // const createdExercisesFiltered = searchExercise(user.createdExercises, searchValue);
     // const dbExercisesFiltered = searchExercise(Exercises, searchValue);
@@ -160,7 +160,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
                 renderItem={({ item }) => (<Exercise disablePress={true} exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />)}
                 renderSectionHeader={({ section: { title } }) => (
                     <ThemedView>
-                        <ThemedText style={styles.header}>{capitalizeFirstLetter(customTitle(title))}</ThemedText>
+                        <ThemedText style={styles.header}>{capitalizeFirstLetter(customTitle(title === "created" ? "Custom" : title))}</ThemedText>
                     </ThemedView>
                 )}
                 showsVerticalScrollIndicator={false}

@@ -66,7 +66,7 @@ const ActionMenu = ({ data, backgroundColor, style, offset = false, ...props }) 
             <Animated.View entering={ZoomInRight.duration(200) } exiting={ZoomOutRight.duration(400)} style={[ styles.menu, { top: menuPos.y, left: menuPos.x,},]}>
 
               {data.map((item, i) => (
-              <Pressable key={i} onPress={() => {setActive(false); item.onPress()}} style={[styles.menuItem, {height: ITEM_HEIGHT}]}>
+              <Pressable key={i} onPress={() => {console.log("ITEM PRESSED:", item.title, item.onPress); setActive(false); item.onPress()}} style={[styles.menuItem, {height: ITEM_HEIGHT}]}>
                 <Image style={{height: 15, width: 15, objectFit: "contain", tintColor: item.color || "white"}} source={item.icon} />
                 <Text style={[styles.menuItemText, {color: item.color || "white"}]}>{item.title}</Text>
               </Pressable>

@@ -259,12 +259,18 @@ const IndexHome = () => {
   let isThereWorkout = (continuedWorkout !== null && continuedWorkout.id !== "0") ? "yes" : (continuedWorkout !== null && continuedWorkout.id === "0") ? "rest" : "none";
   let isThereWorkoutNext = (continuedWorkoutNext !== null && continuedWorkoutNext.id !== "0") ? "yes" : (continuedWorkoutNext !== null && continuedWorkoutNext.id === "0") ? "rest" : "none";
 
-  // if (switchContinuedWorkouts) {
-  //   console.log("")
-  //   console.log(continuedWorkout);
-  //   console.log(continuedWorkoutNext)
-  //   continuedWorkout = continuedWorkoutNext || {name: "Rest Day", id: "0",};
-  // }
+  // // Testing for when need to show user data on screen as text
+  //   return (
+  //     <ScrollView contentContainerStyle={{paddingBottom: 150, paddingTop: 100}}>
+  //       <ThemedView>
+  //         <ThemedText selectable={true} >
+  //           {JSON.stringify(user.tracking)}
+  //         </ThemedText>
+  //       </ThemedView>
+  //     </ScrollView>
+    
+  // )
+
   return (
     <ThemedView style={styles.container}> 
 

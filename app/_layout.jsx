@@ -11,6 +11,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Animated, { FadeIn, SlideInDown, SlideOutDown } from 'react-native-reanimated'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import ThemedView from '../components/ThemedView';
+import ThemedText from '../components/ThemedText';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -94,7 +96,7 @@ const RootLayout = () => {
   
 
   const isIos = Platform.OS === 'ios';
-  
+
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
       {/* <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss}> */}
