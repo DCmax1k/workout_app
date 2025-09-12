@@ -33,7 +33,7 @@ const IndexProgress = () => {
 
   const [addWidget, setAddWidget] = useState(false);
 
-  const showComingSoonMessage = (data) => {
+  const showComingSoonMessage = () => {
       setConfirmMenuData({
           title: "Coming soon!",
           subTitle: "This feature is not yet available but will be coming in a future update.",

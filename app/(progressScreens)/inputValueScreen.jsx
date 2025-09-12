@@ -7,8 +7,7 @@ import TitleWithBack from '../../components/TitleWithBack';
 import Spacer from '../../components/Spacer';
 import HorizontalScrollInput from '../../components/HorizontalScrollInput';
 import { Colors } from '../../constants/Colors';
-
-import { emitter } from "./progressExpanded";
+import emitter from '../../util/eventBus';
 
 const screenHeight = Dimensions.get('screen').height;
 

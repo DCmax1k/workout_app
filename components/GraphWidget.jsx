@@ -87,6 +87,10 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
     const initialDateStringNoYear = initialDateString.split("").splice(0, initialDateString.length-5).join("");
     const initialDateStringJustYear = initialDateString.split("").splice(initialDateString.length-4, 4).join("");
     const isSameYear = initialDateStringJustYear === new Date().getFullYear().toString();
+
+    const parseDecimals = (value, fixedTo = 0) => {
+        return parseFloat(parseFloat(value).toFixed(fixedTo));
+    }
     
   return (
     <View style={[styles.container, (fullWidget || fillWidth) ? {flex: 1, width: "100%"} : {width: 200}, props.style]} >
@@ -96,7 +100,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
             <View>
                 <Text  style={styles.title}>{props.title}</Text>
                 <View style={{flexDirection: "row", alignItems: "flex-end"}}>
-                    <Text style={styles.amount}>{noData ? "No data" : parseFloat(lastItem).toFixed(2)}</Text>
+                    <Text style={styles.amount}>{noData ? "No data" : parseDecimals(lastItem, 2)}</Text>
                     <Text style={styles.unit}>{noData ? "" : props.unit}</Text>
                 </View>
             </View>
@@ -124,14 +128,14 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
                 {/* Most recent marker */}
                 {(<View style={{width: "100%", height: 3, backgroundColor: "#585858", borderRadius: 99999,position: "absolute", bottom: endBottomOffset, left: 0, transform: [{translateY: -2*backGridTopOffset}], opacity: showMiddle ? 1 : 0}} >
                     <View style={{position: "absolute", height: 50, top: -25, left: "101%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                        <Text style={{color: "#848484", fontSize: 12}}>{parseFloat(data[data.length -1]).toFixed(0)  }</Text>
+                        <Text style={{color: "#848484", fontSize: 12}}>{parseDecimals(data[data.length -1], 0)  }</Text>
                     </View>
                 </View>)}
                 {/* General markers with top and bottom */}
                 {(<View style={{width: "100%", height: 1, backgroundColor: "#585858", borderRadius: 99999, position: "relative", top: 0, left: 0, transform: [{translateY: -2*backGridTopOffset}], opacity: showMax ? 1 : 0}} >
                     
                     <View style={{position: "absolute", height: 50, top: -25, left: "101%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                        <Text style={{color: "#848484", fontSize: 12}}>{parseFloat(max).toFixed(2)}</Text>
+                        <Text style={{color: "#848484", fontSize: 12}}>{parseDecimals(max, 2)}</Text>
                     </View>
                 </View>)}
 
@@ -151,7 +155,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
 
                 {(<View style={{width: "100%", height: 1, backgroundColor: "#585858", borderRadius: 99999, position: "relative", bottom: 0, left: 0, transform: [{translateY: -2*backGridTopOffset}], opacity: showMin ? 1 : 0}} >
                     <View style={{position: "absolute", height: 50, top: -25, left: "101%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                        <Text style={{color: "#848484", fontSize: 12}}>{ parseFloat(min).toFixed(2) }</Text>
+                        <Text style={{color: "#848484", fontSize: 12}}>{ parseDecimals(min, 2) }</Text>
                     </View>
                 </View>)}
             </View>

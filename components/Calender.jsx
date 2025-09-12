@@ -1,6 +1,8 @@
 import { Dimensions, Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import carrotArrow from '../assets/icons/carrotArrow.png'
+import Dropdown from './Dropdown';
+import yearsData from '../constants/yearsData';
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -13,6 +15,12 @@ const Calender = ({initialDate=new Date(), active=true, datesWithData=[], set=()
 
     const [dat, setDat] = useState(initialDate);
     const [selectedDate, setSelectedDate] = useState(initialDate);
+
+    const setYearSelected = (year) => {
+        const date = new Date(dat);
+        const month = date.getMonth();
+        setDat(new Date(year, month), 1);
+    }
 
     const strCutoff = (str, length, placeholder = '') => {
         if (str.length > length) {
@@ -97,7 +105,7 @@ const Calender = ({initialDate=new Date(), active=true, datesWithData=[], set=()
   return (
     <View style={[styles.calender]}>
       {/* Header */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
           {month + " " + year}
         </Text>
@@ -110,7 +118,28 @@ const Calender = ({initialDate=new Date(), active=true, datesWithData=[], set=()
             <Image source={carrotArrow} style={[styles.navImg, styles.nextImg]} />
           </Pressable>
         </View>
-      </View>
+      </View> */}
+
+      {/* New header */}
+        <View style={styles.header}>
+          <View style={{width: 100}}>
+            <Dropdown locked={false} selectedId={year} setSelectedId={setYearSelected} data={yearsData} overflow={true} backgroundColor="#303030ff" />
+          </View>
+
+          <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
+            {month}
+          </Text>
+
+          <View style={styles.backAndNext}>
+            <Pressable onPress={prevMonth} style={styles.navButton}>
+              <Image source={carrotArrow} style={[styles.navImg, styles.backImg]} />
+            </Pressable>
+            <Pressable onPress={nextMonth} style={styles.navButton}>
+              <Image source={carrotArrow} style={[styles.navImg, styles.nextImg]} />
+            </Pressable>
+          </View>
+          
+        </View>
 
       {/* Dates */}
       <View style={styles.datesCont}>
@@ -179,6 +208,7 @@ calender: {
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 10,
+    zIndex: 1,
   },
 
   backAndNext: {
@@ -193,6 +223,8 @@ calender: {
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#303030ff",
+    borderRadius: 10,
   },
 
   navImg: {

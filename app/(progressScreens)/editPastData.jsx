@@ -64,22 +64,23 @@ const EditPastData = () => {
   return (
     <ThemedView style={[styles.container, ]}>
         <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
-        <SafeAreaView style={{flex: 1, }}>
+        <SafeAreaView style={{flex: 1, marginBottom: -50}}>
             <TitleWithBack title={"Edit " + data.title} style={{marginHorizontal: -20}} actionBtn={{actionMenu: true, image: require("../../assets/icons/threeEllipses.png"), options: [ {title: "Reset data", icon: rotate, onPress: () => requestResetData(),}]}} />
 
-            <Spacer height={10} />
+            <Spacer height={20} />
 
-            <ScrollView  layout={LinearTransition.springify().mass(0.5).damping(10)} contentContainerStyle={{paddingBottom: 120, paddingTop: 30, alignItems: "center"}} showsVerticalScrollIndicator={false}>
-                <Calender datesWithData={w.data.map((item) => item.date)} set={setSelectedDate} />
+            
+            <Calender datesWithData={w.data.map((item) => item.date)} set={setSelectedDate} />
 
-                <Spacer height={20} />
-                <View style={{width: "50%", height: 2, borderRadius: 999, backgroundColor: "#AAAAAA"}}></View>
+            <Spacer height={20} />
+            <View style={{width: "50%", height: 2, borderRadius: 999, backgroundColor: "#AAAAAA", marginHorizontal: "auto"}}></View>
+            <ScrollView  layout={LinearTransition.springify().damping(90)} contentContainerStyle={{paddingBottom: 120, paddingTop: 30, alignItems: "center"}} showsVerticalScrollIndicator={false}>
                 <Spacer height={20} />
 
                 
                 {dataEntriesOnDate.map((entry, i) => {
                     return (
-                    <Animated.View layout={LinearTransition.springify().mass(0.5).damping(10)} entering={FadeIn} exiting={FadeOut} key={i} style={{flexDirection: "row", alignItems: "center", padding: 5, width: "100%", backgroundColor: "#5C5C5C", borderRadius: 10, marginBottom: 10}}>
+                    <Animated.View layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} key={i} style={{flexDirection: "row", alignItems: "center", padding: 5, width: "100%", backgroundColor: "#5C5C5C", borderRadius: 10, marginBottom: 10}}>
                         <View style={{paddingHorizontal: 10, paddingVertical: 15, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}}>
                             <Text style={{color: "white", fontSize: 18, fontWeight: "800"}}>{entry.amount}</Text>
                         </View>

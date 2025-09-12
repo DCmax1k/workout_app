@@ -12,13 +12,10 @@ import Spacer from '../../components/Spacer'
 import pencilIcon from '../../assets/icons/pencil.png'
 import noEye from '../../assets/icons/noEye.png'
 import rotate from '../../assets/icons/rotate.png'
-
-import { EventEmitter } from "expo-modules-core";
 import { useEffect, useState } from 'react'
 import { useUserStore } from '../../stores/useUserStore'
 import ConfirmMenu from '../../components/ConfirmMenu'
-
-export const emitter = new EventEmitter();
+import emitter from '../../util/eventBus';
 
 
 const screenWidth = Dimensions.get('screen').width;
@@ -41,7 +38,7 @@ const ProgressExpanded = () => {
     menuOptions: w.menuOptions,
     ...wi,
   }
-  // console.log("NEW WIDGET", widget);
+
 
   
 
@@ -163,7 +160,6 @@ const ProgressExpanded = () => {
       : [];
   
   
-console.log("Getting this data in progressExpanded", widget.menuOptions);
   return (
     <ThemedView style={styles.container}>
       

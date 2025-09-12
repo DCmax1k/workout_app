@@ -97,7 +97,6 @@ const USER = {
         },
         BMI: {
           data: [ ],
-          active: true,
           unit: "",
           layout: "bmi", // weight, calorie, none, bmi 
           color: "#54DBA9",
@@ -107,7 +106,6 @@ const USER = {
       logging: {
         "weight": {
           data: [  ], // [{date, amount}]
-
           unit: "lbs", // lbs, kgs
           layout: "weight", // weight, calorie, none, bmi 
           color: "#546FDB",
