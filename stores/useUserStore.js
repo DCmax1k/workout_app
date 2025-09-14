@@ -41,132 +41,78 @@ const fillMissingKeys = (base, user) => {
 
 const USER = TestUsers[0]; // Default user
 
-export const useUserStore = create((set, get) => ({
+export const useUserStore = create((set, get) => {
+  // Initial state
+  const initialState = {
+    options: {
+      loading: true,
+      animateDashboard: false,
+      showOnboarding: true,
+    },
+    user: null,
+    users: {},
+  };
 
-  options: {
-    loading: false,
-    animateDashboard: false,
-    showOnboarding: true,
-  },
-  user: null, // loggedInAs user but full details
-  users: {},
-
-  setUser: (user) => {
-    if (user===null) {
-      const data = {...get(), user: null};
-      set(data);
-      AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(data));
-      return;
-    }
-    const state = get();
-    // Fill in any missing data with default user data
-    //const fillUser = {...USER, ...user, }; // Doesnt merge deep
-    const fillUser = fillMissingKeys(USER, user);
-    const newUsers = {...state.users, [user._id]: fillUser};
-    const newFullData = { ...state, user: {...fillUser}, users: newUsers };
-    set(newFullData);
-    AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
-  },
-
-  updateUser: (updates) => {
-    const state = get();
-    if (!state.user) return;
-    const user = state.user; // state.users[state.loggedInAs];
-    //const newUser = {...user, ...updates};
-    const newUser = deepMerge(structuredClone(user), updates);
-    const newUsers = {...state.users, [state.user?._id]: newUser};
-    const newFullData = { ...state, user: newUser, users: newUsers };
-    set(newFullData);
-    AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
-  },
-
-  clearUser: () => {
-    const newFullData = { ...get(), user: null };
-    set(newFullData);
-    AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
-  },
-
-  updateOptions: (updates) => {
-    const options = { ...get().options, ...updates };
-    set({ options, });
-    AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify({ ...get(), options, }));
-  },
-
-  rehydrate: async () => {
-    const checkData = await AsyncStorage.getItem(DSTORAGE_KEY);
-    if (checkData) {
-      const data = JSON.parse(checkData);
-      const userData = fillMissingKeys(structuredClone(USER), data.user);
-      const options = {loading: false, animateDashboard: false, showOnboarding: true, ...data.options };
-      const newUsers = {...data.users, [userData._id]: userData};
-      set({options, users: newUsers, user: userData});
-    } else {
-      const checkOldData = await AsyncStorage.getItem(STORAGE_KEY);
-      if (checkOldData) {
-        // Put all data that might not be in the user
-        //const oldUserData = {...USER, ...JSON.parse(checkOldData)};
-        //const oldUserData = deepMerge(structuredClone(USER), JSON.parse(checkOldData));
-        const oldUserData = fillMissingKeys(structuredClone(USER), JSON.parse(checkOldData));
-        const newUsers = {[oldUserData._id]: oldUserData};
-        const options = {loading: false, animateDashboard: false, showOnboarding: true,};
-        const newFullData = {options, users: newUsers, user: oldUserData};
-        set(newFullData);
-        AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newFullData));
+  // Async rehydration from DSTORAGE_KEY
+  AsyncStorage.getItem(DSTORAGE_KEY).then((stored) => {
+    if (stored) {
+      try {
+        const data = JSON.parse(stored);
+        if (data.user) {
+          const userData = fillMissingKeys(structuredClone(USER), data.user);
+          const options = { ...initialState.options, ...data.options, loading: false};
+          const newUsers = { ...data.users, [userData._id]: userData };
+          set({ options, users: newUsers, user: userData });
+        } else {
+          const options = { ...initialState.options, ...data.options, loading: false };
+          const newUsers = { ...data.users, };
+          set({ options, users: newUsers, user: null });
+        }
+        
+      } catch (e) {
+        console.error('Failed to rehydrate user store:', e);
       }
     }
-  },
-}));
-/*
+  });
 
-{
-  user: user,
-}
+  return {
+    ...initialState,
 
-to
+    setUser: (user) => {
+      if (user === null) {
+        const newState = { ...get(), user: null };
+        set(newState);
+        AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newState));
+        return;
+      }
+      const fillUser = fillMissingKeys(USER, user);
+      const newUsers = { ...get().users, [user._id]: fillUser };
+      const newState = { ...get(), user: fillUser, users: newUsers };
+      set(newState);
+      AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newState));
+    },
 
-{
-  loggedInAs: UserID,
-  users: {
-    "userID": {...user},
-  }
-}
+    updateUser: (updates) => {
+      const state = get();
+      if (!state.user) return;
+      const newUser = deepMerge(structuredClone(state.user), updates);
+      const newUsers = { ...state.users, [newUser._id]: newUser };
+      const newState = { ...state, user: newUser, users: newUsers };
+      set(newState);
+      AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newState));
+    },
 
-*/
+    clearUser: () => {
+      const newState = { ...get(), user: null };
+      set(newState);
+      AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newState));
+    },
 
-
-
-// import { create } from 'zustand';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { persist } from 'zustand/middleware/async-storage';
-
-// // Wrap AsyncStorage to match zustand's storage interface
-// const zustandStorage = {
-//     getItem: async (key) => {
-//       const value = await AsyncStorage.getItem(key);
-//       return value ? JSON.parse(value) : null; // parse it back into object
-//     },
-//     setItem: async (key, value) => {
-//       await AsyncStorage.setItem(key, JSON.stringify(value)); // stringify before saving
-//     },
-//     removeItem: async (key) => {
-//       await AsyncStorage.removeItem(key);
-//     },
-//   };
-
-// export const useUserStore = create(
-//   persist(
-//     (set) => ({
-//       user: null,
-//       setUser: (user) => set({ user }),
-//       updateUser: (updates) =>
-//         set((state) => ({
-//           user: { ...state.user, ...updates },
-//         })),
-//       clearUser: () => set({ user: null }),
-//     }),
-//     {
-//       name: 'user-storage',
-//       storage: zustandStorage, // <-- use the wrapped storage
-//     }
-//   )
-// );
+    updateOptions: (updates) => {
+      const options = { ...get().options, ...updates };
+      const newState = { ...get(), options };
+      set(newState);
+      AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newState));
+    },
+  };
+});

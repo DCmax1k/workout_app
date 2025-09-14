@@ -27,7 +27,7 @@ const USER = {
       },
       height: null, // in centimeters
       birthday: null, // Date.now()
-      gender: null, // Male, Female, Other.
+      gender: null, // male, female, other.
     },
     prefix: '',
     friendRequests: [],

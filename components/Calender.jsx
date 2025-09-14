@@ -11,7 +11,7 @@ const calenderMarginHorizontal = 20;
 const calenderPaddingHorizontal = 10;
 const calenderContentWidth = screenWidth-(2*calenderMarginHorizontal)-(2*calenderPaddingHorizontal);
 
-const Calender = ({initialDate=new Date(), active=true, datesWithData=[], set=()=>{}}) => {
+const Calender = ({initialDate=new Date(), active=true, datesWithData=[], set=()=>{}, width=screenWidth - 40}) => {
 
     const [dat, setDat] = useState(initialDate);
     const [selectedDate, setSelectedDate] = useState(initialDate);
@@ -103,7 +103,7 @@ const Calender = ({initialDate=new Date(), active=true, datesWithData=[], set=()
     const year = date.getFullYear();
     const allDates = getCalenderDates();
   return (
-    <View style={[styles.calender]}>
+    <View style={[styles.calender, {width,}]}>
       {/* Header */}
       {/* <View style={styles.header}>
         <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
@@ -188,7 +188,6 @@ const styles = StyleSheet.create({
     
 calender: {
     padding: calenderPaddingHorizontal,
-    width: screenWidth - 40,
     backgroundColor: "#393939",
     borderRadius: 12,
     color: "white",
