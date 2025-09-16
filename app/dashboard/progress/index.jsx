@@ -1,5 +1,5 @@
 import { Alert, Dimensions, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
 import BlueButton from '../../../components/BlueButton'
@@ -173,6 +173,21 @@ const IndexProgress = () => {
               <ScrollView style={styles.widgets} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: "flex-start", paddingHorizontal: 20}} >
                 {Object.keys(user.tracking.insights).map((key, index) => {
                   const widget = user.tracking.insights[key];
+                  let blockExpenditure = false;
+                  if ((key === "expenditure" ) && (!user.settings.height || !user.settings.birthday || !user.settings.gender || user.tracking.logging["weight"].data.length < 1))
+                    blockExpenditure = true;
+
+                  if (blockExpenditure) return (
+                    <View key={key} style={{alignItems: "center", width: 180, padding: 5, backgroundColor: "#3A3A3A", borderRadius: 10, marginRight: 20,}}>
+                      <ThemedText title={true} adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 20 }} >Expenditure</ThemedText>
+                      <Spacer height={10} />
+                      <ThemedText title={true} adjustsFontSizeToFit={true} numberOfLines={4} style={{fontSize: 15, textAlign: "center", color:  "#A6A6A6"}} >Requires weight, height, age, and gender for accurate calculations.</ThemedText>
+                      <Spacer height={10} />
+                      <Pressable onPress={() => router.navigate("/dashboard/home/profile")} style={{height: 40, backgroundColor: Colors.primaryBlue, padding: 10, borderRadius: 10}}>
+                        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 15, textAlign: "center", color:  "white"}}>Go to Profile &gt; Health</Text>
+                      </Pressable>
+                    </View>
+                  )
                   return  (
                     <View key={key} >
                       <GraphWidget

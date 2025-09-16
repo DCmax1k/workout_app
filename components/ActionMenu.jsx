@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import { Portal } from 'react-native-paper';
 import threeEllipses from '../assets/icons/threeEllipses.png';
-import Animated, { FadeIn, FadeOut, LightSpeedInRight, ZoomInRight, ZoomOutRight } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut, LightSpeedInRight, withDelay, withSpring, withTiming, ZoomInRight, ZoomOutRight } from 'react-native-reanimated';
+import { transform } from 'typescript';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 const MENU_WIDTH = 250;
@@ -20,17 +21,52 @@ const ActionMenu = ({ data, backgroundColor, style, offset = false, ...props }) 
   const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
   const buttonRef = useRef(null);
 
+  const [upperHalf, setUpperHalf] = useState(true);
+
   const MENU_HEIGHT = ITEM_HEIGHT*data.length;
+
+  // ZoomInRight.duration(200)
+  // const entering = (values) => {
+  //   'worklet';
+
+  //   const animations = {
+  //     opacity: withTiming(1, { duration: 300 }),
+  //     transform: [
+  //       { scale: withSpring(1, { damping: 10, duration: 300 }) },
+  //       { translateX: withTiming(0, {duration: 300})},
+  //       { translateY: withTiming(0, {duration: 300})}
+  //     ],
+  //   };
+
+  //   const initialValues = {
+  //     opacity: 0,
+  //     transform: [
+  //       { scale: 0 },
+  //       { translateX: MENU_WIDTH},
+  //       { translateY: -MENU_HEIGHT},
+  //     ],
+  //   };
+
+  //   return {
+  //     initialValues,
+  //     animations,
+  //   };
+  // };
+
 
   const openMenu = () => {
     buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
       const isLowerHalf = pageY > screenHeight / 2;
-  
-      setMenuPos({
+
+      const menuPos = {
         x: pageX - MENU_WIDTH + 30,
-        y: isLowerHalf ? pageY - MENU_HEIGHT - (offset ? 75 : 0) : pageY + height - (offset ? 50 : 0)
-      });
+        y: isLowerHalf ? pageY - MENU_HEIGHT + (offset ? 25 : 25) : pageY + height - (offset ? 25 : 25)
+      }
   
+      setMenuPos(menuPos);
+      
+      setUpperHalf(isLowerHalf ? false : true);
+
       setActive(true);
     });
   };
@@ -48,7 +84,7 @@ const ActionMenu = ({ data, backgroundColor, style, offset = false, ...props }) 
         }, style]}
       >
         <Image
-          style={{ width: 20, height: 20, resizeMode: 'contain' }}
+          style={{ width: 20, height: 20, resizeMode: 'contain',  }}
           source={threeEllipses}
         />
       </Pressable>
@@ -95,7 +131,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: MENU_WIDTH,
     backgroundColor: '#606060',
-    borderRadius: 6,
+    borderRadius: 15,
     elevation: 4,
   },
   menuItem: {

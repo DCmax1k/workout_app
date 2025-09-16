@@ -9,11 +9,36 @@ import Spacer from '../../../components/Spacer'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import profileIcon from '../../../assets/icons/profileIcon.png'
 import pencilIcon from '../../../assets/icons/pencil.png'
+import maleIcon from '../../../assets/icons/male.png'
+import femaleIcon from '../../../assets/icons/female.png'
+import otherGenderIcon from '../../../assets/icons/userHollow.png'
 import ConfirmMenu from '../../../components/ConfirmMenu'
 import { router } from 'expo-router'
 import emitter from '../../../util/eventBus'
 import PopupSheet from '../../../components/PopupSheet'
 import Calender from '../../../components/Calender'
+import ScrollPicker from '../../../components/ScrollPicker'
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
+
+const firstCapital = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function cmToFeetInches(cm) {
+
+  const totalInches = cm / 2.54;
+  const feet = Math.floor(totalInches / 12);
+  const inches = Math.round(totalInches % 12); // remainder inches
+
+  return { feet, inches };
+}
+function feetInchesToCm(feet, inches) {
+  if (!feet) feet = 0;
+  if (!inches) inches = 0;
+  const totalInches = feet * 12 + inches;
+  const cm = parseFloat(parseInt(totalInches * 2.54 *100)/100);
+  return cm;
+}
 
 const screenWidth = Dimensions.get("screen").width;
 
@@ -21,6 +46,8 @@ const Profile = () => {
     const user = useUserStore((state) => state.user);
     const setUser = useUserStore((state) => state.setUser);
     const updateUser = useUserStore((state) => state.updateUser);
+
+    const { feet: heightFeet, inches: heightInches } = user.settings.height ? cmToFeetInches(user.settings.height) : {heightFeet: 0, heightInches: 0} ;
 
     const [confirmMenuActive, setConfirmMenuActive] = useState(false);
     const [confirmMenuData, setConfirmMenuData] = useState();
@@ -92,6 +119,40 @@ const Profile = () => {
       setPopupMenuActive(true);
       
     }
+    const clickGender = () => {
+      setCurrentPopupContent("gender");
+      setPopupMenuActive(true);
+      
+    }
+
+    const clickHeight = () => {
+      setCurrentPopupContent("height");
+      setPopupMenuActive(true);
+    }
+
+    const setFeet = (feet) => {
+      const newCmValue = feetInchesToCm(feet, heightInches);
+      updateUser({settings: {height: newCmValue}});
+    }
+    const setInches = (inches) => {
+      const newCmValue = feetInchesToCm(heightFeet, inches);
+      updateUser({settings: {height: newCmValue}});
+    }
+    const setCm = (cm) => {
+      updateUser({settings: {height: cm}});
+    }
+
+    const displayUserHeight = (height) => {
+      if (user.settings.preferences.heightUnit === "feet") {
+        const {feet, inches} = cmToFeetInches(height);
+        return `${feet}'${inches}"`;
+      } else if (user.settings.preferences.heightUnit === "cm") {
+        return height ? parseInt(height) : "- -"
+      } else {
+        return null;
+      }
+      
+    }
 
 
     return (
@@ -100,6 +161,99 @@ const Profile = () => {
           <PopupSheet active={popupMenuActive} setActive={setPopupMenuActive}>
             {currentPopupContent === "birthday" && (
               <Calender initialDate={user.settings.birthday ? new Date(user.settings.birthday) : new Date()} set={setBirthday} />
+            )}
+            {currentPopupContent === "gender" && (
+              <View>
+                <Pressable onPress={() => updateUser({settings: {gender: "male"}})} style={{height: 60, backgroundColor: user.settings.gender === "male" ? "#546FDB" : "#595959", borderRadius: 15, justifyContent: 'center', alignItems: "center", position: "relative"}}>
+                  <View style={{position: "absolute", height: 60, width: 40, left: 10, justifyContent: "center"}}>
+                    <Image source={maleIcon} style={{height: "60%", width: "100%", objectFit: "contain"}} />
+                  </View>
+                  <Text style={{color: "white", fontSize: 20, fontWeight: "700", }}>Male</Text>
+                </Pressable>
+                <Spacer height={10} />
+                <Pressable onPress={() => updateUser({settings: {gender: "female"}})} style={{height: 60, backgroundColor: user.settings.gender === "female" ? "#546FDB" : "#595959", borderRadius: 15, justifyContent: 'center', alignItems: "center", position: "relative"}}>
+                  <View style={{position: "absolute", height: 60, width: 40, left: 10, justifyContent: "center"}}>
+                    <Image source={femaleIcon} style={{height: "60%", width: "100%", objectFit: "contain"}} />
+                  </View>
+                  <Text style={{color: "white", fontSize: 20, fontWeight: "700", }}>Female</Text>
+                </Pressable>
+                <Spacer height={10} />
+                <Pressable onPress={() => updateUser({settings: {gender: "other"}})} style={{height: 60, backgroundColor: user.settings.gender === "other" ? "#546FDB" : "#595959", borderRadius: 15, justifyContent: 'center', alignItems: "center", position: "relative"}}>
+                  <View style={{position: "absolute", height: 60, width: 40, left: 10, justifyContent: "center", alignItems: "center"}}>
+                    <Image source={otherGenderIcon} style={{height: "40%", width: "100%", objectFit: "contain"}} />
+                  </View>
+                  <Text style={{color: "white", fontSize: 20, fontWeight: "700", }}>Other</Text>
+                </Pressable>
+                
+              </View>
+            )}
+            {currentPopupContent === "height" && (
+
+              
+              <View >
+                {/* Both sides */}
+                {user.settings.preferences.heightUnit === "feet" && (
+                  <Animated.View entering={FadeIn} exiting={FadeOut} style={{flexDirection: "row", justifyContent: "center"}}>
+                    <View style={{alignItems: "center"}}>
+                      <ThemedText title={true} style={{fontSize: 20, fontWeight: "800"}}>Feet</ThemedText>
+                      <Spacer height={10} />
+                      <ScrollPicker
+                        width={120}
+                        range={[0, 20]}
+                        increment={1}
+                        padWithZero={false}
+                        initialValue={heightFeet}
+                        onValueChange={(val) => setFeet(val)}
+                      />
+                    </View>
+                    <View style={{alignItems: "center"}}>
+                      <ThemedText title={true} style={{fontSize: 20, fontWeight: "800"}}>Inches</ThemedText>
+                      <Spacer height={10} />
+                      <ScrollPicker
+                        width={120}
+                        range={[0, 11]}
+                        increment={1}
+                        padWithZero={true}
+                        initialValue={heightInches}
+                        onValueChange={(val) => setInches(val)}
+                      />
+                    </View>
+
+                    
+                  </Animated.View>
+                )}
+                {user.settings.preferences.heightUnit === "cm" && (
+                  <Animated.View entering={FadeIn} exiting={FadeOut}>
+                    <View style={{alignItems: "center"}}>
+                        <ThemedText title={true} style={{fontSize: 20, fontWeight: "800"}}>Centimeters</ThemedText>
+                        <Spacer height={10} />
+                        <ScrollPicker
+                          width={120}
+                          range={[0, 600]}
+                          increment={1}
+                          padWithZero={true}
+                          initialValue={parseInt(user.settings.height)}
+                          onValueChange={(val) => setCm(val)}
+                        />
+                      </View>
+                  </Animated.View>
+                )}
+                
+                <Spacer height={20} />
+                {/* Feet or centimeters options */}
+                <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+                  <Pressable onPress={() => updateUser({settings: {preferences: {heightUnit: "feet"}}})} style={{flex: 1, marginRight: 5,  height: 60, backgroundColor: user.settings.preferences.heightUnit === "feet" ? "#546FDB" : "#595959", borderRadius: 15, justifyContent: 'center', alignItems: "center", position: "relative"}}>
+                    <Text style={{color: "white", fontSize: 20, fontWeight: "700", }}>ft / in</Text>
+                  </Pressable>
+                  <Pressable onPress={() => updateUser({settings: {preferences: {heightUnit: "cm"}}})} style={{flex: 1, marginLeft: 5, height: 60, backgroundColor: user.settings.preferences.heightUnit === "cm" ? "#546FDB" : "#595959", borderRadius: 15, justifyContent: 'center', alignItems: "center", position: "relative"}}>
+                    <Text style={{color: "white", fontSize: 20, fontWeight: "700", }}>cm</Text>
+                  </Pressable>
+                </View>
+
+                <Spacer height={0} />
+              </View>
+              
+
             )}
             
           </PopupSheet>
@@ -125,20 +279,6 @@ const Profile = () => {
               <Spacer height={20} />
               <View style={{flexDirection: "row", justifyContent: "space-between"}}>
 
-                <Pressable onPress={clickWeight}>
-                  <View style={{height: 100, width: (screenWidth-70)/4, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
-                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Weight</ThemedText>
-                    <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
-                      <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", height: 20,}}>
-                        <View style={{width: 10, height: 10, justifyContent: "center", alignItems: "center", marginLeft: 0}}>
-                          <Image source={pencilIcon} style={{height: 8, width: 8, objectFit: "contain"}} />
-                        </View>
-                        <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 20, height: 20, textAlign: "center", color: "white", fontWeight: '800'}}>{user.tracking.logging["weight"].data.length > 0 ? user.tracking.logging["weight"].data[user.tracking.logging["weight"].data.length-1].amount : "- -"}</ThemedText>
-                      </View>
-                    </View>
-                  </View>
-                </Pressable>
-
                 <Pressable onPress={clickBirthday}>
                   <View style={{height: 100, width: (screenWidth-70)/4, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
                     <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Birthday</ThemedText>
@@ -150,15 +290,24 @@ const Profile = () => {
                   </View>
                 </Pressable>
 
-                <Pressable onPress={clickWeight}>
+                <Pressable onPress={clickGender}>
                   <View style={{height: 100, width: (screenWidth-70)/4, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
-                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Weight</ThemedText>
+                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Gender</ThemedText>
                     <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
                       <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", height: 20,}}>
-                        <View style={{width: 10, height: 10, justifyContent: "center", alignItems: "center", marginLeft: 0}}>
-                          <Image source={pencilIcon} style={{height: 8, width: 8, objectFit: "contain"}} />
-                        </View>
-                        <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 20, height: 20, textAlign: "center", color: "white", fontWeight: '800'}}>{user.tracking.logging["weight"].data.length > 0 ? user.tracking.logging["weight"].data[user.tracking.logging["weight"].data.length-1].amount : "- -"}</ThemedText>
+                        <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 20, height: 20, textAlign: "center", color: "white", fontWeight: '800'}}>{user.settings.gender ? firstCapital(user.settings.gender)  : "- -"}</ThemedText>
+                      </View>
+                    </View>
+                  </View>
+                </Pressable>
+
+                <Pressable onPress={clickHeight}>
+                  <View style={{height: 100, width: (screenWidth-70)/4, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
+                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Height</ThemedText>
+                    <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
+                      <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", height: 20,}}>
+                        <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 20, height: 20, textAlign: "center", color: "white", fontWeight: '800'}}>{displayUserHeight(user.settings.height)}</ThemedText>
+                        {user.settings.preferences.heightUnit==="cm" && (<ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 10, height: 20, textAlign: "center", marginTop: 12, color: "#979797", fontWeight: '800'}}>cm</ThemedText>)}
                       </View>
                     </View>
                   </View>
@@ -169,10 +318,8 @@ const Profile = () => {
                     <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Weight</ThemedText>
                     <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
                       <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", height: 20,}}>
-                        <View style={{width: 10, height: 10, justifyContent: "center", alignItems: "center", marginLeft: 0}}>
-                          <Image source={pencilIcon} style={{height: 8, width: 8, objectFit: "contain"}} />
-                        </View>
                         <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 20, height: 20, textAlign: "center", color: "white", fontWeight: '800'}}>{user.tracking.logging["weight"].data.length > 0 ? user.tracking.logging["weight"].data[user.tracking.logging["weight"].data.length-1].amount : "- -"}</ThemedText>
+                        <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 10, height: 20, textAlign: "center", marginTop: 12, color: "#979797", fontWeight: '800'}}>{user.tracking.logging["weight"].unit}</ThemedText>
                       </View>
                     </View>
                   </View>
@@ -180,9 +327,7 @@ const Profile = () => {
 
               </View>
               
-
-
-              <Spacer height={20} />
+              <Spacer height={100} />
               
 
               <BlueButton onPress={clearUserData} title={"Sign out"} />

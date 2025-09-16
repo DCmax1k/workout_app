@@ -75,10 +75,10 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
             });
         } else {
             // Check all
-            sets = sets.map(s => {
-                s.complete = true;
-                return s;
+            sets.forEach((s, i) => {
+                if (!s.complete) completedSet(i);
             });
+            return; // Return because the function updates already
         }
         const newExercise = {...exercise, sets};
         updateExercise(index, newExercise);

@@ -22,7 +22,7 @@ const USER = {
     premiumFeatures: {},
     settings: {
       preferences: {
-        heightUnit: "feet", // feet, inches, cm
+        heightUnit: "feet", // feet, cm
         liftUnit: "lbs" // lbs, kgs
       },
       height: null, // in centimeters

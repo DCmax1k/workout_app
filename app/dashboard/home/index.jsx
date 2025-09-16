@@ -264,7 +264,7 @@ const IndexHome = () => {
   //     <ScrollView contentContainerStyle={{paddingBottom: 150, paddingTop: 100}}>
   //       <ThemedView>
   //         <ThemedText selectable={true} >
-  //           {JSON.stringify(user.tracking)}
+  //           {JSON.stringify(user.settings)}
   //         </ThemedText>
   //       </ThemedView>
   //     </ScrollView>
@@ -473,7 +473,10 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 3,
+    padding: 2,
+    borderColor: "#8B8B8B",
+    borderWidth: 2,
+    borderRadius: 99999,
   },
   gradientView: {
     width: '100%',

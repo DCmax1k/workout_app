@@ -239,7 +239,7 @@ export const Exercises = [
         "muscleGroups": ["chest", "shoulders", "triceps"],
         "difficulty": "beginner",
         "id": "11",
-        "met": 8
+        "met": 6
     },
     {
         "name": "Machine Ab Crunch",

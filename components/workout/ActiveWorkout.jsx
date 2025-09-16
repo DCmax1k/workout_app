@@ -5,7 +5,7 @@ import Animated, { LinearTransition, SlideInDown, SlideOutDown } from 'react-nat
 import { useUserStore } from '../../stores/useUserStore';
 import { useBottomSheet } from '../../context/BottomSheetContext'
 import EditExercise from './EditExercise';
-import { PaperProvider } from 'react-native-paper';
+import { PaperProvider, Portal } from 'react-native-paper';
 import Spacer from '../Spacer';
 import AddExercise from './AddExercise';
 import BlueButton from '../BlueButton';
@@ -237,7 +237,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
 
   return (
        <View style={{flex: 1}}>
-            <PaperProvider>
+            {/* <PaperProvider> */}
                 <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
 
 
@@ -251,30 +251,31 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                     {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 15, color: "#C4C4C4"}} />}
                 </Animated.View>
 
-                <PaperProvider>
-                <BottomSheetScrollView style={{marginTop: 85, height: screenHeight-150,}} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350,}}>
-                    
-                    <View style={[{ paddingHorizontal: 10}]}>
-                        <TextInput selectTextOnFocus onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
-                        {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 20, color: "#C4C4C4"}} />}
-                    </View>
-
-                    <Spacer height={20} />
-
-                    {exercises.map((exercise, i) => (
-                        <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} activeWorkoutStyle={true} />
+                
+                {/* <PaperProvider> */}
+                    <BottomSheetScrollView style={{marginTop: 85, height: screenHeight-150,}} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350,}}>
                         
-                    ))}
+                        <View style={[{ paddingHorizontal: 10}]}>
+                            <TextInput selectTextOnFocus onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
+                            {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 20, color: "#C4C4C4"}} />}
+                        </View>
 
-                    <Spacer height={20} />
-                    <Animated.View layout={LinearTransition.springify().damping(90)}>
-                        <BlueButton title={"Add Exercise"} style={{marginRight: 10, marginLeft: 10}} onPress={() => setExerciseModal(true)} />
-                        <Spacer height={40} />
-                        <BlueButton title={"Cancel Workout"} color={"#572E32"} style={{marginRight: 30, marginLeft: 30}} onPress={() => cancelWorkout(true)} />
-                    </Animated.View>
-                    
-                </BottomSheetScrollView>
-                </PaperProvider>
+                        <Spacer height={20} />
+
+                        {exercises.map((exercise, i) => (
+                            <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} activeWorkoutStyle={true} />
+                            
+                        ))}
+
+                        <Spacer height={20} />
+                        <Animated.View layout={LinearTransition.springify().damping(90)}>
+                            <BlueButton title={"Add Exercise"} style={{marginRight: 10, marginLeft: 10}} onPress={() => setExerciseModal(true)} />
+                            <Spacer height={40} />
+                            <BlueButton title={"Cancel Workout"} color={"#572E32"} style={{marginRight: 30, marginLeft: 30}} onPress={() => cancelWorkout(true)} />
+                        </Animated.View>
+                        
+                    </BottomSheetScrollView>
+                {/* </PaperProvider> */}
                 
                 {/* {Platform.OS === 'ios' ? (
                     <Modal
@@ -293,14 +294,18 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                     </Animated.View>
                 ) : null)} */}
 
-                
+                <Portal>
                 {( exerciseModal === true && (
                     <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{position: "absolute", top: 0, left: 0, height: screenHeight, width: screenWidth, zIndex: 5, elevation: 5}}>
-                        <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} bottomSheet={true} notModal={true} />
+                        
+                             <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} bottomSheet={false} notModal={true} />
+                        
+                       
                     </Animated.View>
                 ))}
+                </Portal>
 
-            </PaperProvider>
+            {/* </PaperProvider> */}
             
             
         </View> 

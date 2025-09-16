@@ -8,11 +8,10 @@ import { useUserStore } from '../stores/useUserStore'
 import keyboardIcon from '../assets/icons/keyboard.png'
 import { PaperProvider, Portal } from 'react-native-paper'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import Animated, { FadeIn, SlideInDown, SlideOutDown } from 'react-native-reanimated'
+import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import ThemedView from '../components/ThemedView';
-import ThemedText from '../components/ThemedText';
+
 
 SplashScreen.preventAutoHideAsync();
 
