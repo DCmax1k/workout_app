@@ -11,6 +11,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import loadIcons from '../util/loadIcons';
+import { iconArray } from '../constants/icons';
 
 
 SplashScreen.preventAutoHideAsync();
@@ -36,10 +38,22 @@ const RootLayout = () => {
     'DoppioOne-Regular': require('../assets/fonts/DoppioOne-Regular.ttf'),
   });
 
+
+
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
+    const prepare = async () => {
+      try {
+        //await loadIcons(); // Preload icons
+        //iconArray.forEach(img => Image.resolveAssetSource(img));
+        if (loaded) {
+          await SplashScreen.hideAsync();
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+    };
+
+    prepare();
   }, [loaded]);
 
   // useEffect(() => {

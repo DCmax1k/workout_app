@@ -108,7 +108,7 @@ const USER = {
           data: [  ], // [{date, amount}]
           unit: "lbs", // lbs, kgs
           layout: "weight", // weight, calorie, none, bmi 
-          color: "#546FDB",
+          color: "#DBD654",
           extraData: {
             goal: null,
           },
@@ -171,12 +171,13 @@ const USER = {
           }
         },
         "water intake": {
-          data: [ {date: 235234, amount: 10, }, {date: 235235, amount: 10, }, {date: 235236, amount: 10, }, {date: 235237, amount: 10, }, {date: 235238, amount: 10, }, {date: 235239, amount: 10, }, {date: 235240, amount: 10, } ],
+          data: [], // [{date, amount,}] // in cups
           unit: "cups",
           layout: "water", // weight, calorie, none, bmi 
-          color: "#DBD654",
+          color: "#546FDB",
           extraData: {
-            dailyGoal: 2000,
+            goal: 15, // cups
+            valueToAdd: 1,
           },
           inputOptions: {
             increment: 0.1,

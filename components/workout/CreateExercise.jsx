@@ -1,10 +1,19 @@
 import { Alert, Image, KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useEffect, useImperativeHandle, useState } from 'react'
+
 import whiteX from '../../assets/icons/whiteX.png'
 import lock from '../../assets/icons/lock.png'
+
+// const  whiteX = require("../../assets/icons/whiteX.png");
+// const lock = require("../../assets/icons/lock.png");
+
+// import { icons } from "../../constants/icons";
+// const { whiteX, lock } = icons;
+
 import BlueButton from '../BlueButton'
 import Spacer from '../Spacer'
 import Dropdown from '../Dropdown'
+
 import MultiSelectDropdown from '../MultiSelectDropdown'
 import { generateUniqueId } from '../../util/uniqueId'
 import { useUserStore } from '../../stores/useUserStore'

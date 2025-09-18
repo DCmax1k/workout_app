@@ -1,0 +1,63 @@
+
+export const icons = {
+  // Tab bar icons
+  home: require("../assets/tabBarIcons/home.png"),
+  progress: require("../assets/tabBarIcons/progress.png"),
+  dumbbell: require("../assets/tabBarIcons/dumbbell.png"),
+  list: require("../assets/icons/list.png"),
+  friends: require("../assets/tabBarIcons/friends.png"),
+
+  // Onboarding
+  appleIconWhite: require("../assets/onboarding/appleIconWhite.png"),
+  figureHoldingBarbell: require("../assets/onboarding/figureHoldingBarbell.png"),
+  figureOneWeight: require("../assets/onboarding/figureOneWeight.png"),
+  figureOnPhoneDark: require("../assets/onboarding/figureOnPhoneDark.png"),
+  figureOnPhoneLight: require("../assets/onboarding/figureOnPhoneLight.png"),
+  figureRaceStart: require("../assets/onboarding/figureRaceStart.png"),
+  figuresHighFive: require("../assets/onboarding/figuresHighFive.png"),
+  figureTwoWeights: require("../assets/onboarding/figureTwoWeights.png"),
+  firstOnboardingImage: require("../assets/onboarding/firstOnboardingImage.png"),
+  googleIcon: require("../assets/onboarding/googleIcon.png"),
+
+  // Icons
+  aiSparkle: require("../assets/icons/aiSparkle.png"),
+  carrotArrow: require("../assets/icons/carrotArrow.png"),
+  check: require("../assets/icons/check.png"),
+  clock: require("../assets/icons/clock.png"),
+  doubleCheck: require("../assets/icons/doubleCheck.png"),
+  dropdown: require("../assets/icons/dropdown.png"),
+  eye: require("../assets/icons/eye.png"),
+  female: require("../assets/icons/female.png"),
+  file: require("../assets/icons/file.png"),
+  greyX: require("../assets/icons/greyX.png"),
+  hamburger: require("../assets/icons/hamburger.png"),
+  history: require("../assets/icons/history.png"),
+  hollowClock: require("../assets/icons/hollowClock.png"),
+  keyboard: require("../assets/icons/keyboard.png"),
+  lightBulb: require("../assets/icons/lightBulb.png"),
+  listIcon: require("../assets/icons/list.png"), // renamed since you also have tabBar list
+  lock: require("../assets/icons/lock.png"),
+  male: require("../assets/icons/male.png"),
+  noEye: require("../assets/icons/noEye.png"),
+  noImage: require("../assets/icons/noimage.png"),
+  party: require("../assets/icons/party.png"),
+  pencil: require("../assets/icons/pencil.png"),
+  playCircle: require("../assets/icons/playCircle.png"),
+  plus: require("../assets/icons/plus.png"),
+  profileIcon: require("../assets/icons/profileIcon.png"),
+  remove: require("../assets/icons/remove.png"),
+  rightArrow: require("../assets/icons/rightArrow.png"),
+  rightCarrot: require("../assets/icons/rightCarrot.png"),
+  rotate: require("../assets/icons/rotate.png"),
+  scheduleRotationArrow: require("../assets/icons/scheduleRotationArrow.png"),
+  scheduleRotationArrowLength: require("../assets/icons/scheduleRotationArrowLength.png"),
+  search: require("../assets/icons/search.png"),
+  threeEllipses: require("../assets/icons/threeEllipses.png"),
+  trash: require("../assets/icons/trash.png"),
+  userHollow: require("../assets/icons/userHollow.png"),
+  weight: require("../assets/icons/weight.png"),
+  whiteRunner: require("../assets/icons/whiteRunner.png"),
+  whiteX: require("../assets/icons/whiteX.png"),
+};
+
+export const iconArray = Object.values(icons);

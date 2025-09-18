@@ -36,6 +36,13 @@ const fillMissingKeys = (base, user) => {
   if (filled?.tracking?.insights?.expenditure?.data[0]?.["amount"] === 2312 &&  filled?.tracking?.insights?.expenditure?.data[0]?.["date"] === 1756499105140) {
     filled.tracking.insights.expenditure.data = [];
   }
+
+  // if (filled?.tracking?.logging?.["water intake"]?.data[0]?.["date"] === 235234) {
+  //   filled.tracking.logging["water intake"].data = [];
+  // }
+
+  //filled.tracking.logging['water intake'].data = [];
+
   return filled;
 }
 

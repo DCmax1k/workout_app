@@ -162,7 +162,7 @@ const EditWorkout = () => {
         <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
         <SafeAreaView style={{flex: 1, marginBottom: -50}}>
 
-          <View style={styles.actionButtons}>
+          <View style={[styles.actionButtons]}>
               <View>
                 <Pressable onPress={cancelEdit} style={{paddingHorizontal: 20, paddingVertical: 10, backgroundColor: "#4B4B4B", borderRadius: 10, }}>
                       <Text style={{fontSize: 15, color: "white",}}>Cancel</Text>
@@ -174,9 +174,9 @@ const EditWorkout = () => {
                   </Pressable>
               </View>
           </View>
-          <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350, }}>
+          <Animated.ScrollView style={{width: screenWidth, marginHorizontal: -20}} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350, }}>
 
-            <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20, paddingHorizontal: 20}}>
               <Pressable style={{ height: 40, width: 40, justifyContent: "center", alignItems: "center"}} onPress={() => {if (workoutNameInputRef.current) {workoutNameInputRef.current.focus()}}}>
                 <Image style={{height: 15, width: 15, marginRight: 10}} source={pencil} />
               </Pressable>
@@ -185,20 +185,24 @@ const EditWorkout = () => {
               <ActionMenu data={[{title: "Delete Workout", icon: trashIcon, onPress: requestDeleteWorkout, color: "#FF6C6C"}]} />
             </View>
 
-            {exercises.map((exercise, i) => (
-                // <SwipeToDelete key={exercise.id+""+i} openedRight={() => removeExercise(i)} >
+            <Animated.View layout={LinearTransition} style={{width: screenWidth, alignItems: "center"}}>
+              {exercises.map((exercise, i) => ( 
                 <Animated.View key={exercise.id+""+i} layout={LinearTransition}>
-                  <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} />
-                </Animated.View>
-                  
-                // </SwipeToDelete>
 
-              
-            ))}
+                  <SwipeToDelete style={{width: screenWidth}} openedRight={() => removeExercise(i)} >
+                    <View style={{marginHorizontal: 20}}>
+                      <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} />
+                    </View>
+                  </SwipeToDelete>
+
+                </Animated.View>
+              ))}
+            </Animated.View>
+            
 
             <Spacer height={20} />
 
-            <Animated.View layout={LinearTransition} >
+            <Animated.View layout={LinearTransition} style={{marginHorizontal: 20}} >
               <BlueButton title={"Add Exercise"} onPress={() => setExerciseModal(true)} />
             </Animated.View>
             

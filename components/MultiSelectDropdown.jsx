@@ -88,7 +88,7 @@ const MultiSelectDropdown = ({data, height = 50, maxHeight = 225, style, selecte
             
             
 
-            <Image style={{position: 'absolute', height: 20, width: 20, objectFit: "contain", right: 10, top: 15, tintColor: "#546FDB"}} source={dropdown} />
+            <Image style={{position: 'absolute', pointerEvents: "none", height: 20, width: 20, objectFit: "contain", right: 10, top: 15, tintColor: "#546FDB"}} source={dropdown} />
             
         </View>
                 

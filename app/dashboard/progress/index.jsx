@@ -1,5 +1,5 @@
 import { Alert, Dimensions, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
 import BlueButton from '../../../components/BlueButton'
@@ -15,7 +15,8 @@ import whiteX from '../../../assets/icons/whiteX.png'
 import { Colors } from '../../../constants/Colors'
 import ConfirmMenu from '../../../components/ConfirmMenu'
 import { Portal } from 'react-native-paper'
-import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown, LinearTransition } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown, LinearTransition, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import ActionMenu from '../../../components/ActionMenu'
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -32,6 +33,7 @@ const IndexProgress = () => {
   const [confirmMenuData, setConfirmMenuData] = useState();
 
   const [addWidget, setAddWidget] = useState(false);
+
 
   const showComingSoonMessage = () => {
       setConfirmMenuData({
@@ -61,21 +63,27 @@ const IndexProgress = () => {
       },
     });
   } 
-
-  const widgetsAvailable = ["weight", "sleep amount", "sleep quality", "water intake"];
-  const selectAddWidget = (indx) => {
+  const widgets = ["weight", "sleep amount", "sleep quality", "water intake"];
+  const widgetsAvailable = widgets.filter(w => !user.tracking.visibleWidgets.includes(w));
+  const selectAddWidget = (wid) => {
     const visibleWidgets = user.tracking.visibleWidgets;
-    const ind = visibleWidgets.indexOf(widgetsAvailable[indx])
+    const ind = visibleWidgets.indexOf(wid)
     if (ind >= 0) return setAddWidget(false);
     
-    visibleWidgets.push(widgetsAvailable[indx])
+    visibleWidgets.push(wid)
 
     updateUser({tracking: { visibleWidgets: visibleWidgets}});
+    console.log(visibleWidgets);
     setAddWidget(false);
   }
 
+  const widgetActionMenuData = [
+
+                ];
+
 
   return (
+
     <ThemedView style={styles.container}>
         <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
         <SafeAreaView style={{flex: 1}}>
@@ -102,7 +110,7 @@ const IndexProgress = () => {
 
                       <View style={{width: "100%", borderRadius: 10, overflow: "hidden"}}>
                         {widgetsAvailable.map((wid, i) => (
-                          <Pressable key={i} onPress={() => selectAddWidget(i)} style={{backgroundColor:  "#3A3A3A", width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 60, padding: 10}}>
+                          <Pressable key={i} onPress={() => selectAddWidget(wid)} style={{backgroundColor:  "#3A3A3A", width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 60, padding: 10}}>
                             <Text style={{color: "white", fontSize: 17, fontWeight:'800'  }}>{firstCapital(wid)}</Text>
                             
                           </Pressable>
@@ -137,6 +145,7 @@ const IndexProgress = () => {
                 </View>
                 <Text style={{fontSize: 15, color: "white", fontWeight: 600}}>Add widget</Text>
               </Pressable>
+              {/* <ActionMenu data={widgetActionMenuData} /> */}
             </View>
 
             <Spacer height={20} />
@@ -216,6 +225,7 @@ const IndexProgress = () => {
           </ScrollView>
         </SafeAreaView>
     </ThemedView>
+    
   )
 }
 

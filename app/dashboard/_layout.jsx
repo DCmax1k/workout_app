@@ -1,5 +1,5 @@
 import { Dimensions, Modal, Platform, StyleSheet, Text, useColorScheme, View } from 'react-native'
-import { Redirect, router, Tabs } from 'expo-router'
+import { Redirect, router, Stack, Tabs } from 'expo-router'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {Colors} from '../../constants/Colors'
 import TabBar from '../../components/TabBar'
@@ -10,6 +10,7 @@ import ActiveWorkout from '../../components/workout/ActiveWorkout'
 import Animated, { Extrapolation, interpolate, useAnimatedStyle, useDerivedValue, useSharedValue, withTiming } from 'react-native-reanimated'
 import FinishWorkout from '../../components/workout/FinishWorkout'
 import { PaperProvider, Provider } from 'react-native-paper'
+import StackTabBar from '../../components/StackTabBar'
 
 const screenHeight = Dimensions.get("screen").height;
 
@@ -115,13 +116,20 @@ const Dashboard = () => {
     <View style={{flex: 1, backgroundColor: theme.background}}>
       <BottomSheetContext.Provider value={{ openSheet: handleSnapPress, closeSheet: handleCloseSheet, showFinishWorkout }}>
         <>
-          <Tabs tabBar={props => <TabBar animatedTabbarPosition={animatedTabbarPosition} {...props} />} screenOptions={{animation: 'fade', headerShown: false, headerStyle: { backgroundColor: theme.background, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0,}, headerTintColor: theme.title, tabBarStyle: { backgroundColor: "#000" }, tabBarActiveTintColor: theme.title, tabBarInactiveTintColor: "#868686", }}> 
+          {/* <Tabs tabBar={props => <TabBar animatedTabbarPosition={animatedTabbarPosition} {...props} />} screenOptions={{animation: "none", headerShown: false, headerStyle: { backgroundColor: theme.background, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0,}, headerTintColor: theme.title, tabBarStyle: { backgroundColor: "#000" }, tabBarActiveTintColor: theme.title, tabBarInactiveTintColor: "#868686", }}> 
               <Tabs.Screen name="home" options={{ title: 'Home', headerTintColor: "transparent"  }} />
               <Tabs.Screen name="friends" options={{ title: 'Friends' }} />
               <Tabs.Screen name="workout" options={{ title: 'Workouts', popToTopOnBlur: true }} />
               <Tabs.Screen name="exercises" options={{ title: 'Exercises' }} />
               <Tabs.Screen name="progress" options={{ title: 'Progress' }} />
-            </Tabs>
+            </Tabs> */}
+            <Stack screenOptions={{animation: "fade", animationDuration: 200, headerShown: false, contentStyle: {backgroundColor: theme.background,}}}>
+              <Stack.Screen name="home" options={{ title: 'Home', }} />
+              <Stack.Screen name="friends" options={{ title: 'Friends' }} />
+              <Stack.Screen name="workout" options={{ title: 'Workouts', }} />
+              <Stack.Screen name="exercises" options={{ title: 'Exercises' }} />
+              <Stack.Screen name="progress" options={{ title: 'Progress' }} />
+            </Stack>
 
             <BottomSheet
             ref={sheetRef}
@@ -145,6 +153,9 @@ const Dashboard = () => {
                 
 
             </BottomSheet>
+
+            {/* Stack TabBar */}
+            <StackTabBar animatedTabbarPosition={animatedTabbarPosition} />
 
             
 

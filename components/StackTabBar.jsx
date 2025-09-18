@@ -14,62 +14,51 @@ import Workout from '../assets/tabBarIcons/dumbbell.png';
 import Exercises from '../assets/icons/list.png';
 import Friends from '../assets/tabBarIcons/friends.png';
 import Animated from 'react-native-reanimated';
+import { router } from 'expo-router';
+import { useState } from 'react';
 
-function TabBar({animatedTabbarPosition, state, descriptors, navigation }) {
+const firstCapital = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function StackTabBar({animatedTabbarPosition }) {
   const { colors } = useTheme();
   const { buildHref } = useLinkBuilder();
+  const [currentRoute, setCurrentRoute] = useState(0); // route index
 
   const colorScheme = useColorScheme()
   const lightTheme = colorScheme === 'light'
   const theme = Colors[colorScheme] ?? Colors.dark
+
+  const routes = [{name: "home", icon: Home,},{name: "friends", icon: Friends,},{name: "Workouts", route: "workout", icon: Workout,},{name: "exercises", icon: Exercises,},{name: "progress", icon: Progress,},];
   
 
   return (
     <Animated.View style={[styles.tabbar, { backgroundColor: theme.tabBar.background,}, animatedTabbarPosition]}>
-      {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-              ? options.title
-              : route.name;
+      {routes.map((route, index) => {
+        const label = route.name;
 
-        const isFocused = state.index === index;
+        const isFocused = currentRoute === index;
 
         const isMiddleTab = index === 2; // Check if the current tab is the middle tab
 
         const onPress = () => {
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
-
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
+          if (!isFocused) {
+            setCurrentRoute(index);
+            // console.log("Going to", "/dashboard/" + (route.route || route.name));
+            router.replace("/dashboard/" + (route.route || route.name) );
           }
         };
 
-        const onLongPress = () => {
-          navigation.emit({
-            type: 'tabLongPress',
-            target: route.key,
-          });
-        };
 
         return (
           <Pressable
             key={route.name}
-            href={buildHref(route.name, route.params)}
             accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={options.tabBarButtonTestID}
             onPress={onPress}
-            onLongPress={onLongPress}
             style={[styles.tabbarItem, , isMiddleTab ? styles.middleTab : null, { opacity: 1}]}
           >
-            <Image style={[styles.tabBarIcon, isMiddleTab ? styles.middleTabIcon : null, {tintColor: isFocused ? theme.title : "grey"}]} source={(route.name === 'home' ? Home : route.name === 'workout' ? Workout : route.name === 'exercises' ? Exercises : route.name === 'friends' ? Friends : Progress)} />
+            <Image style={[styles.tabBarIcon, isMiddleTab ? styles.middleTabIcon : null, {tintColor: isFocused ? theme.title : "grey"}]} source={route.icon} />
 
 
             {/* {!isMiddleTab && (
@@ -79,7 +68,7 @@ function TabBar({animatedTabbarPosition, state, descriptors, navigation }) {
             )} */}
 
                 <ThemedText style={[styles.tabBarText, { color: isFocused ? theme.tabBar.textActive : theme.tabBar.text }, ]}>
-                    {label === "Workout" ? "Workouts" : label}
+                    {firstCapital(label)}
                 </ThemedText>
             
           </Pressable>
@@ -89,7 +78,7 @@ function TabBar({animatedTabbarPosition, state, descriptors, navigation }) {
   );
 }
 
-export default TabBar
+export default StackTabBar
 
 const styles = StyleSheet.create({
     tabbar: {

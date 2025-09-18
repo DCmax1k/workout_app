@@ -37,7 +37,7 @@ function RightAction({prog, drag, isOpen, setIsOpen}) {
 
 
 
-const SwipeToDelete = forwardRef(({children, style, onPress, openedRight, showConfirmation=false, confirmationData={}, ...props}, ref) => {
+const SwipeToDelete = forwardRef(({children, style, onPress, openedRight=()=>{}, showConfirmation=false, confirmationData={}, ...props}, ref) => {
 
     const swipeRef = useRef(null);
 

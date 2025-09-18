@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react'
 import { useUserStore } from '../../stores/useUserStore'
 import ConfirmMenu from '../../components/ConfirmMenu'
 import emitter from '../../util/eventBus';
+import ProgressBar from '../../components/ProgressBar'
 
 
 const screenWidth = Dimensions.get('screen').width;
@@ -60,8 +61,14 @@ const ProgressExpanded = () => {
         }
         
 
-      } else if (data.widget.layout === "calorie") { // Edit last data point if the last point is 
+      } else if (data.widget.layout === "water") { // Edit last data point if the last point is 
+        if (data.target==="goal") {
+          const updated = {tracking: {logging: {[data.widget.category]: {extraData: {goal: data.value}}}}};
+          updateUser(updated);
+        } else if (data.target === "valueToAdd") {
+          updateUser({tracking: {logging: {[data.widget.category]: {extraData: {valueToAdd: data.value}}}}});
 
+        }
       }
     });
     return () => sub.remove();
@@ -125,6 +132,45 @@ const ProgressExpanded = () => {
     });
   }
 
+  const clickValueToAdd = () => {
+    const info = {
+      title: widget.category,
+      target: 'valueToAdd',
+      value: widget.extraData.valueToAdd,
+      unit: widget.unit,
+      widget,
+      increment: 0.1,
+      range: [0, 100],
+      scrollItemWidth: 10,
+      defaultValue: 1,
+    }
+    router.push({
+      pathname: "/inputValueScreen",
+      params: {
+        data: JSON.stringify(info),
+      },
+    });
+  }
+
+  const addToToday = () => {
+    const currentTime = Date.now();
+    const valueToAdd = widget.extraData.valueToAdd;
+    const data = widget.data;
+    const lastEntry = data[data.length-1];
+    let newData = JSON.parse(JSON.stringify(data));
+    if (data.length > 0) {
+        const isSameDayAsLastEntry =  new Date(lastEntry.date).toDateString() === new Date(currentTime).toDateString();
+        if (isSameDayAsLastEntry) {
+            newData[newData.length-1] = {date: lastEntry.date, amount: lastEntry.amount+valueToAdd};
+        } else {
+            newData.push({date: currentTime, amount: valueToAdd});
+        }
+    } else {
+        newData.push({date: currentTime, amount: valueToAdd});
+    }
+    updateUser({tracking: {logging: {[widget.category]: {data: newData}}}});
+  }
+
   const hideWidget = () => {
       const visibleWidgets = user.tracking.visibleWidgets;
       const ind = visibleWidgets.indexOf(widget.category)
@@ -157,7 +203,32 @@ const ProgressExpanded = () => {
 
   const menuOptions = widget.layout === "weight" ? 
       [{title: "Edit past data", icon: pencilIcon, onPress: () => openEditPastData(),}, {title: "Hide widget", icon: noEye, onPress: () => hideWidget(),}]
+      : widget.layout === "water" ? 
+      [{title: "Edit past data", icon: pencilIcon, onPress: () => openEditPastData(),}, {title: "Hide widget", icon: noEye, onPress: () => hideWidget(),}]
       : [];
+  
+  let yesterdayValue = null;
+  if (widget.layout === 'water') {
+    
+    // Calculating yesterdays value
+    const yesterdayDate = new Date();
+    const threeDaysAgo = new Date();
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+    for (let i=widget.data.length-1; i>=0; i--) {
+      const dDate = new Date(widget.data[i].date);
+      if (dDate.getTime() < threeDaysAgo.getTime()) { // Check if already past yesterday so just cancel
+        console.log("Cancelled because past")
+        i = -1;
+      }
+      if (dDate.toLocaleDateString() === yesterdayDate.toLocaleDateString()) {
+        console.log("Found yesterday");
+        yesterdayValue = widget.data[i].amount;
+        i=-1;
+      }
+
+    }
+  }
   
   
   return (
@@ -185,8 +256,77 @@ const ProgressExpanded = () => {
                 {/* Current */}
                 <View style={{height: 100, width: (screenWidth-80)/3, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
                   <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Current</ThemedText>
-                  <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
+                  <View style={{flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
                     <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 20, textAlign: "center", color: "white", fontWeight: '800'}}>{mostRecentValue}</ThemedText>
+                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 10, height: 20, textAlign: "center", marginTop: 15, marginLeft: 3, color: "#979797", fontWeight: '800'}}>{widget.unit}</ThemedText>
+                  </View>
+                  
+                </View>
+                {/* Goal */}
+                <Pressable onPress={clickGoal}>
+                  <View style={{height: 100, width: (screenWidth-80)/3, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
+                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Goal</ThemedText>
+                    <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
+                      <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", height: 20,}}>
+                        <View style={{width: 20, height: 20, justifyContent: "center", alignItems: "center", marginLeft: -10}}>
+                          <Image source={pencilIcon} style={{height: 10, width: 10, objectFit: "contain"}} />
+                        </View>
+                        <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 20, height: 20, textAlign: "center", color: "white", fontWeight: '800'}}>{widget.extraData?.goal || "- -"}</ThemedText>
+                      </View>
+                    </View>
+                    
+                    
+                  </View>
+                </Pressable>
+                
+                {/* Last recorded */}
+                <View style={{height: 100, width: (screenWidth-80)/3, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
+                  <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Last recorded</ThemedText>
+                  <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
+                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={showYear ? 2 : 1} style={{fontSize: showYear ? 16 : 20, textAlign: "center", color: "white", fontWeight: '800'}}>{mostRecentDate ? new Date( mostRecentDate).toLocaleDateString('en-US', {month: "short", day: "numeric", ...showYearOptions}) : "- -"}</ThemedText>
+                  </View>
+                  
+                </View>
+              </View> 
+
+            </View>
+          )}
+
+          {widget.layout === "water" && (
+            <View style={{width: "100%", alignItems: "center"}}>
+              {/* Subheader and progress bar */}
+              <ThemedText>Todays water consumption</ThemedText>
+              <Spacer height={10} />
+              <View style={{flex: 1, justifyContent: "center", alignItems: "flex-end", flexDirection: "row"}}>
+                <ThemedText style={{fontSize: 22, color: "white", fontWeight: "800"}}>{`${parseInt((mostRecentValue*10))/10} / ${widget.extraData.goal}`}</ThemedText>
+                <ThemedText style={{fontSize: 15, color: "#A6A6A6", fontWeight: "300", marginBottom: 2}}>{` ${widget.unit}`}</ThemedText>
+              </View>
+              
+              <Spacer height={20} />
+              <ProgressBar value={mostRecentValue || 0} goal={widget.extraData.goal || 0} color={widget.color} />
+              <Spacer height={20} />
+              {/* Input and submit button */}
+              <View style={{width: screenWidth-40, flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+                <Pressable onPress={clickValueToAdd} style={{width: (screenWidth-40-20)/2, height: 60, borderRadius: 10, backgroundColor: "#3C3C3C", flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 10, }}>
+                  <Text style={{color: "white", fontSize: 20, fontWeight: "800"}}>{widget.extraData.valueToAdd}</Text>
+                  <Text style={{color: "#717171", fontSize: 20}}>{widget.unit}</Text>
+                </Pressable>
+                <Pressable onPress={addToToday} style={{width: (screenWidth-40-20)/2, height: 60, borderRadius: 10, backgroundColor: widget.color, overflow: "hidden"}}>
+                  <View style={{height: "100%", width: "100%", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.15)"}}>
+                    <Text style={{color: "white", fontSize: 20,  fontWeight: "600"}}>Add to today</Text>
+                  </View>
+                </Pressable>
+              </View> 
+
+              <Spacer height={20} />
+              {/* Extra data */}
+              <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%"}}>
+                {/* Yesterday */}
+                <View style={{height: 100, width: (screenWidth-80)/3, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
+                  <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Yesterday</ThemedText>
+                  <View style={{flex: 1, alignItems: "center", justifyContent: "center", flexDirection: "row", paddingBottom: 10}}>
+                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 20, textAlign: "center", color: "white", fontWeight: '800'}}>{yesterdayValue ? yesterdayValue : "- -"}</ThemedText>
+                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 10, height: 20, textAlign: "center", marginTop: 15, marginLeft: 3, color: "#979797", fontWeight: '800'}}>{widget.unit}</ThemedText>
                   </View>
                   
                 </View>
@@ -285,6 +425,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
+  
+
   
 })
 

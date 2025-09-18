@@ -14,6 +14,8 @@ import trash from '../../assets/icons/trash.png'
 import { useUserStore } from '../../stores/useUserStore';
 import formatTime from '../../util/formatTime';
 import ActionMenu from '../../components/ActionMenu';
+import SwipeToDelete from '../../components/SwipeToDelete';
+import { SCREEN_WIDTH } from '@gorhom/bottom-sheet';
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -74,22 +76,36 @@ const EditPastData = () => {
 
             <Spacer height={20} />
             <View style={{width: "50%", height: 2, borderRadius: 999, backgroundColor: "#AAAAAA", marginHorizontal: "auto"}}></View>
-            <ScrollView  layout={LinearTransition.springify().damping(90)} contentContainerStyle={{paddingBottom: 120, paddingTop: 30, alignItems: "center"}} showsVerticalScrollIndicator={false}>
+            <ScrollView layout={LinearTransition.springify().damping(90)} style={{width: SCREEN_WIDTH, marginHorizontal: -20}} contentContainerStyle={{paddingBottom: 120, paddingTop: 30, alignItems: "center"}} showsVerticalScrollIndicator={false}>
                 <Spacer height={20} />
-
+                
                 
                 {dataEntriesOnDate.map((entry, i) => {
                     return (
-                    <Animated.View layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} key={i} style={{flexDirection: "row", alignItems: "center", padding: 5, width: "100%", backgroundColor: "#5C5C5C", borderRadius: 10, marginBottom: 10}}>
-                        <View style={{paddingHorizontal: 10, paddingVertical: 15, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}}>
-                            <Text style={{color: "white", fontSize: 18, fontWeight: "800"}}>{entry.amount}</Text>
-                        </View>
-                        <Text style={{color: "white", fontSize: 14, fontWeight: "800"}}>{formatTime(entry.date)}</Text>
-                        <View style={{flex: 1}}></View>
-                        <ActionMenu data={[
-                            {title: "Delete data point", icon: trash, onPress: () => deleteData(entry.date), },
-                            ]} />
-                    </Animated.View>)
+                        <Animated.View style={{width: SCREEN_WIDTH}} key={i} layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} >
+                            <SwipeToDelete style={{width: "100%"}}  showConfirmation={true} confirmationData={{
+                                    title: "Delete data point?",
+                                    subTitle: "",
+                                    subTitle2: "",
+                                    option1: "Confirm",
+                                    option1color: "#DB5454",
+                                    option2: "Go back",
+                                    confirm: () => deleteData(entry.date),
+                                }}>
+                                <View style={{flexDirection: "row", alignItems: "center", padding: 5, width: SCREEN_WIDTH-40, marginHorizontal: "auto", backgroundColor: "#5C5C5C", borderRadius: 10, marginBottom: 10}}>
+                                    <View style={{paddingHorizontal: 10, paddingVertical: 15, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}}>
+                                        <Text style={{color: "white", fontSize: 18, fontWeight: "800"}}>{parseInt(entry.amount*10)/10}</Text>
+                                    </View>
+                                    <Text style={{color: "white", fontSize: 14, fontWeight: "800"}}>{formatTime(entry.date)}</Text>
+                                    <View style={{flex: 1}}></View>
+                                    <ActionMenu data={[
+                                        {title: "Delete data point", icon: trash, onPress: () => deleteData(entry.date), },
+                                        ]} />
+                                </View>
+                            </SwipeToDelete>
+                        </Animated.View>
+                        
+                    )
                 })}
 
 
