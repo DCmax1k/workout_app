@@ -63,6 +63,8 @@ const Dashboard = () => {
   const animatedPosition = useSharedValue(0);
   const [currentPosition, setCurrentPosition] = React.useState(0);
 
+  const [currentRoute, setCurrentRoute] = useState(0); // route index 
+
   const handleSnapPress = useCallback((index) => {
     sheetRef.current?.snapToIndex(index);
     setSheetOpen(true);
@@ -114,7 +116,7 @@ const Dashboard = () => {
 
   return user ? (
     <View style={{flex: 1, backgroundColor: theme.background}}>
-      <BottomSheetContext.Provider value={{ openSheet: handleSnapPress, closeSheet: handleCloseSheet, showFinishWorkout }}>
+      <BottomSheetContext.Provider value={{ openSheet: handleSnapPress, closeSheet: handleCloseSheet, showFinishWorkout, setTabBarRoute: setCurrentRoute }}>
         <>
           {/* <Tabs tabBar={props => <TabBar animatedTabbarPosition={animatedTabbarPosition} {...props} />} screenOptions={{animation: "none", headerShown: false, headerStyle: { backgroundColor: theme.background, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0,}, headerTintColor: theme.title, tabBarStyle: { backgroundColor: "#000" }, tabBarActiveTintColor: theme.title, tabBarInactiveTintColor: "#868686", }}> 
               <Tabs.Screen name="home" options={{ title: 'Home', headerTintColor: "transparent"  }} />
@@ -155,7 +157,7 @@ const Dashboard = () => {
             </BottomSheet>
 
             {/* Stack TabBar */}
-            <StackTabBar animatedTabbarPosition={animatedTabbarPosition} />
+            <StackTabBar animatedTabbarPosition={animatedTabbarPosition} currentRoute={currentRoute} setCurrentRoute={setCurrentRoute} />
 
             
 

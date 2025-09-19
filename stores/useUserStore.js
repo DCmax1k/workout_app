@@ -37,11 +37,18 @@ const fillMissingKeys = (base, user) => {
     filled.tracking.insights.expenditure.data = [];
   }
 
-  // if (filled?.tracking?.logging?.["water intake"]?.data[0]?.["date"] === 235234) {
-  //   filled.tracking.logging["water intake"].data = [];
-  // }
+  // Update sleep amount layout
+  if (!filled?.tracking?.logging?.["sleep amount"]?.extraData.goal) {
+    filled.tracking.logging["sleep amount"].extraData.goal = 8;
+  }
+
+  if (filled?.tracking?.logging?.["water intake"]?.data[0]?.["date"] === 235234) {
+    filled.tracking.logging["water intake"].data = [];
+  }
 
   //filled.tracking.logging['water intake'].data = [];
+
+
 
   return filled;
 }

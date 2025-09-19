@@ -146,7 +146,7 @@ const USER = {
           layout: "weight", // weight, calorie, none, bmi
           color: "#DB5454", 
           extraData: {
-            goal: null,
+            goal: 8,
           },
           inputOptions: {
             increment: 0.1,

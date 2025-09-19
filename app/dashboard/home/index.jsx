@@ -39,7 +39,7 @@ const IndexHome = () => {
   const setUser = useUserStore((state) => state.setUser);
   const updateUser = useUserStore((state) => state.updateUser);
 
-  const { openSheet } = useBottomSheet();
+  const { openSheet, setTabBarRoute } = useBottomSheet();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
@@ -250,7 +250,8 @@ const IndexHome = () => {
     }
 
     const navigateToSchedule = () => {
-      router.navigate('/dashboard/workout');
+      setTabBarRoute(2);
+      router.replace('/dashboard/workout');
       setTimeout(() => {
         router.push('/dashboard/workout/schedule');
       }, 100);

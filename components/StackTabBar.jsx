@@ -21,10 +21,9 @@ const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function StackTabBar({animatedTabbarPosition }) {
+function StackTabBar({animatedTabbarPosition, currentRoute, setCurrentRoute}) {
   const { colors } = useTheme();
   const { buildHref } = useLinkBuilder();
-  const [currentRoute, setCurrentRoute] = useState(0); // route index
 
   const colorScheme = useColorScheme()
   const lightTheme = colorScheme === 'light'

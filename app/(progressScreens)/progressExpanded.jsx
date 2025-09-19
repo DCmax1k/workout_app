@@ -74,8 +74,15 @@ const ProgressExpanded = () => {
     return () => sub.remove();
   }, [emitter, updateUser, user.tracking.logging[w.category]]);
 
-  const mostRecentValue = widget.data[widget.data.length - 1]?.amount || 0;
-  const mostRecentDate = widget.data[widget.data.length - 1]?.date || null;
+  let mostRecentValue = widget.data[widget.data.length - 1]?.amount || 0;
+  let mostRecentDate = widget.data[widget.data.length - 1]?.date || null;
+  if (widget.layout === "water") {
+    if (new Date(mostRecentDate).toLocaleDateString() !== new Date().toLocaleDateString()) {
+      mostRecentValue = 0;
+      mostRecentDate = new Date().getTime();
+    }
+  }
+  
 
   const showYear = new Date(mostRecentDate).getFullYear() !== new Date().getFullYear();
   let showYearOptions = {};

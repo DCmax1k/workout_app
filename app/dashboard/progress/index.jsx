@@ -17,6 +17,7 @@ import ConfirmMenu from '../../../components/ConfirmMenu'
 import { Portal } from 'react-native-paper'
 import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown, LinearTransition, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import ActionMenu from '../../../components/ActionMenu'
+import {useBottomSheet} from '../../../context/BottomSheetContext';
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -28,6 +29,8 @@ const screenHeight = Dimensions.get('window').height;
 const IndexProgress = () => {
   const user = useUserStore((state) => state.user);
   const updateUser = useUserStore((state) => state.updateUser);
+
+  const { setTabBarRoute } = useBottomSheet();
 
   const [confirmMenuActive, setConfirmMenuActive] = useState(false);
   const [confirmMenuData, setConfirmMenuData] = useState();
@@ -75,6 +78,14 @@ const IndexProgress = () => {
     updateUser({tracking: { visibleWidgets: visibleWidgets}});
     console.log(visibleWidgets);
     setAddWidget(false);
+  }
+
+  const navigateToHomeProfile = () => {
+    setTabBarRoute(0);
+    router.replace("/dashboard/home");
+    setTimeout(() => {
+      router.push("/dashboard/home/profile");
+    }, 100);
   }
 
   const widgetActionMenuData = [
@@ -192,7 +203,7 @@ const IndexProgress = () => {
                       <Spacer height={10} />
                       <ThemedText title={true} adjustsFontSizeToFit={true} numberOfLines={4} style={{fontSize: 15, textAlign: "center", color:  "#A6A6A6"}} >Requires weight, height, age, and gender for accurate calculations.</ThemedText>
                       <Spacer height={10} />
-                      <Pressable onPress={() => router.navigate("/dashboard/home/profile")} style={{height: 40, backgroundColor: Colors.primaryBlue, padding: 10, borderRadius: 10}}>
+                      <Pressable onPress={navigateToHomeProfile} style={{height: 40, backgroundColor: Colors.primaryBlue, padding: 10, borderRadius: 10}}>
                         <Text adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 15, textAlign: "center", color:  "white"}}>Go to Profile &gt; Health</Text>
                       </Pressable>
                     </View>
