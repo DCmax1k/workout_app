@@ -82,8 +82,8 @@ const EditPastData = () => {
                 
                 {dataEntriesOnDate.map((entry, i) => {
                     return (
-                        <Animated.View style={{width: SCREEN_WIDTH}} key={i} layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} >
-                            <SwipeToDelete style={{width: "100%"}}  showConfirmation={true} confirmationData={{
+                        <Animated.View style={{width: SCREEN_WIDTH}} key={`${i}+${entry.amount}+${entry.date}`} layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} >
+                            <SwipeToDelete style={{width: "100%"}} key={`${i} + ${entry}`}  showConfirmation={true} confirmationData={{
                                     title: "Delete data point?",
                                     subTitle: "",
                                     subTitle2: "",

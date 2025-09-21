@@ -17,7 +17,6 @@ import ConfirmMenu from '../../../components/ConfirmMenu'
 import { Portal } from 'react-native-paper'
 import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown, LinearTransition, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import ActionMenu from '../../../components/ActionMenu'
-import {useBottomSheet} from '../../../context/BottomSheetContext';
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -30,7 +29,7 @@ const IndexProgress = () => {
   const user = useUserStore((state) => state.user);
   const updateUser = useUserStore((state) => state.updateUser);
 
-  const { setTabBarRoute } = useBottomSheet();
+  
 
   const [confirmMenuActive, setConfirmMenuActive] = useState(false);
   const [confirmMenuData, setConfirmMenuData] = useState();
@@ -80,13 +79,7 @@ const IndexProgress = () => {
     setAddWidget(false);
   }
 
-  const navigateToHomeProfile = () => {
-    setTabBarRoute(0);
-    router.replace("/dashboard/home");
-    setTimeout(() => {
-      router.push("/dashboard/home/profile");
-    }, 100);
-  }
+  
 
   const widgetActionMenuData = [
 
@@ -193,21 +186,21 @@ const IndexProgress = () => {
               <ScrollView style={styles.widgets} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: "flex-start", paddingHorizontal: 20}} >
                 {Object.keys(user.tracking.insights).map((key, index) => {
                   const widget = user.tracking.insights[key];
-                  let blockExpenditure = false;
-                  if ((key === "expenditure" ) && (!user.settings.height || !user.settings.birthday || !user.settings.gender || user.tracking.logging["weight"].data.length < 1))
-                    blockExpenditure = true;
 
-                  if (blockExpenditure) return (
-                    <View key={key} style={{alignItems: "center", width: 180, padding: 5, backgroundColor: "#3A3A3A", borderRadius: 10, marginRight: 20,}}>
-                      <ThemedText title={true} adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 20 }} >Expenditure</ThemedText>
-                      <Spacer height={10} />
-                      <ThemedText title={true} adjustsFontSizeToFit={true} numberOfLines={4} style={{fontSize: 15, textAlign: "center", color:  "#A6A6A6"}} >Requires weight, height, age, and gender for accurate calculations.</ThemedText>
-                      <Spacer height={10} />
-                      <Pressable onPress={navigateToHomeProfile} style={{height: 40, backgroundColor: Colors.primaryBlue, padding: 10, borderRadius: 10}}>
-                        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 15, textAlign: "center", color:  "white"}}>Go to Profile &gt; Health</Text>
-                      </Pressable>
-                    </View>
-                  )
+                  
+                  const calResting = ((user.tracking.logging["weight"].data.length > 0) && user.settings.height !== null && user.settings.gender !==null && user.settings.birthday !== null) === true; // True if use has their: weight, height, gender, and age
+                  const calExercising = user.tracking.logging["weight"].data.length > 0 === true; // True if body: weight
+                  const calWalkingSteps = false; // True if: weight, and access to step count
+                  const calFood = false; // True when finished developing meals
+                  const blockExpenditure = key === "expenditure" && ( !calResting || !calExercising || !calWalkingSteps || !calFood);
+                  widget.calResting = calResting;
+                  widget.calExercising = calExercising;
+                  widget.calWalkingSteps = calWalkingSteps;
+                  widget.calFood = calFood;
+                  widget.blockExpenditure = blockExpenditure;
+                  widget.zeroMissingData = key === "expenditure";
+                  
+
                   return  (
                     <View key={key} >
                       <GraphWidget
@@ -218,7 +211,9 @@ const IndexProgress = () => {
                         unit={widget.unit}
                         color={widget.color || "#546FDB"}
                         onPress={() => openProgressExpanded(key, widget)}
-                        
+                        showWarning={widget.blockExpenditure}
+                        zeroMissingData={widget.zeroMissingData}
+                        showDecimals={key === "expenditure" ? 0 : 2}
                       />
                     </View>
                     

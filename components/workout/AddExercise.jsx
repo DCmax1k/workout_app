@@ -121,7 +121,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
             </View>
 
             <View style={[styles.header]}>
-                <ThemedText title={true} style={{fontSize: 23, fontWeight: 700, textAlign: "center"}}>Add exercise</ThemedText>
+                <ThemedText title={true} style={{fontSize: 23, fontWeight: 700, textAlign: "center"}}>Add Exercise</ThemedText>
             </View>
 
             <Spacer height={10} />

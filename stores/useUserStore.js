@@ -46,10 +46,12 @@ const fillMissingKeys = (base, user) => {
     filled.tracking.logging["water intake"].data = [];
   }
 
-  //filled.tracking.logging['water intake'].data = [];
+  // Remove older expenditure layout
+  if (filled?.tracking?.insights?.expenditure?.layout === "none" ) {
+    filled.tracking.insights.expenditure.layout = "expenditure";
+  }
 
-
-
+  
   return filled;
 }
 

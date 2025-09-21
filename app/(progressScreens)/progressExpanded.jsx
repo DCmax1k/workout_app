@@ -11,12 +11,12 @@ import { Pressable, ScrollView } from 'react-native-gesture-handler'
 import Spacer from '../../components/Spacer'
 import pencilIcon from '../../assets/icons/pencil.png'
 import noEye from '../../assets/icons/noEye.png'
-import rotate from '../../assets/icons/rotate.png'
 import { useEffect, useState } from 'react'
 import { useUserStore } from '../../stores/useUserStore'
 import ConfirmMenu from '../../components/ConfirmMenu'
 import emitter from '../../util/eventBus';
 import ProgressBar from '../../components/ProgressBar'
+import ExpenditureBreakdown from '../../components/extra/ExpenditureBreakdown'
 
 
 const screenWidth = Dimensions.get('screen').width;
@@ -236,7 +236,19 @@ const ProgressExpanded = () => {
 
     }
   }
-  
+  let calResting = false;
+  let calExercising = false;
+  let calWalkingSteps = false;
+  let calFood = false;
+  let blockExpenditure = false; 
+  if (widget.category === 'expenditure') {
+    calResting = widget.calResting;
+    calExercising = widget.calExercising;
+    calWalkingSteps = widget.calWalkingSteps;
+    calFood = widget.calFood;
+    blockExpenditure = widget.blockExpenditure;
+  }
+
   
   return (
     <ThemedView style={styles.container}>
@@ -261,14 +273,14 @@ const ProgressExpanded = () => {
               {/* Extra data */}
               <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%"}}>
                 {/* Current */}
-                <View style={{height: 100, width: (screenWidth-80)/3, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
+                <Pressable onPress={clickValue} style={{height: 100, width: (screenWidth-80)/3, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
                   <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Current</ThemedText>
                   <View style={{flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
                     <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 20, textAlign: "center", color: "white", fontWeight: '800'}}>{mostRecentValue}</ThemedText>
                     <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 10, height: 20, textAlign: "center", marginTop: 15, marginLeft: 3, color: "#979797", fontWeight: '800'}}>{widget.unit}</ThemedText>
                   </View>
                   
-                </View>
+                </Pressable>
                 {/* Goal */}
                 <Pressable onPress={clickGoal}>
                   <View style={{height: 100, width: (screenWidth-80)/3, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
@@ -367,7 +379,7 @@ const ProgressExpanded = () => {
             </View>
           )}
           
-
+          {console.log(widget.category === "expenditure")}
           <View style={{marginTop: 20, flex: 1, }}>
             <GraphWidget
               
@@ -377,7 +389,9 @@ const ProgressExpanded = () => {
               unit={widget.unit}
               color={widget.color || "#546FDB"}
               fullWidget={true}
-              
+              showWarning={blockExpenditure}
+              zeroMissingData={widget.zeroMissingData}
+              showDecimals={widget.category === "expenditure" ? 0 : 2}
             />
           </View>
 
@@ -417,6 +431,10 @@ const ProgressExpanded = () => {
 
               </View>
             </View>
+          )}
+
+          {widget.layout === "expenditure" && (
+            <ExpenditureBreakdown widget={widget} />
           )}
 
         </ScrollView>

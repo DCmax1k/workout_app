@@ -91,7 +91,7 @@ const USER = {
         expenditure: {
           data: [], // This data holds 3/4 main groups of calculation, leaving resting to be dynamically added
           unit: "kcal",
-          layout: "none", // weight, calorie, none, bmi 
+          layout: "expenditure", // weight, calorie, none, bmi, expenditure
           color: "#DB8854",
           extraData: {},
         },

@@ -5,43 +5,159 @@ import Spacer from './Spacer'
 import { Colors } from '../constants/Colors'
 import RightArrow from '../assets/icons/rightArrow.png'
 import SectionSelect from './SectionSelect'
+import { useUserStore } from '../stores/useUserStore'
 
+const lbsToKgs = (lbs) => {
+    return 0.453592*lbs;
+}
+const dayProgress = () => {
+    const now = new Date();
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0); // midnight today
+    const elapsed = now.getTime() - startOfDay.getTime();
+    const total = 24 * 60 * 60 * 1000; // total ms in a day
+    return elapsed / total;
+}
 
-const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], onPress = () => {}, ...props}) => {
+const getWeightAtDate = (weights, targetDate) => {
+
+    const targetTimeDate = new Date(targetDate);
+    targetTimeDate.setHours(17,0,0,0); // Checks up to before 5pm if the weight was logged
+    const targetTime = targetTimeDate.getTime();
+
+    // Filter all weights that happened **before or at the target date**
+    const pastWeights = weights.filter(w => new Date(w.date).getTime() <= targetTime);
+
+    if (pastWeights.length === 0) return null; // no weight before this date
+
+    // Find the latest one before the target date
+    const lastWeight = pastWeights.reduce((latest, w) => {
+        return new Date(w.date) > new Date(latest.date) ? w : latest;
+    });
+
+    return lastWeight.amount;
+}
+
+function yearsBetween(date1, date2) {
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    let years = d2.getFullYear() - d1.getFullYear();
+    // Adjust if the second date hasn't reached the month/day of the first date yet
+    if ( d2.getMonth() < d1.getMonth() || (d2.getMonth() === d1.getMonth() && d2.getDate() < d1.getDate())) {
+        years--;
+    }
+    return years;
+}
+
+const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], zeroMissingData = false, showWarning = false, showDecimals=2, onPress = () => {}, ...props}) => {
+    const user = useUserStore((state) => state.user); // Used for expenditure offset adding
 
     const oriData = JSON.parse(JSON.stringify(data));
     const oriDates = JSON.parse(JSON.stringify(dates));
 
-    const sectionOptions = ["Past 5", "Past 10", "All time"];
+    const sectionOptions = ["Daily", "Weekly", "Monthly"]; // Daily shows 7 days, weeklyshows 4 weeks (28 days), monthly shows 6 months (180 days);
     const [section, setSection] = useState(sectionOptions[0]);
 
-    const d = new Date();
+    // Make data in form of daily points
+    const sixMonthsAgo = new Date();
+    const dayOffset = section===sectionOptions[0] ? 7 : section===sectionOptions[1] ? 28 : 180
+    sixMonthsAgo.setDate(sixMonthsAgo.getDate() - dayOffset);
+    sixMonthsAgo.setHours(0, 0, 0, 0);
 
-    if (data.length < 2) {
-        data = [oriData[0] || 0, oriData[0] || 0];
-        dates = [oriDates[0] || d.getTime(), oriDates[0] || d.getTime()];
-    } else {
-        if (section === sectionOptions[0]) {
-            // Past 5
-            if (data.length > 5) {
-                data = oriData.splice(oriData.length - 5, 5);
-                dates = oriDates.splice(oriDates.length - 5, 5);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const dailyDataPoints = [];
+    const dailyDatePoints = [];
+    
+    // Create 6 months of 0's if zeroMissingData == true
+    if (zeroMissingData) {
+        for (let day = new Date(sixMonthsAgo); day.getTime() <= today.getTime(); day.setDate(day.getDate() + 1)) {
+            let expenditureOffset = 0; // For the day, calculate resting amount
+            const userWeightWidget = user.tracking.logging["weight"];
+            if (((userWeightWidget.data.length > 0) && user.settings.height !== null && user.settings.gender !==null && user.settings.birthday !== null) === true) { // Same logic in progress index
+                //const userWeight = userWeightWidget.data[userWeightWidget.data.length-1].amount;
+                const userWeight = getWeightAtDate(userWeightWidget.data, day);
+                const weightKgs = userWeight ? userWeightWidget.unit === "lbs" ? lbsToKgs(userWeight) : userWeight : null;
+                const age = yearsBetween(user.settings.birthday, today);
+                const fracOfToday = day.getTime() !== today.getTime() ? 1 : dayProgress();
+                if (userWeight) {
+                    if (user.settings.gender === "male") {
+                        expenditureOffset = (10*weightKgs) + (6.25*user.settings.height) - (5*age) + 5;
+                    } else if (user.settings.gender === "female") {
+                        expenditureOffset = (10*weightKgs) + (6.25*user.settings.height) - (5*age) - 161;
+                    } else {
+                        expenditureOffset = (10*weightKgs) + (6.25*user.settings.height) - (5*age) - 100;
+                    }
+                    expenditureOffset *= fracOfToday;
+                } 
             }
-            
-        } else if (section === sectionOptions[1]) {
-            // Past 10
-            if (data.length > 10) {
-                data = oriData.splice(oriData.length - 10, 10);
-                dates = oriDates.splice(oriDates.length - 10, 10);
-            }
-        } else {
-            data = oriData;
-            dates = oriDates;
+            dailyDataPoints.push(0+(expenditureOffset));
+            dailyDatePoints.push(day.getTime());
         }
+        // Loop through oriData and fit into dailyData
+        const dailyDate = new Date(sixMonthsAgo);
+        let loopInd = 0; // index of dailyData
+        for (let i = 0; i<oriData.length; i++) {
+            const dataDate = new Date(oriDates[i]);
+            dataDate.setHours(0,0,0,0);
+            // Catch up the dailys
+            if (dataDate.getTime() > dailyDate.getTime()) {
+                while (dataDate.getTime() > dailyDate.getTime()) {
+                    dailyDate.setDate(dailyDate.getDate() + 1);
+                    loopInd++;
+                }
+                
+            }
+            if (dataDate.getTime() === dailyDate.getTime()) {
+                dailyDataPoints[loopInd] = dailyDataPoints[loopInd] + oriData[i];
+                dailyDatePoints[loopInd] = oriDates[i];
+                loopInd++;
+                dailyDate.setDate(dailyDate.getDate()+1);
+            } else {
+                continue; // Data is from before sixMonthsAgo
+            }
+        }
+        data = dailyDataPoints;
+        dates = dailyDatePoints;
+    } else {
+        if (data.length < 2) {
+            data = [oriData[0] || 0, oriData[0] || 0];
+            dates = [oriDates[0] || today.getTime(), oriDates[0] || today.getTime()];
+        }
+        data = data.filter((d, ind) => new Date(dates[ind]).getTime() >= sixMonthsAgo.getTime());
+        // else {
+        //     if (section === sectionOptions[0]) {
+        //         // Past 5
+        //         if (data.length > 5) {
+        //             data = oriData.splice(oriData.length - 5, 5);
+        //             dates = oriDates.splice(oriDates.length - 5, 5);
+        //         }
+                
+        //     } else if (section === sectionOptions[1]) {
+        //         // Past 10
+        //         if (data.length > 10) {
+        //             data = oriData.splice(oriData.length - 10, 10);
+        //             dates = oriDates.splice(oriDates.length - 10, 10);
+        //         }
+        //     } else {
+        //         // Monthly - Past 180 days
+        //         data = oriData;
+        //         dates = oriDates;
+        //     }
+        // }
+        
     }
+    
+
+    
+
+
+    
+
 
     let showYearRecent = {};
-    const showYear = d.getFullYear() !== new Date(dates[dates.length - 1]).getFullYear();
+    const showYear = today.getFullYear() !== new Date(dates[dates.length - 1]).getFullYear();
     if (showYear) {
         showYearRecent.year = "numeric";
     }
@@ -62,7 +178,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
     const backGridTopOffset = 0;
     const backGridRightOffset = 40;
 
-    const noData = oriData.length === 0;
+    const noData = data.length === 0;
 
     const max = !noData ? Math.max(...data) : 0;
     const min = !noData ? Math.min(...data) : 0;
@@ -74,7 +190,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
     let endBottomPerfentOffset = ((data[data.length - 1]-min)/(max-min));
     if (isNaN(endBottomPerfentOffset)) endBottomPerfentOffset = 0.5;
      const endBottomOffset = endBottomPerfentOffset * graphHeight; // For middle number
-    if (endBottomPerfentOffset < 0.1 || endBottomPerfentOffset > 0.9) {
+    if (endBottomPerfentOffset < fullWidget ? 0.1 : 0.2 || endBottomPerfentOffset > fullWidget ? 0.9 : 0.8) {
         showMiddle = false;
     }
     if (max === min) {
@@ -98,9 +214,16 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
 
         <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
             <View>
-                <Text  style={styles.title}>{props.title}</Text>
+                <View style={{flexDirection: "row", alignItems: "center", marginBottom: 5}}>
+                    {showWarning && (<View style={{height: 22, width: 22, backgroundColor: "#B13939", borderRadius: 99999, justifyContent: "center", alignItems: "center", marginRight: 5}}>
+                        <Text style={{color: "white", fontWeight: "800", fontSize: 17}}>!</Text>
+                    </View>)} 
+                    <Text  style={[styles.title, ]}>{props.title}</Text>
+                    
+                </View>
+                
                 <View style={{flexDirection: "row", alignItems: "flex-end"}}>
-                    <Text style={styles.amount}>{noData ? "No data" : parseDecimals(lastItem, 2)}</Text>
+                    <Text style={styles.amount}>{noData ? "No data" : parseDecimals(lastItem, showDecimals)}</Text>
                     <Text style={styles.unit}>{noData ? "" : props.unit}</Text>
                 </View>
             </View>
@@ -135,7 +258,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
                 {(<View style={{width: "100%", height: 1, backgroundColor: "#585858", borderRadius: 99999, position: "relative", top: 0, left: 0, transform: [{translateY: -2*backGridTopOffset}], opacity: showMax ? 1 : 0}} >
                     
                     <View style={{position: "absolute", height: 50, top: -25, left: "101%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                        <Text style={{color: "#848484", fontSize: 12}}>{parseDecimals(max, 2)}</Text>
+                        <Text style={{color: "#848484", fontSize: 12}}>{parseDecimals(max, showDecimals)}</Text>
                     </View>
                 </View>)}
 
@@ -155,7 +278,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
 
                 {(<View style={{width: "100%", height: 1, backgroundColor: "#585858", borderRadius: 99999, position: "relative", bottom: 0, left: 0, transform: [{translateY: -2*backGridTopOffset}], opacity: showMin ? 1 : 0}} >
                     <View style={{position: "absolute", height: 50, top: -25, left: "101%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                        <Text style={{color: "#848484", fontSize: 12}}>{ parseDecimals(min, 2) }</Text>
+                        <Text style={{color: "#848484", fontSize: 12}}>{ parseDecimals(min, showDecimals) }</Text>
                     </View>
                 </View>)}
             </View>
@@ -224,7 +347,6 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 16,
         color: Colors.dark.text,
-        marginBottom: 5,
     },
     amount: {
         fontSize: 20,
