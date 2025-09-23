@@ -1,4 +1,4 @@
-import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Image, StyleSheet, Text, View, ScrollView, Pressable } from 'react-native'
 
 import ThemedView from '../../components/ThemedView'
 import ThemedText from '../../components/ThemedText'
@@ -7,7 +7,6 @@ import { router, useLocalSearchParams } from 'expo-router'
 import TitleWithBack from '../../components/TitleWithBack'
 import GraphWidget from '../../components/GraphWidget'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Pressable, ScrollView } from 'react-native-gesture-handler'
 import Spacer from '../../components/Spacer'
 import pencilIcon from '../../assets/icons/pencil.png'
 import noEye from '../../assets/icons/noEye.png'
@@ -160,6 +159,7 @@ const ProgressExpanded = () => {
   }
 
   const addToToday = () => {
+    console.log("TESTING");
     const currentTime = Date.now();
     const valueToAdd = widget.extraData.valueToAdd;
     const data = widget.data;
@@ -330,6 +330,7 @@ const ProgressExpanded = () => {
                   <Text style={{color: "white", fontSize: 20, fontWeight: "800"}}>{widget.extraData.valueToAdd}</Text>
                   <Text style={{color: "#717171", fontSize: 20}}>{widget.unit}</Text>
                 </Pressable>
+                
                 <Pressable onPress={addToToday} style={{width: (screenWidth-40-20)/2, height: 60, borderRadius: 10, backgroundColor: widget.color, overflow: "hidden"}}>
                   <View style={{height: "100%", width: "100%", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.15)"}}>
                     <Text style={{color: "white", fontSize: 20,  fontWeight: "600"}}>Add to today</Text>
@@ -394,10 +395,6 @@ const ProgressExpanded = () => {
               showDecimals={widget.category === "expenditure" ? 0 : 2}
             />
           </View>
-
-
-
-
 
           {widget.layout === "bmi" && (
             <View>
