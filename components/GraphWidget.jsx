@@ -49,7 +49,7 @@ function yearsBetween(date1, date2) {
     return years;
 }
 
-const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], zeroMissingData = false, showWarning = false, showDecimals=2, onPress = () => {}, ...props}) => {
+const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], zeroMissingData = false, showWarning = false, showDecimals=2, onPress = () => {}, disablePress=false, ...props}) => {
     const user = useUserStore((state) => state.user); // Used for expenditure offset adding
 
     const oriData = JSON.parse(JSON.stringify(data));
@@ -209,8 +209,8 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
     }
     
   return (
-    <View style={[styles.container, (fullWidget || fillWidth) ? {flex: 1, width: "100%"} : {width: 200}, props.style]} >
-        {fullWidget === false && (<Pressable style={{position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 10}} onPress={onPress} />)} 
+    <View style={[styles.container, (fullWidget || fillWidth) ? {flex: 1, width: "100%", height: 205,} : {width: 200, height: 170,}, fullWidget && {height: 350}, props.style]} >
+        {fullWidget === false && disablePress === false && (<Pressable style={{position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 10}} onPress={onPress} />)} 
 
         <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
             <View>
@@ -338,7 +338,7 @@ export default GraphWidget
 
 const styles = StyleSheet.create({
     container: {
-        width: 180,
+
         padding: 10,
         backgroundColor: "#3A3A3A",
         borderRadius: 10,

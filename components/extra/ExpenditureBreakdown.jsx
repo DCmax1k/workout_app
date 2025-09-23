@@ -230,9 +230,12 @@ const calTitleForCurrent = page === 'rest' ? "Resting" : page === 'exercise' ? "
                                             Expenditure is not currently tracking your daily step count. Calculations for this metric require your weight, and allowed access to your step count.
                                         </ThemedText>
                                         <Spacer height={20} />
-                                        <Pressable onPress={navigateToHomeProfile} style={{height: 40, backgroundColor: Colors.primaryBlue, padding: 10, borderRadius: 10}}>
+                                        {/* <Pressable onPress={navigateToHomeProfile} style={{height: 40, backgroundColor: Colors.primaryBlue, padding: 10, borderRadius: 10}}>
                                             <Text adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 15, textAlign: "center", color:  "white"}}>Go to Profile &gt; Health</Text>
-                                        </Pressable>
+                                        </Pressable> */}
+                                        <ThemedText style={{textAlign: "center", fontSize: 13}}>
+                                            This feature is coming soon!
+                                        </ThemedText>
                                     </View>
                                     
                                 )}
@@ -249,7 +252,11 @@ const calTitleForCurrent = page === 'rest' ? "Resting" : page === 'exercise' ? "
                                 ) : (
                                     <View>
                                         <ThemedText style={{textAlign: "center", fontSize: 13}}>
-                                            Expenditure is not currently tracking your digestion of food. This feature is coming soon!
+                                            Expenditure is not currently tracking your digestion of food.
+                                        </ThemedText>
+                                        <Spacer height={20} />
+                                        <ThemedText style={{textAlign: "center", fontSize: 13}}>
+                                            This feature is coming soon!
                                         </ThemedText>
                                     </View>
                                 )}

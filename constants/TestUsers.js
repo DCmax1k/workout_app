@@ -58,30 +58,29 @@ const USER = {
   // },],
     completedExercises:{},// { "2": [{date: 23235235, sets: [{weight: "135", reps: "10"}], shared: true,}] }, // simple data, by exerciseId
     savedWorkouts:[],// [{name: "Legs", id: "234", exercises: [ {id: "2", note:"", sets: [{lbs: "135", reps: "10"}]},] }, {name: "Chest and Shoulders", id: "2344", exercises: [ {id: "2314234", note:"", sets: [{lbs: "135", reps: "10"}]},{id: "4", note:"", sets: [{lbs: "135", reps: "10"}]}] }, {name: "Back", id: "345", exercises: [ {id: "4", note:"", sets: [{lbs: "135", reps: "10"}]},] }],
+    savedMeals: [], //  {name, image, id, category, nutrition: {cal, pro, car, fat}}
+    consumedMeals: {}, // {"23523500000": [{name, image, id, category, nutrition: {cal, pro, car, fat}]}
+
     tracking: {
-      visibleWidgets: [], // ["calories", "ex_89023u42i0jr"]
+      visibleWidgets: [], // ["calories", "ex_89023u42i0jr", "nutrition"]
       nutrition: {
-        meals: [],
         "calories": {
-          data: [],
+          // Data is calculated live from consumedMeals and the date
           extraData: {
             goal: 2000,
           }
         },
         "protein": {
-          data: [],
           extraData: {
             goal: 2000,
           }
         },
         "carbs": {
-          data: [],
           extraData: {
             goal: 2000,
           }
         },
         "fat": {
-          data: [],
           extraData: {
             goal: 2000,
           }
@@ -206,6 +205,8 @@ const USER = {
     // Only local not in live db
     activeWorkout: null,
     editActiveWorkout: null,
+    editActivePlate: null,
+    editActiveMeal: null,
     activeReopenExercise: null,
 };
 

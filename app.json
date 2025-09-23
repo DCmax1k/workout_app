@@ -35,7 +35,8 @@
       "expo-router",
       "expo-audio",
       "expo-font",
-      "expo-asset"
+      "expo-asset",
+      "expo-health-connect"
     ],
     "extra": {
       "router": {},
@@ -43,9 +44,7 @@
         "projectId": "25e0b73e-7b79-4da3-bba6-a652c8220796"
       }
     },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
+    "runtimeVersion": "1.0.0",
     "updates": {
       "url": "https://u.expo.dev/25e0b73e-7b79-4da3-bba6-a652c8220796"
     }

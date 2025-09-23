@@ -1,4 +1,4 @@
-import { Dimensions, Image, Pressable,ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Image, Platform, Pressable,ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
@@ -19,6 +19,9 @@ import PopupSheet from '../../../components/PopupSheet'
 import Calender from '../../../components/Calender'
 import ScrollPicker from '../../../components/ScrollPicker'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
+import { Colors } from '../../../constants/Colors'
+// import * as HealthConnect from 'expo-health-connect';
+
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -73,15 +76,85 @@ const Profile = () => {
         return () => sub.remove();
       }, [emitter, updateUser, user.tracking.logging["weight"]]);
 
+      // useEffect(() => {
+      //   (async () => {
+      //     // Check availability
+      //     const isAvailable = await HealthConnect.isAvailableAsync();
+      //     console.log("Health Connect available:", isAvailable);
+
+      //     if (!isAvailable) return;
+
+          
+
+          
+      //   })();
+      // })
+
     const clearUserData = () => {
       // Signout
       setUser(null);
+    }
+
+    const clickAppleHealth = () => {
+      setConfirmMenuData({
+            title: "Coming soon!",
+            subTitle: "",
+            subTitle2: "",
+            option1: "Okay",
+            option1color: "#546FDB",
+            confirm: () => setConfirmMenuActive(false),
+        });
+        setConfirmMenuActive(true);
+    }
+    const clickGoogleHealth = async () => {
+      setConfirmMenuData({
+            title: "Coming soon!",
+            subTitle: "",
+            subTitle2: "",
+            option1: "Okay",
+            option1color: "#546FDB",
+            confirm: () => setConfirmMenuActive(false),
+        });
+        setConfirmMenuActive(true);
+      // console.log("Requesting access for google");
+      // // Request permissions
+      // const granted = await HealthConnect.requestPermissionsAsync([
+      //   { accessType: "read", recordType: "Steps" },
+      // ]);
+
+      // console.log("Permissions granted:", granted);
+
+      // // Read step count
+      // const now = new Date();
+      // const yesterday = new Date(now);
+      // yesterday.setDate(now.getDate() - 1);
+
+      // const steps = await HealthConnect.readRecordsAsync("Steps", {
+      //   timeRangeFilter: {
+      //     operator: "between",
+      //     startTime: yesterday.toISOString(),
+      //     endTime: now.toISOString(),
+      //   },
+      // });
+
+      // console.log("Steps:", steps);
     }
 
     const showHealthTooltip = () => {
         setConfirmMenuData({
             title: "Why do we need this?",
             subTitle: "Body stats like your height, weight, and age are used to accurately provide insights about your health. Gender is used to more accurately calculate your calorie expenditure.",
+            subTitle2: "",
+            option1: "Okay",
+            option1color: "#546FDB",
+            confirm: () => setConfirmMenuActive(false),
+        });
+        setConfirmMenuActive(true);
+    }
+    const showPlatformHealthTooltip = () => {
+      setConfirmMenuData({
+            title: "Why do we need this?",
+            subTitle: "Metrics like your daily step count are used to accurately provide insights about your daily expenditure.",
             subTitle2: "",
             option1: "Okay",
             option1color: "#546FDB",
@@ -325,6 +398,20 @@ const Profile = () => {
                   </View>
                 </Pressable>
 
+              </View>
+              <Spacer height={20} />
+              {/* Connect Android/Ios Google Health / Apple HealthKit */}
+              <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                <View style={{flexDirection: "row", alignItems: "center"}}>
+                  <ThemedText style={[{ fontSize: 15}]} >{Platform.OS === "ios" ? "Apple Health" : "Google Health"}</ThemedText>
+                  <Pressable onPress={showPlatformHealthTooltip} style={{height: 20, width: 20, borderColor: '#585858', borderWidth: 2, borderRadius: 99999 , marginLeft: 10, alignItems: "center", justifyContent: "center"}}>
+                    <Text style={{color: "#585858", fontSize: 15, marginTop: -1 }}>?</Text>
+                  </Pressable>
+                </View>
+                
+                <Pressable onPress={Platform.OS === "ios" ? clickAppleHealth : clickGoogleHealth} style={{backgroundColor: Colors.primaryBlue, borderRadius: 5, paddingVertical: 10, paddingHorizontal: 15}}>
+                  <ThemedText style={[{ fontSize: 13, color: "white", fontWeight: 800}]} >{Platform.OS === "ios" ? "Connect Apple HealthKit" : "Connect Google Health"}</ThemedText>
+                </Pressable>
               </View>
               
               <Spacer height={100} />

@@ -77,31 +77,34 @@ const Dropdown = ({data, height = 50,maxHeight = 225, style, selectedId, setSele
                     </Pressable>
                     )})}
             </ScrollView> */}
-            <FlatList
-                style={{height: scrollViewHeight, backgroundColor: "#323232", borderBottomRightRadius: 10, borderBottomLeftRadius: 10}}
-                showsVerticalScrollIndicator={false}
-                data={data}
-                keyExtractor={(item) => item.id.toString()}
-                initialScrollIndex={data.findIndex((item) => item.id === selected.id)}
-                getItemLayout={(data, index) => ({
-                    length: height,
-                    offset: height * index,
-                    index,
-                })}
-                renderItem={({ item }) =>
-                    (hideSelectedFromOptions === false || selected.id !== item.id) && (
-                    <Pressable
-                        style={[styles.item, { height, fontSize: 18 }]}
-                        onPress={() => {
-                        selectItem(item.id);
-                        setOverflowShowing(false);
-                        }}
-                    >
-                        <Text style={styles.itemText}>{item.title}</Text>
-                    </Pressable>
-                    )
-                }
-                />
+            <View style={{maxHeight: scrollViewHeight,}}>
+
+                <FlatList
+                    style={{ backgroundColor: "#323232", borderBottomRightRadius: 10, borderBottomLeftRadius: 10, height: scrollViewHeight,}}
+                    showsVerticalScrollIndicator={false}
+                    data={data}
+                    keyExtractor={(item) => item.id.toString()}
+                    initialScrollIndex={data.findIndex((item) => item.id === selected.id)}
+                    getItemLayout={(data, index) => ({
+                        length: height,
+                        offset: height * index,
+                        index,
+                    })}
+                    renderItem={({ item }) =>
+                        (hideSelectedFromOptions === false || selected.id !== item.id) && (
+                        <Pressable
+                            style={[styles.item, { height, fontSize: 18 }]}
+                            onPress={() => {
+                            selectItem(item.id);
+                            setOverflowShowing(false);
+                            }}
+                        >
+                            <Text style={styles.itemText}>{item.title}</Text>
+                        </Pressable>
+                        )
+                    }
+                    />
+            </View>
             
             
         </Animated.View>)}
