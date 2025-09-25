@@ -35,23 +35,7 @@ const IndexProgress = () => {
   const user = useUserStore((state) => state.user);
   const updateUser = useUserStore((state) => state.updateUser);
 
-  const [confirmMenuActive, setConfirmMenuActive] = useState(false);
-  const [confirmMenuData, setConfirmMenuData] = useState();
-
   const [addWidget, setAddWidget] = useState(false);
-
-
-  const showComingSoonMessage = () => {
-      setConfirmMenuData({
-          title: "Coming soon!",
-          subTitle: "This feature is not yet available but will be coming in a future update.",
-          subTitle2: "",
-          option1: "Awesome!",
-          option1color: "#546FDB",
-          confirm: () => setConfirmMenuActive(false),
-      });
-      setConfirmMenuActive(true);
-  }
 
 
   
@@ -153,7 +137,7 @@ const IndexProgress = () => {
   return (
 
     <ThemedView style={styles.container}>
-        <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
+        
         <SafeAreaView style={{flex: 1}}>
 
         {addWidget && (

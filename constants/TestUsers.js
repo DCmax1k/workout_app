@@ -72,17 +72,17 @@ const USER = {
         },
         "protein": {
           extraData: {
-            goal: 2000,
+            goal: 150,
           }
         },
         "carbs": {
           extraData: {
-            goal: 2000,
+            goal: 150,
           }
         },
         "fat": {
           extraData: {
-            goal: 2000,
+            goal: 150,
           }
         }
       },

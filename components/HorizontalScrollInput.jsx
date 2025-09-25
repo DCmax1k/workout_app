@@ -16,6 +16,10 @@ const markerHeight = 20;
 
 const clamp = (num, min, max) => Math.max(min, Math.min(num, max));
 const round1 = (num) => Math.round(num * 10) / 10;
+const roundToIncrement = (num, increment) => {
+  return round1(Math.round(num / increment) * increment);
+};
+
 
 const TickItem = React.memo(({ item, scrollItemWidth, increment }) => {
   const markerHeight = 20;
@@ -91,7 +95,7 @@ const HorizontalScrollInput = ({
 
 
 
-  const getItem = (_, index) => round1(range[0] + index * increment);
+  const getItem = (_, index) => roundToIncrement(range[0] + index * increment, increment);
   const getItemCount = () => totalItems;
 
   const getItemLayout = (_, index) => ({
@@ -101,7 +105,7 @@ const HorizontalScrollInput = ({
   });
 
   const endEdit = () => {
-    const valueToSet = round1(parseFloat(activeEdit) || 0);
+    const valueToSet = roundToIncrement(parseFloat(activeEdit) || 0, increment);
     console.log("Setting value", valueToSet);
     setValue(valueToSet);
     setActiveEdit(false);
@@ -216,7 +220,7 @@ const HorizontalScrollInput = ({
               range[0],
               range[1]
             );
-            setValue(round1(newValue));
+            setValue(roundToIncrement(newValue, increment));
           }}
         />
       </View>

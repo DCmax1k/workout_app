@@ -42,7 +42,7 @@ const InputValueScreen = () => {
   return (
     <ThemedView style={{flex: 1, height: screenHeight, position: "relative"}}>
         <SafeAreaView style={{flex: 1}}>
-            <TitleWithBack title={firstCapital(data.title)} />
+            <TitleWithBack title={firstCapital(data.title || "")} />
             <Spacer />
             <HorizontalScrollInput initialValue={data.value} value={value} setValue={setValue} increment={data.increment} range={data.range} unit={data.unit} scrollItemWidth={data.scrollItemWidth || 10} />
 

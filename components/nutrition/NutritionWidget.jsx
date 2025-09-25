@@ -4,24 +4,32 @@ import ProgressRing from '../ProgressRing'
 import Spacer from '../Spacer'
 import { Colors } from '../../constants/Colors';
 import RightArrow from '../../assets/icons/rightArrow.png'
+import { useUserStore } from '../../stores/useUserStore';
+import { router } from 'expo-router';
 
 const screenWidth = Dimensions.get("screen").width;
 
 const NutritionWidget = ({style}) => {
+    const user = useUserStore(state => state.user);
 
     const calorieCount = 1160;
-    const calorieGoal = 2000;
+    const calorieGoal = user.tracking.nutrition["calories"].extraData.goal;;
     const proteinCount = 124;
-    const proteinGoal = 234;
+    const proteinGoal = user.tracking.nutrition["protein"].extraData.goal;;
     const carbCount = 134;
-    const carbGoal = 300;
+    const carbGoal = user.tracking.nutrition["carbs"].extraData.goal;;
     const fatCount = 34;
-    const fatGoal = 78;
+    const fatGoal = user.tracking.nutrition["fat"].extraData.goal;;
     const todaysPlateCount = 1;
 
 
     const straightToLogFood = () => {
-        console.log("Sraight to log food");
+        router.push({
+            pathname: "/nutrition",
+            params: {
+                data: "straighToLogFood",
+            }
+        });
     }
     
 
