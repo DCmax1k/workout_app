@@ -1,5 +1,5 @@
 import { Alert, Dimensions, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
 import BlueButton from '../../../components/BlueButton'
@@ -19,6 +19,10 @@ import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown, LinearTransition, u
 import ActionMenu from '../../../components/ActionMenu'
 import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist'
 import { ScrollView } from 'react-native-gesture-handler'
+import calculateExpenditure, { useCalculateExpenditure } from '../../../util/calculateExpenditure'
+import memoizeOne from 'memoize-one'
+import NutritionWidget from '../../../components/nutrition/NutritionWidget'
+
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -65,26 +69,42 @@ const IndexProgress = () => {
       },
     });
   } 
-  const widgets = ["weight", "sleep amount", "sleep quality", "water intake"];
+  const openNutrition = () => {
+    router.push({
+      pathname: "/nutrition",
+    });
+  }
+
+  const widgets = ["nutrition", "weight", "sleep amount", "sleep quality", "water intake"];
   const widgetsAvailable = widgets.filter(w => !user.tracking.visibleWidgets.includes(w));
   const selectAddWidget = (wid) => {
     const visibleWidgets = user.tracking.visibleWidgets;
-    const ind = visibleWidgets.indexOf(wid)
-    if (ind >= 0) return setAddWidget(false);
-    
-    visibleWidgets.push(wid)
+    if (visibleWidgets.includes(wid)) return setAddWidget(false);
 
-    updateUser({tracking: { visibleWidgets: visibleWidgets}});
+    const updated = [...visibleWidgets, wid]; // clone, don’t mutate
+    
+    updateUser({ tracking: { visibleWidgets: updated } });
     setAddWidget(false);
-  }
+  };
     
 
   const setVisibleWidgetsFlatlistData = (data) => {
     const newVisibleWidgets = data.map(d => d.key);
     updateUser({tracking: {visibleWidgets: newVisibleWidgets}});
   }
-  const visibleWidgetsFlatlistData = user.tracking.visibleWidgets.map((key, i) => {
-          if (key === "nutrition") return null;
+
+  console.log(user.tracking.visibleWidgets);
+  const updatedVisibleWidgets = user.tracking.visibleWidgets;
+  if (!updatedVisibleWidgets.includes("nutrition")) updatedVisibleWidgets.unshift("nutrition");
+  const visibleWidgetsFlatlistData = updatedVisibleWidgets.map((key, i) => {
+
+          if (key === "nutrition") {
+            return {
+              key,
+              height: (screenWidth-60)/2,
+              width: screenWidth - 40,
+            }
+          }
           const widget = user.tracking.logging[key];
           return {
             key,
@@ -98,6 +118,37 @@ const IndexProgress = () => {
 
                 ];
 
+
+  const rawExpData = useUserStore(
+    (state) => state.user.tracking.insights?.expenditure?.data ?? []
+  );
+
+  const expData = useMemo(() => rawExpData, [rawExpData]);
+
+  const rawWeightData = useUserStore(
+    (state) => state.user.tracking.logging.weight?.data ?? []
+  );
+
+  const weightData = useMemo(() => rawWeightData, [rawWeightData]);
+  const weightUnit = useUserStore(
+    (state) => state.user.tracking.logging.weight?.unit ?? "kg"
+  );
+
+  const height = useUserStore((state) => state.user.settings.height ?? null);
+  const gender = useUserStore((state) => state.user.settings.gender ?? null);
+  const birthday = useUserStore((state) => state.user.settings.birthday ?? null);
+
+  const expenditureUser = useMemo(() => ({
+    settings: { height, gender, birthday },
+    tracking: {
+      logging: {
+        weight: { data: weightData, unit: weightUnit }
+      }
+    }
+  }), [height, gender, birthday, weightData, weightUnit]);
+
+
+  const expenditureData = calculateExpenditure(expData.map(it => it.amount), expData.map(it => it.date), expenditureUser);
 
   return (
 
@@ -177,6 +228,24 @@ const IndexProgress = () => {
               onDragEnd={({data}) => setVisibleWidgetsFlatlistData(data)}
               keyExtractor={(item) => item.key}
               renderItem={({item, drag, isActive}) => {
+
+
+                if (item.key === "nutrition") return (
+                  <ScaleDecorator>
+                    <TouchableOpacity
+                      onLongPress={drag}
+                      disabled={isActive}
+                      onPress={() => openNutrition()}
+                      style={{width: item.width, marginHorizontal: 20}}
+                    >
+                    <NutritionWidget
+                      style={{marginBottom: 20}}
+                    />
+                    </TouchableOpacity>
+                  </ScaleDecorator>
+                ) 
+                
+
                 return (
                   <ScaleDecorator>
                     <TouchableOpacity
@@ -221,21 +290,30 @@ const IndexProgress = () => {
                         widget.calWalkingSteps = calWalkingSteps;
                         widget.calFood = calFood;
                         widget.blockExpenditure = blockExpenditure;
-                        widget.zeroMissingData = key === "expenditure";
+                        
+                        const data = widget.data.map(it => it.amount);
+                        const dates = widget.data.map(it => it.date);
+
+                        widget.calculatedData = data;
+                        widget.calculatedDates = dates;
+
+                        if (key === 'expenditure') {
+                          widget.calculatedData = expenditureData.data;
+                          widget.calculatedDates = expenditureData.dates;
+                        }
                         
 
                         return  (
                           <View key={key} >
                             <GraphWidget
                               key={index}
-                              data={widget.data.map((item) => item.amount)}
-                              dates={widget.data.map((item) => item.date)}
+                              data={widget.calculatedData}
+                              dates={ widget.calculatedDates}
                               title={firstCapital(key)}
                               unit={widget.unit}
                               color={widget.color || "#546FDB"}
                               onPress={() => openProgressExpanded(key, widget)}
                               showWarning={widget.blockExpenditure}
-                              zeroMissingData={widget.zeroMissingData}
                               showDecimals={key === "expenditure" ? 0 : 2}
                             />
                           </View>

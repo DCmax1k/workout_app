@@ -16,6 +16,7 @@ import ConfirmMenu from '../../components/ConfirmMenu'
 import emitter from '../../util/eventBus';
 import ProgressBar from '../../components/ProgressBar'
 import ExpenditureBreakdown from '../../components/extra/ExpenditureBreakdown'
+import sinceWhen from '../../util/sinceWhen'
 
 
 const screenWidth = Dimensions.get('screen').width;
@@ -82,12 +83,6 @@ const ProgressExpanded = () => {
     }
   }
   
-
-  const showYear = new Date(mostRecentDate).getFullYear() !== new Date().getFullYear();
-  let showYearOptions = {};
-  if (showYear) {
-    showYearOptions.year = "numeric";
-  }
 
   //console.log(widget);
 
@@ -302,7 +297,7 @@ const ProgressExpanded = () => {
                 <View style={{height: 100, width: (screenWidth-80)/3, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
                   <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Last recorded</ThemedText>
                   <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
-                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={showYear ? 2 : 1} style={{fontSize: showYear ? 16 : 20, textAlign: "center", color: "white", fontWeight: '800'}}>{mostRecentDate ? new Date( mostRecentDate).toLocaleDateString('en-US', {month: "short", day: "numeric", ...showYearOptions}) : "- -"}</ThemedText>
+                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={2} style={{fontSize: 16, textAlign: "center", color: "white", fontWeight: '800'}}>{mostRecentDate ? sinceWhen(mostRecentDate) : "- -"}</ThemedText>
                   </View>
                   
                 </View>
@@ -371,7 +366,7 @@ const ProgressExpanded = () => {
                 <View style={{height: 100, width: (screenWidth-80)/3, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
                   <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Last recorded</ThemedText>
                   <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
-                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={showYear ? 2 : 1} style={{fontSize: showYear ? 16 : 20, textAlign: "center", color: "white", fontWeight: '800'}}>{mostRecentDate ? new Date( mostRecentDate).toLocaleDateString('en-US', {month: "short", day: "numeric", ...showYearOptions}) : "- -"}</ThemedText>
+                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={2} style={{fontSize:  16, textAlign: "center", color: "white", fontWeight: '800'}}>{mostRecentDate ? sinceWhen(mostRecentDate) : "- -"}</ThemedText>
                   </View>
                   
                 </View>
@@ -380,12 +375,11 @@ const ProgressExpanded = () => {
             </View>
           )}
           
-          {console.log(widget.category === "expenditure")}
           <View style={{marginTop: 20, flex: 1, }}>
             <GraphWidget
               
-              data={widget.data.map((item) => item.amount)}
-              dates={widget.data.map((item) => item.date)}
+              data={widget.calculatedData || widget.data.map((item) => item.amount)}
+              dates={widget.calculatedDates || widget.data.map((item) => item.date)}
               title={firstCapital(widget.category)}
               unit={widget.unit}
               color={widget.color || "#546FDB"}
@@ -393,6 +387,7 @@ const ProgressExpanded = () => {
               showWarning={blockExpenditure}
               zeroMissingData={widget.zeroMissingData}
               showDecimals={widget.category === "expenditure" ? 0 : 2}
+              animationDuration={1000}
             />
           </View>
 
