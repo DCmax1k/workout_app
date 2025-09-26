@@ -1,4 +1,4 @@
-import { Alert, Dimensions, Image, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, Dimensions, Image, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import ThemedView from '../components/ThemedView'
 import { useUserStore } from '../stores/useUserStore'
@@ -20,6 +20,8 @@ import SwipeToDelete from '../components/SwipeToDelete'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import getAllExercises from '../util/getAllExercises'
 import deepEqual from '../util/deepEqual'
+import { generateUniqueId } from '../util/uniqueId'
+import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
@@ -36,6 +38,9 @@ const EditWorkout = () => {
 
   const params = useLocalSearchParams();
   const workoutBeforeEdits = params.workout ? JSON.parse(params.workout) : {};
+
+  const [isDragging, setIsDragging] = useState(false);
+
   
   const [exerciseModal, setExerciseModal] = useState(false);
   const [confirmMenuActive, setConfirmMenuActive] = useState(false);
@@ -90,7 +95,7 @@ const EditWorkout = () => {
     const completeExercises = exerciseIds.map(id => {
       const finding = allExercises.find(ex => ex.id === id);
       if (finding.sets) return finding;
-      else return {...finding, sets: []}
+      else return {...finding, sets: [], uniqueId: generateUniqueId(),} // unique id for sorting purposes
     });
     const exercisesAddedTo = [...exercises, ...completeExercises];
     updateWorkout({exercises: exercisesAddedTo});
@@ -155,6 +160,22 @@ const EditWorkout = () => {
     }
   }
 
+  const exerciseFlatlistData = exercises.map((ex, i) => {
+    if (!ex.uniqueId) {
+      ex.uniqueId = generateUniqueId(); // only assign if missing
+    }
+    return {
+      key: ex.uniqueId,
+      index: i,
+      width: screenWidth - 40,
+      exercise: {...ex},
+    }
+  })
+  const setExerciseFlatlistData = (data) => {
+    const newExercises = data.map(item => item.exercise);
+    updateWorkout({exercises: newExercises});
+  }
+
 
   return (
     <PaperProvider>
@@ -174,40 +195,58 @@ const EditWorkout = () => {
                   </Pressable>
               </View>
           </View>
-          <Animated.ScrollView style={{width: screenWidth, marginHorizontal: -20}} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350, }}>
 
-            <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20, paddingHorizontal: 20}}>
-              <Pressable style={{ height: 40, width: 40, justifyContent: "center", alignItems: "center"}} onPress={() => {if (workoutNameInputRef.current) {workoutNameInputRef.current.focus()}}}>
-                <Image style={{height: 15, width: 15, marginRight: 10}} source={pencil} />
-              </Pressable>
-              
-              <TextInput selectTextOnFocus ref={workoutNameInputRef} onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
-              <ActionMenu data={[{title: "Delete Workout", icon: trashIcon, onPress: requestDeleteWorkout, color: "#FF6C6C"}]} />
-            </View>
 
-            <Animated.View layout={LinearTransition} style={{width: screenWidth, alignItems: "center"}}>
-              {exercises.map((exercise, i) => ( 
-                <Animated.View key={exercise.id+""+i} layout={LinearTransition}>
+          <DraggableFlatList
+              ListHeaderComponent={
+                <>
+                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20, paddingHorizontal: 20}}>
+                    <Pressable style={{ height: 40, width: 40, justifyContent: "center", alignItems: "center"}} onPress={() => {if (workoutNameInputRef.current) {workoutNameInputRef.current.focus()}}}>
+                      <Image style={{height: 15, width: 15, marginRight: 10}} source={pencil} />
+                    </Pressable>
+                    
+                    <TextInput selectTextOnFocus ref={workoutNameInputRef} onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
+                    <ActionMenu data={[{title: "Delete Workout", icon: trashIcon, onPress: requestDeleteWorkout, color: "#FF6C6C"}]} />
+                  </View>
+                </>
+              }
+              style={{width: screenWidth, marginHorizontal: -20}}
+              contentContainerStyle={{paddingBottom: 350}}
+              showsVerticalScrollIndicator={false}
+              // nestedScrollEnabled={true}
+              data={exerciseFlatlistData}
+              onDragBegin={() => setIsDragging(true)}
+              onDragEnd={({data}) => {setExerciseFlatlistData(data); setIsDragging(false)}}
+              keyExtractor={(item) => item.key}
+              renderItem={({item, drag, isActive}) => {
+                return (
+                  <ScaleDecorator key={item.key}>
+                    <View key={item.key} style={{width: item.width, marginHorizontal: 20,}}>
 
-                  <SwipeToDelete style={{width: screenWidth}} openedRight={() => removeExercise(i)} >
-                    <View style={{marginHorizontal: 20}}>
-                      <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} />
+                      {/* <SwipeToDelete style={{width: screenWidth}} openedRight={() => removeExercise(item.index)} > */}
+                        <View style={{ width: screenWidth-40}}>
+                          <EditExercise key={item.key} exercise={item.exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(item.index)} index={item.index} drag={drag} dragActive={isActive} />
+                        </View>
+                      {/* </SwipeToDelete> */}
+
                     </View>
-                  </SwipeToDelete>
+                  </ScaleDecorator>
+                )
+              }}
 
-                </Animated.View>
-              ))}
-            </Animated.View>
+              ListFooterComponent={
+                <>
+                  <Spacer height={20} />
+
+                  <Animated.View layout={LinearTransition} style={{marginHorizontal: 20}} >
+                    <BlueButton title={"Add Exercise"} onPress={() => setExerciseModal(true)} />
+                  </Animated.View>
+                </>
+              }
+          >
             
+          </DraggableFlatList>
 
-            <Spacer height={20} />
-
-            <Animated.View layout={LinearTransition} style={{marginHorizontal: 20}} >
-              <BlueButton title={"Add Exercise"} onPress={() => setExerciseModal(true)} />
-            </Animated.View>
-            
-
-          </Animated.ScrollView>
         </SafeAreaView>
 
             {/* {Platform.OS === 'ios' ? (

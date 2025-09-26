@@ -77,7 +77,6 @@ const IndexProgress = () => {
     updateUser({tracking: {visibleWidgets: newVisibleWidgets}});
   }
 
-  console.log(user.tracking.visibleWidgets);
   const updatedVisibleWidgets = user.tracking.visibleWidgets;
   if (!updatedVisibleWidgets.includes("nutrition")) updatedVisibleWidgets.unshift("nutrition");
   const visibleWidgetsFlatlistData = updatedVisibleWidgets.map((key, i) => {
@@ -207,7 +206,7 @@ const IndexProgress = () => {
               }
               contentContainerStyle={{paddingBottom: 220}}
               showsVerticalScrollIndicator={false}
-              nestedScrollEnabled={true}
+              // nestedScrollEnabled={true}
               data={visibleWidgetsFlatlistData}
               onDragEnd={({data}) => setVisibleWidgetsFlatlistData(data)}
               keyExtractor={(item) => item.key}
@@ -215,7 +214,7 @@ const IndexProgress = () => {
 
 
                 if (item.key === "nutrition") return (
-                  <ScaleDecorator>
+                  <ScaleDecorator key={item.key}>
                     <TouchableOpacity
                       onLongPress={drag}
                       disabled={isActive}
@@ -223,7 +222,7 @@ const IndexProgress = () => {
                       style={{width: item.width, marginHorizontal: 20}}
                     >
                     <NutritionWidget
-                      style={{marginBottom: 20}}
+                      style={{marginBottom: 20}} drag={drag}
                     />
                     </TouchableOpacity>
                   </ScaleDecorator>
@@ -231,7 +230,7 @@ const IndexProgress = () => {
                 
 
                 return (
-                  <ScaleDecorator>
+                  <ScaleDecorator key={item.key}>
                     <TouchableOpacity
                       onLongPress={drag}
                       disabled={isActive}

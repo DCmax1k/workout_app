@@ -9,7 +9,7 @@ import { router } from 'expo-router';
 
 const screenWidth = Dimensions.get("screen").width;
 
-const NutritionWidget = ({style}) => {
+const NutritionWidget = ({style, drag}) => {
     const user = useUserStore(state => state.user);
 
     const calorieCount = 1160;
@@ -87,7 +87,7 @@ const NutritionWidget = ({style}) => {
                 <Spacer height={15} />
                 <Text style={{fontSize: 10, color: "#D0D0D0"}}>Fueled up with {todaysPlateCount} plate{todaysPlateCount===1?"":"s"} today</Text>
                 <Spacer height={3} />
-                <Pressable onPress={straightToLogFood} style={{ width: "100%", justifyContent: "center", alignItems: "center"}}>
+                <Pressable onPress={straightToLogFood} onLongPress={drag} style={{ width: "100%", justifyContent: "center", alignItems: "center"}}>
                     <View style={{backgroundColor: Colors.protein, height: 35, width: "90%", borderRadius: 99999, justifyContent: "center", alignItems: "center"}}>
                         <Text style={{fontSize: 14, color: "white"}}>Log food for today</Text>
                     </View>

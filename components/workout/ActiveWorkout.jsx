@@ -10,9 +10,11 @@ import Spacer from '../Spacer';
 import AddExercise from './AddExercise';
 import BlueButton from '../BlueButton';
 import { Exercises } from '../../constants/Exercises';
-import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { BottomSheetHandle, BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
 import ConfirmMenu from '../ConfirmMenu';
 import { truncate } from '../../util/truncate';
+import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist';
+import { generateUniqueId } from '../../util/uniqueId';
 
 const lbsToKgs = (lbs) => {
     return 0.453592*lbs;
@@ -25,7 +27,10 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
     const {closeSheet, showFinishWorkout} = useBottomSheet();
+
     const [exerciseModal, setExerciseModal] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+
     const allExercises = [...user.createdExercises, ...Exercises];
 
     const [confirmMenuActive, setConfirmMenuActive] = useState(false);
@@ -63,7 +68,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
         const completeExercises = exerciseIds.map(id => {
             const finding = allExercises.find(ex => ex.id === id);
             if (finding.sets) return finding;
-            else return {...finding, sets: []}
+            else return {...finding, sets: [], uniqueId: generateUniqueId(),}
         });
         const exercisesAddedTo = [...exercises, ...completeExercises];
         updateWorkout({exercises: exercisesAddedTo});
@@ -235,47 +240,88 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
         
     }
 
+    const exerciseFlatlistData = exercises.map((ex, i) => {
+        if (!ex.uniqueId) {
+          ex.uniqueId = generateUniqueId(); // only assign if missing
+        }
+        return {
+          key: ex.uniqueId,
+          index: i,
+          width: screenWidth,
+          exercise: {...ex},
+        }
+      })
+      const setExerciseFlatlistData = (data) => {
+        const newExercises = data.map(item => item.exercise);
+        updateWorkout({exercises: newExercises});
+      }
+
   return (
-       <View style={{flex: 1}}>
+       <View style={{flex: 1,}}>
             {/* <PaperProvider> */}
                 <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
-
-
-                <Animated.View style={[{flexDirection: "row", justifyContent: "flex-end", position: "absolute", left: 0, top: 0, width: "100%", zIndex: 1, elevation: 1}, animatedFinishOpacity]}>
-                    <Pressable onPress={true ? requestFinish : null} style={{backgroundColor: "#21863C", paddingVertical: 10, paddingHorizontal: 15, marginRight: 10, borderRadius: 10}}>
-                        <Text style={styles.text}>Finish</Text>
-                    </Pressable>
-                </Animated.View>
-                <Animated.View style={[{position: "absolute", width: "100%", alignItems: "center"}, animatedHeaderOpacity]}>
-                    <Text style={[styles.text, {fontSize: 18, paddingHorizontal: 10, textAlign: "center"}]}>{truncate(workout.name, 30)}</Text>
-                    {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 15, color: "#C4C4C4"}} />}
-                </Animated.View>
-
-                
-                {/* <PaperProvider> */}
-                    <BottomSheetScrollView style={{marginTop: 85, height: screenHeight-150,}} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 350,}}>
-                        
-                        <View style={[{ paddingHorizontal: 10}]}>
-                            <TextInput selectTextOnFocus onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
-                            {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 20, color: "#C4C4C4"}} />}
-                        </View>
-
-                        <Spacer height={20} />
-
-                        {exercises.map((exercise, i) => (
-                            <EditExercise key={exercise.id+""+i} exercise={exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(i)} index={i} activeWorkoutStyle={true} />
-                            
-                        ))}
-
-                        <Spacer height={20} />
-                        <Animated.View layout={LinearTransition.springify().damping(90)}>
-                            <BlueButton title={"Add Exercise"} style={{marginRight: 10, marginLeft: 10}} onPress={() => setExerciseModal(true)} />
-                            <Spacer height={40} />
-                            <BlueButton title={"Cancel Workout"} color={"#572E32"} style={{marginRight: 30, marginLeft: 30}} onPress={() => cancelWorkout(true)} />
+                    <BottomSheetHandle indicatorStyle={{backgroundColor: "transparent"}} style={{height: 100}}>
+                        <Animated.View style={[{flexDirection: "row", justifyContent: "flex-end", position: "absolute", left: 0, top: 0, width: "100%", zIndex: 1, elevation: 1}, animatedFinishOpacity]}>
+                            <Pressable onPress={true ? requestFinish : null} style={{backgroundColor: "#21863C", paddingVertical: 10, paddingHorizontal: 15, marginRight: 10, borderRadius: 10}}>
+                                <Text style={styles.text}>Finish</Text>
+                            </Pressable>
                         </Animated.View>
-                        
-                    </BottomSheetScrollView>
-                {/* </PaperProvider> */}
+                        <Animated.View style={[{position: "absolute", width: "100%", alignItems: "center"}, animatedHeaderOpacity]}>
+                            <Text style={[styles.text, {fontSize: 18, paddingHorizontal: 10, textAlign: "center"}]}>{truncate(workout.name, 30)}</Text>
+                            {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 15, color: "#C4C4C4"}} />}
+                        </Animated.View>
+                    </BottomSheetHandle>
+                    
+    
+                    <DraggableFlatList
+                    ListHeaderComponent={
+                        <>
+                            <View style={[{ paddingHorizontal: 10, }]}>
+                                <TextInput selectTextOnFocus onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
+                                {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 20, color: "#C4C4C4"}} />}
+                            </View>
+
+                            <Spacer height={20} />
+                        </>
+                            
+                    }
+                    style={{marginTop: 0, height: screenHeight-150,}}
+                    contentContainerStyle={{paddingBottom: 350}}
+                    showsVerticalScrollIndicator={false}
+                    data={exerciseFlatlistData}
+                    onDragBegin={() => setIsDragging(true)}
+                    onDragEnd={({data}) => {setExerciseFlatlistData(data); setIsDragging(false)}}
+                    keyExtractor={(item) => item.key}
+                    renderItem={({item, drag, isActive}) => {
+                        return (
+                        <ScaleDecorator key={item.key } style={{width: item.width,}}>
+                            <View key={item.key} style={{width: item.width,}}>
+
+                            {/* <SwipeToDelete style={{width: screenWidth}} openedRight={() => removeExercise(item.index)} > */}
+                                <View style={{ width: screenWidth}}>
+                                    <EditExercise key={item.key} exercise={item.exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(item.index)} index={item.index} activeWorkoutStyle={true} drag={drag} dragActive={isActive} />
+                                </View>
+                            {/* </SwipeToDelete> */}
+
+                            </View>
+                        </ScaleDecorator>
+                        )
+                    }}
+                    ListFooterComponent={
+                        <>
+                            <Spacer height={20} />
+                            <Animated.View layout={LinearTransition.springify().damping(90)}>
+                                <BlueButton title={"Add Exercise"} style={{marginRight: 10, marginLeft: 10}} onPress={() => setExerciseModal(true)} />
+                                <Spacer height={40} />
+                                <BlueButton title={"Cancel Workout"} color={"#572E32"} style={{marginRight: 30, marginLeft: 30}} onPress={() => cancelWorkout(true)} />
+                            </Animated.View>
+                        </>
+                    }
+                >
+
+                </DraggableFlatList>
+                
+
                 
                 {/* {Platform.OS === 'ios' ? (
                     <Modal
