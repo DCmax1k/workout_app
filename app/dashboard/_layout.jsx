@@ -35,11 +35,12 @@ const Dashboard = () => {
     if (user) {
       setTimeout(() => {
         setSheetShouldStartOpen(user.activeWorkout !== null);
-      }, 1000)
+      }, 100)
     }
     
     
   }, []);
+
 
     useEffect(() => {
       if (animateDashboard) {
@@ -50,8 +51,6 @@ const Dashboard = () => {
         }, 1000)
       }
     }, [animateDashboard]);
-
-  const [sheetOpen, setSheetOpen] = useState(sheetShouldStartOpen);
 
   const [finishWorkoutData, setFinishWorkoutData] = useState(null);
 
@@ -67,11 +66,9 @@ const Dashboard = () => {
 
   const handleSnapPress = useCallback((index) => {
     sheetRef.current?.snapToIndex(index);
-    setSheetOpen(true);
   }, []);
   const handleCloseSheet = useCallback(() => {
     sheetRef.current?.close();
-    setSheetOpen(false);
   }, []);
   
 
@@ -134,23 +131,22 @@ const Dashboard = () => {
             </Stack>
 
             <BottomSheet
-            ref={sheetRef}
-            snapPoints={snapPoints}
-            enableDynamicSizing={false}
-            onClose={() => setSheetOpen(false)}
-            backgroundStyle={{backgroundColor: "#313131"}}
-            handleIndicatorStyle={{backgroundColor: "white", width: 80}}
-            animatedPosition={animatedPosition}
-            index={sheetShouldStartOpen ? 0 : -1}
-            onChange={index => setCurrentPosition(index)}
-
+              ref={sheetRef}
+              snapPoints={snapPoints}
+              enableDynamicSizing={false}
+              backgroundStyle={{backgroundColor: "#313131"}}
+              handleIndicatorStyle={{backgroundColor: "white", width: 80}}
+              animatedPosition={animatedPosition}
+              index={sheetShouldStartOpen ? 0 : -1}
+              onChange={index => setCurrentPosition(index)}
             >
+
                 {user.activeWorkout && (
                   <ActiveWorkout
-                  animatedFinishOpacity={animatedFinishOpacity}
-                  animatedHeaderOpacity={animatedHeaderOpacity}
-                  currentPosition={currentPosition}
-                />
+                    animatedFinishOpacity={animatedFinishOpacity}
+                    animatedHeaderOpacity={animatedHeaderOpacity}
+                    currentPosition={currentPosition}
+                  />
                 )}
                 
 

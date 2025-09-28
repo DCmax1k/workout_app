@@ -204,9 +204,9 @@ const USER = {
     facebookId: null,
 
     // Only local not in live db
-    activeWorkout: null,
-    editActiveWorkout: null,
-    editActivePlate: null,
+    activeWorkout: null, // active working session
+    editActiveWorkout: null, // Edit workout screen
+    editActivePlate: null, // Edit plate widget
     activeReopenExercise: null,
 };
 

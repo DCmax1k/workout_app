@@ -260,20 +260,21 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
        <View style={{flex: 1,}}>
             {/* <PaperProvider> */}
                 <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
-                    <BottomSheetHandle indicatorStyle={{backgroundColor: "transparent"}} style={{height: 100}}>
-                        <Animated.View style={[{flexDirection: "row", justifyContent: "flex-end", position: "absolute", left: 0, top: 0, width: "100%", zIndex: 1, elevation: 1}, animatedFinishOpacity]}>
-                            <Pressable onPress={true ? requestFinish : null} style={{backgroundColor: "#21863C", paddingVertical: 10, paddingHorizontal: 15, marginRight: 10, borderRadius: 10}}>
-                                <Text style={styles.text}>Finish</Text>
-                            </Pressable>
-                        </Animated.View>
-                        <Animated.View style={[{position: "absolute", width: "100%", alignItems: "center"}, animatedHeaderOpacity]}>
-                            <Text style={[styles.text, {fontSize: 18, paddingHorizontal: 10, textAlign: "center"}]}>{truncate(workout.name, 30)}</Text>
-                            {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 15, color: "#C4C4C4"}} />}
-                        </Animated.View>
-                    </BottomSheetHandle>
-                    
-    
-                    <DraggableFlatList
+                
+                <BottomSheetHandle indicatorStyle={{backgroundColor: "transparent"}} style={{height: 100}}>
+                    <Animated.View style={[{flexDirection: "row", justifyContent: "flex-end", position: "absolute", left: 0, top: 0, width: "100%", zIndex: 1, elevation: 1}, animatedFinishOpacity]}>
+                        <Pressable onPress={true ? requestFinish : null} style={{backgroundColor: "#21863C", paddingVertical: 10, paddingHorizontal: 15, marginRight: 10, borderRadius: 10}}>
+                            <Text style={styles.text}>Finish</Text>
+                        </Pressable>
+                    </Animated.View>
+                    <Animated.View style={[{position: "absolute", width: "100%", alignItems: "center"}, animatedHeaderOpacity]}>
+                        <Text style={[styles.text, {fontSize: 18, paddingHorizontal: 10, textAlign: "center"}]}>{truncate(workout.name, 30)}</Text>
+                        {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 15, color: "#C4C4C4"}} />}
+                    </Animated.View>
+                </BottomSheetHandle>
+                
+
+                <DraggableFlatList
                     ListHeaderComponent={
                         <>
                             <View style={[{ paddingHorizontal: 10, }]}>

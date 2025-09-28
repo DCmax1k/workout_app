@@ -1,5 +1,5 @@
 import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import noEye from '../../assets/icons/noEye.png'
 import ThemedView from '../../components/ThemedView'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -16,8 +16,10 @@ import { router, useLocalSearchParams } from 'expo-router'
 import PageSwiper from '../../components/PageSwiper'
 import ConfirmMenu from '../../components/ConfirmMenu'
 import PopupButtons from '../../components/PopupButtons'
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
+import Animated, { Extrapolation, FadeIn, FadeOut, interpolate, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated'
 import { generateUniqueId } from '../../util/uniqueId'
+import BottomSheet from '@gorhom/bottom-sheet'
+import EditPlate from './editPlate'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -25,6 +27,63 @@ const screenHeight = Dimensions.get("screen").height;
 const Nutrition = () => {
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
+
+    // Bottom sheet
+    const sheetRef = useRef(null);
+
+    const tabBarHeight = 120;
+    const firstSnap = tabBarHeight;
+    const snapPoints = [firstSnap, 0.95*screenHeight];
+    const animatedPosition = useSharedValue(0);
+    const [sheetShouldStartOpen, setSheetShouldStartOpen] = useState(false);
+      useEffect(() => {
+        if (user) {
+            setTimeout(() => {
+                setSheetShouldStartOpen(user.editActivePlate !== null);
+            }, 100)
+            
+        }
+      }, []);
+    const handleSnapPress = useCallback((index) => {
+        sheetRef.current?.snapToIndex(index);
+    }, []);
+    const handleCloseSheet = useCallback(() => {
+        sheetRef.current?.close();
+    }, []);
+
+    const animatedHeaderOpacity = useAnimatedStyle(() => {
+        const opacity = interpolate(
+            animatedPosition.value,
+            [screenHeight-firstSnap, screenHeight-0.8 * screenHeight],
+            [1, 0],
+            Extrapolation.CLAMP );
+        return {opacity};
+    });
+    const animatedButtonsOpacity = useAnimatedStyle(() => {
+        const opacity = interpolate(
+            animatedPosition.value,
+            [screenHeight-0.3 * screenHeight, screenHeight-0.95*screenHeight],
+            [0, 1],
+            Extrapolation.CLAMP );
+        return {opacity};
+    });
+    const animatedLeftButtonTransform = useAnimatedStyle(() => {
+        const translateX = interpolate(
+            animatedPosition.value,
+            [screenHeight-0.5 * screenHeight, screenHeight-0.95*screenHeight],
+            [-screenWidth/2, 0],
+            Extrapolation.CLAMP );
+        return {transform: [{translateX}]};
+    });
+    const animatedRightButtonTransform = useAnimatedStyle(() => {
+        const translateX = interpolate(
+            animatedPosition.value,
+            [screenHeight-0.5 * screenHeight, screenHeight-0.95*screenHeight],
+            [screenWidth/2, 0],
+            Extrapolation.CLAMP );
+        return {transform: [{translateX}]};
+    });
+
 
     const [confirmMenuActive, setConfirmMenuActive] = useState(false);
     const [confirmMenuData, setConfirmMenuData] = useState();
@@ -120,16 +179,17 @@ const Nutrition = () => {
     const startNewPlate = () => {
         const newPlateData = {name: "New Plate", id: generateUniqueId(), foodIds: [] };
         updateUser({editActivePlate: newPlateData});
-        router.push({
-            pathname: "/editPlate",
+        // router.push({
+        //     pathname: "/editPlate",
            
-        });
+        // });
+        handleSnapPress(1);
     }
     const useSavedPlate = () => {
         console.log('use saved plate')
     }
     const resumePlate = () => {
-        router.push("/editPlate");
+        //router.push("/editPlate");
     }
 
     const logFoodOptions = [
@@ -143,21 +203,25 @@ const Nutrition = () => {
     }
 
     return (
+        <>
         <ThemedView style={styles.container}>
             <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
+        
+
             {floatingButtonActive && (
                 <Animated.View style={[{height: screenHeight, width: screenWidth, backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1}, StyleSheet.absoluteFill]} entering={FadeIn} exiting={FadeOut}>
                     <Pressable onPress={() => closeFloatingButton()} style={StyleSheet.absoluteFill} />
                 </Animated.View>
             )}
-
             {/* Floating footer button */}
-            <View style={{position: "absolute", left: 0, bottom: 40, width: screenWidth, alignItems: "center"}}>
+            {user.editActivePlate === null && (<View style={{position: "absolute", zIndex: 2, left: 0, bottom: 40, width: screenWidth, alignItems: "center"}}>
                 <PopupButtons ref={floatingButtonRef} setParentActive={setFloatingButtonActive}
                     buttons={logFoodOptions}
                 
                 />
-            </View>
+            </View>)}
+
+
             <SafeAreaView style={{flex: 1, width: "100%",  marginBottom: -50, position: "relative"}}>
                 <TitleWithBack title={"Nutrition"} actionBtn={{actionMenu: false, image: require("../../assets/icons/threeEllipses.png"), options: menuOptions}} />
                 <Spacer height={20} />
@@ -285,7 +349,32 @@ const Nutrition = () => {
 
 
             </SafeAreaView>
+
         </ThemedView>
+
+        {/* Bottom sheet */}
+        <BottomSheet
+            ref={sheetRef}
+            snapPoints={snapPoints}
+            enableDynamicSizing={false}
+            backgroundStyle={{backgroundColor: "#313131"}}
+            handleIndicatorStyle={{backgroundColor: "white", width: 80}}
+            animatedPosition={animatedPosition}
+            index={sheetShouldStartOpen ? 0 : -1}
+        >
+        
+            <EditPlate
+                closeSheet={handleCloseSheet}
+                animatedHeaderOpacity={animatedHeaderOpacity}
+                animatedButtonsOpacity={animatedButtonsOpacity}
+                animatedLeftButtonTransform={animatedLeftButtonTransform}
+                animatedRightButtonTransform={animatedRightButtonTransform}
+                handleSnapPress={handleSnapPress}
+            />
+            
+
+        </BottomSheet>
+        </>
     )
 }
 

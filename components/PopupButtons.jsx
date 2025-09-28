@@ -32,7 +32,7 @@ const PopupButtons = forwardRef(({
     }
 
   return (
-    <View style={[{width, zIndex: 10}, style]} {...props}>
+    <View style={[{width}, style]} {...props}>
 
         {/* Bottom button */}
         <Pressable onPress={closeMenu}>
