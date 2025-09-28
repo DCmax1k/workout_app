@@ -15,8 +15,12 @@ import emitter from '../../util/eventBus'
 import { router, useLocalSearchParams } from 'expo-router'
 import PageSwiper from '../../components/PageSwiper'
 import ConfirmMenu from '../../components/ConfirmMenu'
+import PopupButtons from '../../components/PopupButtons'
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
+import { generateUniqueId } from '../../util/uniqueId'
 
 const screenWidth = Dimensions.get("screen").width;
+const screenHeight = Dimensions.get("screen").height;
 
 const Nutrition = () => {
     const user = useUserStore(state => state.user);
@@ -24,6 +28,9 @@ const Nutrition = () => {
 
     const [confirmMenuActive, setConfirmMenuActive] = useState(false);
     const [confirmMenuData, setConfirmMenuData] = useState();
+
+    const [floatingButtonActive, setFloatingButtonActive] = useState(false);
+    const floatingButtonRef = useRef(null);
 
     const params = useLocalSearchParams();
     useEffect(() => {
@@ -105,19 +112,57 @@ const Nutrition = () => {
         setConfirmMenuActive(true);
     }
 
+    const closeFloatingButton = () => {
+        floatingButtonRef.current?.setActiveFalse();
+        setFloatingButtonActive(false);
+    }
+
+    const startNewPlate = () => {
+        const newPlateData = {name: "New Plate", id: generateUniqueId(), foodIds: [] };
+        updateUser({editActivePlate: newPlateData});
+        router.push({
+            pathname: "/editPlate",
+           
+        });
+    }
+    const useSavedPlate = () => {
+        console.log('use saved plate')
+    }
+    const resumePlate = () => {
+        router.push("/editPlate");
+    }
+
+    const logFoodOptions = [
+        {text: "Use saved plate", icon: require("../../assets/icons/silverware.png"), onPress: useSavedPlate},
+        {text: "Start new plate", icon: require("../../assets/icons/plus.png"), onPress: startNewPlate},
+    ];
+    if (user.editActivePlate !== null) {
+        logFoodOptions.unshift(
+            {text: "Resume editting", icon: require("../../assets/icons/playCircle.png"), onPress: resumePlate, iconSize: 25},
+        )
+    }
+
     return (
         <ThemedView style={styles.container}>
             <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
+            {floatingButtonActive && (
+                <Animated.View style={[{height: screenHeight, width: screenWidth, backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1}, StyleSheet.absoluteFill]} entering={FadeIn} exiting={FadeOut}>
+                    <Pressable onPress={() => closeFloatingButton()} style={StyleSheet.absoluteFill} />
+                </Animated.View>
+            )}
+
+            {/* Floating footer button */}
+            <View style={{position: "absolute", left: 0, bottom: 40, width: screenWidth, alignItems: "center"}}>
+                <PopupButtons ref={floatingButtonRef} setParentActive={setFloatingButtonActive}
+                    buttons={logFoodOptions}
+                
+                />
+            </View>
             <SafeAreaView style={{flex: 1, width: "100%",  marginBottom: -50, position: "relative"}}>
                 <TitleWithBack title={"Nutrition"} actionBtn={{actionMenu: false, image: require("../../assets/icons/threeEllipses.png"), options: menuOptions}} />
                 <Spacer height={20} />
 
-                {/* Floating footer button */}
-                <View style={{position: "absolute", left: 0, bottom: 80, width: screenWidth, alignItems: "center"}}>
-                    <Pressable onPress={showComingSoonMessage} style={{paddingVertical: 20, paddingHorizontal: 40, backgroundColor: Colors.protein, borderRadius: 9999999, zIndex: 1, elevation: 1}}>
-                        <Text style={{color: "white", fontSize: 20, fontWeight: "800"}}>Log food for today</Text>
-                    </Pressable>
-                </View>
+
 
                 <ScrollView contentContainerStyle={{paddingBottom: 120}}  showsVerticalScrollIndicator={false}>
                     <View style={{paddingHorizontal: 20}}>

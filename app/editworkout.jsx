@@ -43,6 +43,7 @@ const EditWorkout = () => {
 
   
   const [exerciseModal, setExerciseModal] = useState(false);
+  
   const [confirmMenuActive, setConfirmMenuActive] = useState(false);
   const [confirmMenuData, setConfirmMenuData] = useState({
           title: "The title",
@@ -178,7 +179,7 @@ const EditWorkout = () => {
 
 
   return (
-    <PaperProvider>
+    // <PaperProvider>
       <ThemedView style={{flex: 1, padding: 20}}>
         <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
         <SafeAreaView style={{flex: 1, marginBottom: -50}}>
@@ -274,7 +275,7 @@ const EditWorkout = () => {
                 ) : null)}
         
       </ThemedView>
-    </PaperProvider>
+    // </PaperProvider>
     
   )
 }

@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   menu: {
     position: 'absolute',
     width: MENU_WIDTH,
-    backgroundColor: '#606060',
+    backgroundColor: '#444444',
     borderRadius: 15,
     elevation: 4,
   },

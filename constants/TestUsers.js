@@ -58,8 +58,9 @@ const USER = {
   // },],
     completedExercises:{},// { "2": [{date: 23235235, sets: [{weight: "135", reps: "10"}], shared: true,}] }, // simple data, by exerciseId
     savedWorkouts:[],// [{name: "Legs", id: "234", exercises: [ {id: "2", note:"", sets: [{lbs: "135", reps: "10"}]},] }, {name: "Chest and Shoulders", id: "2344", exercises: [ {id: "2314234", note:"", sets: [{lbs: "135", reps: "10"}]},{id: "4", note:"", sets: [{lbs: "135", reps: "10"}]}] }, {name: "Back", id: "345", exercises: [ {id: "4", note:"", sets: [{lbs: "135", reps: "10"}]},] }],
-    savedMeals: [], //  {name, image, id, category, nutrition: {cal, pro, car, fat}}
-    consumedMeals: {}, // {"00/00/0000": [{name, image, id, category, nutrition: {cal, pro, car, fat}]}
+    savedFoods: [], //  {name, image, id, category, nutrition: {cal, pro, car, fat}}
+    savedMeals: [], // {name, id, foodIds }
+    consumedMeals: {}, // {"00/00/0000": [{name, id, fullMeal, ]}
 
     tracking: {
       visibleWidgets: ["nutrition"], // ["calories", "ex_89023u42i0jr", "nutrition"] cannot remove nutrition
@@ -206,7 +207,6 @@ const USER = {
     activeWorkout: null,
     editActiveWorkout: null,
     editActivePlate: null,
-    editActiveMeal: null,
     activeReopenExercise: null,
 };
 
