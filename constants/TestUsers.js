@@ -89,14 +89,14 @@ const USER = {
       },
       insights: {
         expenditure: {
-          data: [], // This data holds 3/4 main groups of calculation, leaving resting to be dynamically added
+          data: [], // This data holds exercise and food data
           unit: "kcal",
           layout: "expenditure", // weight, calorie, none, bmi, expenditure
           color: "#DB8854",
           extraData: {},
         },
         BMI: {
-          data: [ ],
+          data: [ ], // Fully dynamically convered
           unit: "",
           layout: "bmi", // weight, calorie, none, bmi 
           color: "#54DBA9",

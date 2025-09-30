@@ -18,6 +18,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
     // Make data in form of daily points
     const sixMonthsAgo = new Date();
     const dayOffset = section===sectionOptions[0] ? 7 : section===sectionOptions[1] ? 28 : 180
+    const strokeWidth = section===sectionOptions[0] ? 7 : section===sectionOptions[1] ? 5 : 2;
     sixMonthsAgo.setDate(sixMonthsAgo.getDate() - dayOffset);
     sixMonthsAgo.setHours(0, 0, 0, 0);
 
@@ -33,6 +34,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
         dates = [oriDates[0] || today.getTime(), oriDates[0] || today.getTime()];
     }
     data = data.filter((d, ind) => new Date(dates[ind]).getTime() >= sixMonthsAgo.getTime());
+    dates = dates.filter((d, ind) => new Date(dates[ind]).getTime() >= sixMonthsAgo.getTime());
     // else {
     //     if (section === sectionOptions[0]) {
     //         // Past 5
@@ -146,7 +148,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
 
         <View style={{ paddingRight: backGridRightOffset, marginLeft: fullWidget ? 10 : 5, marginBottom: fullWidget ? 50 : 20, width: "100%", zIndex: 1}} onLayout={(e) => setGraphHeight(e.nativeEvent.layout.height) }>
             {/* SVG graph */}
-            <LineGraph data={data} color={props.color} duration={animationDuration} aspectRatio={fullWidget ? 1/2 : 1/4} />
+            <LineGraph data={data} color={props.color} duration={animationDuration} aspectRatio={fullWidget ? 1/2 : 1/4} strokeWidth={strokeWidth} />
 
             {/* Back grid Three data horizontal line */}
             <View style={{ paddingVertical: backGridTopOffset, paddingRight: backGridRightOffset, zIndex: -1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", justifyContent: "space-between", alignItems: "center"}}>

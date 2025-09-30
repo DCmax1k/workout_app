@@ -82,6 +82,7 @@ const IndexWorkout = () => {
         pathname: "/editworkout",
         params: {
           workout: JSON.stringify(newWorkoutData),
+          autoSelectName: true,
         }
       });
     }
@@ -291,17 +292,17 @@ const styles = StyleSheet.create({
       marginBottom: 10,
       backgroundColor: "#2A2A2A",
     },
-    boxShadow: {
-      shadowColor: "black",
-      shadowOffset: {
-        width: -5,
-        height: 5,
-      },
-      shadowOpacity: 1,
-      shadowRadius: 2,
-      elevation: 10,
+    // boxShadow: {
+    //   shadowColor: "black",
+    //   shadowOffset: {
+    //     width: -5,
+    //     height: 5,
+    //   },
+    //   shadowOpacity: 1,
+    //   shadowRadius: 2,
+    //   elevation: 10,
 
-    },
+    // },
     search: {
         height: 50,
         fontSize: 20,

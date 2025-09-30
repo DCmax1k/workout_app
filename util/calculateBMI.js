@@ -43,7 +43,7 @@ function yearsBetween(date1, date2) {
     return years;
 }
 
-const calculateExpenditure = (oriData, oriDates, user) => {
+const calculateBMI = (oriData, oriDates, user) => {
     const sixMonthsAgo = new Date();
     const dayOffset = 180
     sixMonthsAgo.setDate(sixMonthsAgo.getDate() - dayOffset);
@@ -57,52 +57,47 @@ const calculateExpenditure = (oriData, oriDates, user) => {
 
 
     for (let day = new Date(sixMonthsAgo); day.getTime() <= today.getTime(); day.setDate(day.getDate() + 1)) {
-        let expenditureOffset = 0; // For the day, calculate resting amount
+        let bmi = 0; // For the day, calculate resting amount
         const userWeightWidget = user.tracking.logging["weight"];
         if (((userWeightWidget.data.length > 0) && user.settings.height !== null && user.settings.gender !==null && user.settings.birthday !== null) === true) { // Same logic in progress index
             //const userWeight = userWeightWidget.data[userWeightWidget.data.length-1].amount;
             const userWeight = getWeightAtDate(userWeightWidget.data, day);
             const weightKgs = userWeight ? userWeightWidget.unit === "lbs" ? lbsToKgs(userWeight) : userWeight : null;
-            const age = yearsBetween(user.settings.birthday, today);
-            const fracOfToday = day.getTime() !== today.getTime() ? 1 : dayProgress();
+
             if (userWeight) {
-                if (user.settings.gender === "male") {
-                    expenditureOffset = (10*weightKgs) + (6.25*user.settings.height) - (5*age) + 5;
-                } else if (user.settings.gender === "female") {
-                    expenditureOffset = (10*weightKgs) + (6.25*user.settings.height) - (5*age) - 161;
-                } else {
-                    expenditureOffset = (10*weightKgs) + (6.25*user.settings.height) - (5*age) - 100;
-                }
-                //expenditureOffset *= fracOfToday;
+                const heightM = user.settings.height*0.01;
+                const heightS = Math.pow(heightM, 2);
+                bmi = weightKgs/heightS;
+
             } 
         }
-        dailyDataPoints.push(0+(expenditureOffset));
+        dailyDataPoints.push(0+(bmi));
         dailyDatePoints.push(day.getTime());
     }
-    // Loop through oriData and fit into dailyData
-    const dailyDate = new Date(sixMonthsAgo);
-    let loopInd = 0; // index of dailyData
-    for (let i = 0; i<oriData.length; i++) {
-        const dataDate = new Date(oriDates[i]);
-        dataDate.setHours(0,0,0,0);
-        // Catch up the dailys
-        if (dataDate.getTime() > dailyDate.getTime()) {
-            while (dataDate.getTime() > dailyDate.getTime()) {
-                dailyDate.setDate(dailyDate.getDate() + 1);
-                loopInd++;
-            }
+    // Loop through oriData and fit into dailyData - Not needed. All data is dynamic
+    // const dailyDate = new Date(sixMonthsAgo);
+    // let loopInd = 0; // index of dailyData
+    // for (let i = 0; i<oriData.length; i++) {
+    //     const dataDate = new Date(oriDates[i]);
+    //     dataDate.setHours(0,0,0,0);
+    //     // Catch up the dailys
+    //     if (dataDate.getTime() > dailyDate.getTime()) {
+    //         while (dataDate.getTime() > dailyDate.getTime()) {
+    //             dailyDate.setDate(dailyDate.getDate() + 1);
+    //             loopInd++;
+    //         }
             
-        }
-        if (dataDate.getTime() === dailyDate.getTime()) {
-            dailyDataPoints[loopInd] = dailyDataPoints[loopInd] + oriData[i];
-            dailyDatePoints[loopInd] = oriDates[i];
-            loopInd++;
-            dailyDate.setDate(dailyDate.getDate()+1);
-        } else {
-            continue; // Data is from before sixMonthsAgo
-        }
-    }
+    //     }
+    //     if (dataDate.getTime() === dailyDate.getTime()) {
+    //         dailyDataPoints[loopInd] = dailyDataPoints[loopInd] + oriData[i];
+    //         dailyDatePoints[loopInd] = oriDates[i];
+    //         loopInd++;
+    //         dailyDate.setDate(dailyDate.getDate()+1);
+    //     } else {
+    //         continue; // Data is from before sixMonthsAgo
+    //     }
+    // }
     return {data: dailyDataPoints, dates: dailyDatePoints}
 }
 
-export default calculateExpenditure;
+export default calculateBMI;

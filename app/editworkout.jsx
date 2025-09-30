@@ -15,7 +15,7 @@ import ActionMenu from '../components/ActionMenu'
 import trashIcon from '../assets/icons/trash.png'
 import { workoutToSimple } from '../util/workoutToSimple'
 import ConfirmMenu from '../components/ConfirmMenu'
-import Animated, { LinearTransition, SlideInDown, SlideOutDown } from 'react-native-reanimated'
+import Animated, { LinearTransition, SlideInDown, SlideOutDown, useEvent } from 'react-native-reanimated'
 import SwipeToDelete from '../components/SwipeToDelete'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import getAllExercises from '../util/getAllExercises'
@@ -38,6 +38,22 @@ const EditWorkout = () => {
 
   const params = useLocalSearchParams();
   const workoutBeforeEdits = params.workout ? JSON.parse(params.workout) : {};
+  const autoSelectName = params.autoSelectName ?? false;
+  console.log(autoSelectName);
+  useEffect(() => {
+    let timeout;
+
+    if (autoSelectName && workoutNameInputRef.current) {
+      timeout = setTimeout(() => {
+        workoutNameInputRef.current.focus();
+      }, 510);
+    }
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [autoSelectName]);
+
 
   const [isDragging, setIsDragging] = useState(false);
 

@@ -22,6 +22,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 import calculateExpenditure, { useCalculateExpenditure } from '../../../util/calculateExpenditure'
 import memoizeOne from 'memoize-one'
 import NutritionWidget from '../../../components/nutrition/NutritionWidget'
+import calculateBMI from '../../../util/calculateBMI'
 
 
 const firstCapital = (string) => {
@@ -105,7 +106,6 @@ const IndexProgress = () => {
   const rawExpData = useUserStore(
     (state) => state.user.tracking.insights?.expenditure?.data ?? []
   );
-
   const expData = useMemo(() => rawExpData, [rawExpData]);
 
   const rawWeightData = useUserStore(
@@ -132,6 +132,7 @@ const IndexProgress = () => {
 
 
   const expenditureData = calculateExpenditure(expData.map(it => it.amount), expData.map(it => it.date), expenditureUser);
+  const bmiData = calculateBMI([], [], expenditureUser); // Two blank arrays, all data is dynamic
 
   return (
 
@@ -283,6 +284,10 @@ const IndexProgress = () => {
                         if (key === 'expenditure') {
                           widget.calculatedData = expenditureData.data;
                           widget.calculatedDates = expenditureData.dates;
+                        }
+                        if (key === 'BMI') {
+                          widget.calculatedData = bmiData.data;
+                          widget.calculatedDates = bmiData.dates;
                         }
                         
 
