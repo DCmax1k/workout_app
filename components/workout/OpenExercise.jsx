@@ -238,7 +238,7 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
         {/* Muscle groups */}
         <View style={{flexDirection: 'row', marginTop: 5, flexWrap: 'wrap', justifyContent: "center"}}>
             {exercise.muscleGroups.map(muscle => (
-              <View style={{backgroundColor: "#353535", borderRadius: 5000,justifyContent: "center", alignItems: "center",marginRight: 5, marginBottom: 5,paddingVertical: 2, paddingHorizontal: 10,}}>
+              <View key={muscle} style={{backgroundColor: "#353535", borderRadius: 5000,justifyContent: "center", alignItems: "center",marginRight: 5, marginBottom: 5,paddingVertical: 2, paddingHorizontal: 10,}}>
                 <Text style={{  fontSize: 12, color: "#B1B1B1",  }} key={muscle}>{capitalizeFirstLetter(muscle)}</Text>
               </View>
                 

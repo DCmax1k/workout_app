@@ -204,7 +204,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
              totalWeightLifted,
              totalDistanceTraveled,
              exercises: completedExercises,
-
+                totalExpenditure,
              fullWorkout: ultimateCloneOfActiveWorkout, // Used to save if user chooses to
          }
         closeSheet();

@@ -39,8 +39,6 @@ const IndexProgress = () => {
   const [addWidget, setAddWidget] = useState(false);
 
 
-  
-
   const openProgressExpanded = (category, categoryData) => {
     const data = {
       category,

@@ -1,5 +1,5 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import { Image, Pressable, StyleSheet, Text, View, TextInput, Dimensions } from 'react-native'
+import React, { useRef, useState } from 'react'
 import ThemedView from '../../components/ThemedView'
 import ConfirmMenu from '../../components/ConfirmMenu'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -7,17 +7,41 @@ import { router } from 'expo-router'
 import ThemedText from '../../components/ThemedText'
 import Spacer from '../../components/Spacer'
 import { useUserStore } from '../../stores/useUserStore'
-import { BottomSheetHandle } from '@gorhom/bottom-sheet'
-import Animated from 'react-native-reanimated'
+import { BottomSheetHandle, BottomSheetScrollView } from '@gorhom/bottom-sheet'
+import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated'
 import { truncate } from '../../util/truncate'
 import doubleCarrot from '../../assets/icons/doubleCarrot.png'
+import pencil from '../../assets/icons/pencil.png'
+import trashIcon from '../../assets/icons/trash.png'
 import { Colors } from '../../constants/Colors'
+import ActionMenu from '../../components/ActionMenu'
+import BlueButton from '../../components/BlueButton'
+import AddFood from '../../components/nutrition/AddFood'
+import { Portal } from 'react-native-paper'
+
+const screenHeight = Dimensions.get("screen").height;
+const screenWidth = Dimensions.get("screen").width;
 
 const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, animatedLeftButtonTransform, animatedRightButtonTransform, handleSnapPress}) => {
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
 
     const plate = user.editActivePlate ?? {name: "New Plate", id: 0, foodIds: [] };
+
+    const [foodModal, setFoodModal] = useState(false);
+
+    const plateNameInputRef = useRef(null);
+
+    const updatePlate = (updates) => {
+        updateUser({editActivePlate: {...plate, ...updates}});
+    }
+
+    const updatePlateName = (value) => {
+        updatePlate({name: value});
+    }
+    const handleEndEditting = () => {
+        if (!plate.name) updatePlateName("New Plate");
+    }
 
     const [confirmMenuActive, setConfirmMenuActive] = useState(false);
     const [confirmMenuData, setConfirmMenuData] = useState({
@@ -87,11 +111,35 @@ const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, a
                 </Animated.View>
             </BottomSheetHandle>
 
-            <Animated.View style={[{alignItems: "center"}, animatedButtonsOpacity]}>
-                <Pressable onPress={requestDiscardPlate} style={{padding: 20, backgroundColor: Colors.primaryBlue, borderRadius: 10}}>
-                    <ThemedText>Discard</ThemedText>
-                </Pressable>
+            {/* This makes everything fade in */}
+            <Animated.View style={[{flex: 1}, animatedButtonsOpacity]}>
+                <BottomSheetScrollView style={{flex: 1}} contentContainerStyle={{ paddingBottom: 50}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20, paddingHorizontal: 20}}>
+                        <Pressable style={{ height: 40, width: 40, justifyContent: "center", alignItems: "center"}} onPress={() => {if (plateNameInputRef.current) {plateNameInputRef.current.focus()}}}>
+                            <Image style={{height: 15, width: 15, marginRight: 10}} source={pencil} />
+                        </Pressable>
+                        
+                        <TextInput selectTextOnFocus ref={plateNameInputRef} onChangeText={updatePlateName} onEndEditing={handleEndEditting} value={plate.name} style={styles.plateNameInput} />
+                        <ActionMenu data={[{title: "Discard Plate", icon: trashIcon, onPress: requestDiscardPlate, color: "#FF6C6C"}]} />
+                    </View>
+
+                    <Spacer height={10} />
+                    <BlueButton title={"Add Food"} onPress={() => setFoodModal(true)} style={{marginHorizontal: 20}} />
+                    <Spacer height={20} />
+
+                    <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10, marginLeft: 20}}>Plate Items</ThemedText>
+
+
+                </BottomSheetScrollView>
             </Animated.View>
+            
+            <Portal>
+                {(foodModal === true ? (
+                    <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{position: "absolute", top: 0, left: 0, height: screenHeight, width: screenWidth, zIndex: 5, elevation: 5}}>
+                        <AddFood foodModal={foodModal} setFoodModal={setFoodModal} />
+                    </Animated.View>
+                ) : null)}
+            </Portal>
             
 
         </ThemedView>
@@ -106,4 +154,10 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: 600,
     },
+    plateNameInput: {
+        fontSize: 23,
+        color: "white",
+        flex: 1,
+        fontWeight: 700
+    }
 })

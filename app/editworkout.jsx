@@ -105,7 +105,7 @@ const EditWorkout = () => {
     updateWorkout({name: value});
   }
   const handleEndEditting = () => {
-    if (!workout.name) updateWorkoutName("New workout");
+    if (!workout.name) updateWorkoutName("New Workout");
   }
 
   const addExercises = (exerciseIds) => { // [exerciseId,]

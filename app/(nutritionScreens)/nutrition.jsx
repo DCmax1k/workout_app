@@ -28,6 +28,14 @@ const Nutrition = () => {
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
 
+    // Stop calorie widget from animating if past initial open
+    const [widgetAnimationDuration, setWidgetAnimationDuration] = useState(1000);
+    useEffect(() => {
+        setTimeout(() => {
+            setWidgetAnimationDuration(0);
+        }, 1005);
+    }, [])
+
     // Bottom sheet
     const sheetRef = useRef(null);
 
@@ -255,7 +263,7 @@ const Nutrition = () => {
                                 style={[styles.widgetCont, { height: 185}]}
                                 titleStyles={{fontWeight: "800", color: "white", fontSize: 16, marginBottom: -3}}
                                 hideFooter={true}
-                                animationDuration={1000}
+                                animationDuration={widgetAnimationDuration}
                             />
                         </View>
                         <View style={{height: 185, width: pageSwipeWidth}}>

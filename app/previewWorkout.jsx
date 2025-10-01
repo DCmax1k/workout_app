@@ -62,12 +62,35 @@ const PreviewWorkoutPage = () => {
             } while (completedIndex > -1)
         });
 
-        // Find workout and slice out to delete
+        // Find workout
         const ind = pastWorkouts.findIndex(w => w.time === data.time);
+
+        // Subtract expenditure data from that day
+        const expenditureData = JSON.parse(JSON.stringify(user.tracking.insights["expenditure"].data));
+        const idx = expenditureData.length - 1;
+        let isSameDay = false; 
+        while (!isSameDay) {
+            isSameDay = new Date(expenditureData[idx].date).toDateString() === new Date(pastWorkouts[ind].time).toDateString();
+            if (isSameDay) {
+                const totalExpenditure = pastWorkouts[ind].totalExpenditure || 0;
+                console.log("Total expenditure to remove", totalExpenditure);
+                console.log("Old expenditure amount", expenditureData[idx].amount);
+                expenditureData[idx].amount = Math.max(0, expenditureData[idx].amount - totalExpenditure);
+                console.log("New expenditure amount", expenditureData[idx].amount);
+                break;
+            }
+            idx--;
+            if (idx < 0) break;
+        }
+        console.log("Is same day found", isSameDay);
+        console.log("Found expenditure data index", idx);
+        
+        // Slice out to delete
         pastWorkouts.splice(ind, 1);
 
         // Update user
-        updateUser({pastWorkouts, completedExercises});
+        console.log("Expenditure data", expenditureData);
+        updateUser({pastWorkouts, completedExercises, tracking: {insights: {expenditure: {data: expenditureData}}}});
         router.back();
     }
 
