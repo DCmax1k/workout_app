@@ -18,6 +18,7 @@ import ActionMenu from '../../components/ActionMenu'
 import BlueButton from '../../components/BlueButton'
 import AddFood from '../../components/nutrition/AddFood'
 import { Portal } from 'react-native-paper'
+import getAllFood from '../../util/getAllFood'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
@@ -25,8 +26,9 @@ const screenWidth = Dimensions.get("screen").width;
 const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, animatedLeftButtonTransform, animatedRightButtonTransform, handleSnapPress}) => {
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
+    const allFoods = getAllFood(user);
 
-    const plate = user.editActivePlate ?? {name: "New Plate", id: 0, foodIds: [] };
+    const plate = user.editActivePlate ?? {name: "New Plate", id: 0, foods: [] };
 
     const [foodModal, setFoodModal] = useState(false);
 
@@ -74,6 +76,15 @@ const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, a
             
         }
 
+        const addFood = (foodIds) => {
+            if (!foodIds || foodIds.length < 1) return;
+            const newFoodIds = [...new Set([...plate.foods.map(f => f.id), ...foodIds])];
+            // Get food objects and add the quantity key
+            const foodsToAdd = newFoodIds.map(id => allFoods.find(f => f.id === id)).filter(e => e !== undefined);
+            const nextFoodsToAdd = foodsToAdd.map(f => ({...f, quantity: 1}));
+            updatePlate({foods: nextFoodsToAdd});
+        }
+
     return (
         <ThemedView style={{flex: 1, backgroundColor: "#313131"}}>
             <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
@@ -98,10 +109,10 @@ const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, a
                 <Animated.View style={[{position: "absolute", left: 0, top: 0, right: 0, paddingHorizontal: 20, marginTop: 10, flexDirection: "row", justifyContent: "space-between",  }, animatedHeaderOpacity]}>
                     <View style={{height: "100%", justifyContent: "center"}}>
                         <Text style={[styles.text, {color: "#FF7072"}]}>{truncate(plate.name, 30)}</Text>
-                        <Text style={{fontSize: 14, color: "#939393"}}>{plate.foodIds.length} item{plate.foodIds.length === 1 ? "":"s"} added</Text>
+                        <Text style={{fontSize: 14, color: "#939393"}}>{plate.foods.length} item{plate.foods.length === 1 ? "":"s"} added</Text>
                     </View>
                     <View style={{height: "100%", justifyContent: "center"}}>
-                        <Pressable onPress={() => handleSnapPress(1)} style={{flexDirection: "row"}}>
+                        <Pressable onPress={() => handleSnapPress(1)} style={{flexDirection: "row", paddingVertical: 10,}}>
                             <Image source={doubleCarrot} style={{height: 20, width: 20, objectFit: "contain", marginRight: 10, marginBottom: -3}} />
                             <Text style={[styles.text, {fontWeight: "300"}]}>Add more</Text>
                         </Pressable>
@@ -129,6 +140,14 @@ const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, a
 
                     <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10, marginLeft: 20}}>Plate Items</ThemedText>
 
+                    {plate.foods.map((food, i) => {
+                        return (
+                            <View key={i} >
+                                <Text>{food.name}</Text>
+                            </View>
+                        )
+                    })}
+
 
                 </BottomSheetScrollView>
             </Animated.View>
@@ -136,7 +155,7 @@ const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, a
             <Portal>
                 {(foodModal === true ? (
                     <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{position: "absolute", top: 0, left: 0, height: screenHeight, width: screenWidth, zIndex: 5, elevation: 5}}>
-                        <AddFood foodModal={foodModal} setFoodModal={setFoodModal} />
+                        <AddFood setFoodModal={setFoodModal} addFood={addFood} />
                     </Animated.View>
                 ) : null)}
             </Portal>

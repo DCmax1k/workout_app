@@ -55,7 +55,10 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
     //         dates = oriDates;
     //     }
     // }
-        
+    if (data.length < 2 && oriData.length > 0) {
+        data = [oriData[oriData.length -1], oriData[oriData.length -1]];
+        dates = [oriDates[oriDates.length -1], oriDates[oriDates.length -1]];
+    }
 
     
 

@@ -185,7 +185,7 @@ const Nutrition = () => {
     }
 
     const startNewPlate = () => {
-        const newPlateData = {name: "New Plate", id: generateUniqueId(), foodIds: [] };
+        const newPlateData = {name: "New Plate", id: generateUniqueId(), foods: [] };
         updateUser({editActivePlate: newPlateData});
         // router.push({
         //     pathname: "/editPlate",
@@ -276,6 +276,18 @@ const Nutrition = () => {
                     <Spacer height={20} />
                     
                     <View style={{paddingHorizontal: 20}}>
+                       
+                        <View style={{flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+                            <ThemedText style={ [{fontSize: 15, fontWeight: "700"}]} >Todays Consumption</ThemedText>
+                            <Pressable onPress={showComingSoonMessage} style={{}}>
+                                <ThemedText style={{textAlign: "center", textDecorationLine: "underline"}}>View history</ThemedText>
+                            </Pressable>
+                        </View> 
+                        {todaysConsumptionHistory.length === 0 && (
+                            <ThemedText style={{paddingHorizontal: 50, paddingVertical: 20, textAlign: "center"}}>Find meals you eat today here!</ThemedText>
+                        )}
+                        <Spacer height={30} />
+                        
                         <ThemedText style={ [{fontSize: 15, fontWeight: "700"}]} >Macros</ThemedText>
                         <Spacer height={10} />
                         <View style={[styles.widgetCont, { paddingVertical: 20, paddingHorizontal: 10}]}>
@@ -334,17 +346,9 @@ const Nutrition = () => {
                                 
                             </View>
                         </View>
-                        <Spacer height={30} />
-                        <View style={{flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
-                            <ThemedText style={ [{fontSize: 15, fontWeight: "700"}]} >Todays Consumption</ThemedText>
-                            <Pressable onPress={showComingSoonMessage} style={{}}>
-                                <ThemedText style={{textAlign: "center", textDecorationLine: "underline"}}>View history</ThemedText>
-                            </Pressable>
-                        </View> 
                         
-                        {todaysConsumptionHistory.length === 0 && (
-                            <ThemedText style={{paddingHorizontal: 50, paddingVertical: 20, textAlign: "center"}}>Find meals you eat today here!</ThemedText>
-                        )}
+                        
+
 
                         
 

@@ -5,7 +5,7 @@ import { Image } from 'react-native';
 import { Portal } from 'react-native-paper';
 import Animated, { Easing, FadeInUp, FadeOutUp, useAnimatedRef, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-const Dropdown = ({data, height = 50,maxHeight = 225, style, selectedId, setSelectedId, locked = false, overflow =false, backgroundColor="#3D3D3D", hideSelectedFromOptions=true,  ...props}) => {
+const Dropdown = ({data, height = 50,maxHeight = 225, style, selectedId, setSelectedId, actionIds=[], actions=[], locked = false, overflow =false, backgroundColor="#3D3D3D", hideSelectedFromOptions=true,  ...props}) => {
     const [active, setActive] = useState(false);
 
     const selected = data.find(d => d.id === selectedId);
@@ -38,6 +38,14 @@ const Dropdown = ({data, height = 50,maxHeight = 225, style, selectedId, setSele
     }
 
     const selectItem = (itemID) => {
+        // Check for action buttons
+        if (actionIds.includes(itemID)) {
+            actions[itemID]();
+            setActive(false);
+            heightAnim.value = slideTiming(height);
+            return;
+        }
+        // Set selected
         setSelectedId(itemID);
         if (active) {
             setActive(false);
@@ -49,7 +57,6 @@ const Dropdown = ({data, height = 50,maxHeight = 225, style, selectedId, setSele
     }
 
     const toggleItems = () => {
-        console.log("testing");
         if (overflow) {
             setOverflowShowing(!overflowShowing);
             return;
@@ -80,7 +87,7 @@ const Dropdown = ({data, height = 50,maxHeight = 225, style, selectedId, setSele
             <View style={{maxHeight: scrollViewHeight,}}>
 
                 <FlatList
-                    style={{ backgroundColor: "#323232", borderBottomRightRadius: 10, borderBottomLeftRadius: 10, height: scrollViewHeight,}}
+                    style={{ backgroundColor: "#323232", borderBottomRightRadius: 10, borderBottomLeftRadius: 10, height: scrollViewHeight, }}
                     showsVerticalScrollIndicator={false}
                     data={data}
                     keyExtractor={(item) => item.id.toString()}
@@ -99,7 +106,7 @@ const Dropdown = ({data, height = 50,maxHeight = 225, style, selectedId, setSele
                             setOverflowShowing(false);
                             }}
                         >
-                            <Text style={styles.itemText}>{item.title}</Text>
+                            <Text style={[styles.itemText, actionIds.includes(item.id) && {color: "#92A8FF"}]}>{item.title}</Text>
                         </Pressable>
                         )
                     }
