@@ -20,6 +20,8 @@ import Animated, { Extrapolation, FadeIn, FadeOut, interpolate, useAnimatedStyle
 import { generateUniqueId } from '../../util/uniqueId'
 import BottomSheet from '@gorhom/bottom-sheet'
 import EditPlate from './editPlate'
+import ActionMenu from '../../components/ActionMenu'
+import trashIcon from '../../assets/icons/trash.png'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -96,6 +98,8 @@ const Nutrition = () => {
     const [confirmMenuActive, setConfirmMenuActive] = useState(false);
     const [confirmMenuData, setConfirmMenuData] = useState();
 
+    const [bottomSheetPosition, setBottomSheetPosition] = useState(0);
+
     const [floatingButtonActive, setFloatingButtonActive] = useState(false);
     const floatingButtonRef = useRef(null);
 
@@ -144,7 +148,7 @@ const Nutrition = () => {
     const fatCount = 34;
     const fatGoal = user.tracking.nutrition["fat"].extraData.goal;
 
-    const todaysConsumptionHistory = [];
+    const todaysConsumptionHistory = user.consumedMeals[getDateKey(new Date())] || [];
 
     const pageSwipeWidth = screenWidth-40;
 
@@ -273,21 +277,13 @@ const Nutrition = () => {
                         </View>
                         
                     </PageSwiper>
-                    <Spacer height={20} />
+                    <Spacer height={10} />
                     
+
                     <View style={{paddingHorizontal: 20}}>
-                       
-                        <View style={{flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
-                            <ThemedText style={ [{fontSize: 15, fontWeight: "700"}]} >Todays Consumption</ThemedText>
-                            <Pressable onPress={showComingSoonMessage} style={{}}>
-                                <ThemedText style={{textAlign: "center", textDecorationLine: "underline"}}>View history</ThemedText>
-                            </Pressable>
-                        </View> 
-                        {todaysConsumptionHistory.length === 0 && (
-                            <ThemedText style={{paddingHorizontal: 50, paddingVertical: 20, textAlign: "center"}}>Find meals you eat today here!</ThemedText>
-                        )}
-                        <Spacer height={30} />
+
                         
+                        {/* Macros */}
                         <ThemedText style={ [{fontSize: 15, fontWeight: "700"}]} >Macros</ThemedText>
                         <Spacer height={10} />
                         <View style={[styles.widgetCont, { paddingVertical: 20, paddingHorizontal: 10}]}>
@@ -347,8 +343,42 @@ const Nutrition = () => {
                             </View>
                         </View>
                         
-                        
+                        <Spacer height={30} />
 
+                        {/* Todays consumption */}
+                        <View style={{flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+                            <ThemedText style={ [{fontSize: 15, fontWeight: "700"}]} >Todays Consumption</ThemedText>
+                            <Pressable onPress={showComingSoonMessage} style={{}}>
+                                <ThemedText style={{textAlign: "center", textDecorationLine: "underline"}}>View history</ThemedText>
+                            </Pressable>
+                        </View> 
+                        {todaysConsumptionHistory.length === 0 && (
+                            <ThemedText style={{paddingHorizontal: 50, paddingVertical: 20, textAlign: "center"}}>Find meals you eat today here!</ThemedText>
+                        )}
+
+                        {/* LEFT OFF WORKING HERE, MEALS FROM TODAY */}
+                        <View>
+                            {todaysConsumptionHistory.map((meal, i) => {
+
+                                return (
+                                    <View key={meal.id} style={{height: 60, width: "100%", backgroundColor: "#1C1C1C", borderRadius: 10, paddingHorizontal: 10, justifyContent: "center", alignItems: "center", marginTop: 10}}>
+                                        <View style={{width: "100%", height: 30, paddingTop: 5, flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+                                            <View>
+                                                <Text style={{color: "white", fontSize: 14, fontWeight: "600"}}>{meal.name}</Text>
+                                            </View>
+                                            <ActionMenu data={[
+                                                            {title: "Remove Meal", icon: trashIcon, onPress: () => {console.log("Remove meal")}, },
+                                            ]} />
+                                        </View>
+                                        <View style={{width: "100%", height: 30, paddingTop: 5}}>
+
+                                        </View>
+                                    </View>
+                                )
+                                
+                            })}
+                            
+                        </View>
 
                         
 
@@ -373,6 +403,7 @@ const Nutrition = () => {
             handleIndicatorStyle={{backgroundColor: "white", width: 80}}
             animatedPosition={animatedPosition}
             index={sheetShouldStartOpen ? 0 : -1}
+            onChange={index => setBottomSheetPosition(index)}
         >
         
             <EditPlate
@@ -382,6 +413,7 @@ const Nutrition = () => {
                 animatedLeftButtonTransform={animatedLeftButtonTransform}
                 animatedRightButtonTransform={animatedRightButtonTransform}
                 handleSnapPress={handleSnapPress}
+                bottomSheetPosition={bottomSheetPosition}
             />
             
 

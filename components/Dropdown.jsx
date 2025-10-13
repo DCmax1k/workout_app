@@ -72,11 +72,12 @@ const Dropdown = ({data, height = 50,maxHeight = 225, style, selectedId, setSele
     }
   return (
     <Animated.View style={[styles.mainCont, {overflow: overflow ? "visible" : "hidden"}, style, overflow ? {height} : heightAnimationStyle]} >
-        <Pressable key={selected.id} style={[styles.item, {height: height, width: "100%", backgroundColor, borderTopWidth: 0, borderRadius: 10,}]} onPress={locked ? () => {} : toggleItems}>
+        <Pressable key={selected.id} style={[styles.item, {height: height, width: "100%", backgroundColor, borderTopWidth: 0, borderRadius: 10, zIndex: 101}]} onPress={locked ? () => {} : toggleItems}>
             <Text style={[styles.itemText, {fontWeight: 700}]}>{selected.title}</Text>
         </Pressable>
 
-        { (overflow===false || (overflow===true && overflowShowing===true)) && (<Animated.View entering={FadeInUp} exiting={FadeOutUp} style={[{maxHeight: maxHeight, width: '100%', elevation: 100, zIndex: 100}]}>
+        { (overflow===false || (overflow===true && overflowShowing===true)) && (
+            <Animated.View entering={FadeInUp} exiting={FadeOutUp} style={[{maxHeight: maxHeight, width: '100%', elevation: 100, zIndex: 100}]}>
             {/* <ScrollView style={{height: scrollViewHeight, backgroundColor: "#323232", borderBottomRightRadius: 10, borderBottomLeftRadius: 10}} >
                 {data.map((item, i) => {
                 return  (hideSelectedFromOptions===false || ( hideSelectedFromOptions === true && selected.id !== item.id )) &&  (<Pressable key={item.id} style={[styles.item, {height: height, fontSize: 18,},]} onPress={() => {selectItem(item.id); setOverflowShowing(false)}}>
@@ -84,10 +85,10 @@ const Dropdown = ({data, height = 50,maxHeight = 225, style, selectedId, setSele
                     </Pressable>
                     )})}
             </ScrollView> */}
-            <View style={{maxHeight: scrollViewHeight,}}>
+            <View style={{maxHeight: scrollViewHeight+20, paddingTop: 10, backgroundColor: "#323232", borderBottomRightRadius: 10, borderBottomLeftRadius: 10, overflow: "hidden", transform: [{translateY: -10}]}}>
 
                 <FlatList
-                    style={{ backgroundColor: "#323232", borderBottomRightRadius: 10, borderBottomLeftRadius: 10, height: scrollViewHeight, }}
+                    style={{ height: scrollViewHeight, }}
                     showsVerticalScrollIndicator={false}
                     data={data}
                     keyExtractor={(item) => item.id.toString()}
@@ -117,7 +118,7 @@ const Dropdown = ({data, height = 50,maxHeight = 225, style, selectedId, setSele
         </Animated.View>)}
 
 
-        <Image style={{position: 'absolute', pointerEvents: "none", height: 20, width: 20, objectFit: "contain", right: 10, top: 15, tintColor: "#546FDB"}} source={dropdown} />
+        <Image style={{position: 'absolute', pointerEvents: "none", height: 20, width: 20, objectFit: "contain", right: 10, top: 15, tintColor: "#546FDB", zIndex: 102}} source={dropdown} />
         
     </Animated.View>
   )
@@ -135,7 +136,6 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         borderTopWidth: 1,
         borderTopColor: "#565656",
-        backgroundColor: "#323232",
     },
     itemText: {
         color: "white",

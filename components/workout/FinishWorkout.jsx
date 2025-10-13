@@ -31,6 +31,8 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
     
     const updateUser = useUserStore(state => state.updateUser);
 
+    const [animationEnded, setAnimationEnded] = useState(false);
+
     const [confirmMenuActive, setConfirmMenuActive] = useState(false);
     const [confirmMenuData, setConfirmMenuData] = useState({
         title: "The title",
@@ -41,8 +43,18 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
         confirm: () => {},
     });
 
+    const requestClose = () => {
+        if (!animationEnded) {
+            // Do nothing
+            return;
+        }
+        closeModal();
+    }
+
     useEffect(() => {
         successPlayer.play();
+
+        setTimeout(doChecks, 1500);
         
         setTimeout(() => {
 
@@ -58,8 +70,8 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
                     subTitleOpacity.value = withTiming(1, {duration: 1000})
                     setTimeout(() => {
                         workoutOpacity.value = withTiming(1, {duration: 1000})
-
-                        setTimeout(checkForWorkoutUpdate, 500);
+                        
+                        
                     }, 300);
                 }, 300);
             }, 300);
@@ -81,6 +93,69 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
         updateUser({savedWorkouts});
     }
 
+    const updateOtherWorkoutsWithExercises = (w) => {
+        const savedWorkouts = JSON.parse(JSON.stringify(user.savedWorkouts));
+        const newSavedWorkouts = savedWorkouts.map(swk => {
+            if (swk.id === w.id) return swk; // Skip same workout
+            // Loop through exercises from current workout to see matches
+            w.exercises.forEach(ex => {
+                if (swk.exercises.map(e => e.id).includes(ex.id)) {
+                    // Found a match, check if values differ
+                    const matchingExerciseIndex = swk.exercises.findIndex(e => e.id === ex.id);
+                    if (matchingExerciseIndex < 0) return;
+                    const isSame = deepEqual(ex, swk.exercises[matchingExerciseIndex]);
+                    if (!isSame) {
+                        // Update exercise
+                        swk.exercises[matchingExerciseIndex] = ex;
+                    }
+                }
+                        
+            });
+            return swk;
+        });
+        updateUser({savedWorkouts: newSavedWorkouts});
+    }
+    
+    const checkForOtherWorkoutsWithExercises = (w) => {
+        const savedWorkouts = user.savedWorkouts;
+        let needsUpdate = false;
+        savedWorkouts.forEach(swk => {
+            if (swk.id === w.id) return; // Skip same workout
+            // Loop through exercises from current workout to see matches
+            w.exercises.forEach(ex => {
+                if (needsUpdate) return; // Already needs update
+                if (swk.exercises.map(e => e.id).includes(ex.id)) {
+                    // Found a match, check if values differ
+                    const matchingExerciseIndex = swk.exercises.findIndex(e => e.id === ex.id);
+                    if (matchingExerciseIndex < 0) return;
+                    const isSame = deepEqual(ex, swk.exercises[matchingExerciseIndex]);
+                    if (!isSame) {
+                        // Ask to update workout
+                        needsUpdate = true;
+                        return;
+                    }
+                }
+            })
+        });
+        if (!needsUpdate) return;
+
+        setTimeout(() => {
+            setConfirmMenuData({
+                title: "Update exercises in other workouts?",
+                subTitle: "You made changes to exercises used in other workouts.",
+                subTitle2: "Would you like to update them?",
+                option1: "Update other workouts",
+                option2: "Don't update other workouts",
+                confirm: () => updateOtherWorkoutsWithExercises(w),
+            });
+            setConfirmMenuActive(true);
+        }, 300);
+
+        
+    }
+
+    
+
     const checkForWorkoutUpdate = () => {
         const workout = data.fullWorkout;
         if (workout.exercises.length < 1) return;
@@ -96,7 +171,10 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
                 subTitle2: "Would you like to save it?",
                 option1: "Save workout",
                 option2: "Don't save",
-                confirm: () => saveWorkout(w),
+                confirm: () => {
+                    saveWorkout(w);
+                    checkForOtherWorkoutsWithExercises(w);
+                },
             });
             setConfirmMenuActive(true);
         } else {
@@ -110,11 +188,25 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
                     subTitle2: "Would you like to update it?",
                     option1: "Update values",
                     option2: "Don't change",
-                    confirm: () => saveWorkout(w),
+                    confirm: () => {
+                        saveWorkout(w);
+                        checkForOtherWorkoutsWithExercises(w);
+                    },
                 });
                 setConfirmMenuActive(true);
             }
         }
+        
+        
+
+    }
+
+    const doChecks = () => {
+        checkForWorkoutUpdate();
+
+        setTimeout(() => {
+            setAnimationEnded(true);
+        }, 500);
     }
 
       // Animations
@@ -151,7 +243,7 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
             <SafeAreaView style={{flex: 1}}>
                 <View style={styles.actionButtons}>
                     <View>
-                        <Pressable onPress={closeModal}>
+                        <Pressable onPress={requestClose}>
                             <Image style={{height: 50, width: 50}} source={greyX} />
                         </Pressable>
                     </View>

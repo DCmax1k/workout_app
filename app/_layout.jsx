@@ -8,7 +8,7 @@ import { useUserStore } from '../stores/useUserStore'
 import keyboardIcon from '../assets/icons/keyboard.png'
 import { PaperProvider, Portal } from 'react-native-paper'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated'
+import Animated, { FadeOutDown, SlideInDown, SlideOutDown } from 'react-native-reanimated'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import loadIcons from '../util/loadIcons';
@@ -148,11 +148,11 @@ const RootLayout = () => {
                   {keyboardVisible && (
                     <Animated.View
                       entering={SlideInDown.springify().damping(90)}
-                      exiting={SlideOutDown.springify().damping(90)}
+                      exiting={FadeOutDown.duration(100)}
                       style={{
                         position: "absolute",
                         right: 20,
-                        bottom: keyboardHeight + (Platform.OS === "ios" ? 10 : 30),
+                        bottom: keyboardHeight + (Platform.OS === "ios" ? 10 : 10),
                         zIndex: 99999999,
                       }}
                     >

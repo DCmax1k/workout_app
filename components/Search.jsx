@@ -1,21 +1,26 @@
 import { Image, Keyboard, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
-import React from 'react'
+import React, { useRef } from 'react'
 import ActionMenu from './ActionMenu'
 import searchIcon from '../assets/icons/search.png'
 import keyboardIcon from '../assets/icons/keyboard.png';
 import { Colors } from '../constants/Colors';
 import Animated, { BounceInRight, BounceOutRight, FadeIn, FadeInRight, FadeOut, FadeOutRight, SlideOutRight } from 'react-native-reanimated';
 
-const Search = ({style, actionMenuData = false, dismissKeyboard = false, autoCorrect=false, placeholder="Search", ...props }) => {
+const Search = ({style, backgroundColor='#222222', actionMenuData = false, dismissKeyboard = false, autoCorrect=false, placeholder="Search", ...props }) => {
 
   const [showDisKeyboard, setShowDisKeyboard] = React.useState(false);
 
+  const textInputRef = useRef(null);
+
   return (
     <View style={[styles.container, style]}>
-      <View style={[styles.searchCont, {flex: 1}]}>
+      <View style={[styles.searchCont, {flex: 1, backgroundColor}]}>
         
-        <Image style={styles.searchIcon} source={searchIcon} />
-        <TextInput {...props} autoCorrect={autoCorrect} style={[styles.search, {flex: 1}]} placeholder={placeholder} placeholderTextColor={"#A6A6A6"} onFocus={() => setShowDisKeyboard(true)} onBlur={() => setShowDisKeyboard(false)} />
+        <Pressable style={styles.searchIconCont} onPress={() => {if (textInputRef.current) {textInputRef.current.focus()}}}>
+          <Image style={styles.searchIcon} source={searchIcon} />
+        </Pressable>
+        
+        <TextInput ref={textInputRef} {...props} autoCorrect={autoCorrect} style={[styles.search, {flex: 1}]} placeholder={placeholder} placeholderTextColor={"#A6A6A6"} onFocus={() => setShowDisKeyboard(true)} onBlur={() => setShowDisKeyboard(false)} />
         {/* Dismiss keyboard */}
         {dismissKeyboard && showDisKeyboard && (
           <Animated.View style={[styles.disKeyboard,]} entering={BounceInRight} exiting={SlideOutRight}>
@@ -41,21 +46,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     postion: "relative",
   },
-  searchIcon: {
-    position: "absolute",
-    width: 30,
-    height: 30,
+  searchIconCont: {
     position: "absolute",
     top: 10,
     left: 10,
+    width: 30,
+    height: 30,
     zIndex: 1,
+  },
+  searchIcon: {
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
     tintColor: "#A6A6A6",
   },
   searchCont: {
     position: "relative",
       height: 50,
-      
-      backgroundColor: "#222222",
       borderRadius: 99999,
       paddingLeft: 50,
       paddingRight: 10,

@@ -21,6 +21,9 @@ const Dashboard = () => {
   const colorScheme = useColorScheme()
   const theme = Colors[colorScheme];
 
+  const testingWorkout = {name: "Legs", id: "234", exercises: [ {id: "2", note:"", tracks: [], sets: [{lbs: "135", reps: "10"}]},], fullWorkout: {name: "Legs", id: "234", exercises: [ {id: "2", note:"", tracks: [], sets: [{lbs: "135", reps: "10"}]},], } };
+  const [finishWorkoutData, setFinishWorkoutData] = useState(null);
+
   const finishWorkoutPositionTop = useSharedValue(screenHeight);
   const finishWorkoutStyle = useAnimatedStyle(() => {
     return {
@@ -29,6 +32,7 @@ const Dashboard = () => {
   }, [])
 
   const sheetRef = useRef(null);
+
 
   const [sheetShouldStartOpen, setSheetShouldStartOpen] = useState(false);
   useEffect(() => {
@@ -50,9 +54,11 @@ const Dashboard = () => {
             updateOptions({ animateDashboard: false });
         }, 1000)
       }
+
+      //showFinishWorkout(testingWorkout);
     }, [animateDashboard]);
 
-  const [finishWorkoutData, setFinishWorkoutData] = useState(null);
+  
 
   const tabBarHeight = 115;
   const activePreview = 85;
@@ -110,6 +116,7 @@ const Dashboard = () => {
     setTimeout(() => {setFinishWorkoutData(null);}, animateTime);
   }
 
+  
 
   return user ? (
     <View style={{flex: 1, backgroundColor: theme.background}}>
@@ -158,9 +165,9 @@ const Dashboard = () => {
             
 
             <Animated.View style={[{position: "absolute", /* top: (finishWorkoutData !== null ? true : false) ? 0 : screenHeight, */ left: 0, height: screenHeight, width: "100%", zIndex: 5, elevation: 5}, finishWorkoutStyle]}>
-                      {finishWorkoutData !== null ? (
+                      {finishWorkoutData !== null && (
                       <FinishWorkout data={finishWorkoutData} closeModal={closeFinishWorkout} />
-                      ) : null}
+                      )}
                   </Animated.View>
 
           </>

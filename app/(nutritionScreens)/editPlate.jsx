@@ -8,7 +8,7 @@ import ThemedText from '../../components/ThemedText'
 import Spacer from '../../components/Spacer'
 import { useUserStore } from '../../stores/useUserStore'
 import { BottomSheetHandle, BottomSheetScrollView } from '@gorhom/bottom-sheet'
-import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated'
+import Animated, { FadeInUp, LinearTransition, SlideInDown, SlideOutDown } from 'react-native-reanimated'
 import { truncate } from '../../util/truncate'
 import doubleCarrot from '../../assets/icons/doubleCarrot.png'
 import pencil from '../../assets/icons/pencil.png'
@@ -19,11 +19,15 @@ import BlueButton from '../../components/BlueButton'
 import AddFood from '../../components/nutrition/AddFood'
 import { Portal } from 'react-native-paper'
 import getAllFood from '../../util/getAllFood'
+import getDateKey from '../../util/getDateKey'
+import { generateUniqueId } from '../../util/uniqueId'
+import PlateItem from '../../components/nutrition/PlateItem'
+import SwipeToDelete from '../../components/SwipeToDelete'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
 
-const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, animatedLeftButtonTransform, animatedRightButtonTransform, handleSnapPress}) => {
+const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, animatedLeftButtonTransform, animatedRightButtonTransform, handleSnapPress, bottomSheetPosition}) => {
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
     const allFoods = getAllFood(user);
@@ -85,21 +89,85 @@ const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, a
             updatePlate({foods: nextFoodsToAdd});
         }
 
+        const saveAsMeal = () => {
+            setConfirmMenuData({
+                title: "Coming soon!",
+                subTitle: "",
+
+                option1: "Okay",
+                option1color: Colors.primaryBlue,
+                confirm: () => {},
+            });
+            setConfirmMenuActive(true);
+        }
+
+        // CURRENTLY TESTING
+        const logFoods = () => {
+            
+            const dateKey = getDateKey(new Date());
+            const meal = {
+                name: plate.name,
+                id: generateUniqueId(),
+                fullMeal: plate,
+            };
+            const consumedMeals = user.consumedMeals;
+            const todaysMeals = consumedMeals[dateKey] ?? [];
+            const newMeals = [meal, ...todaysMeals];
+            const newConsumedMeals = {...consumedMeals, [dateKey]: newMeals};
+            updateUser({consumedMeals: newConsumedMeals});
+            closeSheet();
+            setTimeout(() => {
+                updateUser({editActivePlate: null});
+
+                console.log(user.consumedMeals)
+            }, 100)
+        }
+
+        const requestLogFoods = () => {
+            if (!plate.foods || plate.foods.length < 1) {
+                setConfirmMenuData({
+                    title: "No plate items",
+                    subTitle: "Please add at least one food item",
+                    subTitle2: "to your plate before logging.",
+                    option1: "Okay",
+                    option1color: Colors.primaryBlue,
+                    confirm: () => {},
+                });
+                setConfirmMenuActive(true);
+                return;
+            }
+            setConfirmMenuData({
+                title: "Log Foods?",
+                subTitle: "You are about to log the foods in this plate.",
+                subTitle2: "Would you like to proceed?",
+                option1: "Log Foods",
+                option1color: Colors.protein,
+                option2: "Go back",
+                confirm: logFoods,
+            });
+            setConfirmMenuActive(true);
+        }
+
+        const removeFoodItem = (food) => {
+            const newFoods = plate.foods.filter(f => f.id !== food.id);
+            updatePlate({foods: newFoods});
+        }
+
     return (
         <ThemedView style={{flex: 1, backgroundColor: "#313131"}}>
             <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
             
             <BottomSheetHandle indicatorStyle={{backgroundColor: "transparent"}} style={{height: 120,}}>
                 {/* Buttons if sheet is open */}
-                <Animated.View style={[{flexDirection: "row", justifyContent: "space-between", position: "absolute", left: 0, top: 0, right: 0, paddingHorizontal: 10, zIndex: 1, elevation: 1}, animatedButtonsOpacity ]}>
+                <Animated.View style={[{flexDirection: "row", justifyContent: "space-between", position: "absolute", left: 0, top: 0, right: 0, paddingHorizontal: 10, zIndex: 1, elevation: 1, pointerEvents: bottomSheetPosition===1?"auto":"none"}, animatedButtonsOpacity ]}>
                     <Animated.View style={animatedLeftButtonTransform}>
-                        <Pressable onPress={() => {}} style={{backgroundColor: "#5A5A5A", paddingVertical: 15, paddingHorizontal: 20, borderRadius: 10}}>
+                        <Pressable onPress={saveAsMeal} style={{backgroundColor: "#5A5A5A", paddingVertical: 15, paddingHorizontal: 20, borderRadius: 10}}>
                             <Text style={styles.text}>Save as meal</Text>
                         </Pressable>
                     </Animated.View>
                     
                     <Animated.View style={animatedRightButtonTransform}>
-                        <Pressable onPress={() => {}} style={{backgroundColor: "#DB5456", paddingVertical: 15, paddingHorizontal: 20, borderRadius: 10}}>
+                        <Pressable onPress={requestLogFoods} style={{backgroundColor: "#DB5456", paddingVertical: 15, paddingHorizontal: 20, borderRadius: 10}}>
                             <Text style={styles.text}>Log Foods</Text>
                         </Pressable>
                     </Animated.View>
@@ -140,14 +208,24 @@ const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, a
 
                     <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10, marginLeft: 20}}>Plate Items</ThemedText>
 
-                    {plate.foods.map((food, i) => {
-                        return (
-                            <View key={i} >
-                                <Text>{food.name}</Text>
-                            </View>
-                        )
-                    })}
+                    <Animated.View layout={LinearTransition}>
+                        {plate.foods.map((food, i) => {
+                            return (
+                                <Animated.View key={food.id} style={{width: screenWidth}} entering={FadeInUp} exiting={SlideOutDown} layout={LinearTransition}>
 
+                                    <SwipeToDelete style={{width: screenWidth}} openedRight={() => removeFoodItem(food)} >
+                                        <View style={{marginBottom: 5, paddingHorizontal: 10}} >
+                                            <PlateItem food={food} />
+                                        </View>
+                                    </SwipeToDelete>
+
+                                </Animated.View>
+                                
+                            )
+                        })}
+
+                    </Animated.View>
+                    
 
                 </BottomSheetScrollView>
             </Animated.View>

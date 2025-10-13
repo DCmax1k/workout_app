@@ -1,5 +1,5 @@
-import { Dimensions, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import { Dimensions, Image, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import ThemedView from '../ThemedView'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import greyX from '../../assets/icons/greyX.png'
@@ -11,7 +11,7 @@ import scanIcon from '../../assets/icons/scan.png'
 import searchIcon from '../../assets/icons/searchNoBg.png'
 import aiIcon from '../../assets/icons/aiSparkle.png'
 import plusIcon from '../../assets/icons/plus.png'
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
+import Animated, { Easing, FadeIn, FadeOut, SlideInDown, SlideOutDown, useAnimatedStyle, useSharedValue, withDelay, withSpring, withTiming } from 'react-native-reanimated'
 import Search from '../Search'
 import Spacer from '../Spacer'
 import Dropdown from '../Dropdown'
@@ -23,11 +23,11 @@ import { icons } from '../../constants/icons'
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
 
-const LibraryTab = ({openCreateNewCategory, foodToAdd, selectFood, ...props}) => {
+const LibraryTab = ({openCreateNewCategory, foodToAdd, selectFood, searchValue, ...props}) => {
     const user = useUserStore(state => state.user);
 
 
-    const [searchValue, setSearchValue] = useState("");
+    // const [searchValue, setSearchValue] = useState("");
     const userFoodCategories = user.foodCategories;
     const actionIds = [];
     const foodCategoriesOrganized = ["All Foods", ...userFoodCategories, ...foodCategories];
@@ -36,22 +36,22 @@ const LibraryTab = ({openCreateNewCategory, foodToAdd, selectFood, ...props}) =>
 
     const allFoods = foods;
 
-    console.log("Category data: ", selectedCategory);
+ 
     const currentCategory = categoryData.find(c => c.id === selectedCategory)?.title;
-    console.log("Current category: ", currentCategory);
+
 
     const filteredFoods = allFoods.filter(f => {
         if (currentCategory === "All Foods") {
             return f.name.toLowerCase().includes(searchValue.toLowerCase());
         } else {
-            return f.category?.toLowerCase() === currentCategory.toLowerCase() && f.name.toLowerCase().includes(searchValue.toLowerCase());
+            return f.categories.includes(currentCategory) && f.name.toLowerCase().includes(searchValue.toLowerCase());
         }
     });
 
     return (
-        <View>
-            <Search value={searchValue} onChangeText={(e) => setSearchValue(e)} placeholder='Search' />
-            <Spacer height={20} />
+        <View style={{ position: 'relative',}}>
+            {/* <Search value={searchValue} onChangeText={(e) => setSearchValue(e)} placeholder='Search' /> */}
+            {/* <Spacer height={20} /> */}
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginLeft: 10, marginBottom: 10,}}>
                 <ThemedText style={{fontSize: 13, fontWeight: 700,  }}>Category</ThemedText>
                 <ActionMenu style={{zIndex: 2}} data={[
@@ -62,9 +62,7 @@ const LibraryTab = ({openCreateNewCategory, foodToAdd, selectFood, ...props}) =>
             
             <Dropdown style={{zIndex: 2}} data={categoryData} selectedId={selectedCategory} setSelectedId={setSelectedCategory} actionIds={actionIds} actions={{"1": openCreateNewCategory}} overflow={true} />
 
-            <Spacer height={20} />
-
-            <ScrollView style={{marginLeft: -20, marginRight: -20, maxHeight: screenHeight/1.5,}} contentContainerStyle={{paddingBottom: screenHeight/3, paddingHorizontal: 20}} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{marginLeft: -20, marginRight: -20, height: screenHeight/1.5,}} contentContainerStyle={{paddingBottom: screenHeight/3, paddingHorizontal: 20, paddingTop: 20}} showsVerticalScrollIndicator={false}>
                 <View style={{paddingBottom: 50, flexWrap: "wrap", flexDirection: "row", justifyContent: "center", gap: 15,}}>
                     {filteredFoods.map((f, i) => {
                         const selected = foodToAdd.includes(f.id);
@@ -80,6 +78,8 @@ const LibraryTab = ({openCreateNewCategory, foodToAdd, selectFood, ...props}) =>
                     )})}
                 </View>
             </ScrollView>
+
+            
             
         </View>
     )
@@ -88,6 +88,11 @@ const LibraryTab = ({openCreateNewCategory, foodToAdd, selectFood, ...props}) =>
 const AddFood = ({setFoodModal, addFood}) => {
 
     const [foodToAdd, setFoodToAdd] = useState([]); // food ids
+
+    const [searchValue, setSearchValue] = useState(""); // For library
+
+    const [keyboardVisible, setKeyboardVisible] = useState(false);
+    const [keyboardHeight, setKeyboardHeight] = useState(0);
 
     const selectFood = (foodId) => {
         if (foodToAdd.includes(foodId)) {
@@ -110,10 +115,80 @@ const AddFood = ({setFoodModal, addFood}) => {
         console.log("Open create new category");
     }
 
+
+    // Animate view up when keyboard appears
+    useEffect(() => {
+        const onKeyboardShow = (e) => {
+        setKeyboardVisible(true);
+        setKeyboardHeight(e.endCoordinates.height);
+        };
+
+        const onKeyboardHide = () => {
+        setKeyboardVisible(false);
+        setKeyboardHeight(0);
+        };
+
+        const onKeyboardChange = (e) => {
+        setKeyboardHeight(e.endCoordinates.height);
+        };
+
+        const willShowSub = Keyboard.addListener("keyboardWillShow", onKeyboardShow);
+        const didShowSub = Keyboard.addListener("keyboardDidShow", onKeyboardShow);
+        const willHideSub = Keyboard.addListener("keyboardWillHide", onKeyboardHide);
+        const didHideSub = Keyboard.addListener("keyboardDidHide", onKeyboardHide);
+        const changeSub = Keyboard.addListener('keyboardDidChangeFrame', onKeyboardChange);
+
+        return () => {
+        willShowSub.remove();
+        didShowSub.remove();
+        willHideSub.remove();
+        didHideSub.remove();
+        changeSub.remove();
+        };
+    }, []);
+
+    const translateY = useSharedValue(0);
+    const searchWidth1 = 150;
+    const searchWidth2 = screenWidth - 40;
+    const searchWidth = useSharedValue(searchWidth1);
+
+    useEffect(() => {
+        translateY.value = withTiming(keyboardHeight > 0 ? -keyboardHeight - (Platform.OS === "ios" ? -15 : -20) : 0, { duration: keyboardHeight > 0 ? 200 : 300 });
+        searchWidth.value = withDelay(keyboardHeight > 0 ? 200 : 0, withSpring(keyboardHeight > 0 ? searchWidth2  : searchWidth1, { damping: keyboardHeight > 0 ? 80 : 100, }));
+    }, [keyboardHeight]);
+
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ translateY: translateY.value }],
+    }));
+    const animatedSearchStyle = useAnimatedStyle(() => ({
+        width: searchWidth.value,
+    }));
+
+
   return (
     <ThemedView style={{flex: 1, padding: 20}}>
-        <SafeAreaView>
 
+        {/* <KeyboardAvoidingView keyboardVerticalOffset={30} behavior={"padding"} style={{paddingHorizontal: 20, flex: 1, height: 100, zIndex: 1, position: "absolute", bottom: Platform.OS === 'ios' ? -10 : 0, left: 0, right: 0,}}>
+            
+            
+                <Search value={searchValue} onChangeText={(e) => setSearchValue(e)} placeholder='Search' />
+            
+        </KeyboardAvoidingView> */}
+
+        {tab === tabs[1] && (<Animated.View entering={FadeIn} exiting={FadeOut} style={[ { position: "absolute", left: 20, right: 20, bottom: Platform.OS === "ios" ? 20 : 50, zIndex: 9, alignItems: "center", }, animatedStyle ]} >
+                <Animated.View style={[animatedSearchStyle]}>
+                    <Search
+                        value={searchValue}
+                        onChangeText={(text) => setSearchValue(text)}
+                        placeholder="Search"
+                        backgroundColor='#3D3D3D'
+                    />
+                </Animated.View>
+            
+            </Animated.View>)}
+
+        <SafeAreaView>
             <View style={[styles.actionButtons]}>
                 <View>
                     <Pressable onPress={() => setFoodModal(false)}>
@@ -143,7 +218,7 @@ const AddFood = ({setFoodModal, addFood}) => {
             )}
             {tab === tabs[1] && (
                 <Animated.View entering={FadeIn} exiting={FadeOut}>
-                    <LibraryTab openCreateNewCategory={openCreateNewCategory} selectFood={selectFood} foodToAdd={foodToAdd}  />
+                    <LibraryTab openCreateNewCategory={openCreateNewCategory} selectFood={selectFood} foodToAdd={foodToAdd} searchValue={searchValue}  />
                 </Animated.View>
             )}
             {tab === tabs[2] && (
@@ -152,10 +227,7 @@ const AddFood = ({setFoodModal, addFood}) => {
                 </Animated.View>
             )}
 
-
-
         </SafeAreaView>
-
     </ThemedView>
   )
 }
@@ -176,3 +248,4 @@ const styles = StyleSheet.create({
         fontWeight: 600
     },
 })
+
