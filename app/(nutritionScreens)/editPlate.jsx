@@ -1,5 +1,5 @@
 import { Image, Pressable, StyleSheet, Text, View, TextInput, Dimensions } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import ThemedView from '../../components/ThemedView'
 import ConfirmMenu from '../../components/ConfirmMenu'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -27,7 +27,7 @@ import SwipeToDelete from '../../components/SwipeToDelete'
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
 
-const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, animatedLeftButtonTransform, animatedRightButtonTransform, handleSnapPress, bottomSheetPosition}) => {
+const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, animatedLeftButtonTransform, animatedRightButtonTransform, handleSnapPress, bottomSheetPosition}, ref) => {
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
     const allFoods = getAllFood(user);
@@ -37,6 +37,13 @@ const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, a
     const [foodModal, setFoodModal] = useState(false);
 
     const plateNameInputRef = useRef(null);
+
+    const selectPlateName = () => {
+        plateNameInputRef.current?.focus();
+    }
+    useImperativeHandle(ref, () => ({
+        selectPlateName
+    }))
 
     const updatePlate = (updates) => {
         updateUser({editActivePlate: {...plate, ...updates}});
@@ -101,13 +108,30 @@ const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, a
             setConfirmMenuActive(true);
         }
 
-        // CURRENTLY TESTING
+        const getTotalNutrition = (meal) => {
+            const mealNutrition = {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0
+            };
+            meal.foods.forEach(f => {
+                new Array(4).fill(null).map((_, i) => {
+                    const nutritionKey = ["calories", "protein", "carbs", "fat"][i];
+                    mealNutrition[nutritionKey] += f.nutrition[nutritionKey]*f.quantity;
+                });
+            });
+            return mealNutrition;
+        }
+
         const logFoods = () => {
             
-            const dateKey = getDateKey(new Date());
+            const dateKey = getDateKey();
+
             const meal = {
                 name: plate.name,
                 id: generateUniqueId(),
+                totalNutrition: getTotalNutrition(plate),
                 fullMeal: plate,
             };
             const consumedMeals = user.consumedMeals;
@@ -118,8 +142,6 @@ const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, a
             closeSheet();
             setTimeout(() => {
                 updateUser({editActivePlate: null});
-
-                console.log(user.consumedMeals)
             }, 100)
         }
 
@@ -199,7 +221,7 @@ const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, a
                         </Pressable>
                         
                         <TextInput selectTextOnFocus ref={plateNameInputRef} onChangeText={updatePlateName} onEndEditing={handleEndEditting} value={plate.name} style={styles.plateNameInput} />
-                        <ActionMenu data={[{title: "Discard Plate", icon: trashIcon, onPress: requestDiscardPlate, color: "#FF6C6C"}]} />
+                        <ActionMenu data={[{title: "Discard Plate", icon: trashIcon, onPress: requestDiscardPlate, color: Colors.redText}]} />
                     </View>
 
                     <Spacer height={10} />
@@ -241,7 +263,7 @@ const EditPlate = ({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, a
 
         </ThemedView>
     )
-}
+});
 
 export default EditPlate
 

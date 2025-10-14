@@ -1,4 +1,4 @@
-const getDateKey = (dateInput) => {
+const getDateKey = (dateInput = new Date()) => {
   const date = new Date(dateInput);
 
   const month = String(date.getMonth() + 1).padStart(2, '0'); // months are 0-indexed

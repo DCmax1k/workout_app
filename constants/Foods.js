@@ -4,7 +4,7 @@ export const foods = [
   {
     "name": "Egg",
     "unit": "units",
-    "categories": [[foodCategories[0]]],
+    "categories": [foodCategories[0]],
     "nutrition": { "calories": 70, "protein": 6, "carbs": 0.4, "fat": 5 },
     "icon": "fooddoodles175",
     "color": "#d9b45c",
@@ -14,7 +14,7 @@ export const foods = [
   {
     "name": "Bacon",
     "unit": "slices",
-    "categories": [[foodCategories[0]]],
+    "categories": [foodCategories[0]],
     "nutrition": { "calories": 42, "protein": 3, "carbs": 0, "fat": 3.3 },
     "icon": "fooddoodles326",
     "color": "#bb6242",
@@ -644,7 +644,7 @@ export const foods = [
   {
     "name": "Bagel",
     "unit": "unit",
-    "categories": [],
+    "categories": [foodCategories[0]],
     "nutrition": { "calories": 245, "protein": 9.5, "carbs": 48, "fat": 1.5 },
     "icon": "fooddoodles303",
     "color": "#c9a16a",

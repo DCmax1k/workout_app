@@ -3,6 +3,8 @@ export const Colors = {
     primaryOrange: '#DB8854',
     darkBlue: '#33417B',
 
+    redText: '#FF6C6C',
+
     calories: '#546FDC',
     protein: "#DB5456",
     carbs: "#2EE36A",

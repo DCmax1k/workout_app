@@ -20,8 +20,10 @@ import Animated, { Extrapolation, FadeIn, FadeOut, interpolate, useAnimatedStyle
 import { generateUniqueId } from '../../util/uniqueId'
 import BottomSheet from '@gorhom/bottom-sheet'
 import EditPlate from './editPlate'
-import ActionMenu from '../../components/ActionMenu'
-import trashIcon from '../../assets/icons/trash.png'
+import ConsumedMealCard from '../../components/nutrition/ConsumedMealCard'
+import calculateCalories from '../../util/calculateNutrition/calculateCalories'
+import calculateProtein from '../../util/calculateNutrition/calculateProtein'
+import calculateCarbs from '../../util/calculateNutrition/calculateCarbs'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -40,6 +42,7 @@ const Nutrition = () => {
 
     // Bottom sheet
     const sheetRef = useRef(null);
+    const editPlateRef = useRef(null);
 
     const tabBarHeight = 120;
     const firstSnap = tabBarHeight;
@@ -137,15 +140,19 @@ const Nutrition = () => {
 
     const menuOptions = [{title: "Hide widget", icon: noEye, onPress: () => console.log(""),}]
 
-    const calorieData = [3454, 3453, 1345, 2346, 4442, 3654, 1346, 2345, 5234, 1160];
-    const calorieDates = [Date.now(), Date.now(), Date.now(), Date.now(), Date.now(), Date.now(), Date.now(), Date.now(), Date.now(), Date.now(),];
+    // const calorieData = [3454, 3453, 1345, 2346, 4442, 3654, 1346, 2345, 5234, 1160];
+    // const calorieDates = [Date.now(), Date.now(), Date.now(), Date.now(), Date.now(), Date.now(), Date.now(), Date.now(), Date.now(), Date.now(),];
+    const calorieCalculation = calculateCalories(user, 29);
+    const calorieData = calorieCalculation.data;
+    const calorieDates = calorieCalculation.dates;
+
     const colorieGoal = user.tracking.nutrition["calories"].extraData.goal;
 
-    const proteinCount = 124;
+    const proteinCount = calculateProtein(user, 0).data[0];
     const proteinGoal = user.tracking.nutrition["protein"].extraData.goal;
-    const carbCount = 134;
+    const carbCount = calculateCarbs(user, 0).data[0];
     const carbGoal = user.tracking.nutrition["carbs"].extraData.goal;
-    const fatCount = 34;
+    const fatCount = calculateProtein(user, 0).data[0];
     const fatGoal = user.tracking.nutrition["fat"].extraData.goal;
 
     const todaysConsumptionHistory = user.consumedMeals[getDateKey(new Date())] || [];
@@ -196,6 +203,10 @@ const Nutrition = () => {
            
         // });
         handleSnapPress(1);
+        setTimeout(() => {
+            // Auto select title
+            editPlateRef.current?.selectPlateName();
+        }, 600  )
     }
     const useSavedPlate = () => {
         console.log('use saved plate')
@@ -240,7 +251,7 @@ const Nutrition = () => {
 
 
 
-                <ScrollView contentContainerStyle={{paddingBottom: 120}}  showsVerticalScrollIndicator={false}>
+                <ScrollView contentContainerStyle={{paddingBottom: 220}}  showsVerticalScrollIndicator={false}>
                     <View style={{paddingHorizontal: 20}}>
                         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "flex-end"}}>
                             <Text style={{color: "#B4B4B4", fontSize: 15, marginRight: 20}}>Calorie Target</Text>
@@ -356,24 +367,12 @@ const Nutrition = () => {
                             <ThemedText style={{paddingHorizontal: 50, paddingVertical: 20, textAlign: "center"}}>Find meals you eat today here!</ThemedText>
                         )}
 
-                        {/* LEFT OFF WORKING HERE, MEALS FROM TODAY */}
+                        {/* MEALS FROM TODAY */}
                         <View>
                             {todaysConsumptionHistory.map((meal, i) => {
 
                                 return (
-                                    <View key={meal.id} style={{height: 60, width: "100%", backgroundColor: "#1C1C1C", borderRadius: 10, paddingHorizontal: 10, justifyContent: "center", alignItems: "center", marginTop: 10}}>
-                                        <View style={{width: "100%", height: 30, paddingTop: 5, flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
-                                            <View>
-                                                <Text style={{color: "white", fontSize: 14, fontWeight: "600"}}>{meal.name}</Text>
-                                            </View>
-                                            <ActionMenu data={[
-                                                            {title: "Remove Meal", icon: trashIcon, onPress: () => {console.log("Remove meal")}, },
-                                            ]} />
-                                        </View>
-                                        <View style={{width: "100%", height: 30, paddingTop: 5}}>
-
-                                        </View>
-                                    </View>
+                                    <ConsumedMealCard meal={meal} key={meal.id} setConfirmMenuData={setConfirmMenuData} setConfirmMenuActive={setConfirmMenuActive} />
                                 )
                                 
                             })}
@@ -407,6 +406,7 @@ const Nutrition = () => {
         >
         
             <EditPlate
+                ref={editPlateRef}
                 closeSheet={handleCloseSheet}
                 animatedHeaderOpacity={animatedHeaderOpacity}
                 animatedButtonsOpacity={animatedButtonsOpacity}

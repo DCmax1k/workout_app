@@ -132,6 +132,7 @@ const RootLayout = () => {
                   <Stack.Screen name="(progressScreens)/inputValueScreen" options={{ headerShown: false }} />
                   <Stack.Screen name="(progressScreens)/editPastData" options={{ headerShown: false }} />
                   <Stack.Screen name="(nutritionScreens)/nutrition" options={{ headerShown: false }} />
+                  <Stack.Screen name="(nutritionScreens)/consumedMealsHistory" options={{ headerShown: false }} />
                   {/* <Stack.Screen name="(nutritionScreens)/editPlate" options={{ headerShown: false }} /> */}
 
                   <Stack.Screen name="GlowImageCont" options={{ headerShown: false, animation: "fade" }} />

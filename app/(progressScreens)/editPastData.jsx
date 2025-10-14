@@ -16,6 +16,7 @@ import formatTime from '../../util/formatTime';
 import ActionMenu from '../../components/ActionMenu';
 import SwipeToDelete from '../../components/SwipeToDelete';
 import { SCREEN_WIDTH } from '@gorhom/bottom-sheet';
+import { Colors } from '../../constants/Colors';
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -99,7 +100,7 @@ const EditPastData = () => {
                                     <Text style={{color: "white", fontSize: 14, fontWeight: "800"}}>{formatTime(entry.date)}</Text>
                                     <View style={{flex: 1}}></View>
                                     <ActionMenu data={[
-                                        {title: "Delete data point", icon: trash, onPress: () => deleteData(entry.date), },
+                                        {title: "Delete data point", icon: trash, onPress: () => deleteData(entry.date), color: Colors.redText},
                                         ]} />
                                 </View>
                             </SwipeToDelete>

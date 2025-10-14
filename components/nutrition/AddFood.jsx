@@ -23,7 +23,7 @@ import { icons } from '../../constants/icons'
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
 
-const LibraryTab = ({openCreateNewCategory, foodToAdd, selectFood, searchValue, ...props}) => {
+const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, searchValue, ...props}) => {
     const user = useUserStore(state => state.user);
 
 
@@ -55,12 +55,12 @@ const LibraryTab = ({openCreateNewCategory, foodToAdd, selectFood, searchValue, 
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginLeft: 10, marginBottom: 10,}}>
                 <ThemedText style={{fontSize: 13, fontWeight: 700,  }}>Category</ThemedText>
                 <ActionMenu style={{zIndex: 2}} data={[
-                    {title: "Create New Category", icon: plusIcon, onPress: openCreateNewCategory, },
+                    {title: "Create New Food", icon: plusIcon, onPress: openCreateNewFood, },
                    
                     ]} />
             </View>
             
-            <Dropdown style={{zIndex: 2}} data={categoryData} selectedId={selectedCategory} setSelectedId={setSelectedCategory} actionIds={actionIds} actions={{"1": openCreateNewCategory}} overflow={true} />
+            <Dropdown style={{zIndex: 2}} data={categoryData} selectedId={selectedCategory} setSelectedId={setSelectedCategory} actionIds={actionIds} actions={{"1": openCreateNewFood}} overflow={true} />
 
             <ScrollView style={{marginLeft: -20, marginRight: -20, height: screenHeight/1.5,}} contentContainerStyle={{paddingBottom: screenHeight/3, paddingHorizontal: 20, paddingTop: 20}} showsVerticalScrollIndicator={false}>
                 <View style={{paddingBottom: 50, flexWrap: "wrap", flexDirection: "row", justifyContent: "center", gap: 15,}}>
@@ -111,8 +111,8 @@ const AddFood = ({setFoodModal, addFood}) => {
         setFoodToAdd([]);
     }
 
-    const openCreateNewCategory = () => {
-        console.log("Open create new category");
+    const openCreateNewFood = () => {
+        console.log("Open create new food");
     }
 
 
@@ -218,7 +218,7 @@ const AddFood = ({setFoodModal, addFood}) => {
             )}
             {tab === tabs[1] && (
                 <Animated.View entering={FadeIn} exiting={FadeOut}>
-                    <LibraryTab openCreateNewCategory={openCreateNewCategory} selectFood={selectFood} foodToAdd={foodToAdd} searchValue={searchValue}  />
+                    <LibraryTab openCreateNewFood={openCreateNewFood} selectFood={selectFood} foodToAdd={foodToAdd} searchValue={searchValue}  />
                 </Animated.View>
             )}
             {tab === tabs[2] && (

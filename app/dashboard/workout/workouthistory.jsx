@@ -49,7 +49,7 @@ const WorkoutHistory = () => {
     }))
 
   return (
-    <Provider>
+    // <Provider>
         <ThemedView style={{flex: 1, paddingHorizontal: 20}}>
           <SafeAreaView style={{flex: 1}}>
               <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
@@ -87,7 +87,7 @@ const WorkoutHistory = () => {
 
           </SafeAreaView>
       </ThemedView>
-    </Provider>
+    // </Provider>
     
   )
 }

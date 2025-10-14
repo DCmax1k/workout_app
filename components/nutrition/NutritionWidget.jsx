@@ -6,21 +6,28 @@ import { Colors } from '../../constants/Colors';
 import RightArrow from '../../assets/icons/rightArrow.png'
 import { useUserStore } from '../../stores/useUserStore';
 import { router } from 'expo-router';
+import calculateCalories from '../../util/calculateNutrition/calculateCalories';
+import calculateProtein from '../../util/calculateNutrition/calculateProtein';
+import calculateCarbs from '../../util/calculateNutrition/calculateCarbs';
+import getDateKey from '../../util/getDateKey';
 
 const screenWidth = Dimensions.get("screen").width;
 
 const NutritionWidget = ({style, drag}) => {
     const user = useUserStore(state => state.user);
 
-    const calorieCount = 1160;
-    const calorieGoal = user.tracking.nutrition["calories"].extraData.goal;;
-    const proteinCount = 124;
-    const proteinGoal = user.tracking.nutrition["protein"].extraData.goal;;
-    const carbCount = 134;
-    const carbGoal = user.tracking.nutrition["carbs"].extraData.goal;;
-    const fatCount = 34;
-    const fatGoal = user.tracking.nutrition["fat"].extraData.goal;;
-    const todaysPlateCount = 1;
+    const calorieCount = calculateCalories(user, 0).data[0];
+    const calorieGoal = user.tracking.nutrition["calories"].extraData.goal;
+    const proteinCount = calculateProtein(user, 0).data[0];
+    const proteinGoal = user.tracking.nutrition["protein"].extraData.goal;
+    const carbCount = calculateCarbs(user, 0).data[0];
+    const carbGoal = user.tracking.nutrition["carbs"].extraData.goal;
+    const fatCount = calculateProtein(user, 0).data[0];
+    const fatGoal = user.tracking.nutrition["fat"].extraData.goal;
+
+    const dateKey = getDateKey();
+    const todaysConsumedMeals = user.consumedMeals[dateKey] ?? [];
+    const todaysPlateCount = todaysConsumedMeals.length ?? 0;
 
 
     const straightToLogFood = () => {
