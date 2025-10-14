@@ -9,7 +9,7 @@ const MacrosRow = ({style, nutrition, multiplier=1, ...props}) => {
             const nutritionKey = ["calories", "protein", "carbs", "fat"][i];
             const backgroundColor = [Colors.calories, Colors.protein, "#1BB14C", Colors.fat][i];
             const abr = ["Cal", "P", "C", "F"][i];
-            const nAmount = parseInt(nutrition[nutritionKey]*multiplier);
+            const nAmount = Math.round(nutrition[nutritionKey]*multiplier);
 
             return (
                 <View key={i} style={{backgroundColor, flexDirection: "row", alignItems: "flex-end", paddingHorizontal: 5, paddingVertical: 3, borderRadius: 9999, marginTop: 3}}>

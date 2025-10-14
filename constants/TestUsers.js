@@ -63,7 +63,7 @@ const USER = {
     archivedFoods: {}, // {foodId: true, foodId2: false, ...}
     foodCategories: [], // "name"
     savedMeals: [], // {name, id, foodIds }
-    consumedMeals: {}, // {"00/00/0000": [{name, id, fullMeal, ]}
+    consumedMeals: {}, // {"00/00/0000": [{name, id, totalNutrition, fullMeal, ]}
 
     tracking: {
       visibleWidgets: ["nutrition"], // ["calories", "ex_89023u42i0jr", "nutrition"] cannot remove nutrition

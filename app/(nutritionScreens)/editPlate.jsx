@@ -127,11 +127,11 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
         const logFoods = () => {
             
             const dateKey = getDateKey();
-
+            const totalNutrition =  getTotalNutrition(plate);
             const meal = {
                 name: plate.name,
                 id: generateUniqueId(),
-                totalNutrition: getTotalNutrition(plate),
+                totalNutrition,
                 fullMeal: plate,
             };
             const consumedMeals = user.consumedMeals;

@@ -29,7 +29,6 @@ const calculateFat = (user, days=0) => {
         dates.push(day.getTime());
         
     }
-
     return {data, dates};
 }
 

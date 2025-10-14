@@ -24,6 +24,7 @@ import ConsumedMealCard from '../../components/nutrition/ConsumedMealCard'
 import calculateCalories from '../../util/calculateNutrition/calculateCalories'
 import calculateProtein from '../../util/calculateNutrition/calculateProtein'
 import calculateCarbs from '../../util/calculateNutrition/calculateCarbs'
+import calculateFat from '../../util/calculateNutrition/calculateFat'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -152,7 +153,7 @@ const Nutrition = () => {
     const proteinGoal = user.tracking.nutrition["protein"].extraData.goal;
     const carbCount = calculateCarbs(user, 0).data[0];
     const carbGoal = user.tracking.nutrition["carbs"].extraData.goal;
-    const fatCount = calculateProtein(user, 0).data[0];
+    const fatCount = calculateFat(user, 0).data[0];
     const fatGoal = user.tracking.nutrition["fat"].extraData.goal;
 
     const todaysConsumptionHistory = user.consumedMeals[getDateKey(new Date())] || [];

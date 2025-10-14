@@ -101,36 +101,9 @@ const IndexProgress = () => {
                 ];
 
 
-  const rawExpData = useUserStore(
-    (state) => state.user.tracking.insights?.expenditure?.data ?? []
-  );
-  const expData = useMemo(() => rawExpData, [rawExpData]);
 
-  const rawWeightData = useUserStore(
-    (state) => state.user.tracking.logging.weight?.data ?? []
-  );
-
-  const weightData = useMemo(() => rawWeightData, [rawWeightData]);
-  const weightUnit = useUserStore(
-    (state) => state.user.tracking.logging.weight?.unit ?? "kg"
-  );
-
-  const height = useUserStore((state) => state.user.settings.height ?? null);
-  const gender = useUserStore((state) => state.user.settings.gender ?? null);
-  const birthday = useUserStore((state) => state.user.settings.birthday ?? null);
-
-  const expenditureUser = useMemo(() => ({
-    settings: { height, gender, birthday },
-    tracking: {
-      logging: {
-        weight: { data: weightData, unit: weightUnit }
-      }
-    }
-  }), [height, gender, birthday, weightData, weightUnit]);
-
-
-  const expenditureData = calculateExpenditure(expData.map(it => it.amount), expData.map(it => it.date), expenditureUser);
-  const bmiData = calculateBMI([], [], expenditureUser); // Two blank arrays, all data is dynamic
+  const expenditureData = calculateExpenditure(user);
+  const bmiData = calculateBMI([], [], user); // Two blank arrays, all data is dynamic
 
   return (
 
@@ -265,7 +238,7 @@ const IndexProgress = () => {
                         const calResting = ((user.tracking.logging["weight"].data.length > 0) && user.settings.height !== null && user.settings.gender !==null && user.settings.birthday !== null) === true; // True if use has their: weight, height, gender, and age
                         const calExercising = user.tracking.logging["weight"].data.length > 0 === true; // True if body: weight
                         const calWalkingSteps = false; // True if: weight, and access to step count
-                        const calFood = false; // True when finished developing meals
+                        const calFood = true; // True when finished developing meals
                         const blockExpenditure = key === "expenditure" && ( !calResting || !calExercising || !calWalkingSteps || !calFood);
                         widget.calResting = calResting;
                         widget.calExercising = calExercising;

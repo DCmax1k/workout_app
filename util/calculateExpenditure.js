@@ -1,3 +1,4 @@
+import getDateKey from "./getDateKey";
 
 
 
@@ -43,7 +44,8 @@ function yearsBetween(date1, date2) {
     return years;
 }
 
-const calculateExpenditure = (oriData, oriDates, user) => {
+const calculateExpenditure = (user) => {
+    const oriData = user.tracking.insights.expenditure.data;
     const sixMonthsAgo = new Date();
     const dayOffset = 180
     sixMonthsAgo.setDate(sixMonthsAgo.getDate() - dayOffset);
@@ -57,14 +59,16 @@ const calculateExpenditure = (oriData, oriDates, user) => {
 
 
     for (let day = new Date(sixMonthsAgo); day.getTime() <= today.getTime(); day.setDate(day.getDate() + 1)) {
-        let expenditureOffset = 0; // For the day, calculate resting amount
+        const dateKey = getDateKey(day);
+        // TRACK FROM EXERCISING
+        let expenditureOffset = 0; // For the day, calculate resting amount, and digesting
         const userWeightWidget = user.tracking.logging["weight"];
         if (((userWeightWidget.data.length > 0) && user.settings.height !== null && user.settings.gender !==null && user.settings.birthday !== null) === true) { // Same logic in progress index
             //const userWeight = userWeightWidget.data[userWeightWidget.data.length-1].amount;
             const userWeight = getWeightAtDate(userWeightWidget.data, day);
             const weightKgs = userWeight ? userWeightWidget.unit === "lbs" ? lbsToKgs(userWeight) : userWeight : null;
             const age = yearsBetween(user.settings.birthday, today);
-            const fracOfToday = day.getTime() !== today.getTime() ? 1 : dayProgress();
+            
             if (userWeight) {
                 if (user.settings.gender === "male") {
                     expenditureOffset = (10*weightKgs) + (6.25*user.settings.height) - (5*age) + 5;
@@ -73,17 +77,28 @@ const calculateExpenditure = (oriData, oriDates, user) => {
                 } else {
                     expenditureOffset = (10*weightKgs) + (6.25*user.settings.height) - (5*age) - 100;
                 }
-                //expenditureOffset *= fracOfToday;
+                
             } 
         }
-        dailyDataPoints.push(0+(expenditureOffset));
+        // TRACK FROM DIGESTING = 10% calories
+        const dayMeals = user.consumedMeals[dateKey] || [];
+        if (dayMeals.length > 0) {
+            dayMeals.forEach(meal => {
+                expenditureOffset += meal.totalNutrition["calories"]*0.10;
+            });
+        }
+        
+        //const fracOfToday = day.getTime() !== today.getTime() ? 1 : dayProgress();
+        //expenditureOffset *= fracOfToday;
+        dailyDataPoints.push(expenditureOffset);
         dailyDatePoints.push(day.getTime());
     }
     // Loop through oriData and fit into dailyData
     const dailyDate = new Date(sixMonthsAgo);
     let loopInd = 0; // index of dailyData
     for (let i = 0; i<oriData.length; i++) {
-        const dataDate = new Date(oriDates[i]);
+        // const dataDate = new Date(oriDates[i]);
+        const dataDate = new Date(oriData[i].date);
         dataDate.setHours(0,0,0,0);
         // Catch up the dailys
         if (dataDate.getTime() > dailyDate.getTime()) {
@@ -94,8 +109,8 @@ const calculateExpenditure = (oriData, oriDates, user) => {
             
         }
         if (dataDate.getTime() === dailyDate.getTime()) {
-            dailyDataPoints[loopInd] = dailyDataPoints[loopInd] + oriData[i];
-            dailyDatePoints[loopInd] = oriDates[i];
+            dailyDataPoints[loopInd] = dailyDataPoints[loopInd] + oriData[i].amount;
+            dailyDatePoints[loopInd] = oriData[i].date;
             loopInd++;
             dailyDate.setDate(dailyDate.getDate()+1);
         } else {
