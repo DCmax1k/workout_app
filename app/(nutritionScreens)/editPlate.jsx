@@ -38,11 +38,23 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
     //const [foodModal, setFoodModal] = useState(false);
     useEffect(() => {
         const sub = emitter.addListener("addFood", ({foodToAdd}) => {
-        //console.log("Got data back:", foodToAdd);
-        addFood(foodToAdd);
-        
+            //console.log("Got data back:", foodToAdd);
+            addFood(foodToAdd);
+            
         });
-        return () => sub.remove();
+        const sub2 = emitter.addListener("done", (data) => {
+            if (data?.target === "changeFoodQuantity") {
+                const quantity = data.value;
+                const foods = plate.foods;
+                const foodIdx = foods.findIndex(f => f.id === data.food.id);
+                foods[foodIdx] = {...data.food, quantity};
+                updatePlate({foods});
+            }
+        })
+        return () => {
+            sub.remove();
+            sub2.remove();
+        }
     }, [emitter]);
 
     const plateNameInputRef = useRef(null);
@@ -192,6 +204,27 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
                     });
         }
 
+        const clickChangeQuantity = (food) => {
+            const info = {
+                title: food.name + " Quantity",
+                target: 'changeFoodQuantity',
+                value: food.quantity,
+                unit: food.unit,
+                increment: 0.1,
+                range: [0, 100],
+                scrollItemWidth: 10,
+                defaultValue: 1,
+
+                food,
+            }
+            router.push({
+                pathname: "/inputValueScreen",
+                params: {
+                    data: JSON.stringify(info),
+                },
+            });
+        }
+
     return (
         <ThemedView style={{flex: 1, backgroundColor: "#313131"}}>
             <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
@@ -254,7 +287,7 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
 
                                     <SwipeToDelete style={{width: screenWidth}} openedRight={() => removeFoodItem(food)} >
                                         <View style={{marginBottom: 5, paddingHorizontal: 10}} >
-                                            <PlateItem food={food} />
+                                            <PlateItem food={food} clickChangeQuantity={clickChangeQuantity} />
                                         </View>
                                     </SwipeToDelete>
 

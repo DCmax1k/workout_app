@@ -130,6 +130,7 @@ const EditFood = () => {
         }
         
       }
+      
 
   return (
     <ThemedView style={{flex: 1, padding: 20}}>

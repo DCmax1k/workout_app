@@ -1,10 +1,10 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { icons } from '../../constants/icons';
 import { Colors } from '../../constants/Colors';
 import MacrosRow from './MacrosRow';
 
-const PlateItem = ({style, food, ...props}) => {
+const PlateItem = ({style, food, clickChangeQuantity, ...props}) => {
 
     const icon = food.icon ? icons[food.icon] : icons["fooddoodles303"];
     const size = 60;
@@ -25,9 +25,9 @@ const PlateItem = ({style, food, ...props}) => {
         </View>
         {/* Serving input */}
         <View style={{height: size, justifyContent: "center", alignItems: "center", paddingRight: 10 }}>
-            <View style={{height: size/1.5, backgroundColor: "#333333", borderRadius: 10, justifyContent: 'center', alignItems: "center", paddingHorizontal: 10}}>
+            <Pressable onPress={() => clickChangeQuantity(food)} style={{height: size/1.5, backgroundColor: "#333333", borderRadius: 10, justifyContent: 'center', alignItems: "center", paddingHorizontal: 10}}>
                 <Text style={{color: "white", fontSize: 14, fontWeight: "600",}}>{food.quantity} {food.unit}</Text>
-            </View>
+            </Pressable>
             
         </View>
     </View>

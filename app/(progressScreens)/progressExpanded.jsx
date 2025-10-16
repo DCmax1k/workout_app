@@ -56,9 +56,7 @@ const ProgressExpanded = () => {
         } else if (data.target === 'goal') {
           const updated = {tracking: {logging: {[data.widget.category]: {extraData: {goal: data.value}}}}};
           updateUser(updated);
-        } else {
-          console.log("Tried changing value with emit but value not found");
-        }
+        } 
         
 
       } else if (data.widget.layout === "water") { // Edit last data point if the last point is 
