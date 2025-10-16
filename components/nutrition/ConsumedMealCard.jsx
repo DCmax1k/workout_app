@@ -9,6 +9,7 @@ import formatDate from '../../util/formatDate'
 import { useUserStore } from '../../stores/useUserStore'
 import getDateKey from '../../util/getDateKey'
 import { Colors } from '../../constants/Colors'
+import sinceWhen from '../../util/sinceWhen'
 
 const ConsumedMealCard = ({style, meal, setConfirmMenuData, setConfirmMenuActive, ...props}) => {
     const user = useUserStore(state => state.user);
@@ -61,7 +62,7 @@ const ConsumedMealCard = ({style, meal, setConfirmMenuData, setConfirmMenuActive
             ]} />
         </View>
         <View style={{width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
-            <ThemedText style={{fontSize: 13}}>{formatDate(Date.now())}</ThemedText>
+            <ThemedText style={{fontSize: 13}}>{sinceWhen(meal.date ?? new Date())}</ThemedText>
             <MacrosRow nutrition={mealNutrition} />
         </View>
     </View>

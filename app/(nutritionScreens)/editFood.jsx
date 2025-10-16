@@ -1,5 +1,5 @@
 import { Dimensions, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ThemedText from '../../components/ThemedText'
 import { router, useLocalSearchParams } from 'expo-router';
 import ThemedView from '../../components/ThemedView';
@@ -12,10 +12,14 @@ import { icons } from '../../constants/icons';
 import customizeIcon from '../../assets/icons/customizeIcon.png'
 import pencil from '../../assets/icons/pencil.png'
 import trashIcon from '../../assets/icons/trash.png'
+import plusIcon from '../../assets/icons/plus.png'
 import Spacer from '../../components/Spacer';
 import ActionMenu from '../../components/ActionMenu';
+import { foodCategories } from '../../constants/Foods';
+import MultiSelectDropdown from '../../components/MultiSelectDropdown';
 
 const screenWidth = Dimensions.get('screen').width;
+const screenHeight = Dimensions.get('screen').height;
 
 const EditFood = () => {
     const user = useUserStore(state => state.user);
@@ -27,6 +31,23 @@ const EditFood = () => {
 
     const [food, setFood] = useState(JSON.parse(JSON.stringify(f)));
     const foodNameInputRef = useRef(null);
+
+    const userFoodCategories = user.foodCategories;
+    const foodCategoriesOrganized = [...userFoodCategories, ...foodCategories];
+    const categoryData = foodCategoriesOrganized.map((f, i) => ({id: `${i}`, title: f}));
+
+    const preSetCategoryIds = categoryData.filter(d =>{ 
+        return food.categories.includes(d.title)
+    }).map(c=> c.id);
+    const [categoryIds, setCategoryIds] = useState(preSetCategoryIds);
+    
+    
+    
+
+    useEffect(() => {
+        const newCategories = categoryIds.map(id => categoryData.find(c => c.id === id)).map(c => c.title);
+        updateFood({categories: newCategories});
+    }, [categoryIds])
 
 
     const [confirmMenuActive, setConfirmMenuActive] = useState(false);
@@ -50,6 +71,12 @@ const EditFood = () => {
     }
 
     const updateMacro = (nutritionKey, value) => {
+        const nutrition = food.nutrition;
+        nutrition[nutritionKey] = value;
+        updateFood({nutrition})
+    }
+    const handleEndEdittingMacro = (nutritionKey, e) => {
+        const value =  e.nativeEvent.text;
         const nutrition = food.nutrition;
         nutrition[nutritionKey] = parseInt(value*10)/10;
         updateFood({nutrition})
@@ -80,7 +107,7 @@ const EditFood = () => {
     const requestSaveFood = () => {
         const customFoods = user.customFoods;
         customFoods[food.id] = food;
-        
+        //console.log("Saving food", food);
         updateUser({customFoods});
         router.back();
       }
@@ -130,6 +157,17 @@ const EditFood = () => {
         }
         
       }
+
+      const createNewCategory = () => {
+            setConfirmMenuData({
+                title: "Coming soon",
+                subTitle: "",
+                option1: "Okay",
+                option1color: Colors.primaryBlue,
+                confirm: () => {},
+            });
+            setConfirmMenuActive(true);
+      }
       
 
   return (
@@ -151,7 +189,7 @@ const EditFood = () => {
           </View>
 
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex: 1}} >
-                     <ScrollView contentContainerStyle={{paddingBottom: 120, paddingTop: 170}} showsVerticalScrollIndicator={false}>
+                     <ScrollView contentContainerStyle={{paddingBottom: screenHeight/2, paddingTop: 170}} showsVerticalScrollIndicator={false}>
                         <View style={{width: screenWidth, height: screenWidth/2, alignItems: "center", marginLeft: -20}}>
                             <View style={{height: screenWidth/2, width: screenWidth/2, backgroundColor: food.color, borderRadius: 20, justifyContent: "center", alignItems: "center", overflow: "hidden"}}>
                                 <View style={[StyleSheet.absoluteFill, {backgroundColor: "rgba(0,0,0,0.3)"}]}></View>
@@ -186,14 +224,15 @@ const EditFood = () => {
                                 const nutritionKey = ["calories", "protein", "carbs", "fat"][i];
                                 const backgroundColor = [Colors.calories, Colors.protein, Colors.carbs, Colors.fat][i];
                                 const abr = ["Calories", "Protein", "Carbohydrates", "Fat"][i];
-                                const nAmount = Math.round(nutrition[nutritionKey]);
+                                const nAmount = nutrition[nutritionKey]?.toString() || ""; // no rounding!
+
                     
                                 const height = 60;
                                 return (
                                     <View key={i} style={{flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 10}} >
                                         <View style={{height, width: 20, borderRadius: 999, backgroundColor}}></View>
                                         <View style={{backgroundColor: "#3C3C3C", borderRadius: 10, justifyContent: "center", alignItems: "center"}}>
-                                            <TextInput selectTextOnFocus keyboardType='numeric' style={{color: "white", fontSize: 18, fontWeight: "800", width: 100, height, paddingHorizontal: 20,}} value={JSON.stringify(nAmount)} onChangeText={(e) => updateMacro(nutritionKey, e)} />
+                                            <TextInput selectTextOnFocus keyboardType='numeric' style={{color: "white", fontSize: 18, fontWeight: "800", width: 100, height, paddingHorizontal: 20,}} value={nAmount} onChangeText={(e) => updateMacro(nutritionKey, e)} onEndEditing={(e) => handleEndEdittingMacro(nutritionKey, e)} />
                                         </View>
                                         
                                         <Text style={{color: "white", fontSize: 16, fontWeight: "800"}}>{abr}</Text>
@@ -202,6 +241,20 @@ const EditFood = () => {
                                 )
                             })}
                         </View>
+
+                        <Spacer height={20} />
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginLeft: 10, marginBottom: 10,}}>
+                            <ThemedText style={{fontSize: 13, fontWeight: 700,  }}>Category</ThemedText>
+                            <ActionMenu style={{zIndex: 2}} data={[
+                                {title: "Create New Category", icon: plusIcon, onPress: createNewCategory, },
+                                ]} />
+                        </View>
+
+                        <MultiSelectDropdown locked={false} selectedIds={categoryIds} setSelectedIds={setCategoryIds} data={categoryData} />
+                            
+                        <Spacer height={20} />
+
+
                     </ScrollView> 
             </KeyboardAvoidingView>
 

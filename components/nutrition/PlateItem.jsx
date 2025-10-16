@@ -1,16 +1,18 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { icons } from '../../constants/icons';
 import { Colors } from '../../constants/Colors';
 import MacrosRow from './MacrosRow';
+import { truncate } from '../../util/truncate';
+const screenWidth = Dimensions.get('screen').width;
 
 const PlateItem = ({style, food, clickChangeQuantity, ...props}) => {
 
     const icon = food.icon ? icons[food.icon] : icons["fooddoodles303"];
-    const size = 60;
+    const size = 60; 
 
   return (
-    <View style={[style, {height: size, width: "100%", backgroundColor: "#272727", borderRadius: 10, flexDirection: "row" }]} {...props}>
+    <View style={[style, {height: size, width: screenWidth-20, backgroundColor: "#272727", borderRadius: 10, flexDirection: "row", }]} {...props}>
         {/* ICON */}
         <View style={{height: size, width: size, justifyContent: "center", alignItems: "center"}}>
             <View style={{height: size/1.5, width: size/1.5, backgroundColor: food.color, borderRadius: 10, justifyContent: "center", alignItems: "center", overflow: "hidden"}}>
@@ -20,12 +22,12 @@ const PlateItem = ({style, food, clickChangeQuantity, ...props}) => {
         </View>
         {/* Name and details */}
         <View style={{flexDirection: "column", height: size, justifyContent: "center", marginRight: "auto"}}>
-            <Text style={{color: "white", fontSize: 14, fontWeight: "600"}}>{food.name}</Text>
+            <Text style={{color: "white", fontSize: 14, fontWeight: "600"}}>{truncate(food.name, 25)}</Text>
             <MacrosRow nutrition={food.nutrition} multiplier={food.quantity} />
         </View>
         {/* Serving input */}
-        <View style={{height: size, justifyContent: "center", alignItems: "center", paddingRight: 10 }}>
-            <Pressable onPress={() => clickChangeQuantity(food)} style={{height: size/1.5, backgroundColor: "#333333", borderRadius: 10, justifyContent: 'center', alignItems: "center", paddingHorizontal: 10}}>
+        <View style={{height: size, justifyContent: "center", alignItems: "center", paddingRight: 10, marginLeft: 5, }}>
+            <Pressable onPress={() => clickChangeQuantity(food)} style={{height: size/1.5, backgroundColor: "#333333",borderColor: "#272727", borderWidth: 2,  borderRadius: 10, justifyContent: 'center', alignItems: "center", paddingHorizontal: 10}}>
                 <Text style={{color: "white", fontSize: 14, fontWeight: "600",}}>{food.quantity} {food.unit}</Text>
             </Pressable>
             

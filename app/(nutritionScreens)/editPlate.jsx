@@ -31,7 +31,6 @@ const screenWidth = Dimensions.get("screen").width;
 const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, animatedLeftButtonTransform, animatedRightButtonTransform, handleSnapPress, bottomSheetPosition}, ref) => {
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
-    const allFoods = getAllFood(user);
 
     const plate = user.editActivePlate ?? {name: "New Plate", id: 0, foods: [] };
 
@@ -45,7 +44,7 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
         const sub2 = emitter.addListener("done", (data) => {
             if (data?.target === "changeFoodQuantity") {
                 const quantity = data.value;
-                const foods = plate.foods;
+                const foods = JSON.parse(JSON.stringify(plate.foods));
                 const foodIdx = foods.findIndex(f => f.id === data.food.id);
                 foods[foodIdx] = {...data.food, quantity};
                 updatePlate({foods});
@@ -55,7 +54,7 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
             sub.remove();
             sub2.remove();
         }
-    }, [emitter]);
+    }, [emitter, plate]);
 
     const plateNameInputRef = useRef(null);
 
@@ -108,13 +107,16 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
             
         }
 
-        const addFood = (foodIds) => {
-            if (!foodIds || foodIds.length < 1) return;
-            const newFoodIds = [...new Set([...plate.foods.map(f => f.id), ...foodIds])];
-            // Get food objects and add the quantity key
-            const foodsToAdd = newFoodIds.map(id => allFoods.find(f => f.id === id)).filter(e => e !== undefined);
-            const nextFoodsToAdd = foodsToAdd.map(f => ({...f, quantity: 1}));
-            updatePlate({foods: nextFoodsToAdd});
+        const addFood = (foods) => {
+            if (!foods || foods.length < 1) return; 
+            const foodsWithQuantity = foods.map(f => ({...f, quantity: 1}));
+
+            const plateFoodIds = plate.foods.map(f=>f.id);
+            const filterFoods = foodsWithQuantity.map(f => plateFoodIds.includes(f.id) ? null : f).filter(e => e !== null);
+
+            const foodsToAdd = [...plate.foods, ...filterFoods];
+            
+            updatePlate({foods: foodsToAdd});
         }
 
         const saveAsMeal = () => {
@@ -146,13 +148,14 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
         }
 
         const logFoods = () => {
-            
-            const dateKey = getDateKey();
+            const dateToday = new Date();
+            const dateKey = getDateKey(dateToday);
             const totalNutrition =  getTotalNutrition(plate);
             const meal = {
                 name: plate.name,
                 id: generateUniqueId(),
                 totalNutrition,
+                date: dateToday,
                 fullMeal: plate,
             };
             const consumedMeals = user.consumedMeals;

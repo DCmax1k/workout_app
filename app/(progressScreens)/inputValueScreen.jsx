@@ -8,6 +8,7 @@ import Spacer from '../../components/Spacer';
 import HorizontalScrollInput from '../../components/HorizontalScrollInput';
 import { Colors } from '../../constants/Colors';
 import emitter from '../../util/eventBus';
+import { truncate } from '../../util/truncate';
 
 const screenHeight = Dimensions.get('screen').height;
 
@@ -42,7 +43,7 @@ const InputValueScreen = () => {
   return (
     <ThemedView style={{flex: 1, height: screenHeight, position: "relative"}}>
         <SafeAreaView style={{flex: 1}}>
-            <TitleWithBack title={firstCapital(data.title || "")} />
+            <TitleWithBack title={firstCapital(truncate(data.title, 30) || "")} />
             <Spacer />
             <HorizontalScrollInput initialValue={data.value} value={value} setValue={setValue} increment={data.increment} range={data.range} unit={data.unit} scrollItemWidth={data.scrollItemWidth || 10} />
 

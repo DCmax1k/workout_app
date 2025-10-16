@@ -2,6 +2,15 @@ const sinceWhen = (dateInput) => {
   const date = new Date(dateInput);
   const now = new Date();
 
+  const isToday =
+    date.getFullYear() === now.getFullYear() &&
+    date.getMonth() === now.getMonth() &&
+    date.getDate() === now.getDate();
+
+  if (isToday) {
+    return "Today";
+  }
+
   const diffTime = now - date; // difference in milliseconds
   const diffDays = diffTime / (1000 * 60 * 60 * 24);
 

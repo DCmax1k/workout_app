@@ -24,6 +24,7 @@ import { router } from 'expo-router'
 import emitter from '../../util/eventBus'
 import getAllFood from '../../util/getAllFood'
 import { generateUniqueId } from '../../util/uniqueId'
+import { truncate } from '../../util/truncate'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
@@ -75,19 +76,22 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, searchValue, edit
             <ScrollView style={{marginLeft: -20, marginRight: -20, height: screenHeight/1.5,}} contentContainerStyle={{paddingBottom: screenHeight/3, paddingHorizontal: 20, paddingTop: 20}} showsVerticalScrollIndicator={false}>
                 <View style={{paddingBottom: 50, flexWrap: "wrap", flexDirection: "row", justifyContent: "center", gap: 15,}}>
                     {filteredFoods.map((f, i) => {
-                        const selected = foodToAdd.includes(f.id);
+                        const selected = foodToAdd.map(f => f.id).includes(f.id);
                         const icon = f.icon ? icons[f.icon] : icons["fooddoodles303"];
                         const backgroundColor = editFoods ? "#AB3F41" : selected ? "#304998" : "#2E2E2E" ;
                     return (
-                        <Pressable onPress={() => selectFood(f.id)} key={i} style={{paddingHorizontal: 8, paddingVertical: 8, borderRadius: 10, backgroundColor, flexDirection: "row", alignItems: "center",}}>
+                        <Pressable onPress={() => selectFood(f)} key={i} style={{paddingHorizontal: 8, paddingVertical: 8, borderRadius: 10, backgroundColor, flexDirection: "row", alignItems: "center",}}>
                             <View style={{height: 30, width: 30, borderRadius: 5, backgroundColor: f.color, marginRight: 5, overflow: "hidden"}}>
                                 <View style={[StyleSheet.absoluteFill, {backgroundColor: "rgba(0,0,0,0.3)"}]}></View>
                                 <Image source={icon} style={{height: "100%", width: "100%", objectFit: "contain", tintColor: "white"}} />
                             </View>
-                            <Text style={{color: "white", fontSize: 15}}>{f.name}</Text>
+                            <Text style={{color: "white", fontSize: 15}}>{truncate(f.name, 30)}</Text>
                         </Pressable>
                     )})}
                 </View>
+
+
+
             </ScrollView>
 
             
@@ -101,7 +105,7 @@ const AddFood = ({...props}) => {
 
     const allFoods = getAllFood(user);
 
-    const [foodToAdd, setFoodToAdd] = useState([]); // food ids
+    const [foodToAdd, setFoodToAdd] = useState([]); // foods
     const [editFoods, setEditFoods] = useState(false);
 
     const [searchValue, setSearchValue] = useState(""); // For library
@@ -109,21 +113,26 @@ const AddFood = ({...props}) => {
     const [keyboardVisible, setKeyboardVisible] = useState(false);
     const [keyboardHeight, setKeyboardHeight] = useState(0);
 
-    const selectFood = (foodId) => {
+    const selectFood = (food) => {
         if (editFoods) {
             router.push({
                 pathname: '/editFood',
                 params: {
-                    food: JSON.stringify(allFoods.find(f => f.id === foodId)),
+                    food: JSON.stringify(food),
                 }
             })
             return;
         }
 
-        if (foodToAdd.includes(foodId)) {
-            return setFoodToAdd(foodToAdd.filter(id => id !== foodId));
+
+        if (foodToAdd.map(f => f.id).includes(food.id)) {
+            const foodsToAdd = foodToAdd.filter(f => f.id !== food.id);
+            setFoodToAdd(foodsToAdd);
+        } else {
+            const foodsToAdd = [...foodToAdd, food];
+            setFoodToAdd(foodsToAdd);
         }
-        setFoodToAdd([...foodToAdd, foodId]);
+        
     }
 
     const tabs = [" Scan", "Library", "AI"];
