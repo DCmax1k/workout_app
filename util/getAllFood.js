@@ -1,11 +1,14 @@
 import { foods } from "../constants/Foods";
 
-function getAllFood(user) { // category, name
-    const userCreatedFood = user.createdFoods;
-    const allFoods = [...userCreatedFood, ...foods ];
+function getAllFood(user) {
+    const userCreatedFood = user.customFoods ?? {};
+    const userCreatedFoodArray = Object.values(userCreatedFood).sort((a, b) => (a?.timeCreated ?? 0) - (b?.timeCreated ?? 0));
+    const foodsMinusCustom = foods.filter(f => !(f.id in userCreatedFood));
+    const allFoods = [...userCreatedFoodArray, ...foodsMinusCustom ];
 
-    const filteredFood = allFoods.filter(ex => !user.archivedFoods?.[ex.id]);
-    return filteredFood;//.sort((a, b) => a.group.localeCompare(b.group));
+    const filteredFood = allFoods.filter(ex => !user.archivedFoods?.[ex.id]).sort((a, b) => a.name.localeCompare(b.name));
+
+    return filteredFood;
 }
 
 export default getAllFood;

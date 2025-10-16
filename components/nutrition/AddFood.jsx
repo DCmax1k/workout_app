@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import greyX from '../../assets/icons/greyX.png'
 import { Colors } from '../../constants/Colors'
 import plus from '../../assets/icons/plus.png'
+import pencilIcon from '../../assets/icons/pencil.png'
 import ThemedText from '../ThemedText'
 import SectionSelect from '../SectionSelect'
 import scanIcon from '../../assets/icons/scan.png'
@@ -19,13 +20,18 @@ import { useUserStore } from '../../stores/useUserStore'
 import ActionMenu from '../ActionMenu'
 import {foodCategories, foods} from '../../constants/Foods'
 import { icons } from '../../constants/icons'
+import { router } from 'expo-router'
+import emitter from '../../util/eventBus'
+import getAllFood from '../../util/getAllFood'
+import { generateUniqueId } from '../../util/uniqueId'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
 
-const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, searchValue, ...props}) => {
-    const user = useUserStore(state => state.user);
+const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, searchValue, editFoods, setEditFoods, user, allFoods, ...props}) => {
+    
 
+    
 
     // const [searchValue, setSearchValue] = useState("");
     const userFoodCategories = user.foodCategories;
@@ -34,7 +40,7 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, searchValue, ...p
     const categoryData = foodCategoriesOrganized.map((f, i) => ({id: `${i}`, title: f}));
     const [selectedCategory, setSelectedCategory] = useState("0");
 
-    const allFoods = foods;
+    
 
  
     const currentCategory = categoryData.find(c => c.id === selectedCategory)?.title;
@@ -54,10 +60,14 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, searchValue, ...p
             {/* <Spacer height={20} /> */}
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginLeft: 10, marginBottom: 10,}}>
                 <ThemedText style={{fontSize: 13, fontWeight: 700,  }}>Category</ThemedText>
-                <ActionMenu style={{zIndex: 2}} data={[
-                    {title: "Create New Food", icon: plusIcon, onPress: openCreateNewFood, },
-                   
-                    ]} />
+                <View style={{flexDirection: "row", alignItems: "center"}}>
+                    <ThemedText style={{fontSize: 13, fontWeight: 700, marginRight: 5 }}>Food Options</ThemedText>
+                    <ActionMenu style={{zIndex: 2}} data={[
+                        {title: "Create New Food", icon: plusIcon, onPress: openCreateNewFood, },
+                        {title: "Edit Foods", icon: pencilIcon, onPress: () => {setEditFoods(!editFoods)}, },
+                        ]} />
+                </View>
+                
             </View>
             
             <Dropdown style={{zIndex: 2}} data={categoryData} selectedId={selectedCategory} setSelectedId={setSelectedCategory} actionIds={actionIds} actions={{"1": openCreateNewFood}} overflow={true} />
@@ -67,8 +77,9 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, searchValue, ...p
                     {filteredFoods.map((f, i) => {
                         const selected = foodToAdd.includes(f.id);
                         const icon = f.icon ? icons[f.icon] : icons["fooddoodles303"];
+                        const backgroundColor = editFoods ? "#AB3F41" : selected ? "#304998" : "#2E2E2E" ;
                     return (
-                        <Pressable onPress={() => selectFood(f.id)} key={i} style={{paddingHorizontal: 8, paddingVertical: 8, borderRadius: 10, backgroundColor: selected ? "#304998" : "#2E2E2E", flexDirection: "row", alignItems: "center",}}>
+                        <Pressable onPress={() => selectFood(f.id)} key={i} style={{paddingHorizontal: 8, paddingVertical: 8, borderRadius: 10, backgroundColor, flexDirection: "row", alignItems: "center",}}>
                             <View style={{height: 30, width: 30, borderRadius: 5, backgroundColor: f.color, marginRight: 5, overflow: "hidden"}}>
                                 <View style={[StyleSheet.absoluteFill, {backgroundColor: "rgba(0,0,0,0.3)"}]}></View>
                                 <Image source={icon} style={{height: "100%", width: "100%", objectFit: "contain", tintColor: "white"}} />
@@ -85,9 +96,13 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, searchValue, ...p
     )
 }
 
-const AddFood = ({setFoodModal, addFood}) => {
+const AddFood = ({...props}) => {
+    const user = useUserStore(state => state.user);
+
+    const allFoods = getAllFood(user);
 
     const [foodToAdd, setFoodToAdd] = useState([]); // food ids
+    const [editFoods, setEditFoods] = useState(false);
 
     const [searchValue, setSearchValue] = useState(""); // For library
 
@@ -95,6 +110,16 @@ const AddFood = ({setFoodModal, addFood}) => {
     const [keyboardHeight, setKeyboardHeight] = useState(0);
 
     const selectFood = (foodId) => {
+        if (editFoods) {
+            router.push({
+                pathname: '/editFood',
+                params: {
+                    food: JSON.stringify(allFoods.find(f => f.id === foodId)),
+                }
+            })
+            return;
+        }
+
         if (foodToAdd.includes(foodId)) {
             return setFoodToAdd(foodToAdd.filter(id => id !== foodId));
         }
@@ -106,13 +131,32 @@ const AddFood = ({setFoodModal, addFood}) => {
 
     const requestAddFood = () => {
         if (foodToAdd.length < 1) return;
-        addFood(foodToAdd);
-        setFoodModal(false);
+        //addFood(foodToAdd);
+        emitter.emit("addFood", { foodToAdd, });
+        router.back();
         setFoodToAdd([]);
     }
 
     const openCreateNewFood = () => {
-        console.log("Open create new food");
+        const newFood = {
+            name: "New Food",
+            unit: "unit",
+            categories: [],
+            nutrition: { "calories": 0, "protein": 0, "carbs": 0, "fat": 0 },
+            icon: "fooddoodles326",
+            color: "#6D3F32",
+            description: "",
+            id: generateUniqueId(),
+            created: true,
+        }
+
+        router.push({
+            pathname: '/editFood',
+            params: {
+                food: JSON.stringify(newFood),
+            }
+        })
+        return;
     }
 
 
@@ -188,10 +232,11 @@ const AddFood = ({setFoodModal, addFood}) => {
             
             </Animated.View>)}
 
+        
         <SafeAreaView>
             <View style={[styles.actionButtons]}>
                 <View>
-                    <Pressable onPress={() => setFoodModal(false)}>
+                    <Pressable onPress={() => router.back()}>
                         <Image style={{height: 50, width: 50}} source={greyX} />
                     </Pressable>
                 </View>
@@ -207,7 +252,21 @@ const AddFood = ({setFoodModal, addFood}) => {
                 <ThemedText title={true} style={{fontSize: 23, fontWeight: 700, textAlign: "center"}}>Add Food</ThemedText>
             </View>
 
-            <SectionSelect section={tab} setSection={setTab} sections={tabs} icons={[scanIcon, searchIcon, aiIcon]} />
+            <View style={{position: "relative"}}>
+                <SectionSelect section={tab} setSection={setTab} sections={tabs} icons={[scanIcon, searchIcon, aiIcon]} />
+
+                {/* done button for editting food */}
+                {editFoods && (
+                    <Animated.View style={[StyleSheet.absoluteFill]} entering={FadeIn} exiting={FadeOut}>
+                        <Pressable onPress={() => setEditFoods(false)} style={[StyleSheet.absoluteFill, {backgroundColor: Colors.primaryBlue, zIndex: 1, borderRadius: 10, justifyContent: "center", alignItems: "center"}]}>
+                            <ThemedText style={{textAlign: "center", fontSize: 18, fontWeight: "600", color: "white"}}>Done Editting</ThemedText>
+                        </Pressable>
+                    </Animated.View>
+                )}
+                
+                
+            </View>
+            
 
             <Spacer height={20} />
 
@@ -218,7 +277,7 @@ const AddFood = ({setFoodModal, addFood}) => {
             )}
             {tab === tabs[1] && (
                 <Animated.View entering={FadeIn} exiting={FadeOut}>
-                    <LibraryTab openCreateNewFood={openCreateNewFood} selectFood={selectFood} foodToAdd={foodToAdd} searchValue={searchValue}  />
+                    <LibraryTab openCreateNewFood={openCreateNewFood} selectFood={selectFood} foodToAdd={foodToAdd} searchValue={searchValue} editFoods={editFoods} setEditFoods={setEditFoods} user={user} allFoods={allFoods} />
                 </Animated.View>
             )}
             {tab === tabs[2] && (

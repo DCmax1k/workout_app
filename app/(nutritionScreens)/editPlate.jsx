@@ -1,5 +1,5 @@
 import { Image, Pressable, StyleSheet, Text, View, TextInput, Dimensions } from 'react-native'
-import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import ThemedView from '../../components/ThemedView'
 import ConfirmMenu from '../../components/ConfirmMenu'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -23,6 +23,7 @@ import getDateKey from '../../util/getDateKey'
 import { generateUniqueId } from '../../util/uniqueId'
 import PlateItem from '../../components/nutrition/PlateItem'
 import SwipeToDelete from '../../components/SwipeToDelete'
+import emitter from '../../util/eventBus'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
@@ -34,7 +35,15 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
 
     const plate = user.editActivePlate ?? {name: "New Plate", id: 0, foods: [] };
 
-    const [foodModal, setFoodModal] = useState(false);
+    //const [foodModal, setFoodModal] = useState(false);
+    useEffect(() => {
+        const sub = emitter.addListener("addFood", ({foodToAdd}) => {
+        //console.log("Got data back:", foodToAdd);
+        addFood(foodToAdd);
+        
+        });
+        return () => sub.remove();
+    }, [emitter]);
 
     const plateNameInputRef = useRef(null);
 
@@ -175,6 +184,14 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
             updatePlate({foods: newFoods});
         }
 
+        const openAddFood = () => {
+            //setFoodModal(true);
+
+            router.push({
+                        pathname: "/addFood",
+                    });
+        }
+
     return (
         <ThemedView style={{flex: 1, backgroundColor: "#313131"}}>
             <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
@@ -225,7 +242,7 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
                     </View>
 
                     <Spacer height={10} />
-                    <BlueButton title={"Add Food"} onPress={() => setFoodModal(true)} style={{marginHorizontal: 20}} />
+                    <BlueButton title={"Add Food"} onPress={openAddFood} style={{marginHorizontal: 20}} />
                     <Spacer height={20} />
 
                     <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10, marginLeft: 20}}>Plate Items</ThemedText>
@@ -252,13 +269,13 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
                 </BottomSheetScrollView>
             </Animated.View>
             
-            <Portal>
+            {/* <Portal>
                 {(foodModal === true ? (
                     <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{position: "absolute", top: 0, left: 0, height: screenHeight, width: screenWidth, zIndex: 5, elevation: 5}}>
                         <AddFood setFoodModal={setFoodModal} addFood={addFood} />
                     </Animated.View>
                 ) : null)}
-            </Portal>
+            </Portal> */}
             
 
         </ThemedView>
