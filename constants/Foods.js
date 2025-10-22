@@ -884,16 +884,6 @@ export const foods = [
     "id": "96"
   },
   {
-    "name": "Ice Cream",
-    "unit": "cup",
-    "categories": [],
-    "nutrition": { "calories": 273, "protein": 4.6, "carbs": 31, "fat": 14.5 },
-    "icon": "fooddoodles303",
-    "color": "#f0e2ce",
-    "description": "Vanilla ice cream, regular fat.",
-    "id": "97"
-  },
-  {
     "name": "Frozen Yogurt",
     "unit": "cup",
     "categories": [],

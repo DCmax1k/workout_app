@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import rightCarrot from '../assets/icons/rightCarrot.png'
 import Spacer from './Spacer';
 
@@ -36,29 +36,49 @@ const ScrollPicker = ({
   // Find initial index
   const initialIndex = data.findIndex((n) => n === initialValue);
 
+  const [currentYOffset, setCurrentYOffset] = useState(0);
+
+      const handleScroll = (event) => {
+        const yOffset = event.nativeEvent.contentOffset.y;
+        setCurrentYOffset(yOffset);
+      };
+
   const onScrollEnd = (e) => {
     const offsetY = e.nativeEvent.contentOffset.y;
     const index = Math.round(offsetY / ITEM_HEIGHT);
     const value = data[index];
     if (onValueChange) onValueChange(value);
-
-    // snap to index
-    // flatListRef.current?.scrollToIndex({ index, animated: true });
   };
   useEffect(() => {
     if (flatListRef.current && initialIndex > -1) {
-        // wait for next frame to ensure FlatList is measured
         requestAnimationFrame(() => {
             flatListRef.current.scrollToIndex({ index: initialIndex, animated: false });
         });
     }
     }, [flatListRef, initialIndex]);
 
+    const onPressUp = () => {
+      flatListRef.current?.scrollToOffset({
+        offset: Math.max(0, currentYOffset - ITEM_HEIGHT),
+        animated: true,
+      });
+    };
+
+    const onPressDown = () => {
+      flatListRef.current?.scrollToOffset({
+        offset: currentYOffset + ITEM_HEIGHT,
+        animated: true,
+      });
+    };
+
   return (
     <View style={{flexDirection: "column"}}>
-        <View style={{width, height: ITEM_HEIGHT/2, justifyContent: "center", alignItems: "center"}}>
+        <Pressable 
+          onPress={onPressUp}
+          style={{width, height: ITEM_HEIGHT/2, justifyContent: "center", alignItems: "center"}}
+        >
             <Image source={rightCarrot} style={{objectFit: "contain", transform: [{rotate: "-90deg"}], height: "100%", width: "100%", tintColor: "#454545"}} />
-        </View>
+        </Pressable>
         <Spacer height={10} />
         <View style={[styles.container, { width, height: ITEM_HEIGHT * 3, }]}>
         
@@ -75,6 +95,7 @@ const ScrollPicker = ({
                 offset: ITEM_HEIGHT * index,
                 index,
                 })}
+                onScroll={handleScroll}
                 onMomentumScrollEnd={onScrollEnd}
                 contentContainerStyle={{
                     paddingVertical: ITEM_HEIGHT,
@@ -125,9 +146,12 @@ const ScrollPicker = ({
 
         </View>
         <Spacer height={10} />
-        <View style={{width, height: ITEM_HEIGHT/2, justifyContent: "center", alignItems: "center"}}>
+        <Pressable
+          onPress={onPressDown}
+          style={{width, height: ITEM_HEIGHT/2, justifyContent: "center", alignItems: "center"}}
+        >
             <Image source={rightCarrot} style={{objectFit: "contain", transform: [{rotate: "90deg"}], height: "100%", width: "100%", tintColor: "#454545"}} />
-        </View>
+        </Pressable>
     </View>
     
   );

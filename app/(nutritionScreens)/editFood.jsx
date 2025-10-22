@@ -168,6 +168,17 @@ const EditFood = () => {
             });
             setConfirmMenuActive(true);
       }
+
+      const openCustomize =() => {
+        setConfirmMenuData({
+                title: "Coming soon",
+                subTitle: "",
+                option1: "Okay",
+                option1color: Colors.primaryBlue,
+                confirm: () => {},
+            });
+            setConfirmMenuActive(true);
+      }
       
 
   return (
@@ -199,7 +210,7 @@ const EditFood = () => {
                         
                         <Spacer height={20} />
                         <View style={{width: screenWidth-40, alignItems: "center",}}>
-                            <Pressable style={{backgroundColor: "#363636", flexDirection: "row", alignItems: "center", borderRadius: 10, paddingVertical: 10, paddingHorizontal: 15}}>
+                            <Pressable onPress={openCustomize} style={{backgroundColor: "#363636", flexDirection: "row", alignItems: "center", borderRadius: 10, paddingVertical: 10, paddingHorizontal: 15}}>
                                 <Image style={{height: 30, width: 30, tintColor: "white", objectFit: "contain", marginRight: 10}} source={customizeIcon} />
                                 <Text style={{fontSize: 16, fontWeight: "600", color: "white"}}>Customize</Text>
                             </Pressable>

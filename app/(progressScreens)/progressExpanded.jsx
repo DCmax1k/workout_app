@@ -17,7 +17,7 @@ import emitter from '../../util/eventBus';
 import ProgressBar from '../../components/ProgressBar'
 import ExpenditureBreakdown from '../../components/extra/ExpenditureBreakdown'
 import sinceWhen from '../../util/sinceWhen'
-
+import findInsertIndex from '../../util/findInsertIndex'
 
 const screenWidth = Dimensions.get('screen').width;
 
@@ -48,8 +48,15 @@ const ProgressExpanded = () => {
       //console.log("Got data back:", data);
       if (data.widget.layout === "weight") { // Push new data point with new date
         if (data.target === "value") {
-          const nData = user.tracking.logging[data.widget.category].data;
-          const cData = [...nData, {date: Date.now(), amount: data.value}];
+          const cData = user.tracking.logging[data.widget.category].data;
+          const newTime = data.timeAndDate.getTime() ?? new Date().getTime();
+          if (cData.length === 0 || new Date(cData[cData.length -1].date).getTime() < new Date(newTime).getTime()) {
+            cData.push({date: newTime, amount: data.value});
+          } else {
+            const idx = findInsertIndex(cData.map(d => d.date), newTime);
+            cData.splice(idx, 0, {date: newTime, amount: data.value});
+          }
+          //const cData = [...nData, {date: Date.now(), amount: data.value}];
           const updated = {tracking: {logging: {[data.widget.category]: {data: cData}}}};
           updateUser(updated);
           //console.log("updated ", updated);
@@ -120,6 +127,11 @@ const ProgressExpanded = () => {
       target: 'value',
       value: mostRecentValue || 0,
       unit: widget.unit,
+      options: {
+        showTime: true,
+        showDate: true,
+        defaultDate: Date.now(),
+      },
       widget,
       ...widget.inputOptions
     }
@@ -152,7 +164,6 @@ const ProgressExpanded = () => {
   }
 
   const addToToday = () => {
-    console.log("TESTING");
     const currentTime = Date.now();
     const valueToAdd = widget.extraData.valueToAdd;
     const data = widget.data;
@@ -222,7 +233,6 @@ const ProgressExpanded = () => {
         i = -1;
       }
       if (dDate.toLocaleDateString() === yesterdayDate.toLocaleDateString()) {
-        console.log("Found yesterday");
         yesterdayValue = widget.data[i].amount;
         i=-1;
       }

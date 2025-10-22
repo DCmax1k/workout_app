@@ -184,7 +184,6 @@ const IndexProgress = () => {
               keyExtractor={(item) => item.key}
               renderItem={({item, drag, isActive}) => {
 
-
                 if (item.key === "nutrition") return (
                   <ScaleDecorator key={item.key}>
                     <TouchableOpacity
@@ -199,6 +198,24 @@ const IndexProgress = () => {
                     </TouchableOpacity>
                   </ScaleDecorator>
                 ) 
+
+                const widget = item.widget;
+                const key = item.key;
+                const data = widget.data.map(it => it.amount);
+                const dates = widget.data.map(it => it.date);
+                widget.calculatedData = data;
+                widget.calculatedDates = dates;
+
+                
+                if (key === 'water intake') {
+                    // If last item of data is not from today, add a 0 value for today
+                    const today = new Date();
+                    const lastDate = dates[dates.length -1] ? new Date(dates[dates.length -1]) : null;
+                    if (!lastDate || lastDate.toDateString() !== today.toDateString()) {
+                      widget.calculatedData = [...data, 0];
+                      widget.calculatedDates = [...dates, today.toISOString()];
+                    }
+                  }
                 
 
                 return (
@@ -211,11 +228,11 @@ const IndexProgress = () => {
                     >
                     <GraphWidget
                       fillWidth={true}
-                      data={item.widget.data.map((it) => it.amount)}
-                      dates={item.widget.data.map((it) => it.date)}
+                      data={widget.calculatedData}
+                      dates={widget.calculatedDates}
                       title={firstCapital(item.key)}
-                      unit={item.widget.unit}
-                      color={item.widget.color || "#546FDB"}
+                      unit={widget.unit}
+                      color={widget.color || "#546FDB"}
                       style={{marginBottom: 20}}
                       disablePress={true}
                     />

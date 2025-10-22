@@ -12,7 +12,7 @@ const formatTime = (timestamp) => {
   // Pad minutes with leading zero if needed
   const minutesStr = minutes.toString().padStart(2, "0");
 
-  return `${hours}:${minutesStr}${ampm}`;
+  return `${hours}:${minutesStr} ${ampm}`;
 }
 
 export default formatTime;
