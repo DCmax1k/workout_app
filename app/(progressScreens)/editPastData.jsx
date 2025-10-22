@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ThemedView from '../../components/ThemedView'
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import TitleWithBack from '../../components/TitleWithBack';
 import Calender from '../../components/Calender';
@@ -11,12 +11,16 @@ import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanim
 import ConfirmMenu from '../../components/ConfirmMenu';
 import rotate from '../../assets/icons/rotate.png'
 import trash from '../../assets/icons/trash.png'
+import plusIcon from '../../assets/icons/plus.png'
 import { useUserStore } from '../../stores/useUserStore';
 import formatTime from '../../util/formatTime';
 import ActionMenu from '../../components/ActionMenu';
 import SwipeToDelete from '../../components/SwipeToDelete';
 import { SCREEN_WIDTH } from '@gorhom/bottom-sheet';
 import { Colors } from '../../constants/Colors';
+import BlueButton from '../../components/BlueButton';
+import emitter from '../../util/eventBus';
+import findInsertIndex from '../../util/findInsertIndex';
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -33,6 +37,8 @@ const EditPastData = () => {
 
     const [confirmMenuActive, setConfirmMenuActive] = useState(false);
     const [confirmMenuData, setConfirmMenuData] = useState();
+
+    
 
     const requestResetData = () => {
         setConfirmMenuData({
@@ -59,10 +65,91 @@ const EditPastData = () => {
         updateUser({tracking: {logging: {[data.widget.category]: {data: newData}}}});
     }
 
+    const addDataPoint = () => {
+        const defaultDate = new Date(selectedDate);
+        let value = data.widget.data[data.widget.data.length - 1]?.amount || 0;
+        if (data.widget.category === "water intake") {
+            value = data.widget.extraData.valueToAdd;
+        }
+        // Correct time to current time
+        const now = new Date();
+        defaultDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+        const info = {
+            title: data.widget.category,
+            target: 'valueFromEditPastData',
+            value: value,
+            unit: data.widget.unit,
+            options: {
+                showTime: true,
+                showDate: true,
+                defaultDate,
+            },
+            widget: data.widget,
+            ...data.widget.inputOptions
+        }
+        router.push({
+            pathname: "/inputValueScreen",
+            params: {
+                data: JSON.stringify(info),
+            },
+        });
+    }
+
     const w = user.tracking.logging[data.widget.category] || null;
     if (!w) return null;
 
     const dataEntriesOnDate = w.data.filter(k => new Date(k.date).toDateString() === selectedDate.toDateString());
+
+    useEffect(() => {
+        const sub = emitter.addListener("done", (d) => {
+         //console.log("Got data back:", data);
+        if (d.widget.layout === "weight") { // Push new data point with new date
+            if (d.target === "valueFromEditPastData") {
+                const cData = user.tracking.logging[d.widget.category].data;
+                const newTime = d.timeAndDate.getTime() ?? new Date().getTime();
+                if (cData.length === 0 || new Date(cData[cData.length -1].date).getTime() < new Date(newTime).getTime()) {
+                    cData.push({date: newTime, amount: d.value});
+                } else {
+                    const idx = findInsertIndex(cData.map(d => d.date), newTime);
+                    cData.splice(idx, 0, {date: newTime, amount: d.value});
+                }
+                //const cData = [...nData, {date: Date.now(), amount: data.value}];
+                    const updated = {tracking: {logging: {[d.widget.category]: {d: cData}}}};
+                    updateUser(updated);
+                //console.log("updated ", updated);
+                } else if (d.target === 'goal') {
+                    const updated = {tracking: {logging: {[d.widget.category]: {extraData: {goal: d.value}}}}};
+                    updateUser(updated);
+                } 
+                
+
+            } else if (d.widget.layout === "water") { // Edit last data point if the last point is ;
+                if (d.target === "valueFromEditPastData") {
+                    const cData = user.tracking.logging[d.widget.category].data;
+                    const newTime = d.timeAndDate.getTime() ?? new Date().getTime();
+                    if (dataEntriesOnDate.length > 0) {
+                        // Edit existing entry
+                        const entryToEdit = dataEntriesOnDate[0];
+                        const entryIndex = cData.findIndex(e => e.date === entryToEdit.date);
+                        cData[entryIndex] = {date: newTime, amount: d.value+entryToEdit.amount};
+                        updateUser({tracking: {logging: {[d.widget.category]: {data: cData}}}});
+                    } else {
+                        // Add new entry
+                        if (cData.length === 0 || new Date(cData[cData.length -1].date).getTime() < new Date(newTime).getTime()) {
+                            cData.push({date: newTime, amount: d.value});
+                        } else {
+                            const idx = findInsertIndex(cData.map(d => d.date), newTime);
+                            cData.splice(idx, 0, {date: newTime, amount: d.value});
+                        }
+                        updateUser({tracking: {logging: {[d.widget.category]: {data: cData}}}});
+                    }
+                    
+
+                }
+            }
+        });
+        return () => sub.remove();
+    }, [emitter, updateUser, dataEntriesOnDate]);
 
   return (
     <ThemedView style={[styles.container, ]}>
@@ -75,10 +162,19 @@ const EditPastData = () => {
             
             <Calender datesWithData={w.data.map((item) => item.date)} set={setSelectedDate} />
 
-            <Spacer height={20} />
+            <Spacer height={10} />
             <View style={{width: "50%", height: 2, borderRadius: 999, backgroundColor: "#AAAAAA", marginHorizontal: "auto"}}></View>
-            <ScrollView layout={LinearTransition.springify().damping(90)} style={{width: SCREEN_WIDTH, marginHorizontal: -20}} contentContainerStyle={{paddingBottom: 120, paddingTop: 30, alignItems: "center"}} showsVerticalScrollIndicator={false}>
-                <Spacer height={20} />
+            <Spacer height={10} />
+
+            {/* Only show if the selectedDate is today or earlier */}
+            {(selectedDate.getTime() < new Date().getTime() || selectedDate.toLocaleDateString() === new Date().toLocaleDateString()) && (
+                <BlueButton title={"Add new data point"} icon={plusIcon} onPress={addDataPoint} />
+            )}
+           
+
+            <Spacer height={10} />
+            <ScrollView layout={LinearTransition.springify().damping(90)} style={{width: SCREEN_WIDTH, marginHorizontal: -20}} contentContainerStyle={{paddingBottom: 120, paddingTop: 10, alignItems: "center"}} showsVerticalScrollIndicator={false}>
+                <Spacer height={10} />
                 
                 
                 {dataEntriesOnDate.map((entry, i) => {

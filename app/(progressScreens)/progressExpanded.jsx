@@ -77,12 +77,15 @@ const ProgressExpanded = () => {
       }
     });
     return () => sub.remove();
-  }, [emitter, updateUser, user.tracking.logging[w.category]]);
+  }, [emitter, updateUser]);
 
   let mostRecentValue = widget.data[widget.data.length - 1]?.amount || 0;
   let mostRecentDate = widget.data[widget.data.length - 1]?.date || null;
   if (widget.layout === "water") {
-    if (new Date(mostRecentDate).toLocaleDateString() !== new Date().toLocaleDateString()) {
+    const mostRecentDte = new Date(mostRecentDate);
+    const tdDte = new Date();
+    // NEEDS VERIFICATION IF THIS WORKS
+    if (mostRecentDte.getTime() < tdDte.getTime() && mostRecentDte.toLocaleDateString() !== tdDte.toLocaleDateString()) {
       mostRecentValue = 0;
       mostRecentDate = new Date().getTime();
     }
@@ -164,22 +167,44 @@ const ProgressExpanded = () => {
   }
 
   const addToToday = () => {
-    const currentTime = Date.now();
+    //const currentTime = Date.now();
     const valueToAdd = widget.extraData.valueToAdd;
-    const data = widget.data;
-    const lastEntry = data[data.length-1];
-    let newData = JSON.parse(JSON.stringify(data));
-    if (data.length > 0) {
-        const isSameDayAsLastEntry =  new Date(lastEntry.date).toDateString() === new Date(currentTime).toDateString();
-        if (isSameDayAsLastEntry) {
-            newData[newData.length-1] = {date: lastEntry.date, amount: lastEntry.amount+valueToAdd};
-        } else {
-            newData.push({date: currentTime, amount: valueToAdd});
-        }
+    // const data = widget.data;
+    // const lastEntry = data[data.length-1];
+    // let newData = JSON.parse(JSON.stringify(data));
+    // if (data.length > 0) {
+    //     const isSameDayAsLastEntry =  new Date(lastEntry.date).toDateString() === new Date(currentTime).toDateString();
+    //     if (isSameDayAsLastEntry) {
+    //         newData[newData.length-1] = {date: lastEntry.date, amount: lastEntry.amount+valueToAdd};
+    //     } else {
+    //         newData.push({date: currentTime, amount: valueToAdd});
+    //     }
+    // } else {
+    //     newData.push({date: currentTime, amount: valueToAdd});
+    // }
+    // updateUser({tracking: {logging: {[widget.category]: {data: newData}}}});
+
+    // Updated to update today, today isnt always the last entry - TESTING
+    const currentTime = new Date();
+    const cData = widget.data;
+    const newTime = currentTime.getTime();
+    const dataEntriesOnDate = widget.data.filter(k => new Date(k.date).toDateString() === currentTime.toDateString());
+    if (dataEntriesOnDate.length > 0) {
+        // Edit existing entry
+        const entryToEdit = dataEntriesOnDate[0];
+        const entryIndex = cData.findIndex(e => e.date === entryToEdit.date);
+        cData[entryIndex] = {date: newTime, amount: valueToAdd+entryToEdit.amount};
+        updateUser({tracking: {logging: {[widget.category]: {data: cData}}}});
     } else {
-        newData.push({date: currentTime, amount: valueToAdd});
+        // Add new entry
+        if (cData.length === 0 || new Date(cData[cData.length -1].date).getTime() < new Date(newTime).getTime()) {
+            cData.push({date: newTime, amount: valueToAdd});
+        } else {
+            const idx = findInsertIndex(cData.map(d => d.date), newTime);
+            cData.splice(idx, 0, {date: newTime, amount: valueToAdd});
+        }
+        updateUser({tracking: {logging: {[widget.category]: {data: cData}}}});
     }
-    updateUser({tracking: {logging: {[widget.category]: {data: newData}}}});
   }
 
   const hideWidget = () => {

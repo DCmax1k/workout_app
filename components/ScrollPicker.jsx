@@ -75,7 +75,7 @@ const ScrollPicker = ({
     <View style={{flexDirection: "column"}}>
         <Pressable 
           onPress={onPressUp}
-          style={{width, height: ITEM_HEIGHT/2, justifyContent: "center", alignItems: "center"}}
+          style={{width, height: ITEM_HEIGHT/2, justifyContent: "center", alignItems: "center", overflow: "hidden",  }}
         >
             <Image source={rightCarrot} style={{objectFit: "contain", transform: [{rotate: "-90deg"}], height: "100%", width: "100%", tintColor: "#454545"}} />
         </Pressable>
@@ -100,10 +100,10 @@ const ScrollPicker = ({
                 contentContainerStyle={{
                     paddingVertical: ITEM_HEIGHT,
                 }}
-                style={{width: "100%", height: ITEM_HEIGHT*3}}
+                style={{width: "100%", height: ITEM_HEIGHT*3,}}
                 renderItem={({ item, index }) => {
                 return (
-                    <View style={[styles.item, { height: ITEM_HEIGHT }]}>
+                    <View style={[styles.item, { height: ITEM_HEIGHT, }]}>
                     <Text
                         style={[
                         styles.text,
@@ -124,14 +124,14 @@ const ScrollPicker = ({
                 pointerEvents="none"
                 style={[
                 styles.greyout,
-                { top: 0, height: ITEM_HEIGHT, width, backgroundColor: backgroundcolor },
+                { top: 0, height: ITEM_HEIGHT, width, backgroundColor: backgroundcolor, pointerEvents: "none" },
                 ]}
             />
             <View
                 pointerEvents="none"
                 style={[
                 styles.greyout,
-                { top: ITEM_HEIGHT*2, height: ITEM_HEIGHT, width, backgroundColor: backgroundcolor },
+                { top: ITEM_HEIGHT*2, height: ITEM_HEIGHT, width, backgroundColor: backgroundcolor, pointerEvents: "none" },
                 ]}
             />
 
@@ -139,8 +139,8 @@ const ScrollPicker = ({
             <View
                 pointerEvents="none"
                 style={[
-                {position: "absolute", backgroundColor: "#454545", zIndex: -1, borderRadius: 99999},
-                { top: ITEM_HEIGHT, height: ITEM_HEIGHT, width: width/2, },
+                {position: "absolute", backgroundColor: "#454545", zIndex: -1, borderRadius: 99999, pointerEvents: "none"},
+                { top: ITEM_HEIGHT, height: ITEM_HEIGHT, width: width/2,},
                 ]}
             />
 
@@ -148,9 +148,9 @@ const ScrollPicker = ({
         <Spacer height={10} />
         <Pressable
           onPress={onPressDown}
-          style={{width, height: ITEM_HEIGHT/2, justifyContent: "center", alignItems: "center"}}
+          style={{width, height: ITEM_HEIGHT/2, justifyContent: "center", alignItems: "center", overflow: "hidden", }}
         >
-            <Image source={rightCarrot} style={{objectFit: "contain", transform: [{rotate: "90deg"}], height: "100%", width: "100%", tintColor: "#454545"}} />
+            <Image source={rightCarrot} style={{objectFit: "contain", transform: [{rotate: "90deg"}], height: "100%", width: "100%", tintColor: "#454545",}} />
         </Pressable>
     </View>
     

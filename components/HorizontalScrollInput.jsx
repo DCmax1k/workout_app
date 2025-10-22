@@ -106,7 +106,7 @@ const HorizontalScrollInput = ({
 
   const endEdit = () => {
     const valueToSet = roundToIncrement(parseFloat(activeEdit) || 0, increment);
-    console.log("Setting value", valueToSet);
+    //console.log("Setting value", valueToSet);
     setValue(valueToSet);
     setActiveEdit(false);
 
@@ -121,7 +121,7 @@ const HorizontalScrollInput = ({
     }
   };
 
-  console.log(activeEdit !== false ? parseInt(parseFloat(activeEdit)*10)/10 : parseInt(parseFloat(value)*10)/10 );
+  //console.log(activeEdit !== false ? parseInt(parseFloat(activeEdit)*10)/10 : parseInt(parseFloat(value)*10)/10 );
   return (
     <View style={{ flexDirection: "column", alignItems: "center" }}>
       {/* Value + Unit */}

@@ -57,7 +57,7 @@ const InputValueScreen = () => {
     const [currentPopupContent, setCurrentPopupContent] = useState("") // time, date,
     const [popupMenuActive, setPopupMenuActive] = useState(false);
 
-    const [timeAndDate, setTimeAndDate] = useState(new Date(data.options.defaultDate) ?? new Date());
+    const [timeAndDate, setTimeAndDate] = useState(new Date(data.options?.defaultDate) ?? new Date());
 
     let timeHours = timeAndDate.getHours();
     let timeMinutes = timeAndDate.getMinutes();
@@ -102,6 +102,9 @@ const InputValueScreen = () => {
       setPopupMenuActive(true);
     }
     const setTimeHours = (hours) => {
+      if (ampm === "am" && hours === 12) {
+        hours = 0;
+      }
       if (ampm === "pm" && hours < 12) {
         hours += 12;
       }
@@ -132,11 +135,11 @@ const InputValueScreen = () => {
         setTimeAndDate(newDate);
       }
     }
-    // const setDate = (date) => {
-    //   const newDate = new Date(timeAndDate);
-    //   newDate.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
-    //   setTimeAndDate(newDate);
-    // }
+    const setDate = (date) => {
+      const newDate = new Date(timeAndDate);
+      newDate.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
+      setTimeAndDate(newDate);
+    }
 
     const showTime = data?.options?.showTime || false;
     const showDate = data?.options?.showDate || false;
@@ -188,7 +191,7 @@ const InputValueScreen = () => {
 
           {currentPopupContent === "changeDate" && (
             <View>
-                <Calender initialDate={new Date(timeAndDate)} set={setTimeAndDate} />
+                <Calender initialDate={new Date(timeAndDate)} set={setDate} />
 
             </View>
           )}
