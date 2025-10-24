@@ -33,12 +33,21 @@ const ProgressExpanded = () => {
 
   const params = useLocalSearchParams();
   const w = JSON.parse(params.data);
+
   const wi = user.tracking.logging[w.category] || user.tracking.insights[w.category] || w;
-  const widget = {
-    category: w.category,
-    menuOptions: w.menuOptions,
-    ...wi,
+
+  let widget;
+  if (w.layout === 'exercise') {
+    widget = w;
+  } else {
+    widget = {
+      category: w.category,
+      menuOptions: w.menuOptions,
+      ...wi,
+    }
   }
+
+  
 
 
   

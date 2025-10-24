@@ -48,8 +48,6 @@ const IndexProgress = () => {
 
   const openProgressExpanded = (category, categoryData) => {
 
-    console.log("Clicked");
-
     const data = {
       category,
       ...categoryData
@@ -63,8 +61,18 @@ const IndexProgress = () => {
     });
   } 
 
-  const openProgressExpandedExercise = (exercise) => {
-    console.log("Clicked");
+  const openProgressExpandedExercise = (exercise, exerciseData) => {
+    const data = {
+      layout: "exercise",
+      category: exercise.name,
+      data: exerciseData,
+    }
+    router.push({
+      pathname: "/progressExpanded",
+      params: {
+        data: JSON.stringify(data),
+      },
+    });
   }
 
   const openNutrition = () => {
@@ -288,7 +296,7 @@ const IndexProgress = () => {
                     <TouchableOpacity
                       onLongPress={drag}
                       disabled={isActive}
-                      onPress={() => openProgressExpandedExercise(exercise)}
+                      onPress={() => openProgressExpandedExercise(exercise, bestData)}
                       style={{width: item.width, marginHorizontal: 20}}
                     >
                       {/* Save as OpenExercise here */}
