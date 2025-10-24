@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import GraphWidget from '../../../components/GraphWidget'
 import Spacer from '../../../components/Spacer'
 import plusIcon from '../../../assets/icons/plus.png'
-import noEye from '../../../assets/icons/noEye.png'
+import gripDots from '../../../assets/icons/gripDots.png'
 import pencilIcon from '../../../assets/icons/pencil.png'
 import whiteX from '../../../assets/icons/whiteX.png'
 import { Colors } from '../../../constants/Colors'
@@ -31,6 +31,7 @@ const firstCapital = (string) => {
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
+
 
 const IndexProgress = () => {
   const user = useUserStore((state) => state.user);
@@ -220,6 +221,9 @@ const IndexProgress = () => {
 
                 return (
                   <ScaleDecorator key={item.key}>
+                    <Pressable onPressIn={drag} style={{height: 30, width: 30, zIndex: 2, justifyContent: "center", alignItems: "center", position: "absolute", top: 5, right: 25}}>
+                      <Image source={gripDots} style={{objectFit: "contain", height: 13, width: 30, tintColor: "#acacacff", }} />
+                    </Pressable>
                     <TouchableOpacity
                       onLongPress={drag}
                       disabled={isActive}

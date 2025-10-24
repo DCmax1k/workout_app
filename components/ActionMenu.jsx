@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Pressable,
@@ -15,6 +15,25 @@ import { transform } from 'typescript';
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 const MENU_WIDTH = 250;
 const ITEM_HEIGHT = 40;
+const MAX_MENU_WIDTH = screenWidth - 80;
+
+const MeasureMenuItems = ({ data, onMeasured }) => {
+  const handleLayout = (e) => {
+    const { width } = e.nativeEvent.layout;
+    onMeasured(width > MAX_MENU_WIDTH ? MAX_MENU_WIDTH : width);
+  };
+
+  return (
+    <View style={{ position: 'absolute', opacity: 0, left: -1000, top: -1000 }} onLayout={handleLayout}>
+      {data.map((item, i) => (
+        <Text key={i}  style={{ fontSize: 14 }}>
+          {item.title}
+        </Text>
+      ))}
+    </View>
+  );
+};
+
 
 const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style, offset = false, ...props }) => {
   const [active, setActive] = useState(false);
@@ -22,57 +41,49 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
   const buttonRef = useRef(null);
 
   const [upperHalf, setUpperHalf] = useState(true);
+  // const [menuWidth, setMenuWidth] = useState(0); // Dynamic width
 
   const MENU_HEIGHT = ITEM_HEIGHT*data.length;
 
-  // ZoomInRight.duration(200)
-  // const entering = (values) => {
-  //   'worklet';
+  const [menuWidth, setMenuWidth] = useState(0);
+  const [menuMeasured, setMenuMeasured] = useState(false);
 
-  //   const animations = {
-  //     opacity: withTiming(1, { duration: 300 }),
-  //     transform: [
-  //       { scale: withSpring(1, { damping: 10, duration: 300 }) },
-  //       { translateX: withTiming(0, {duration: 300})},
-  //       { translateY: withTiming(0, {duration: 300})}
-  //     ],
-  //   };
-
-  //   const initialValues = {
-  //     opacity: 0,
-  //     transform: [
-  //       { scale: 0 },
-  //       { translateX: MENU_WIDTH},
-  //       { translateY: -MENU_HEIGHT},
-  //     ],
-  //   };
-
-  //   return {
-  //     initialValues,
-  //     animations,
-  //   };
-  // };
-
+  useEffect(() => {
+    setMenuWidth(0);
+    setMenuMeasured(false);
+  }, [data]);
 
   const openMenu = () => {
+
+    if (!menuMeasured) return; // wait until widths measured
+
     buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
       const isLowerHalf = pageY > screenHeight / 2;
-
       const menuPos = {
-        x: pageX - MENU_WIDTH + 30,
-        y: isLowerHalf ? pageY - MENU_HEIGHT + (offset ? 25 : 25) : pageY + height - (offset ? 25 : 25)
-      }
-  
+        x: pageX - menuWidth + 30,
+        y: isLowerHalf
+          ? pageY - ITEM_HEIGHT * data.length
+          : pageY + height
+      };
       setMenuPos(menuPos);
-      
-      setUpperHalf(isLowerHalf ? false : true);
-
+      setUpperHalf(!isLowerHalf);
       setActive(true);
     });
   };
 
+  
+
   return (
     <>
+    {!menuMeasured && (
+      <MeasureMenuItems
+        data={data}
+        onMeasured={(width) => {
+          setMenuWidth((prev) => Math.max(prev, width)+60); // optional padding
+          setMenuMeasured(true);
+        }}
+      />
+    )}
       <Pressable
         ref={buttonRef}
         onPress={openMenu}
@@ -90,23 +101,35 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
       </Pressable>
 
       <Portal>
-          {active && (
+          {active && menuMeasured && (
           <Animated.View entering={FadeIn} exiting={FadeOut} style={styles.fullScreenOverlay}>
             {/* BACKDROP - dismisses when tapped */}
             <Pressable
               style={StyleSheet.absoluteFill}
-              onPress={() => setActive(false)}
+              onPress={() => {
+                setActive(false);
+              }}
             />
 
             {/* MENU */}
-            <Animated.View entering={ZoomInRight.duration(200) } exiting={ZoomOutRight.duration(400)} style={[ styles.menu, { top: menuPos.y, left: menuPos.x,},]}>
+            <Animated.View
+            entering={ZoomInRight.duration(200) }
+            exiting={ZoomOutRight.duration(400)}
+            style={[ styles.menu, { top: menuPos.y, left: menuPos.x, width: menuWidth || 0, },]}
+            >
 
               {data.map((item, i) => (
-              <Pressable key={i} onPress={() => { setActive(false); item.onPress()}} style={[styles.menuItem, {height: ITEM_HEIGHT}]}>
-                <Image style={{height: 15, width: 15, objectFit: "contain", tintColor: item.color || "white"}} source={item.icon} />
-                <Text style={[styles.menuItemText, {color: item.color || "white"}]}>{item.title}</Text>
-              </Pressable>
+
+                  <Pressable key={i}  onPress={() => { setActive(false); item.onPress()}} style={[styles.menuItem, {height: ITEM_HEIGHT,}]} >
+                    {item.icon !== null ? (<Image style={{height: 15, width: 15, objectFit: "contain", tintColor: item.color || "white"}} source={item.icon} />) : (<View style={{width: 10, height: 2, borderRadius: 99, backgroundColor: "white"}}></View>)}
+                    <View style={styles.menuItemText}>
+                      <Text style={[{color: item.color || "white"}]} >{item.title}</Text>
+                    </View>
+                    
+                  </Pressable>
+              
               ))}
+
 
             </Animated.View>
           </Animated.View>
@@ -129,7 +152,8 @@ const styles = StyleSheet.create({
   },
   menu: {
     position: 'absolute',
-    width: MENU_WIDTH,
+    // width: MENU_WIDTH,
+    maxWidth: MAX_MENU_WIDTH,
     backgroundColor: '#444444',
     borderRadius: 15,
     elevation: 4,
@@ -142,5 +166,8 @@ const styles = StyleSheet.create({
   menuItemText: {
     paddingVertical: 8,
     paddingHorizontal: 16,
+
+    
   },
 });
+

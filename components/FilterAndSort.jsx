@@ -19,7 +19,7 @@ const Option = ({style, label, onPress, iconScale=1, backgroundColor="#3D3D3D", 
 }
 
 // CURRENT WORKING ON THIS, MAKE IT ACTUALLY FILTER THE PARENT
-const FilterAndSort = forwardRef(({style, selected, setSelected, options = ["Chest", "Abs", "Back", "Bicep", "Tricep", "Forearm", "Shoulder", "Leg"], ...props}, ref) => {
+const FilterAndSort = forwardRef(({style, selected, setSelected, options = ["Chest", "Abs", "Back", "Biceps", "Triceps", "Forearms", "Shoulders", "Legs"], ...props}, ref) => {
 
     // Moved to parent
     // const [selected, setSelected] = useState([]);

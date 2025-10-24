@@ -5,7 +5,7 @@ import greyX from '../../assets/icons/greyX.png'
 import ActionMenu from '../ActionMenu'
 import fileIcon from '../../assets/icons/file.png'
 import trashIcon from '../../assets/icons/trash.png'
-import hamburger from '../../assets/icons/hamburger.png'
+import gripDots from '../../assets/icons/gripDots.png'
 import pencilIcon from '../../assets/icons/pencil.png'
 import check from '../../assets/icons/check.png'
 import lightBulb from '../../assets/icons/lightBulb.png'
@@ -215,13 +215,12 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
 
 
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
-            <TextInput ref={exerciseNameRef} value={exercise.name} onChangeText={changeExerciseName} style={{fontSize: 15, flex: 1, fontWeight: 500, color: activeWorkoutStyle?"white":"#DB8854", }} />
-            {showHamHint && (<Animated.View entering={FadeInRight} exiting={FadeOutRight}>
-                <ThemedText>Press and hold to drag</ThemedText>
-            </Animated.View>)}
-            <Pressable onPress={setShowHamHint} onLongPress={drag} style={{height: 20, width: 40, zIndex: 2, justifyContent: "center", alignItems: "center"}}>
-                <Image source={hamburger} style={{objectFit: "contain", height: 10, width: 40}} />
+            <Pressable onPressIn={drag} style={{height: 30, width: 30, marginVertical: -10, zIndex: 2, justifyContent: "center", alignItems: "center",}}>
+                <Image source={gripDots} style={{objectFit: "contain", height: 10, width: 30, tintColor: "#6d6d6dff", }} />
             </Pressable>
+
+            <TextInput ref={exerciseNameRef} value={exercise.name} onChangeText={changeExerciseName} style={{fontSize: 15, flex: 1, fontWeight: 500, color: activeWorkoutStyle?"white":"#DB8854", }} />
+
             <ActionMenu style={{zIndex: 2}} offset={activeWorkoutStyle} backgroundColor={activeWorkoutStyle?"transparent":"#DB8854"} data={[
                 {title: "Add note", icon: fileIcon, onPress: openNoteAndFocus, },
                 {title: "Rename exercise", icon: pencilIcon, onPress: () => exerciseNameRef.current?.focus()},

@@ -22,6 +22,7 @@ import { router, useLocalSearchParams, } from 'expo-router';
 import OpenExercise from '../../../components/workout/OpenExercise';
 import { useIsFocused } from '@react-navigation/native';
 import FilterAndSort from '../../../components/FilterAndSort';
+import FilterAndSearch from '../../../components/FilterAndSearch'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -86,8 +87,8 @@ const ExercisesIndex = () => {
 
 
   
-
-  const sectionalData = groupExercisesByLetter(filterByCategories(searchExercise(getAllExercises(user), searchValue), filterSelected));
+  const filteredData = filterByCategories(searchExercise(getAllExercises(user), searchValue), filterSelected);
+  const sectionalData = filterSelected.length > 0 ? [{title: "Filtered", data: filteredData}] : groupExercisesByLetter(filteredData);
 
 
   const allExercises = getAllExercises(user);
@@ -160,9 +161,11 @@ const ExercisesIndex = () => {
 
             <Spacer height={20} />
 
-            <Search value={searchValue} style={{marginHorizontal: 20}} onChangeText={(e) => setSearchValue(e)} />
-              <Spacer height={10} />
-            <FilterAndSort selected={filterSelected} setSelected={setFilterSelected} />
+            {/* <Search value={searchValue} style={{marginHorizontal: 20}} onChangeText={(e) => setSearchValue(e)} />
+            <Spacer height={10} />
+            <FilterAndSort selected={filterSelected} setSelected={setFilterSelected} /> */}
+
+            <FilterAndSearch value ={searchValue} onChangeText={(e) => setSearchValue(e)} selected={filterSelected} setSelected={setFilterSelected} style={{marginHorizontal: 15}} />
 
             <Spacer height={10} />
 
