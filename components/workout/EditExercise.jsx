@@ -5,6 +5,7 @@ import greyX from '../../assets/icons/greyX.png'
 import ActionMenu from '../ActionMenu'
 import fileIcon from '../../assets/icons/file.png'
 import trashIcon from '../../assets/icons/trash.png'
+import eyeIcon from '../../assets/icons/eye.png'
 import gripDots from '../../assets/icons/gripDots.png'
 import pencilIcon from '../../assets/icons/pencil.png'
 import check from '../../assets/icons/check.png'
@@ -20,7 +21,7 @@ const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWorkoutStyle, drag=()=>{}, dragActive=false, ...props}) => {
+const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWorkoutStyle, viewOpenExercise, drag=()=>{}, dragActive=false, ...props}) => {
     const user = useUserStore((state) => state.user);
 
     const exerciseNameRef = useRef(null);
@@ -222,10 +223,12 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
             <TextInput ref={exerciseNameRef} value={exercise.name} onChangeText={changeExerciseName} style={{fontSize: 15, flex: 1, fontWeight: 500, color: activeWorkoutStyle?"white":"#DB8854", }} />
 
             <ActionMenu style={{zIndex: 2}} offset={activeWorkoutStyle} backgroundColor={activeWorkoutStyle?"transparent":"#DB8854"} data={[
+                {title: "Open Exercise", icon: eyeIcon, onPress: () => viewOpenExercise(exercise)},
                 {title: "Add note", icon: fileIcon, onPress: openNoteAndFocus, },
                 {title: "Rename exercise", icon: pencilIcon, onPress: () => exerciseNameRef.current?.focus()},
                 {title: exercise.unit === "metric" ? ("Imperial unit (" + imperialTag + ")") : ("Metric unit (" + metricTag + ")"), icon: dumbellIcon, onPress: switchUnit},
-                {title: "Delete exercise", icon: trashIcon, onPress: removeExercise, color: "#FF6C6C"}]}
+                {title: "Delete exercise", icon: trashIcon, onPress: removeExercise, color: "#FF6C6C"},
+            ]}
                 />
                 
         </View>

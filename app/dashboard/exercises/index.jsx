@@ -165,7 +165,7 @@ const ExercisesIndex = () => {
             <Spacer height={10} />
             <FilterAndSort selected={filterSelected} setSelected={setFilterSelected} /> */}
 
-            <FilterAndSearch value ={searchValue} onChangeText={(e) => setSearchValue(e)} selected={filterSelected} setSelected={setFilterSelected} style={{marginHorizontal: 15}} />
+            <FilterAndSearch value ={searchValue} onChangeText={(e) => setSearchValue(e)} selected={filterSelected} setSelected={setFilterSelected} padding={15} />
 
             <Spacer height={10} />
 

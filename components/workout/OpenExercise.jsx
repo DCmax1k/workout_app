@@ -203,6 +203,43 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
     });
 
     const weightOrDistance = (exercise.tracks.includes("weight") || exercise.tracks.includes("weightPlus"));
+
+    
+
+
+    const visibleExerciseWidgetIds = user.tracking.visibleWidgets.map(w => {
+      if (w.length >= 3 && w.slice(0, 3) === "ex_") {
+        return w.slice(3, w.length);
+      } else return null;
+    }).filter(o => o !== null);
+
+    const selectAddExerciseWidget = (ex) => {
+      if (visibleExerciseWidgetIds.includes(ex.id)) return;
+      const updated = ["ex_" + ex.id, ...user.tracking.visibleWidgets];
+      updateUser({tracking: { visibleWidgets: updated}});
+    }
+
+    const hideWidget = (exercise) => {
+        const wid = "ex_" + exercise.id;
+        const visibleWidgets = user.tracking.visibleWidgets;
+        const ind = visibleWidgets.indexOf(wid)
+        if (ind < 0) return router.back();
+        
+        visibleWidgets.splice(ind, 1);
+        
+        updateUser({tracking: { visibleWidgets: visibleWidgets}});
+      }
+
+    const addWidgetToProgress = () => {
+      if (visibleExerciseWidgetIds.includes(exercise.id)) {
+        // Remove
+        hideWidget(exercise);
+      } else {
+        // Add
+        selectAddExerciseWidget(exercise);
+      }
+      
+    }
     
   return (
     <Animated.View layout={LinearTransition.springify().damping(90)} style={[styles.cont, style]} {...props}>
@@ -255,7 +292,8 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
       </Animated.View>)}
 
       {/* Progress screen - Charts and graphs */}
-      {!editModeActive && section === "Progress" && <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1}}>
+      {!editModeActive && section === "Progress" &&
+      (<Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1}}>
 
           {completedExercises.length < 1 === true ? (
             // No completed exercises
@@ -295,7 +333,16 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
 
           <Spacer height={20} />
           
-      </Animated.View>}
+
+          <BlueButton
+          title={visibleExerciseWidgetIds.includes(exercise.id) ? "Hide widget from progress tab" : "Add widget to progress tab"}
+          onPress={addWidgetToProgress}
+          color={visibleExerciseWidgetIds.includes(exercise.id) ? Colors.protein : Colors.primaryBlue}
+          />
+
+          <Spacer height={20} />
+
+      </Animated.View>)}
 
       {/* History screen - Past workouts with exercise */}
       {!editModeActive && section === "History" && <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1}}>

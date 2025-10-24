@@ -28,11 +28,12 @@ import { truncate } from '../../util/truncate'
 import { Portal } from 'react-native-paper'
 import FoodPreview from './FoodPreview'
 import TouchableScale from '../TouchableScale'
+import FilterAndSearch from '../FilterAndSearch'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
 
-const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, searchValue, editFoods, setEditFoods, user, allFoods, ...props}) => {
+const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, searchValue, setSearchValue, editFoods, setEditFoods, user, allFoods, ...props}) => {
     
 
     
@@ -40,22 +41,32 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, 
     // const [searchValue, setSearchValue] = useState("");
     const userFoodCategories = user.foodCategories;
     const actionIds = [];
+
     const foodCategoriesOrganized = ["All Foods", ...userFoodCategories, ...foodCategories];
     const categoryData = foodCategoriesOrganized.map((f, i) => ({id: `${i}`, title: f}));
     const [selectedCategory, setSelectedCategory] = useState("0");
 
-    
+    const [filterSelected, setFilterSelected] = useState([]);
 
  
     const currentCategory = categoryData.find(c => c.id === selectedCategory)?.title;
 
 
+    // const filteredFoods = allFoods.filter(f => {
+    //     if (currentCategory === "All Foods") {
+    //         return f.name.toLowerCase().includes(searchValue.toLowerCase());
+    //     } else {
+    //         return f.categories.includes(currentCategory) && f.name.toLowerCase().includes(searchValue.toLowerCase());
+    //     }
+    // });
     const filteredFoods = allFoods.filter(f => {
-        if (currentCategory === "All Foods") {
-            return f.name.toLowerCase().includes(searchValue.toLowerCase());
-        } else {
-            return f.categories.includes(currentCategory) && f.name.toLowerCase().includes(searchValue.toLowerCase());
+        if (filterSelected.length === 0) return f.name.toLowerCase().includes(searchValue.toLowerCase());
+        for (let i = 0; i<filterSelected.length; i++) {
+            if ((f.categories.includes(filterSelected[i])) && f.name.toLowerCase().includes(searchValue.toLowerCase())) {
+                return true;
+            }
         }
+        return false;
     });
 
     return (
@@ -74,9 +85,11 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, 
                 
             </View>
             
-            <Dropdown style={{zIndex: 2}} data={categoryData} selectedId={selectedCategory} setSelectedId={setSelectedCategory} actionIds={actionIds} actions={{"1": openCreateNewFood}} overflow={true} />
+            <FilterAndSearch value ={searchValue} onChangeText={(e) => setSearchValue(e)} options={[...userFoodCategories, ...foodCategories]} selected={filterSelected} setSelected={setFilterSelected} padding={15} style={{marginHorizontal: -20,}} />
+            {/* <Dropdown style={{zIndex: 2}} data={categoryData} selectedId={selectedCategory} setSelectedId={setSelectedCategory} actionIds={actionIds} actions={{"1": openCreateNewFood}} overflow={true} /> */}
+            {filterSelected.length > 0 && (<Spacer height={10} />)}
 
-            <ScrollView style={{marginLeft: -20, marginRight: -20, height: screenHeight/1.5,}} contentContainerStyle={{paddingBottom: screenHeight/3, paddingHorizontal: 20, paddingTop: 20}} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{marginLeft: -20, marginRight: -20, height: screenHeight/1.5,}} contentContainerStyle={{paddingBottom: screenHeight/3, paddingHorizontal: 20, paddingTop: 10}} showsVerticalScrollIndicator={false}>
                 <View style={{paddingBottom: 50, flexWrap: "wrap", flexDirection: "row", justifyContent: "center", gap: 15,}}>
                     {filteredFoods.map((f, i) => {
                         const selected = foodToAdd.map(f => f.id).includes(f.id);
@@ -147,7 +160,7 @@ const AddFood = ({...props}) => {
         
     }
 
-    const tabs = [" Scan", "Search", "AI"];
+    const tabs = [" Scan", "Library", "AI"];
     const [tab, setTab] = useState(tabs[1]);
 
     const requestAddFood = () => {
@@ -264,7 +277,8 @@ const AddFood = ({...props}) => {
             
           )}
 
-        {tab === tabs[1] && (<Animated.View entering={FadeIn} exiting={FadeOut} style={[ { position: "absolute", left: 20, right: 20, bottom: Platform.OS === "ios" ? 20 : 50, zIndex: 9, alignItems: "center", }, animatedStyle ]} >
+          {/* Super cool search bar that no longer is used */}
+        {/* {tab === tabs[1] && (<Animated.View entering={FadeIn} exiting={FadeOut} style={[ { position: "absolute", left: 20, right: 20, bottom: Platform.OS === "ios" ? 20 : 50, zIndex: 9, alignItems: "center", }, animatedStyle ]} >
                 <Animated.View style={[animatedSearchStyle]}>
                     <Search
                         value={searchValue}
@@ -274,7 +288,7 @@ const AddFood = ({...props}) => {
                     />
                 </Animated.View>
             
-            </Animated.View>)}
+            </Animated.View>)} */}
 
         
         <SafeAreaView>
@@ -326,6 +340,7 @@ const AddFood = ({...props}) => {
                     selectFood={selectFood}
                     foodToAdd={foodToAdd}
                     searchValue={searchValue}
+                    setSearchValue={setSearchValue}
                     editFoods={editFoods}
                     setEditFoods={setEditFoods}
                     user={user}

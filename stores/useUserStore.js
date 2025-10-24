@@ -50,7 +50,9 @@ const fillMissingKeys = (base, user) => {
   if (filled?.tracking?.insights?.expenditure?.layout === "none" ) {
     filled.tracking.insights.expenditure.layout = "expenditure";
   }
-  
+
+  console.log(filled.tracking.visibleWidgets);
+
   return filled;
 }
 

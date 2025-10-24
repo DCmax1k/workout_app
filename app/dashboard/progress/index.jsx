@@ -10,7 +10,7 @@ import GraphWidget from '../../../components/GraphWidget'
 import Spacer from '../../../components/Spacer'
 import plusIcon from '../../../assets/icons/plus.png'
 import gripDots from '../../../assets/icons/gripDots.png'
-import pencilIcon from '../../../assets/icons/pencil.png'
+import noEye from '../../../assets/icons/noEye.png'
 import whiteX from '../../../assets/icons/whiteX.png'
 import { Colors } from '../../../constants/Colors'
 import ConfirmMenu from '../../../components/ConfirmMenu'
@@ -23,10 +23,13 @@ import calculateExpenditure, { useCalculateExpenditure } from '../../../util/cal
 import memoizeOne from 'memoize-one'
 import NutritionWidget from '../../../components/nutrition/NutritionWidget'
 import calculateBMI from '../../../util/calculateBMI'
+import getAllExercises from '../../../util/getAllExercises'
 
 
 const firstCapital = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+  const strToArr = string.split(' ');
+  const newArr = strToArr.map(word => word.charAt(0).toUpperCase() + word.slice(1));
+  return newArr.join(' ');
 }
 
 const screenWidth = Dimensions.get('window').width;
@@ -37,10 +40,16 @@ const IndexProgress = () => {
   const user = useUserStore((state) => state.user);
   const updateUser = useUserStore((state) => state.updateUser);
 
-  const [addWidget, setAddWidget] = useState(false);
+  const [addExerciseWidget, setAddExerciseWidget] = useState(false);
+
+  const [confirmMenuActive, setConfirmMenuActive] = useState(false);
+  const [confirmMenuData, setConfirmMenuData] = useState();
 
 
   const openProgressExpanded = (category, categoryData) => {
+
+    console.log("Clicked");
+
     const data = {
       category,
       ...categoryData
@@ -53,32 +62,76 @@ const IndexProgress = () => {
       },
     });
   } 
+
+  const openProgressExpandedExercise = (exercise) => {
+    console.log("Clicked");
+  }
+
   const openNutrition = () => {
     router.push({
       pathname: "/nutrition",
     });
   }
 
+  const updatedVisibleWidgets = user.tracking.visibleWidgets;
   const widgets = ["nutrition", "weight", "sleep amount", "sleep quality", "water intake"];
-  const widgetsAvailable = widgets.filter(w => !user.tracking.visibleWidgets.includes(w));
-  const selectAddWidget = (wid) => {
-    const visibleWidgets = user.tracking.visibleWidgets;
-    if (visibleWidgets.includes(wid)) return setAddWidget(false);
+  const widgetsAvailable = widgets.filter(w => !updatedVisibleWidgets.includes(w));
+  
+  const visibleExerciseWidgetIds = updatedVisibleWidgets.map(w => {
+    if (w.length >= 3 && w.slice(0, 3) === "ex_") {
+      return w.slice(3, w.length);
+    } else return null;
+  }).filter(o => o !== null);
 
-    const updated = [...visibleWidgets, wid]; // clone, don’t mutate
+  const allExercises = getAllExercises(user, "name")
+  const exerciseWidgetsAvailable = allExercises.filter(ex => !visibleExerciseWidgetIds.includes(ex.id));
+
+  const selectAddExerciseWidget = (ex) => {
+    if (visibleExerciseWidgetIds.includes(ex.id)) return;
+    const updated = ["ex_" + ex.id, ...updatedVisibleWidgets];
+    updateUser({tracking: { visibleWidgets: updated}});
+    setAddExerciseWidget(false);
+  }
+
+  const selectAddWidget = (wid) => {
+    const visibleWidgets = updatedVisibleWidgets;
+
+    const updated = [wid, ...visibleWidgets]; // clone, don’t mutate
     
     updateUser({ tracking: { visibleWidgets: updated } });
-    setAddWidget(false);
   };
+
+  const requestHideWidget = (wid) => {
+    setConfirmMenuData({
+                title: "Hide this widget?",
+                subTitle: "This widget can always be added back later.",
+                subTitle2: "",
+                option1: "Confirm hide",
+                option1color: "#DB5454",
+                option2: "Go back",
+                confirm: () => hideWidget(wid),
+            });
+            setConfirmMenuActive(true);
+  }
     
+  const hideWidget = (wid) => {
+      const visibleWidgets = updatedVisibleWidgets;
+      const ind = visibleWidgets.indexOf(wid)
+      if (ind < 0) return router.back();
+      
+      visibleWidgets.splice(ind, 1);
+      
+      updateUser({tracking: { visibleWidgets: visibleWidgets}});
+    }
 
   const setVisibleWidgetsFlatlistData = (data) => {
     const newVisibleWidgets = data.map(d => d.key);
     updateUser({tracking: {visibleWidgets: newVisibleWidgets}});
   }
 
-  const updatedVisibleWidgets = user.tracking.visibleWidgets;
+  
   if (!updatedVisibleWidgets.includes("nutrition")) updatedVisibleWidgets.unshift("nutrition");
+
   const visibleWidgetsFlatlistData = updatedVisibleWidgets.map((key, i) => {
 
           if (key === "nutrition") {
@@ -97,9 +150,17 @@ const IndexProgress = () => {
           }
         })
 
-  const widgetActionMenuData = [
+  const pWidgetActionMenuData = widgetsAvailable.map(w => {
+    return {
+      title: firstCapital(w),
+      onPress: () => selectAddWidget(w),
+    }
+  });
 
-                ];
+  //const widgetActionMenuData = widgetActionMenuData.length === 0 ? [{title: "No more availbe widgets", onPress: () => {}}] : widgetActionMenuData;
+  const widgetActionMenuData = [{title: "Add Exercise Progress", onPress: () => {setAddExerciseWidget(true)}}, ...pWidgetActionMenuData];
+
+
 
 
 
@@ -109,38 +170,38 @@ const IndexProgress = () => {
   return (
 
     <ThemedView style={styles.container}>
-        
+        <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
         <SafeAreaView style={{flex: 1}}>
 
-        {addWidget && (
+        {addExerciseWidget && (
             <Portal >
               <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
-                <Pressable onPress={() => setAddWidget(false)} style={{height: "100%", width: "100%", zIndex: 0}}></Pressable>
+                <Pressable onPress={() => setAddExerciseWidget(false)} style={{height: "100%", width: "100%", zIndex: 0}}></Pressable>
                   <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
                     
                     <Animated.View layout={LinearTransition.springify().damping(90)} style={[styles.addWidgetCont]}>
 
                       <View style={{flexDirection: "row", alignItems: "center", justifyContent: "flex-start", }}>
-                        <Pressable onPress={() => setAddWidget(false)}>
+                        <Pressable onPress={() => setAddExerciseWidget(false)}>
                             <Image source={whiteX} style={{ height: 30, width: 30, marginRight: 20}} />
                         </Pressable>
                         
-                        <Text adjustsFontSizeToFit style={[styles.screenText, { flex: 1, }]}>Add widget</Text>
+                        <Text adjustsFontSizeToFit style={[styles.screenText, { flex: 1, }]}>Add Exercise Widget</Text>
 
                         <View style={{width: 80}}></View>
                       </View>
 
                       <Spacer height={20} />
 
-                      <View style={{width: "100%", borderRadius: 10, overflow: "hidden"}}>
-                        {widgetsAvailable.map((wid, i) => (
-                          <Pressable key={i} onPress={() => selectAddWidget(wid)} style={{backgroundColor:  "#3A3A3A", width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 60, padding: 10}}>
-                            <Text style={{color: "white", fontSize: 17, fontWeight:'800'  }}>{firstCapital(wid)}</Text>
+                      <ScrollView style={{width: "100%", maxHeight: screenHeight-300, borderRadius: 10, overflow: "hidden"}}>
+                        {exerciseWidgetsAvailable.map((ex, i) => (
+                          <Pressable key={i} onPress={() => selectAddExerciseWidget(ex)} style={{backgroundColor:  "#3A3A3A", width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 60, padding: 10}}>
+                            <Text style={{color: "white", fontSize: 17, fontWeight:'800'  }}>{firstCapital(ex.name)}</Text>
                             
                           </Pressable>
                         ))}
 
-                      </View>
+                      </ScrollView>
                       <Spacer height={20} />
                     
                     </Animated.View>
@@ -152,7 +213,7 @@ const IndexProgress = () => {
             
           )}
 
-
+            
             <DraggableFlatList
               ListHeaderComponent={
                 <>
@@ -165,14 +226,15 @@ const IndexProgress = () => {
                   {/* Add widget button*/}
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: "center", marginRight: 20}}>
                   <ThemedText style={[styles.header, {fontSize: 15}]} >Logging & Tracking</ThemedText>
-                  <Pressable onPress={() => setAddWidget(true)} style={{flexDirection: 'row', alignItems: 'center', padding: 5, backgroundColor: Colors.primaryBlue, borderRadius: 50, height: 30, paddingHorizontal: 10}} >
+                  {/* <Pressable onPress={() => setAddWidget(true)} style={{flexDirection: 'row', alignItems: 'center', padding: 5, backgroundColor: Colors.primaryBlue, borderRadius: 50, height: 30, paddingHorizontal: 10}} >
                     <View style={{height: 20, width: 20, justifyContent: "center", alignItems: "center", marginRight: 10}}>
                       <Image style={{height: 20, width: 20, objectFit: 'contain'}} source={plusIcon} />
                     </View>
                     <Text style={{fontSize: 15, color: "white", fontWeight: 600}}>Add widget</Text>
-                  </Pressable>
-                  {/* <ActionMenu data={widgetActionMenuData} /> */}
+                  </Pressable> */}
+                  <ActionMenu data={widgetActionMenuData} backgroundColor={Colors.primaryBlue} title={"Add widget"} icon={plusIcon} style={{paddingVertical: 5, paddingHorizontal: 10, borderRadius: 50}} />
                 </View>
+                
 
                 <Spacer height={20} />
                 </>
@@ -183,10 +245,97 @@ const IndexProgress = () => {
               data={visibleWidgetsFlatlistData}
               onDragEnd={({data}) => setVisibleWidgetsFlatlistData(data)}
               keyExtractor={(item) => item.key}
+              
               renderItem={({item, drag, isActive}) => {
+
+                if (item.key.length >= 3 && item.key.slice(0, 3) === "ex_") {
+                  const exerciseId = item.key.slice(3, item.key.length);
+                  const completedExercises = user.completedExercises[exerciseId] || [];
+                  const exercise = allExercises.find(e => e.id === exerciseId);
+                  const weightOrDistance = (exercise.tracks.includes("weight") || exercise.tracks.includes("weightPlus"));
+
+                  const bestData =  completedExercises.map((exer, ind) => {
+                    let highestAmount = 0;
+                    let highestAmountIndex = 0;
+                    exer.sets.forEach((s, i) => {
+                        const group = exer.tracks.includes("weight") ? "strength" : exer.tracks.includes("weightPlus") ? "strengthPlus" : (exer.tracks.includes("mile") && exer.tracks.includes("time")) ? "cardio" : exer.tracks.includes("mile") ? "distance" : exer.tracks.includes("reps") ? "repsOnly" : null;
+                        const track = group === "strength" ? "weight" : group==="strengthPlus" ? "weightPlus" : group==="cardio" ? "mile" : group==="distance" ? "mile" : group==="repsOnly" ? "reps" : null;
+                        const value = track ? parseFloat(s[track]) : 0;
+                        if (value > highestAmount) {
+                            highestAmountIndex = i;
+                            highestAmount = value;
+                        }
+                    });
+                    const bestSet = exer.sets[highestAmountIndex];
+                    let returnValue = "";
+                    if (exer.tracks.includes("mile")) returnValue = `${highestAmount} miles`;
+                    else if (exer.tracks.includes("weight") || exer.tracks.includes("weightPlus")) returnValue = `${highestAmount} lbs`;
+                    if (exer.tracks.includes("reps")) returnValue += ` x${bestSet["reps"]}`;
+                    return {date: exer.date, amount: highestAmount, unit: exer.unit}
+                    
+                  });
+
+                  return (
+                  <ScaleDecorator key={item.key}>
+                    {/* Grip drag */}
+                    <Pressable onPressIn={drag} style={{height: 30, width: 30, zIndex: 2, justifyContent: "center", alignItems: "center", position: "absolute", top: 5, left: 25}}>
+                      <Image source={gripDots} style={{objectFit: "contain", height: 13, width: 30, tintColor: "#acacacff", }} />
+                    </Pressable>
+                    {/* Hide widget */}
+                    <Pressable onPress={() => requestHideWidget(item.key)} style={{height: 30, width: 30, zIndex: 2, justifyContent: "center", alignItems: "center", position: "absolute", top: 5, right: 25}}>
+                      <Image source={noEye} style={{objectFit: "contain", height: 17, width: 30, tintColor: "white", }} />
+                    </Pressable>
+                    <TouchableOpacity
+                      onLongPress={drag}
+                      disabled={isActive}
+                      onPress={() => openProgressExpandedExercise(exercise)}
+                      style={{width: item.width, marginHorizontal: 20}}
+                    >
+                      {/* Save as OpenExercise here */}
+                      {completedExercises.length < 1 === true ? (
+                        // No completed exercises
+                        <GraphWidget
+                            data={[0]}
+                            dates={[Date.now(), Date.now()]}
+                            title={"       " + exercise.name}
+                            unit={""}
+                            color={Colors.primaryOrange}
+                            style={{marginBottom: 20}}
+                            fillWidth={true}
+                            disablePress={true}
+                          />
+                      ) : (
+                        // Show completed exercise widgets
+                        <GraphWidget
+                          data={bestData.map((item) => {
+                            if (item.unit === 'metric') {
+                              return weightOrDistance ? kgToLbs(item.amount) : kmToMiles(item.amount);
+                            } else {
+                              return item.amount
+                            }
+                            
+                          })}
+                          dates={bestData.map((item) => item.date)}
+                          title={"       "+exercise.name}
+                          unit={weightOrDistance ? "lbs" : "miles"}
+                          color={Colors.primaryOrange}
+                          style={{marginBottom: 20}}
+                          fillWidth={true}
+                          disablePress={true}
+                        />
+                      )}
+
+
+                    </TouchableOpacity>
+                  </ScaleDecorator>
+                )}
 
                 if (item.key === "nutrition") return (
                   <ScaleDecorator key={item.key}>
+                    {/* Grip drag */}
+                    <Pressable onPressIn={drag} style={{height: 30, width: 30, zIndex: 2, justifyContent: "center", alignItems: "center", position: "absolute", top: 0, left: 25}}>
+                      <Image source={gripDots} style={{objectFit: "contain", height: 13, width: 30, tintColor: "#acacacff", }} />
+                    </Pressable>
                     <TouchableOpacity
                       onLongPress={drag}
                       disabled={isActive}
@@ -220,9 +369,15 @@ const IndexProgress = () => {
                 
 
                 return (
+                  
                   <ScaleDecorator key={item.key}>
-                    <Pressable onPressIn={drag} style={{height: 30, width: 30, zIndex: 2, justifyContent: "center", alignItems: "center", position: "absolute", top: 5, right: 25}}>
+                    {/* Grip drag */}
+                    <Pressable onPressIn={drag} style={{height: 30, width: 30, zIndex: 2, justifyContent: "center", alignItems: "center", position: "absolute", top: 5, left: 25}}>
                       <Image source={gripDots} style={{objectFit: "contain", height: 13, width: 30, tintColor: "#acacacff", }} />
+                    </Pressable>
+                    {/* Hide widget */}
+                    <Pressable onPress={() => requestHideWidget(item.key)} style={{height: 30, width: 30, zIndex: 2, justifyContent: "center", alignItems: "center", position: "absolute", top: 5, right: 25}}>
+                      <Image source={noEye} style={{objectFit: "contain", height: 17, width: 30, tintColor: "white", }} />
                     </Pressable>
                     <TouchableOpacity
                       onLongPress={drag}
@@ -234,7 +389,7 @@ const IndexProgress = () => {
                       fillWidth={true}
                       data={widget.calculatedData}
                       dates={widget.calculatedDates}
-                      title={firstCapital(item.key)}
+                      title={"       " +firstCapital(item.key)}
                       unit={widget.unit}
                       color={widget.color || "#546FDB"}
                       style={{marginBottom: 20}}

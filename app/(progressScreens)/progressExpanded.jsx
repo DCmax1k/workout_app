@@ -330,7 +330,7 @@ const ProgressExpanded = () => {
                 <View style={{height: 100, width: (screenWidth-80)/3, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
                   <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Last recorded</ThemedText>
                   <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
-                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={2} style={{fontSize: 16, textAlign: "center", color: "white", fontWeight: '800'}}>{mostRecentDate ? sinceWhen(mostRecentDate) : "- -"}</ThemedText>
+                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, textAlign: "center", color: "white", fontWeight: '800'}}>{mostRecentDate ? sinceWhen(mostRecentDate) : "- -"}</ThemedText>
                   </View>
                   
                 </View>
@@ -399,7 +399,7 @@ const ProgressExpanded = () => {
                 <View style={{height: 100, width: (screenWidth-80)/3, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
                   <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Last recorded</ThemedText>
                   <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
-                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={2} style={{fontSize:  16, textAlign: "center", color: "white", fontWeight: '800'}}>{mostRecentDate ? sinceWhen(mostRecentDate) : "- -"}</ThemedText>
+                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize:  16, textAlign: "center", color: "white", fontWeight: '800'}}>{mostRecentDate ? sinceWhen(mostRecentDate) : "- -"}</ThemedText>
                   </View>
                   
                 </View>

@@ -6,6 +6,7 @@ import {
   Image,
   Text,
   Dimensions,
+  ScrollView,
 } from 'react-native';
 import { Portal } from 'react-native-paper';
 import threeEllipses from '../assets/icons/threeEllipses.png';
@@ -49,18 +50,18 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
   const [menuMeasured, setMenuMeasured] = useState(false);
 
   useEffect(() => {
-    setMenuWidth(0);
     setMenuMeasured(false);
+    setMenuWidth(0);
   }, [data]);
 
   const openMenu = () => {
 
-    if (!menuMeasured) return; // wait until widths measured
+    if (!menuMeasured) return console.log("Menu not measured"); // wait until widths measured
 
     buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
       const isLowerHalf = pageY > screenHeight / 2;
       const menuPos = {
-        x: pageX - menuWidth + 30,
+        x: (pageX) - menuWidth + width,
         y: isLowerHalf
           ? pageY - ITEM_HEIGHT * data.length
           : pageY + height
@@ -96,7 +97,7 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
         }, style]}
       >
         <Image style={{ width: 20, height: 20, resizeMode: 'contain',  }} source={icon} />
-        {title && <Text>{title}</Text>}
+        {title && <Text style={{fontSize: 15, color: "white", fontWeight: 600, marginLeft: 10}}>{title}</Text>}
 
       </Pressable>
 
@@ -113,24 +114,54 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
 
             {/* MENU */}
             <Animated.View
-            entering={ZoomInRight.duration(200) }
-            exiting={ZoomOutRight.duration(400)}
-            style={[ styles.menu, { top: menuPos.y, left: menuPos.x, width: menuWidth || 0, },]}
+              entering={ZoomInRight.duration(200)}
+              exiting={ZoomOutRight.duration(400)}
+              style={[
+                styles.menu,
+                {
+                  top: menuPos.y,
+                  left: menuPos.x,
+                  width: menuWidth || 0,
+                  maxHeight: ITEM_HEIGHT * 7.5, // max height so scroll works for >7
+                },
+              ]}
             >
-
-              {data.map((item, i) => (
-
-                  <Pressable key={i}  onPress={() => { setActive(false); item.onPress()}} style={[styles.menuItem, {height: ITEM_HEIGHT,}]} >
-                    {item.icon !== null ? (<Image style={{height: 15, width: 15, objectFit: "contain", tintColor: item.color || "white"}} source={item.icon} />) : (<View style={{width: 10, height: 2, borderRadius: 99, backgroundColor: "white"}}></View>)}
+              <ScrollView scrollEnabled={data.length > 7}>
+                {data.map((item, i) => (
+                  <Pressable
+                    key={i}
+                    onPress={() => {
+                      setActive(false);
+                      item.onPress();
+                    }}
+                    style={[styles.menuItem, { height: ITEM_HEIGHT }]}
+                  >
+                    {item.icon ? (
+                      <Image
+                        style={{
+                          height: 15,
+                          width: 15,
+                          objectFit: 'contain',
+                          tintColor: item.color || 'white',
+                        }}
+                        source={item.icon}
+                      />
+                    ) : (
+                      <View
+                        style={{
+                          width: 10,
+                          height: 2,
+                          borderRadius: 99,
+                          backgroundColor: 'white',
+                        }}
+                      />
+                    )}
                     <View style={styles.menuItemText}>
-                      <Text style={[{color: item.color || "white"}]} >{item.title}</Text>
+                      <Text style={{ color: item.color || 'white' }}>{item.title}</Text>
                     </View>
-                    
                   </Pressable>
-              
-              ))}
-
-
+                ))}
+              </ScrollView>
             </Animated.View>
           </Animated.View>
         )}

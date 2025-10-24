@@ -17,7 +17,7 @@ const Option = ({style, label, onPress, iconScale=1, backgroundColor="#3D3D3D", 
     )
 }
 
-const FilterAndSearch = ({style, value, onChangeText, selected, setSelected, options = ["Chest", "Abs", "Back", "Biceps", "Triceps", "Forearms", "Shoulders", "Legs"], ...props}) => {
+const FilterAndSearch = ({style, value, onChangeText, selected, setSelected, options = ["Chest", "Abs", "Back", "Biceps", "Triceps", "Forearms", "Shoulders", "Legs",], padding=10, ...props}) => {
 
 
     const actionMenuData = options.filter(o => !selected.includes(o)).map((o) => {
@@ -36,13 +36,13 @@ const FilterAndSearch = ({style, value, onChangeText, selected, setSelected, opt
     })
 
   return (
-    <View style={{flexDirection: "column"}}>
-        <View style={[{ flexDirection: "row", alignItems: "center"}, style]} {...props}>
+    <View style={[{flexDirection: "column"}, style]} {...props}>
+        <View style={[{ flexDirection: "row", alignItems: "center", paddingHorizontal: padding,}]} >
             <Search value={value} onChangeText={onChangeText} style={{flex: 1, marginRight: 10 }} />
             <ActionMenu icon={filterIcon} data={actionMenuData} />
         </View>
 
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginTop: 5}} contentContainerStyle={{paddingHorizontal: 10, flexDirection: 'row', justifyContent: "flex-start", minWidth: "100%", alignItems: 'center', gap: 10}}>
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginTop: 5}} contentContainerStyle={{paddingHorizontal: padding, flexDirection: 'row', justifyContent: "flex-start", minWidth: "100%", alignItems: 'center', gap: 10}}>
                 {selected.map((option, index) => (
                     <Animated.View entering={FadeIn} exiting={FadeOut} key={option} >
                         <Option key={option} label={option} icon={greyX} iconScale={1.3} backgroundColor={"#303A66"} onPress={() => {
