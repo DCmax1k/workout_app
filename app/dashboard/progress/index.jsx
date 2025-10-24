@@ -66,6 +66,7 @@ const IndexProgress = () => {
       layout: "exercise",
       category: exercise.name,
       data: exerciseData,
+      color: Colors.primaryOrange,
     }
     router.push({
       pathname: "/progressExpanded",

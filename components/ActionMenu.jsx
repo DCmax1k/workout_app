@@ -49,14 +49,13 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
   const [menuWidth, setMenuWidth] = useState(0);
   const [menuMeasured, setMenuMeasured] = useState(false);
 
-  useEffect(() => {
-    setMenuMeasured(false);
-    setMenuWidth(0);
-  }, [data]);
-
   const openMenu = () => {
 
-    if (!menuMeasured) return console.log("Menu not measured"); // wait until widths measured
+    if (!menuMeasured) {
+      console.log("Menu not measured"); // Recreate by holding grip drag but no moving
+      
+      return;
+     } 
 
     buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
       const isLowerHalf = pageY > screenHeight / 2;
@@ -76,7 +75,7 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
 
   return (
     <>
-    {!menuMeasured && (
+    {/* {!menuMeasured && ( */}
       <MeasureMenuItems
         data={data}
         onMeasured={(width) => {
@@ -84,7 +83,7 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
           setMenuMeasured(true);
         }}
       />
-    )}
+    {/* )} */}
       <Pressable
         ref={buttonRef}
         onPress={openMenu}

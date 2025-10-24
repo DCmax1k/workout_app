@@ -98,7 +98,7 @@ const PreviewWorkoutPage = () => {
     <ThemedView style={{flex: 1}}>
         <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
         <SafeAreaView zIndex={1} >
-            <TitleWithBack backBtn={true} actionBtn={{actionMenu: true, image: require("../assets/icons/threeEllipses.png"), options: [{title: "Delete workout", icon: trash, onPress: () => showDeletePastWorkoutConfirmation(data),}],}} />
+            <TitleWithBack backBtn={true} actionBtn={{actionMenu: true, image: require("../assets/icons/threeEllipses.png"), options: [{title: "Delete workout", icon: trash, color: "#FF6C6C", onPress: () => showDeletePastWorkoutConfirmation(data),}],}} />
         </SafeAreaView>
         <WorkoutPreview style={{position: "absolute", width: screenWidth, height: screenHeight, zIndex: 0}} data={data} />
     </ThemedView>
