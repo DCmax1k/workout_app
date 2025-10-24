@@ -65,7 +65,7 @@ const calculateBMI = (oriData, oriDates, user) => {
             const weightKgs = userWeight ? userWeightWidget.unit === "lbs" ? lbsToKgs(userWeight) : userWeight : null;
 
             if (userWeight) {
-                const heightM = user.settings.height*0.01;
+                const heightM = user.settings.height * 0.01;
                 const heightS = Math.pow(heightM, 2);
                 bmi = weightKgs/heightS;
 

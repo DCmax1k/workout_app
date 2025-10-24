@@ -17,6 +17,7 @@ import Spacer from '../../components/Spacer';
 import ActionMenu from '../../components/ActionMenu';
 import { foodCategories } from '../../constants/Foods';
 import MultiSelectDropdown from '../../components/MultiSelectDropdown';
+import emitter from '../../util/eventBus';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -28,6 +29,8 @@ const EditFood = () => {
     const params = useLocalSearchParams();
     const f = JSON.parse(params.food) ?? {};
     const foodBeforeEdits = f;
+
+    const openedFromPlate = params.openedFromPlate ?? false;
 
     const [food, setFood] = useState(JSON.parse(JSON.stringify(f)));
     const foodNameInputRef = useRef(null);
@@ -109,6 +112,14 @@ const EditFood = () => {
         customFoods[food.id] = food;
         //console.log("Saving food", food);
         updateUser({customFoods});
+        if (openedFromPlate) {
+            const foodsInActivePlate = user.editActivePlate.foods;
+            const newFoods = foodsInActivePlate.map(f => {
+                if (f.id !== food.id) return f;
+                return food;
+            });
+            updateUser({editActivePlate: {...user.editActivePlate, foods: newFoods}});
+        }
         router.back();
       }
 

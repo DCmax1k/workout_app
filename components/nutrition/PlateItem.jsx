@@ -23,7 +23,7 @@ const PlateItem = ({style, food, clickChangeQuantity, ...props}) => {
         {/* Name and details */}
         <View style={{flexDirection: "column", height: size, justifyContent: "center", marginRight: "auto"}}>
             <Text style={{color: "white", fontSize: 14, fontWeight: "600"}}>{truncate(food.name, 25)}</Text>
-            <MacrosRow nutrition={food.nutrition} multiplier={food.quantity} />
+            <MacrosRow nutrition={food.nutrition} multiplier={food.quantity} showDecimal={false} />
         </View>
         {/* Serving input */}
         <View style={{height: size, justifyContent: "center", alignItems: "center", paddingRight: 10, marginLeft: 5, }}>

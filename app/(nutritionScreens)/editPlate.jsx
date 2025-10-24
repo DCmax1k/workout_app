@@ -8,7 +8,7 @@ import ThemedText from '../../components/ThemedText'
 import Spacer from '../../components/Spacer'
 import { useUserStore } from '../../stores/useUserStore'
 import { BottomSheetHandle, BottomSheetScrollView } from '@gorhom/bottom-sheet'
-import Animated, { FadeInUp, LinearTransition, SlideInDown, SlideOutDown } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, FadeOutDown, LinearTransition, SlideInDown, SlideOutDown } from 'react-native-reanimated'
 import { truncate } from '../../util/truncate'
 import doubleCarrot from '../../assets/icons/doubleCarrot.png'
 import pencil from '../../assets/icons/pencil.png'
@@ -24,15 +24,32 @@ import { generateUniqueId } from '../../util/uniqueId'
 import PlateItem from '../../components/nutrition/PlateItem'
 import SwipeToDelete from '../../components/SwipeToDelete'
 import emitter from '../../util/eventBus'
+import TouchableScale from '../../components/TouchableScale'
+import FoodPreview from '../../components/nutrition/FoodPreview'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
 
-const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButtonsOpacity, animatedLeftButtonTransform, animatedRightButtonTransform, handleSnapPress, bottomSheetPosition}, ref) => {
+const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOpacity, animatedButtonsOpacity, animatedLeftButtonTransform, animatedRightButtonTransform, handleSnapPress, bottomSheetPosition}, ref) => {
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
 
     const plate = user.editActivePlate ?? {name: "New Plate", id: 0, foods: [] };
+
+    const [foodPreview, setFoodPreview] = useState(null); // {...food}
+    const [foodPreviewOpen, setFoodPreviewOpen] = useState(false);
+
+    const openEditFood = (food) => {
+        if (foodPreviewOpen) setFoodPreviewOpen(false);
+        router.push({
+            pathname: '/editFood',
+            params: {
+                food: JSON.stringify(food),
+                openedFromPlate: true,
+            }
+        })
+            
+    }
 
     //const [foodModal, setFoodModal] = useState(false);
     useEffect(() => {
@@ -100,6 +117,7 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
             setConfirmMenuActive(true);
         }
         const discardPlate = () => {
+            closeKeyboardIfOpen();
             closeSheet();
             setTimeout(() => {
                 updateUser({editActivePlate: null})
@@ -121,7 +139,7 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
 
         const saveAsMeal = () => {
             setConfirmMenuData({
-                title: "Coming soon!",
+                title: "Save meal coming soon!",
                 subTitle: "",
 
                 option1: "Okay",
@@ -162,6 +180,7 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
             const todaysMeals = consumedMeals[dateKey] ?? [];
             const newMeals = [meal, ...todaysMeals];
             const newConsumedMeals = {...consumedMeals, [dateKey]: newMeals};
+            closeKeyboardIfOpen();
             updateUser({consumedMeals: newConsumedMeals});
             closeSheet();
             setTimeout(() => {
@@ -169,6 +188,13 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
             }, 100)
         }
 
+        const logAndSaveMeal = () => {
+            saveAsMeal();
+            setTimeout(() => {
+                logFoods();
+            }, 500);
+            
+        }
         const requestLogFoods = () => {
             if (!plate.foods || plate.foods.length < 1) {
                 setConfirmMenuData({
@@ -182,12 +208,23 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
                 setConfirmMenuActive(true);
                 return;
             }
+            // setConfirmMenuData({
+            //     title: "Log Foods?",
+            //     subTitle: "You are about to log the foods in this plate.",
+            //     subTitle2: "Would you like to proceed?",
+            //     option1: "Log Foods",
+            //     option1color: Colors.protein,
+            //     option2: "Go back",
+            //     confirm: logFoods,
+            // });
             setConfirmMenuData({
-                title: "Log Foods?",
+                title: "Log Foods and Save as Meal?",
                 subTitle: "You are about to log the foods in this plate.",
-                subTitle2: "Would you like to proceed?",
+                subTitle2: "Would you also like to save this meal for future use?",
                 option1: "Log Foods",
                 option1color: Colors.protein,
+                option3: "Log and Save Meal",
+                option3onPress: logAndSaveMeal,
                 option2: "Go back",
                 confirm: logFoods,
             });
@@ -228,16 +265,39 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
             });
         }
 
+    const openFoodPreview = (f) => {
+        setFoodPreview(f);
+        setFoodPreviewOpen(true);
+    }
+
     return (
         <ThemedView style={{flex: 1, backgroundColor: "#313131"}}>
             <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
+
+            {/* Food Preview */}
+            {foodPreviewOpen&& (
+                <Portal >
+                    <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
+
+                        <Pressable onPress={() => setFoodPreviewOpen(false)} style={{height: "100%", width: "100%", zIndex: 0}}></Pressable>
+
+                        <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
+                            <FoodPreview food={foodPreview} setFoodPreviewOpen={setFoodPreviewOpen} editFood={openEditFood} />
+                        </Animated.View>
+
+                    
+
+                    </Animated.View>    
+                </Portal>
+                
+                )}
             
             <BottomSheetHandle indicatorStyle={{backgroundColor: "transparent"}} style={{height: 120,}}>
                 {/* Buttons if sheet is open */}
                 <Animated.View style={[{flexDirection: "row", justifyContent: "space-between", position: "absolute", left: 0, top: 0, right: 0, paddingHorizontal: 10, zIndex: 1, elevation: 1, pointerEvents: bottomSheetPosition===1?"auto":"none"}, animatedButtonsOpacity ]}>
                     <Animated.View style={animatedLeftButtonTransform}>
-                        <Pressable onPress={saveAsMeal} style={{backgroundColor: "#5A5A5A", paddingVertical: 15, paddingHorizontal: 20, borderRadius: 10}}>
-                            <Text style={styles.text}>Save as meal</Text>
+                        <Pressable onPress={requestDiscardPlate} style={{backgroundColor: "#5A5A5A", paddingVertical: 15, paddingHorizontal: 20, borderRadius: 10}}>
+                            <Text style={styles.text}>Discard Plate</Text>
                         </Pressable>
                     </Animated.View>
                     
@@ -289,9 +349,9 @@ const EditPlate = forwardRef(({closeSheet, animatedHeaderOpacity, animatedButton
                                 <Animated.View key={food.id} style={{width: screenWidth}} entering={FadeInUp} exiting={SlideOutDown} layout={LinearTransition}>
 
                                     <SwipeToDelete style={{width: screenWidth}} openedRight={() => removeFoodItem(food)} >
-                                        <View style={{marginBottom: 5, paddingHorizontal: 10}} >
+                                        <TouchableScale onPress={() => openFoodPreview(food)} style={{marginBottom: 5, paddingHorizontal: 10}} >
                                             <PlateItem food={food} clickChangeQuantity={clickChangeQuantity} />
-                                        </View>
+                                        </TouchableScale>
                                     </SwipeToDelete>
 
                                 </Animated.View>

@@ -26,6 +26,11 @@ function formatMonthYear(date) {
   return `${month} ${year}`; // "MAY 2025"
 }
 
+
+const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 function kmToMiles(km) {
   // miles = kilometers * 0.621371
   const miles = km * 0.621371;
@@ -160,9 +165,6 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
         }
     }
 
-    const capitalizeFirstLetter = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
 
     const isImage = exercise.image ? true : false;
 

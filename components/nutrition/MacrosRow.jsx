@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Colors } from '../../constants/Colors';
 
-const MacrosRow = ({style, nutrition, multiplier=1, ...props}) => {
+const MacrosRow = ({style, nutrition, multiplier=1, showDecimal=true, ...props}) => {
 
   return (
     <View {...props} style={[{flexDirection: "row", gap: 5}, style]}>
@@ -10,7 +10,8 @@ const MacrosRow = ({style, nutrition, multiplier=1, ...props}) => {
             const nutritionKey = ["calories", "protein", "carbs", "fat"][i];
             const backgroundColor = [Colors.calories, Colors.protein, "#1BB14C", Colors.fat][i];
             const abr = ["Cal", "P", "C", "F"][i];
-            const nAmount = parseInt(nutrition[nutritionKey]*multiplier*10)/10;
+            const pAmount = nutrition[nutritionKey]*multiplier;
+            const nAmount = showDecimal ? parseInt(nutrition[nutritionKey]*multiplier*10)/10 : parseInt(pAmount);
 
             return (
                 <View key={i} style={{backgroundColor, flexDirection: "row", alignItems: "flex-end", paddingHorizontal: 5, paddingVertical: 3, borderRadius: 9999, marginTop: 3}}>

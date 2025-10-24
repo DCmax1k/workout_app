@@ -1,5 +1,5 @@
 import { Dimensions, Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
 import TitleWithBack from '../../../components/TitleWithBack'
@@ -21,6 +21,7 @@ import getAllExercises from '../../../util/getAllExercises';
 import { router, useLocalSearchParams, } from 'expo-router';
 import OpenExercise from '../../../components/workout/OpenExercise';
 import { useIsFocused } from '@react-navigation/native';
+import FilterAndSort from '../../../components/FilterAndSort';
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -41,14 +42,34 @@ function groupExercisesByLetter(exercises) {
     })).sort((a, b) => a.title.localeCompare(b.title));
 }
 
+const filterByCategories = (exercises, categories) => {
+    if (categories.length === 0) {
+        return exercises;
+    } else {
+        return exercises.filter(ex => {
+            for (let i = 0; i < ex.muscleGroups.length; i++) {  
+
+                if (categories.map(str => str.toLowerCase()).includes(ex.muscleGroups[i].toLowerCase())) {
+                    return true;
+                }
+            }
+            return false;
+        });
+    }
+
+}
+
 const ExercisesIndex = () => {
   const user = useUserStore((state) => state.user);
   const updateUser = useUserStore((state) => state.updateUser);
 
   const [searchValue, setSearchValue] = useState("");
   const [createExercise, setCreateExercise] = useState(false);
-  const [openExercise, setOpenExercise] = useState(false);
-  const [exerciseOpen, setExerciseOpen] = useState({});
+  const [openExercise, setOpenExercise] = useState(false); // Is open or not
+  const [exerciseOpen, setExerciseOpen] = useState({}); // The exercise thats open
+
+  const [filterSelected, setFilterSelected] = useState([]);
+
 
   // Reopen exercise
   const isFocused = useIsFocused();
@@ -66,7 +87,7 @@ const ExercisesIndex = () => {
 
   
 
-  const sectionalData = groupExercisesByLetter(searchExercise(getAllExercises(user), searchValue));
+  const sectionalData = groupExercisesByLetter(filterByCategories(searchExercise(getAllExercises(user), searchValue), filterSelected));
 
 
   const allExercises = getAllExercises(user);
@@ -140,9 +161,10 @@ const ExercisesIndex = () => {
             <Spacer height={20} />
 
             <Search value={searchValue} style={{marginHorizontal: 20}} onChangeText={(e) => setSearchValue(e)} />
-            
+              <Spacer height={10} />
+            <FilterAndSort selected={filterSelected} setSelected={setFilterSelected} />
 
-            <Spacer height={20} />
+            <Spacer height={10} />
 
             <View style={{flex: 1,}}>
               {/* <AlphabetList

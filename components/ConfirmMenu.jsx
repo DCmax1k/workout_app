@@ -26,6 +26,11 @@ const ConfirmMenu = ({ style, active, setActive, data, ...props }) => {
       data.goback ? data.goback() : null;
     }
 
+    const selectOptionThree = () => {
+      setActive(false);
+      data.option3onPress ? data.option3onPress() : null;
+    }
+
   return (
     <>
       <Portal>
@@ -41,17 +46,26 @@ const ConfirmMenu = ({ style, active, setActive, data, ...props }) => {
             <Animated.View entering={FadeInDown} exiting={FadeOutDown}  style={[ styles.menu,]}>
 
               <Text style={[styles.title]}>{data.title}</Text>
-              <Spacer height={10} />
-              <Text style={[styles.text]}>{data.subTitle}</Text>
+              {data.subTitle && (
+                <View>
+                  <Spacer height={10} />
+                  <Text style={[styles.text]}>{data.subTitle}</Text>
+                </View>
+              )}
+              
               {data.subTitle2 && <Text style={[styles.text]}>{data.subTitle2}</Text>}
               <Spacer height={10} />
               <View style={styles.buttons}>
                 <Pressable onPress={closeAndConfirm} style={[styles.button, {backgroundColor: data.option1color || Colors.primaryBlue}]}>
                     <Text style={[styles.title]}>{data.option1}</Text>
                 </Pressable>
+                {data.option3 && <Pressable onPress={selectOptionThree} style={[styles.button, {backgroundColor: data.option3color || Colors.primaryBlue}]}>
+                    <Text style={[styles.title]}>{data.option3}</Text>
+                </Pressable>}
                 {data.option2 && <Pressable onPress={() => {closeAndCancel()}} style={styles.button}>
                     <Text style={[styles.title]}>{data.option2}</Text>
                 </Pressable>}
+                
               </View>
 
             </Animated.View>

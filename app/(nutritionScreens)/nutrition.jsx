@@ -1,4 +1,4 @@
-import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import noEye from '../../assets/icons/noEye.png'
 import ThemedView from '../../components/ThemedView'
@@ -16,7 +16,7 @@ import { router, useLocalSearchParams } from 'expo-router'
 import PageSwiper from '../../components/PageSwiper'
 import ConfirmMenu from '../../components/ConfirmMenu'
 import PopupButtons from '../../components/PopupButtons'
-import Animated, { Extrapolation, FadeIn, FadeOut, interpolate, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated'
+import Animated, { Extrapolation, FadeIn, FadeOut, interpolate, useAnimatedReaction, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated'
 import { generateUniqueId } from '../../util/uniqueId'
 import BottomSheet from '@gorhom/bottom-sheet'
 import EditPlate from './editPlate'
@@ -25,6 +25,7 @@ import calculateCalories from '../../util/calculateNutrition/calculateCalories'
 import calculateProtein from '../../util/calculateNutrition/calculateProtein'
 import calculateCarbs from '../../util/calculateNutrition/calculateCarbs'
 import calculateFat from '../../util/calculateNutrition/calculateFat'
+import { runOnJS, scheduleOnRN } from 'react-native-worklets'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -40,6 +41,21 @@ const Nutrition = () => {
             setWidgetAnimationDuration(0);
         }, 1005);
     }, [])
+
+    // Track if keyboard open
+    const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+    useEffect(() => {
+        const showSub = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
+        const hideSub = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
+
+        return () => {
+            showSub.remove();
+            hideSub.remove();
+        };
+    }, []);
+
+    
 
     // Bottom sheet
     const sheetRef = useRef(null);
@@ -57,7 +73,26 @@ const Nutrition = () => {
             }, 100)
             
         }
-      }, []);
+      }, []); 
+    //   useEffect(() => {
+    //     console.log(animatedPosition.value, keyboardVisible, screenHeight);
+    //     if (keyboardVisible && animatedPosition.value < screenHeight - 200) {
+    //         Keyboard.dismiss();
+    //     }
+    // }, [keyboardVisible, animatedPosition]);
+
+    const closeKeyboardIfOpen = () => {
+        if (keyboardVisible) {
+            Keyboard.dismiss();
+        }
+    }
+    const closeKeyboardIfBottomSheetBelow = () => {
+        if (animatedPosition.value > 200) {
+            closeKeyboardIfOpen();
+        }
+    }
+
+      
     const handleSnapPress = useCallback((index) => {
         sheetRef.current?.snapToIndex(index);
     }, []);
@@ -108,12 +143,12 @@ const Nutrition = () => {
     const floatingButtonRef = useRef(null);
 
     const params = useLocalSearchParams();
-    useEffect(() => {
-        if (params.data === "straighToLogFood") {
-            // May want a setTimeout because it goes instant
-            //showComingSoonMessage();
-        }
-    }, [])
+    // useEffect(() => {
+    //     if (params.data === "straightToLogFood") {
+    //         // May want a setTimeout because it goes instant
+    //         //showComingSoonMessage();
+    //     }
+    // }, [params]);
 
     const pageSwiperRef = useRef(null);
 
@@ -210,7 +245,15 @@ const Nutrition = () => {
         }, 600  )
     }
     const useSavedPlate = () => {
-        console.log('use saved plate')
+        setConfirmMenuData({
+            title: "Coming soon!",
+            subTitle: "This feature is not yet available but will be coming in a future update.",
+            subTitle2: "",
+            option1: "Awesome!",
+            option1color: "#546FDB",
+            confirm: () => setConfirmMenuActive(false),
+        });
+        setConfirmMenuActive(true);
     }
     const resumePlate = () => {
         //router.push("/editPlate");
@@ -404,6 +447,8 @@ const Nutrition = () => {
             animatedPosition={animatedPosition}
             index={sheetShouldStartOpen ? 0 : -1}
             onChange={index => setBottomSheetPosition(index)}
+            onAnimate={closeKeyboardIfBottomSheetBelow}
+            
         >
         
             <EditPlate
@@ -415,6 +460,7 @@ const Nutrition = () => {
                 animatedRightButtonTransform={animatedRightButtonTransform}
                 handleSnapPress={handleSnapPress}
                 bottomSheetPosition={bottomSheetPosition}
+                closeKeyboardIfOpen={closeKeyboardIfOpen}
             />
             
 

@@ -1,5 +1,5 @@
-import { Dimensions, Image, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import { Dimensions, Image, Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import ThemedView from '../ThemedView'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import greyX from '../../assets/icons/greyX.png'
@@ -12,7 +12,7 @@ import scanIcon from '../../assets/icons/scan.png'
 import searchIcon from '../../assets/icons/searchNoBg.png'
 import aiIcon from '../../assets/icons/aiSparkle.png'
 import plusIcon from '../../assets/icons/plus.png'
-import Animated, { Easing, FadeIn, FadeOut, SlideInDown, SlideOutDown, useAnimatedStyle, useSharedValue, withDelay, withSpring, withTiming } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown,useAnimatedStyle, useSharedValue, withDelay, withSpring, withTiming } from 'react-native-reanimated'
 import Search from '../Search'
 import Spacer from '../Spacer'
 import Dropdown from '../Dropdown'
@@ -25,11 +25,14 @@ import emitter from '../../util/eventBus'
 import getAllFood from '../../util/getAllFood'
 import { generateUniqueId } from '../../util/uniqueId'
 import { truncate } from '../../util/truncate'
+import { Portal } from 'react-native-paper'
+import FoodPreview from './FoodPreview'
+import TouchableScale from '../TouchableScale'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
 
-const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, searchValue, editFoods, setEditFoods, user, allFoods, ...props}) => {
+const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, searchValue, editFoods, setEditFoods, user, allFoods, ...props}) => {
     
 
     
@@ -80,13 +83,16 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, searchValue, edit
                         const icon = f.icon ? icons[f.icon] : icons["fooddoodles303"];
                         const backgroundColor = editFoods ? "#AB3F41" : selected ? "#304998" : "#2E2E2E" ;
                     return (
-                        <Pressable onPress={() => selectFood(f)} key={i} style={{paddingHorizontal: 8, paddingVertical: 8, borderRadius: 10, backgroundColor, flexDirection: "row", alignItems: "center",}}>
-                            <View style={{height: 30, width: 30, borderRadius: 5, backgroundColor: f.color, marginRight: 5, overflow: "hidden"}}>
-                                <View style={[StyleSheet.absoluteFill, {backgroundColor: "rgba(0,0,0,0.3)"}]}></View>
-                                <Image source={icon} style={{height: "100%", width: "100%", objectFit: "contain", tintColor: "white"}} />
+                        <TouchableScale activeScale={1.1} friction={10} tension={120} onLongPress={() => openFoodPreview(f)} onPress={() => selectFood(f)} key={i} style={{paddingHorizontal: 8, paddingVertical: 8, borderRadius: 10, backgroundColor, flexDirection: "row", alignItems: "center",}}>
+                            <View style={{flexDirection: "row", alignItems: "center"}}>
+                                <View style={{height: 30, width: 30, borderRadius: 5, backgroundColor: f.color, marginRight: 5, overflow: "hidden"}}>
+                                    <View style={[StyleSheet.absoluteFill, {backgroundColor: "rgba(0,0,0,0.3)"}]}></View>
+                                    <Image source={icon} style={{height: "100%", width: "100%", objectFit: "contain", tintColor: "white"}} />
+                                </View>
+                                <Text style={{color: "white", fontSize: 15}}>{truncate(f.name, 30)}</Text>
                             </View>
-                            <Text style={{color: "white", fontSize: 15}}>{truncate(f.name, 30)}</Text>
-                        </Pressable>
+                            
+                        </TouchableScale>
                     )})}
                 </View>
 
@@ -108,21 +114,27 @@ const AddFood = ({...props}) => {
     const [foodToAdd, setFoodToAdd] = useState([]); // foods
     const [editFoods, setEditFoods] = useState(false);
 
+    const [foodPreview, setFoodPreview] = useState(null); // {...food}
+    const [foodPreviewOpen, setFoodPreviewOpen] = useState(false);
+
     const [searchValue, setSearchValue] = useState(""); // For library
 
     const [keyboardVisible, setKeyboardVisible] = useState(false);
     const [keyboardHeight, setKeyboardHeight] = useState(0);
 
+    const openEditFood = (food) => {
+        if (foodPreviewOpen) setFoodPreviewOpen(false);
+        router.push({
+            pathname: '/editFood',
+            params: {
+                food: JSON.stringify(food),
+            }
+        })
+            
+    }
+
     const selectFood = (food) => {
-        if (editFoods) {
-            router.push({
-                pathname: '/editFood',
-                params: {
-                    food: JSON.stringify(food),
-                }
-            })
-            return;
-        }
+        if (editFoods) return openEditFood(food);
 
 
         if (foodToAdd.map(f => f.id).includes(food.id)) {
@@ -135,7 +147,7 @@ const AddFood = ({...props}) => {
         
     }
 
-    const tabs = [" Scan", "Library", "AI"];
+    const tabs = [" Scan", "Search", "AI"];
     const [tab, setTab] = useState(tabs[1]);
 
     const requestAddFood = () => {
@@ -218,6 +230,11 @@ const AddFood = ({...props}) => {
         width: searchWidth.value,
     }));
 
+    const openFoodPreview = (f) => {
+        setFoodPreview(f);
+        setFoodPreviewOpen(true);
+    }
+
 
   return (
     <ThemedView style={{flex: 1, padding: 20}}>
@@ -228,6 +245,24 @@ const AddFood = ({...props}) => {
                 <Search value={searchValue} onChangeText={(e) => setSearchValue(e)} placeholder='Search' />
             
         </KeyboardAvoidingView> */}
+
+        {/* Food Preview */}
+        {foodPreviewOpen&& (
+            <Portal >
+              <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
+
+                  <Pressable onPress={() => setFoodPreviewOpen(false)} style={{height: "100%", width: "100%", zIndex: 0}}></Pressable>
+
+                  <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
+                    <FoodPreview food={foodPreview} setFoodPreviewOpen={setFoodPreviewOpen} editFood={openEditFood} />
+                  </Animated.View>
+
+                
+
+              </Animated.View>
+            </Portal>
+            
+          )}
 
         {tab === tabs[1] && (<Animated.View entering={FadeIn} exiting={FadeOut} style={[ { position: "absolute", left: 20, right: 20, bottom: Platform.OS === "ios" ? 20 : 50, zIndex: 9, alignItems: "center", }, animatedStyle ]} >
                 <Animated.View style={[animatedSearchStyle]}>
@@ -286,7 +321,17 @@ const AddFood = ({...props}) => {
             )}
             {tab === tabs[1] && (
                 <Animated.View entering={FadeIn} exiting={FadeOut}>
-                    <LibraryTab openCreateNewFood={openCreateNewFood} selectFood={selectFood} foodToAdd={foodToAdd} searchValue={searchValue} editFoods={editFoods} setEditFoods={setEditFoods} user={user} allFoods={allFoods} />
+                    <LibraryTab
+                    openCreateNewFood={openCreateNewFood}
+                    selectFood={selectFood}
+                    foodToAdd={foodToAdd}
+                    searchValue={searchValue}
+                    editFoods={editFoods}
+                    setEditFoods={setEditFoods}
+                    user={user}
+                    allFoods={allFoods}
+                    openFoodPreview={openFoodPreview}
+                    />
                 </Animated.View>
             )}
             {tab === tabs[2] && (
@@ -311,6 +356,7 @@ const styles = StyleSheet.create({
         marginBottom: 0,
     },
     header: {
+        marginTop: -20,
         marginBottom: 10,
         fontSize: 15,
         fontWeight: 600
