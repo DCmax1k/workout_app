@@ -96,7 +96,20 @@ const CustomizeIconAndColor = ({style, updateFood, food, ...props}) => {
 
             {/* Content */}
             <View style={{width: screenWidth, marginHorizontal: -20}}>
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}  contentContainerStyle={{paddingHorizontal: 20, flexDirection: 'row', justifyContent: "flex-start", minWidth: "100%", gap: ITEM_GAP}}>
+
+                {/* Color content covers scrollview */}
+                <View style={[StyleSheet.absoluteFill, {backgroundColor: "#303030", paddingHorizontal: 50}]}>
+                    <ColorPicker style={{ width: '100%' }} value='red' onCompleteJS={onSelectColor}>
+                        <Spacer height={20} />
+                        <HueSlider />
+                        <Spacer height={20} />
+                        <OpacitySlider />
+                        <Spacer height={20} />
+                        <Swatches colors={[Colors.protein, Colors.primaryOrange, Colors.carbs, Colors.primaryBlue, Colors.fat ]} />
+                    </ColorPicker>
+                </View>
+                {/* Icons */}
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{zIndex: 1, opacity: pages[activePageIdx] === "Icon" ? 1 : 0, pointerEvents: pages[activePageIdx] === "Icon" ? "auto" : "none", minWidth: "100%", backgroundColor: "#303030",}} contentContainerStyle={{paddingHorizontal: 20,  flexDirection: 'row', justifyContent: "flex-start",  gap: ITEM_GAP}}>
                     {iconColumns.map((column, colIndex) => (
                         <View key={colIndex} style={{flexDirection: "column"}}>
                         {column.map((item) => (
@@ -107,18 +120,7 @@ const CustomizeIconAndColor = ({style, updateFood, food, ...props}) => {
                         </View>
                     ))}
                 </ScrollView>
-                {/* Color content covers scrollview */}
-                {pages[activePageIdx] === "Color" && (
-                    <Animated.View entering={FadeIn} exiting={FadeOut} style={[StyleSheet.absoluteFill, {backgroundColor: "#303030", paddingHorizontal: 50}]}>
-                         <ColorPicker style={{ width: '100%' }} value='red' onCompleteJS={onSelectColor}>
-                            <HueSlider />
-                            <Spacer height={20} />
-                            <OpacitySlider />
-                            <Spacer height={20} />
-                            <Swatches colors={[Colors.protein, Colors.primaryOrange, Colors.carbs, Colors.primaryBlue, Colors.fat ]} />
-                        </ColorPicker>
-                    </Animated.View>
-                )}
+                
             </View>
                 
 

@@ -71,12 +71,17 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
     });
   };
 
+  useEffect(() => {
+    setMenuMeasured(false);
+    setMenuWidth(0);
+  }, [data]);
   
 
   return (
     <>
     {/* {!menuMeasured && ( */}
       <MeasureMenuItems
+        key={data.length}
         data={data}
         onMeasured={(width) => {
           setMenuWidth((prev) => Math.max(prev, width)+60); // optional padding
