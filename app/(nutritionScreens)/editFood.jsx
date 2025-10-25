@@ -1,5 +1,5 @@
 import { Dimensions, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, version } from 'react'
 import ThemedText from '../../components/ThemedText'
 import { router, useLocalSearchParams } from 'expo-router';
 import ThemedView from '../../components/ThemedView';
@@ -13,14 +13,118 @@ import customizeIcon from '../../assets/icons/customizeIcon.png'
 import pencil from '../../assets/icons/pencil.png'
 import trashIcon from '../../assets/icons/trash.png'
 import plusIcon from '../../assets/icons/plus.png'
+import colorIcon from '../../assets/icons/color.png'
 import Spacer from '../../components/Spacer';
 import ActionMenu from '../../components/ActionMenu';
 import { foodCategories } from '../../constants/Foods';
 import MultiSelectDropdown from '../../components/MultiSelectDropdown';
 import emitter from '../../util/eventBus';
+import PopupSheet from '../../components/PopupSheet';
+import TouchableScale from '../../components/TouchableScale'
+import Animated, { FadeIn, FadeOut, interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import ColorPicker, { Panel1, Swatches, Preview, OpacitySlider, HueSlider } from 'reanimated-color-picker';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
+
+const CustomizeIconAndColor = ({style, updateFood, food, ...props}) => {
+
+    const [activePageIdx, setActivePageIdx] = useState(0);
+    const pages = ["Icon", "Color"];
+    const pageIcons = [customizeIcon, colorIcon];
+
+    const progress = pages.map(() => useSharedValue(0));
+
+    const animateTo = (index) => {
+        setActivePageIdx(index);
+        progress.forEach((p, i) => {
+            p.value = withTiming(i === index ? 1 : 0, { duration: 250 });
+        });
+    };
+
+    useEffect(() => {
+        progress.forEach((p, i) => {
+            p.value = i === activePageIdx ? 1 : 0;
+        });
+    }, []);
+
+    // Icon data
+    const iconData = Array.from({ length: 350 }, (_, i) => "fooddoodles"+(i+1));
+
+    const ITEMS_PER_COLUMN = 4;
+    const ITEM_GAP = 10;
+    const iconColumns = [];
+    for (let i = 0; i < iconData.length; i += ITEMS_PER_COLUMN) {
+        iconColumns.push(iconData.slice(i, i + ITEMS_PER_COLUMN));
+    }
+
+    const onSelectColor = ({ hex }) => {
+        updateFood({color: hex});
+    };
+
+    return (
+        <View style={[{flexDirection: "column"}, style]} {...props}>
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginHorizontal: -20}} contentContainerStyle={{paddingHorizontal: 20, flexDirection: 'row', justifyContent: "flex-start", minWidth: "100%", alignItems: 'center', gap: 10}}>
+                {pages.map((page, i) => {
+
+                    const animatedStyle = useAnimatedStyle(() => ({
+                        backgroundColor: interpolateColor(
+                            progress[i].value,
+                            [0, 1],
+                            ['transparent', '#7D7D7D']
+                        ),
+                        borderRadius: 15,
+                    }));
+
+                    return (
+                        <Animated.View  key={i} style={animatedStyle}>
+                            <Pressable onPress={() => animateTo(i)} style={{flexDirection: "row", alignItems: "center",  gap: 10, padding: 15,}}>
+                                <View style={{height: 20, width: 20}}>
+                                    <Image style={{objectFit: "contain", height: "100%", width: '100%'}} source={pageIcons[i]} />
+                                </View>
+                                <Text style={{color: "white", fontWeight: "600", fontSize: 18}}>{page}</Text>
+                            </Pressable>
+                        </Animated.View>
+                    )
+                    
+                    
+                })}
+                
+            </ScrollView>
+
+            <Spacer height={20} />
+
+            {/* Content */}
+            <View style={{width: screenWidth, marginHorizontal: -20}}>
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}  contentContainerStyle={{paddingHorizontal: 20, flexDirection: 'row', justifyContent: "flex-start", minWidth: "100%", gap: ITEM_GAP}}>
+                    {iconColumns.map((column, colIndex) => (
+                        <View key={colIndex} style={{flexDirection: "column"}}>
+                        {column.map((item) => (
+                            <TouchableScale activeScale={1.1} onPress={() => updateFood({icon: item})} key={item} style={{height: 40, width: 40, marginBottom: ITEM_GAP,  backgroundColor: food.icon === item ? "#262626" : "transparent", borderColor: food.icon === item ? "#727272ff" : "transparent", borderWidth: 1, borderRadius: 10}}>
+                                <Image style={{height: "100%", width: "100%", objectFit: "contain" ,tintColor: "white"}} source={icons[item]} />
+                            </TouchableScale>
+                        ))}
+                        </View>
+                    ))}
+                </ScrollView>
+                {/* Color content covers scrollview */}
+                {pages[activePageIdx] === "Color" && (
+                    <Animated.View entering={FadeIn} exiting={FadeOut} style={[StyleSheet.absoluteFill, {backgroundColor: "#303030", paddingHorizontal: 50}]}>
+                         <ColorPicker style={{ width: '100%' }} value='red' onCompleteJS={onSelectColor}>
+                            <HueSlider />
+                            <Spacer height={20} />
+                            <OpacitySlider />
+                            <Spacer height={20} />
+                            <Swatches colors={[Colors.protein, Colors.primaryOrange, Colors.carbs, Colors.primaryBlue, Colors.fat ]} />
+                        </ColorPicker>
+                    </Animated.View>
+                )}
+            </View>
+                
+
+        </View>
+    )
+}
 
 const EditFood = () => {
     const user = useUserStore(state => state.user);
@@ -33,7 +137,9 @@ const EditFood = () => {
     const openedFromPlate = params.openedFromPlate ?? false;
 
     const [food, setFood] = useState(JSON.parse(JSON.stringify(f)));
+    const [popupMenuActive, setPopupMenuActive] = useState(false);
     const foodNameInputRef = useRef(null);
+    const descriptionRef = useRef(null);
 
     const userFoodCategories = user.foodCategories;
     const foodCategoriesOrganized = [...userFoodCategories, ...foodCategories];
@@ -181,20 +287,25 @@ const EditFood = () => {
       }
 
       const openCustomize =() => {
-        setConfirmMenuData({
-                title: "Coming soon",
-                subTitle: "",
-                option1: "Okay",
-                option1color: Colors.primaryBlue,
-                confirm: () => {},
-            });
-            setConfirmMenuActive(true);
+        setPopupMenuActive(true);
       }
+
+      const updateUnit = (e) => {
+        updateFood({unit: e});
+      }
+
+      const setDescription = (e) => {
+        updateFood({description: e});
+      }
+
       
 
   return (
     <ThemedView style={{flex: 1, padding: 20}}>
         <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
+        <PopupSheet active={popupMenuActive} setActive={setPopupMenuActive}>
+            <CustomizeIconAndColor updateFood={updateFood} food={food} />
+        </PopupSheet>
         <SafeAreaView style={{flex: 1, marginBottom: -50,}}>
 
           <View style={[styles.actionButtons]}>
@@ -210,8 +321,8 @@ const EditFood = () => {
               </View>
           </View>
 
-            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex: 1}} >
-                     <ScrollView contentContainerStyle={{paddingBottom: screenHeight/2, paddingTop: 170}} showsVerticalScrollIndicator={false}>
+            <KeyboardAvoidingView behavior={"position"} keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 30} style={{flex: 1}} >
+                     <ScrollView contentContainerStyle={{paddingBottom: screenHeight/4, paddingTop: 170}} showsVerticalScrollIndicator={false}>
                         <View style={{width: screenWidth, height: screenWidth/2, alignItems: "center", marginLeft: -20}}>
                             <View style={{height: screenWidth/2, width: screenWidth/2, backgroundColor: food.color, borderRadius: 20, justifyContent: "center", alignItems: "center", overflow: "hidden"}}>
                                 <View style={[StyleSheet.absoluteFill, {backgroundColor: "rgba(0,0,0,0.3)"}]}></View>
@@ -221,10 +332,10 @@ const EditFood = () => {
                         
                         <Spacer height={20} />
                         <View style={{width: screenWidth-40, alignItems: "center",}}>
-                            <Pressable onPress={openCustomize} style={{backgroundColor: "#363636", flexDirection: "row", alignItems: "center", borderRadius: 10, paddingVertical: 10, paddingHorizontal: 15}}>
+                            <TouchableScale onPress={openCustomize} style={{backgroundColor: "#363636", flexDirection: "row", alignItems: "center", borderRadius: 10, paddingVertical: 10, paddingHorizontal: 15}}>
                                 <Image style={{height: 30, width: 30, tintColor: "white", objectFit: "contain", marginRight: 10}} source={customizeIcon} />
                                 <Text style={{fontSize: 16, fontWeight: "600", color: "white"}}>Customize</Text>
-                            </Pressable>
+                            </TouchableScale>
                         </View>
                         
                         <Spacer height={20} />
@@ -262,6 +373,16 @@ const EditFood = () => {
                                     </View>
                                 )
                             })}
+                            {/* Unit */}
+                            <View key={"unit"} style={{flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 10}} >
+                                <View style={{height: 60, width: 20, borderRadius: 999, backgroundColor: Colors.primaryOrange}}></View>
+                                <View style={{backgroundColor: "#3C3C3C", borderRadius: 10, justifyContent: "center", alignItems: "center"}}>
+                                    <TextInput selectTextOnFocus style={{color: "white", fontSize: 18, fontWeight: "800", width: 180, height: 60, paddingHorizontal: 20,}} value={food.unit} onChangeText={updateUnit} />
+                                </View>
+                                
+                                <Text style={{color: "white", fontSize: 16, fontWeight: "800"}}>Unit</Text>
+                                
+                            </View>
                         </View>
 
                         <Spacer height={20} />
@@ -275,6 +396,20 @@ const EditFood = () => {
                         <MultiSelectDropdown locked={false} selectedIds={categoryIds} setSelectedIds={setCategoryIds} data={categoryData} />
                             
                         <Spacer height={20} />
+
+                        <View style={{flex: 1, backgroundColor: "#3C3C3C", borderRadius: 10, height: 100, }}>
+                            <Pressable onPress={() => descriptionRef.current?.focus()} style={[StyleSheet.absoluteFill]}></Pressable>
+                            <TextInput
+                                ref={descriptionRef}
+                                style={{color: "white", maxHeight: 100,  padding: 10,}}
+                                placeholderTextColor={"#b8b8b8ff"}
+                                onChangeText={setDescription}
+                                value={food.description}
+                                multiline={true}
+                                
+                                placeholder="Item description - Optional"
+                            />
+                        </View>
 
 
                     </ScrollView> 

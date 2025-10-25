@@ -24,9 +24,9 @@ export const foods = [
   {
     "name": "Bread",
     "unit": "slices",
-    "categories": [],
+    "categories": [foodCategories[0], foodCategories[1]],
     "nutrition": { "calories": 80, "protein": 3, "carbs": 15, "fat": 1 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles64",
     "color": "#c8a15c",
     "description": "White or whole wheat slice of bread.",
     "id": "3"
@@ -34,9 +34,9 @@ export const foods = [
   {
     "name": "Butter",
     "unit": "tbsp",
-    "categories": [],
+    "categories": [foodCategories[0], foodCategories[2]],
     "nutrition": { "calories": 102, "protein": 0.1, "carbs": 0, "fat": 12 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles230",
     "color": "#e6c45c",
     "description": "",
     "id": "4"
@@ -46,7 +46,7 @@ export const foods = [
     "unit": "cups",
     "categories": [foodCategories[0]],
     "nutrition": { "calories": 150, "protein": 5, "carbs": 27, "fat": 3 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles330",
     "color": "#d0b48c",
     "description": "",
     "id": "5"
@@ -56,7 +56,7 @@ export const foods = [
     "unit": "cups",
     "categories": [foodCategories[0]],
     "nutrition": { "calories": 120, "protein": 2, "carbs": 28, "fat": 1 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles337",
     "color": "#e4c17d",
     "description": "Average dry breakfast cereal.",
     "id": "6"
@@ -76,7 +76,7 @@ export const foods = [
     "unit": "units",
     "categories": [foodCategories[0]],
     "nutrition": { "calories": 218, "protein": 5.9, "carbs": 25, "fat": 11 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles306",
     "color": "#d6a55c",
     "description": "",
     "id": "8"
@@ -96,7 +96,7 @@ export const foods = [
     "unit": "oz",
     "categories": [foodCategories[2]],
     "nutrition": { "calories": 47, "protein": 9, "carbs": 0, "fat": 1 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles293",
     "color": "#f4d7c2",
     "description": "Skinless grilled chicken breast.",
     "id": "10"
@@ -106,7 +106,7 @@ export const foods = [
     "unit": "oz",
     "categories": [foodCategories[2]],
     "nutrition": { "calories": 77, "protein": 7, "carbs": 0, "fat": 5 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles146",
     "color": "#b04936",
     "description": "Cooked 85% lean ground beef.",
     "id": "11"
@@ -116,7 +116,7 @@ export const foods = [
     "unit": "oz",
     "categories": [foodCategories[2]],
     "nutrition": { "calories": 55, "protein": 6, "carbs": 0, "fat": 3 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles147",
     "color": "#d4927c",
     "description": "",
     "id": "12"
@@ -126,7 +126,7 @@ export const foods = [
     "unit": "oz",
     "categories": [foodCategories[2]],
     "nutrition": { "calories": 59, "protein": 6, "carbs": 0, "fat": 3.5 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles146",
     "color": "#f5a17a",
     "description": "Grilled Atlantic salmon fillet.",
     "id": "13"
@@ -136,7 +136,7 @@ export const foods = [
     "unit": "oz",
     "categories": [foodCategories[2]],
     "nutrition": { "calories": 33, "protein": 7, "carbs": 0, "fat": 0.3 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles343",
     "color": "#b2c0c5",
     "description": "Canned tuna in water.",
     "id": "14"
@@ -146,7 +146,7 @@ export const foods = [
     "unit": "oz",
     "categories": [foodCategories[2]],
     "nutrition": { "calories": 28, "protein": 6, "carbs": 0, "fat": 0.3 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles295",
     "color": "#ffb5a2",
     "description": "",
     "id": "15"
@@ -156,7 +156,7 @@ export const foods = [
     "unit": "cups",
     "categories": [foodCategories[2]],
     "nutrition": { "calories": 205, "protein": 4.2, "carbs": 45, "fat": 0.4 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles213",
     "color": "#f2e8c8",
     "description": "Cooked white rice.",
     "id": "16"
@@ -166,7 +166,7 @@ export const foods = [
     "unit": "cups",
     "categories": [foodCategories[2]],
     "nutrition": { "calories": 221, "protein": 8, "carbs": 43, "fat": 1.3 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles311",
     "color": "#e5d197",
     "description": "Cooked spaghetti noodles.",
     "id": "17"
@@ -176,7 +176,7 @@ export const foods = [
     "unit": "medium",
     "categories": [foodCategories[2]],
     "nutrition": { "calories": 163, "protein": 4.3, "carbs": 37, "fat": 0.2 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles216",
     "color": "#cbbd7d",
     "description": "",
     "id": "18"
@@ -186,7 +186,7 @@ export const foods = [
     "unit": "medium",
     "categories": [foodCategories[2]],
     "nutrition": { "calories": 112, "protein": 2, "carbs": 26, "fat": 0.1 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles216",
     "color": "#d98e3c",
     "description": "",
     "id": "19"
@@ -196,7 +196,7 @@ export const foods = [
     "unit": "cups",
     "categories": [foodCategories[5]],
     "nutrition": { "calories": 31, "protein": 2.5, "carbs": 6, "fat": 0.3 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles89",
     "color": "#64a64a",
     "description": "",
     "id": "20"
@@ -206,7 +206,7 @@ export const foods = [
     "unit": "medium",
     "categories": [foodCategories[5]],
     "nutrition": { "calories": 25, "protein": 0.6, "carbs": 6, "fat": 0.1 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles90",
     "color": "#e6882c",
     "description": "",
     "id": "21"
@@ -216,7 +216,7 @@ export const foods = [
     "unit": "cups",
     "categories": [foodCategories[5]],
     "nutrition": { "calories": 7, "protein": 0.9, "carbs": 1, "fat": 0.1 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles117",
     "color": "#4a853a",
     "description": "",
     "id": "22"
@@ -236,7 +236,7 @@ export const foods = [
     "unit": "medium",
     "categories": [foodCategories[5]],
     "nutrition": { "calories": 105, "protein": 1.3, "carbs": 27, "fat": 0.3 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles60",
     "color": "#e3d25c",
     "description": "",
     "id": "24"
@@ -266,7 +266,7 @@ export const foods = [
     "unit": "cups",
     "categories": [foodCategories[5]],
     "nutrition": { "calories": 85, "protein": 1.1, "carbs": 21, "fat": 0.5 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles76",
     "color": "#4a63a6",
     "description": "",
     "id": "27"
@@ -276,7 +276,7 @@ export const foods = [
     "unit": "medium",
     "categories": [foodCategories[5]],
     "nutrition": { "calories": 240, "protein": 3, "carbs": 12, "fat": 22 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles75",
     "color": "#7da647",
     "description": "",
     "id": "28"
@@ -294,9 +294,9 @@ export const foods = [
   {
     "name": "Cheddar Cheese",
     "unit": "oz",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 115, "protein": 7, "carbs": 0.4, "fat": 9.5 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles342",
     "color": "#f4c13c",
     "description": "",
     "id": "30"
@@ -304,9 +304,9 @@ export const foods = [
   {
     "name": "Yogurt",
     "unit": "cups",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 150, "protein": 8, "carbs": 17, "fat": 4 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles348",
     "color": "#f4f2e2",
     "description": "Plain whole-milk yogurt.",
     "id": "31"
@@ -314,9 +314,9 @@ export const foods = [
   {
     "name": "Greek Yogurt",
     "unit": "cups",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 100, "protein": 17, "carbs": 6, "fat": 0 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles348",
     "color": "#faf5eb",
     "description": "",
     "id": "32"
@@ -324,9 +324,9 @@ export const foods = [
   {
     "name": "Cottage Cheese",
     "unit": "cups",
-    "categories": [],
+    "categories": [foodCategories[2], foodCategories[3]],
     "nutrition": { "calories": 206, "protein": 27, "carbs": 8, "fat": 8 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles338",
     "color": "#e9e4d8",
     "description": "",
     "id": "33"
@@ -336,7 +336,7 @@ export const foods = [
     "unit": "cups",
     "categories": [foodCategories[4]],
     "nutrition": { "calories": 39, "protein": 1, "carbs": 1, "fat": 3 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles262",
     "color": "#e7dfc9",
     "description": "Unsweetened almond milk.",
     "id": "34"
@@ -346,7 +346,7 @@ export const foods = [
     "unit": "tbsp",
     "categories": [foodCategories[1]],
     "nutrition": { "calories": 94, "protein": 4, "carbs": 3, "fat": 8 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles343",
     "color": "#c89156",
     "description": "",
     "id": "35"
@@ -356,7 +356,7 @@ export const foods = [
     "unit": "tbsp",
     "categories": [],
     "nutrition": { "calories": 98, "protein": 3.4, "carbs": 3, "fat": 9 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles343",
     "color": "#b87e45",
     "description": "",
     "id": "36"
@@ -366,7 +366,7 @@ export const foods = [
     "unit": "oz",
     "categories": [foodCategories[3]],
     "nutrition": { "calories": 157, "protein": 5, "carbs": 9, "fat": 12 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles355",
     "color": "#d4a65f",
     "description": "",
     "id": "37"
@@ -376,7 +376,7 @@ export const foods = [
     "unit": "oz",
     "categories": [foodCategories[3]],
     "nutrition": { "calories": 185, "protein": 4.3, "carbs": 4, "fat": 18 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles335",
     "color": "#b77a45",
     "description": "",
     "id": "38"
@@ -386,7 +386,7 @@ export const foods = [
     "unit": "bars",
     "categories": [foodCategories[3]],
     "nutrition": { "calories": 120, "protein": 2, "carbs": 20, "fat": 4 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles183",
     "color": "#d9a45e",
     "description": "",
     "id": "39"
@@ -396,7 +396,7 @@ export const foods = [
     "unit": "oz",
     "categories": [foodCategories[3]],
     "nutrition": { "calories": 137, "protein": 4, "carbs": 12, "fat": 8 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles336",
     "color": "#b89b61",
     "description": "Mixed nuts and dried fruit.",
     "id": "40"
@@ -406,7 +406,7 @@ export const foods = [
     "unit": "cups",
     "categories": [foodCategories[3]],
     "nutrition": { "calories": 31, "protein": 1, "carbs": 6, "fat": 0.4 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles294",
     "color": "#f5e29b",
     "description": "Air-popped, unsalted popcorn.",
     "id": "41"
@@ -416,7 +416,7 @@ export const foods = [
     "unit": "oz",
     "categories": [foodCategories[3]],
     "nutrition": { "calories": 152, "protein": 2, "carbs": 15, "fat": 10 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles301",
     "color": "#f2d673",
     "description": "",
     "id": "42"
@@ -426,7 +426,7 @@ export const foods = [
     "unit": "oz",
     "categories": [foodCategories[3]],
     "nutrition": { "calories": 108, "protein": 2.6, "carbs": 23, "fat": 0.8 },
-    "icon": "fooddoodles289",
+    "icon": "fooddoodles304",
     "color": "#cba064",
     "description": "",
     "id": "43"
@@ -436,7 +436,7 @@ export const foods = [
     "unit": "bars",
     "categories": [foodCategories[3]],
     "nutrition": { "calories": 210, "protein": 2, "carbs": 24, "fat": 13 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles280",
     "color": "#5e3b27",
     "description": "Standard milk chocolate bar.",
     "id": "44"
@@ -466,7 +466,7 @@ export const foods = [
     "unit": "cups",
     "categories": [foodCategories[4]],
     "nutrition": { "calories": 114, "protein": 0.2, "carbs": 28, "fat": 0.3 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles34",
     "color": "#e7b43c",
     "description": "",
     "id": "47"
@@ -476,7 +476,7 @@ export const foods = [
     "unit": "cups",
     "categories": [foodCategories[4]],
     "nutrition": { "calories": 112, "protein": 2, "carbs": 26, "fat": 0.5 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles56",
     "color": "#f7a84b",
     "description": "",
     "id": "48"
@@ -496,7 +496,7 @@ export const foods = [
     "unit": "cups",
     "categories": [foodCategories[4]],
     "nutrition": { "calories": 2, "protein": 0, "carbs": 0, "fat": 0 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles46",
     "color": "#b58a55",
     "description": "Brewed tea without sugar.",
     "id": "50"
@@ -506,7 +506,7 @@ export const foods = [
     "unit": "cans",
     "categories": [foodCategories[4]],
     "nutrition": { "calories": 140, "protein": 0, "carbs": 39, "fat": 0 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles143",
     "color": "#3b3b3b",
     "description": "Regular cola soft drink.",
     "id": "51"
@@ -534,9 +534,9 @@ export const foods = [
   {
     "name": "Ketchup",
     "unit": "tbsp",
-    "categories": [foodCategories[1]],
+    "categories": [foodCategories[1], foodCategories[2]],
     "nutrition": { "calories": 17, "protein": 0.2, "carbs": 4.5, "fat": 0 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles345",
     "color": "#c0392b",
     "description": "",
     "id": "55"
@@ -544,9 +544,9 @@ export const foods = [
   {
     "name": "Mustard",
     "unit": "tsp",
-    "categories": [],
+    "categories": [foodCategories[1], foodCategories[2]],
     "nutrition": { "calories": 3, "protein": 0.2, "carbs": 0.3, "fat": 0.2 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles345",
     "color": "#d4b42f",
     "description": "",
     "id": "56"
@@ -554,9 +554,9 @@ export const foods = [
   {
     "name": "Mayonnaise",
     "unit": "tbsp",
-    "categories": [],
+    "categories": [foodCategories[1], foodCategories[2]],
     "nutrition": { "calories": 94, "protein": 0, "carbs": 0.1, "fat": 10 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles345",
     "color": "#f7e8b0",
     "description": "",
     "id": "57"
@@ -564,9 +564,9 @@ export const foods = [
   {
     "name": "Olive Oil",
     "unit": "tbsp",
-    "categories": [],
+    "categories": [foodCategories[2]],
     "nutrition": { "calories": 119, "protein": 0, "carbs": 0, "fat": 14 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles263",
     "color": "#c4a73a",
     "description": "",
     "id": "58"
@@ -574,9 +574,9 @@ export const foods = [
   {
     "name": "Soy Sauce",
     "unit": "tbsp",
-    "categories": [],
+    "categories": [foodCategories[2]],
     "nutrition": { "calories": 10, "protein": 1, "carbs": 1, "fat": 0 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles263",
     "color": "#5a4a3a",
     "description": "",
     "id": "59"
@@ -584,9 +584,9 @@ export const foods = [
   {
     "name": "Honey",
     "unit": "tbsp",
-    "categories": [],
+    "categories": [foodCategories[0]],
     "nutrition": { "calories": 64, "protein": 0, "carbs": 17, "fat": 0 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles346",
     "color": "#e3b13a",
     "description": "",
     "id": "60"
@@ -596,7 +596,7 @@ export const foods = [
     "unit": "cup",
     "categories": [foodCategories[2]],
     "nutrition": { "calories": 205, "protein": 4.3, "carbs": 44.5, "fat": 0.4 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles339",
     "color": "#e4dcb4",
     "description": "Cooked long-grain white rice.",
     "id": "61"
@@ -604,9 +604,9 @@ export const foods = [
   {
     "name": "Brown Rice",
     "unit": "cup",
-    "categories": [],
+    "categories": [foodCategories[2]],
     "nutrition": { "calories": 216, "protein": 5, "carbs": 45, "fat": 1.8 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles339",
     "color": "#b59863",
     "description": "Cooked whole-grain brown rice.",
     "id": "62"
@@ -614,9 +614,9 @@ export const foods = [
   {
     "name": "Quinoa",
     "unit": "cup",
-    "categories": [],
+    "categories": [foodCategories[2]],
     "nutrition": { "calories": 222, "protein": 8, "carbs": 39, "fat": 3.6 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles337",
     "color": "#d3b786",
     "description": "Cooked quinoa, a high-protein grain alternative.",
     "id": "63"
@@ -624,7 +624,7 @@ export const foods = [
   {
     "name": "White Bread",
     "unit": "slice",
-    "categories": [],
+    "categories": [foodCategories[0], foodCategories[1]],
     "nutrition": { "calories": 80, "protein": 2.7, "carbs": 14, "fat": 1 },
     "icon": "fooddoodles64",
     "color": "#ede1c3",
@@ -634,9 +634,9 @@ export const foods = [
   {
     "name": "Whole Wheat Bread",
     "unit": "slice",
-    "categories": [],
+    "categories": [foodCategories[0], foodCategories[1]],
     "nutrition": { "calories": 82, "protein": 4, "carbs": 14, "fat": 1.1 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles64",
     "color": "#c89b5c",
     "description": "",
     "id": "65"
@@ -646,7 +646,7 @@ export const foods = [
     "unit": "unit",
     "categories": [foodCategories[0]],
     "nutrition": { "calories": 245, "protein": 9.5, "carbs": 48, "fat": 1.5 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles227",
     "color": "#c9a16a",
     "description": "Plain bagel, medium size.",
     "id": "66"
@@ -655,9 +655,9 @@ export const foods = [
   {
     "name": "Granola",
     "unit": "cup",
-    "categories": [],
+    "categories": [foodCategories[0], foodCategories[3]],
     "nutrition": { "calories": 597, "protein": 10, "carbs": 64, "fat": 29 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles222",
     "color": "#c59a58",
     "description": "Sweetened baked oat clusters with nuts.",
     "id": "70"
@@ -665,9 +665,9 @@ export const foods = [
   {
     "name": "Cornflakes",
     "unit": "cup",
-    "categories": [],
+    "categories": [foodCategories[0]],
     "nutrition": { "calories": 101, "protein": 2, "carbs": 24, "fat": 0.1 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles337",
     "color": "#e1c36b",
     "description": "Breakfast cereal made from toasted corn flakes.",
     "id": "71"
@@ -675,9 +675,9 @@ export const foods = [
   {
     "name": "Couscous",
     "unit": "cup",
-    "categories": [],
+    "categories": [foodCategories[2]],
     "nutrition": { "calories": 176, "protein": 6, "carbs": 36, "fat": 0.3 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles339",
     "color": "#d8c079",
     "description": "",
     "id": "72"
@@ -685,9 +685,9 @@ export const foods = [
   {
     "name": "Barley",
     "unit": "cup",
-    "categories": [],
+    "categories": [foodCategories[2]],
     "nutrition": { "calories": 193, "protein": 3.6, "carbs": 44, "fat": 0.7 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles338",
     "color": "#cbb883",
     "description": "Cooked pearled barley.",
     "id": "73"
@@ -695,9 +695,9 @@ export const foods = [
   {
     "name": "Farro",
     "unit": "cup",
-    "categories": [],
+    "categories": [foodCategories[2]],
     "nutrition": { "calories": 170, "protein": 6, "carbs": 34, "fat": 1 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles338",
     "color": "#c1a364",
     "description": "Ancient grain similar to wheat berries.",
     "id": "74"
@@ -705,9 +705,9 @@ export const foods = [
   {
     "name": "White Flour",
     "unit": "cup",
-    "categories": [],
+    "categories": [foodCategories[0], foodCategories[2]],
     "nutrition": { "calories": 455, "protein": 13, "carbs": 95, "fat": 1.2 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles347",
     "color": "#e8e0c7",
     "description": "",
     "id": "75"
@@ -715,9 +715,9 @@ export const foods = [
   {
     "name": "Whole Wheat Flour",
     "unit": "cup",
-    "categories": [],
+    "categories": [foodCategories[0], foodCategories[2]],
     "nutrition": { "calories": 407, "protein": 16, "carbs": 86, "fat": 2 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles347",
     "color": "#c7a164",
     "description": "",
     "id": "76"
@@ -725,9 +725,9 @@ export const foods = [
   {
     "name": "Tortilla",
     "unit": "unit",
-    "categories": [],
+    "categories": [foodCategories[2]],
     "nutrition": { "calories": 140, "protein": 4, "carbs": 23, "fat": 3.5 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles208",
     "color": "#dfd1a5",
     "description": "Soft flour tortilla, medium size.",
     "id": "77"
@@ -735,9 +735,9 @@ export const foods = [
   {
     "name": "Biscuit",
     "unit": "unit",
-    "categories": [],
+    "categories": [foodCategories[2]],
     "nutrition": { "calories": 160, "protein": 3, "carbs": 22, "fat": 7 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles59",
     "color": "#e1c196",
     "description": "Fluffy southern-style biscuit.",
     "id": "79"
@@ -746,9 +746,9 @@ export const foods = [
   {
     "name": "Waffle",
     "unit": "unit",
-    "categories": [],
+    "categories": [foodCategories[0]],
     "nutrition": { "calories": 218, "protein": 5.9, "carbs": 25, "fat": 10 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles306",
     "color": "#d99d52",
     "description": "",
     "id": "81"
@@ -756,9 +756,9 @@ export const foods = [
   {
     "name": "Croissant",
     "unit": "unit",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 231, "protein": 4.7, "carbs": 26, "fat": 12 },
-    "icon": "fooddoodles59",
+    "icon": "fooddoodles225",
     "color": "#d6a46f",
     "description": "Buttery flaky pastry roll.",
     "id": "82"
@@ -766,9 +766,9 @@ export const foods = [
   {
     "name": "Muffin",
     "unit": "unit",
-    "categories": [],
+    "categories": [foodCategories[0]],
     "nutrition": { "calories": 340, "protein": 6, "carbs": 54, "fat": 12 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles100",
     "color": "#c77c4a",
     "description": "Blueberry or similar breakfast muffin.",
     "id": "83"
@@ -776,9 +776,9 @@ export const foods = [
   {
     "name": "Donut",
     "unit": "unit",
-    "categories": [],
+    "categories": [foodCategories[0], foodCategories[3]],
     "nutrition": { "calories": 260, "protein": 3, "carbs": 31, "fat": 14 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles14",
     "color": "#e4a6a0",
     "description": "Glazed yeast donut.",
     "id": "84"
@@ -786,9 +786,9 @@ export const foods = [
   {
     "name": "Crackers",
     "unit": "10 pieces",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 120, "protein": 2, "carbs": 20, "fat": 3 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles282",
     "color": "#d8c795",
     "description": "",
     "id": "86"
@@ -796,9 +796,9 @@ export const foods = [
   {
     "name": "Tortilla Chips",
     "unit": "oz",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 140, "protein": 2, "carbs": 18, "fat": 7 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles301",
     "color": "#e1c155",
     "description": "",
     "id": "88"
@@ -806,9 +806,9 @@ export const foods = [
   {
     "name": "French Fries",
     "unit": "small serving",
-    "categories": [],
+    "categories": [foodCategories[2]],
     "nutrition": { "calories": 365, "protein": 4, "carbs": 48, "fat": 17 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles200",
     "color": "#e1c85d",
     "description": "Fast-food small fries portion.",
     "id": "89"
@@ -816,29 +816,19 @@ export const foods = [
   {
     "name": "Mashed Potatoes",
     "unit": "cup",
-    "categories": [],
+    "categories": [foodCategories[2]],
     "nutrition": { "calories": 214, "protein": 4, "carbs": 35, "fat": 7.9 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles338",
     "color": "#e5dfae",
     "description": "",
     "id": "90"
   },
   {
-    "name": "Chocolate Bar",
-    "unit": "bar",
-    "categories": [],
-    "nutrition": { "calories": 210, "protein": 2, "carbs": 25, "fat": 12 },
-    "icon": "fooddoodles303",
-    "color": "#7b3f00",
-    "description": "Milk chocolate bar, 1.5 oz.",
-    "id": "91"
-  },
-  {
     "name": "Dark Chocolate",
     "unit": "oz",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 170, "protein": 2, "carbs": 13, "fat": 12 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles182",
     "color": "#3d1e10",
     "description": "",
     "id": "92"
@@ -846,9 +836,9 @@ export const foods = [
   {
     "name": "Chocolate Chip Cookie",
     "unit": "unit",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 78, "protein": 0.9, "carbs": 9.8, "fat": 4.3 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles297",
     "color": "#c7a97a",
     "description": "Medium homemade cookie.",
     "id": "93"
@@ -856,9 +846,9 @@ export const foods = [
   {
     "name": "Brownie",
     "unit": "piece",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 112, "protein": 1.3, "carbs": 16, "fat": 5.3 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles332",
     "color": "#6b3b20",
     "description": "Standard chocolate brownie square.",
     "id": "94"
@@ -866,7 +856,7 @@ export const foods = [
   {
     "name": "Cupcake",
     "unit": "unit",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 180, "protein": 2, "carbs": 28, "fat": 7 },
     "icon": "fooddoodles4",
     "color": "#d78fa2",
@@ -876,7 +866,7 @@ export const foods = [
   {
     "name": "Cake Slice",
     "unit": "slice",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 340, "protein": 3.8, "carbs": 50, "fat": 14 },
     "icon": "fooddoodles6",
     "color": "#f0c7c0",
@@ -886,9 +876,9 @@ export const foods = [
   {
     "name": "Frozen Yogurt",
     "unit": "cup",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 230, "protein": 6, "carbs": 38, "fat": 6 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles337",
     "color": "#f6e7e0",
     "description": "",
     "id": "98"
@@ -896,9 +886,9 @@ export const foods = [
   {
     "name": "Cheesecake",
     "unit": "slice",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 401, "protein": 6, "carbs": 32, "fat": 29 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles239",
     "color": "#f2d2b5",
     "description": "Classic New York–style cheesecake.",
     "id": "99"
@@ -906,9 +896,9 @@ export const foods = [
   {
     "name": "Pie Slice",
     "unit": "slice",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 320, "protein": 3, "carbs": 42, "fat": 15 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles240",
     "color": "#e9c59a",
     "description": "Average slice of fruit pie with crust.",
     "id": "100"
@@ -916,9 +906,9 @@ export const foods = [
   {
     "name": "Apple Pie",
     "unit": "slice",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 296, "protein": 2.4, "carbs": 41, "fat": 14 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles237",
     "color": "#e2b86a",
     "description": "Classic apple pie slice.",
     "id": "101"
@@ -926,9 +916,9 @@ export const foods = [
   {
     "name": "Pudding",
     "unit": "cup",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 140, "protein": 2, "carbs": 21, "fat": 5 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles149",
     "color": "#e8c3b8",
     "description": "",
     "id": "102"
@@ -936,9 +926,9 @@ export const foods = [
   {
     "name": "Gelatin Dessert",
     "unit": "cup",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 70, "protein": 1, "carbs": 17, "fat": 0 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles25",
     "color": "#e3536b",
     "description": "Jelly dessert, fruit-flavored.",
     "id": "103"
@@ -946,7 +936,7 @@ export const foods = [
   {
     "name": "Popsicle",
     "unit": "unit",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 65, "protein": 0, "carbs": 16, "fat": 0 },
     "icon": "fooddoodles30",
     "color": "#ff6f91",
@@ -956,9 +946,9 @@ export const foods = [
   {
     "name": "Gummy Bears",
     "unit": "oz",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 94, "protein": 1.7, "carbs": 22, "fat": 0 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles291",
     "color": "#ec7c1d",
     "description": "",
     "id": "105"
@@ -966,9 +956,9 @@ export const foods = [
   {
     "name": "Hard Candy",
     "unit": "piece",
-    "categories": [],
+    "categories": [foodCategories[3]],
     "nutrition": { "calories": 23, "protein": 0, "carbs": 6, "fat": 0 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles288",
     "color": "#f4b84e",
     "description": "",
     "id": "106"
@@ -976,9 +966,9 @@ export const foods = [
   {
     "name": "Protein Bar",
     "unit": "bar",
-    "categories": [],
+    "categories": [foodCategories[0], foodCategories[3]],
     "nutrition": { "calories": 200, "protein": 20, "carbs": 23, "fat": 5 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles332",
     "color": "#a77b45",
     "description": "Typical whey-based protein bar.",
     "id": "108"
@@ -986,9 +976,9 @@ export const foods = [
   {
     "name": "Pop-Tart",
     "unit": "unit",
-    "categories": [],
+    "categories": [foodCategories[0]],
     "nutrition": { "calories": 200, "protein": 2, "carbs": 37, "fat": 5 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles282",
     "color": "#d66b7a",
     "description": "Frosted toaster pastry.",
     "id": "110"
@@ -996,7 +986,7 @@ export const foods = [
   {
     "name": "Doughnut",
     "unit": "unit",
-    "categories": [],
+    "categories": [foodCategories[0]],
     "nutrition": { "calories": 290, "protein": 3, "carbs": 35, "fat": 16 },
     "icon": "fooddoodles111",
     "color": "#9e644a",
@@ -1006,9 +996,9 @@ export const foods = [
   {
     "name": "Hot Chocolate",
     "unit": "cup",
-    "categories": [],
+    "categories": [foodCategories[4]],
     "nutrition": { "calories": 190, "protein": 5, "carbs": 27, "fat": 7 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles305",
     "color": "#7b4d37",
     "description": "",
     "id": "112"
@@ -1016,9 +1006,9 @@ export const foods = [
   {
     "name": "Cereal Bar",
     "unit": "bar",
-    "categories": [],
+    "categories": [foodCategories[0]],
     "nutrition": { "calories": 140, "protein": 2, "carbs": 28, "fat": 3 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles280",
     "color": "#e4c47f",
     "description": "",
     "id": "114"
@@ -1026,7 +1016,7 @@ export const foods = [
   {
     "name": "Milkshake",
     "unit": "cup",
-    "categories": [],
+    "categories": [foodCategories[4]],
     "nutrition": { "calories": 350, "protein": 9, "carbs": 55, "fat": 10 },
     "icon": "fooddoodles40",
     "color": "#e6c7b2",
@@ -1038,7 +1028,7 @@ export const foods = [
     "unit": "tbsp",
     "categories": [],
     "nutrition": { "calories": 52, "protein": 0.3, "carbs": 0.4, "fat": 5.5 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles248",
     "color": "#fff5e0",
     "description": "",
     "id": "117"
@@ -1048,7 +1038,7 @@ export const foods = [
     "unit": "tbsp",
     "categories": [],
     "nutrition": { "calories": 50, "protein": 0.4, "carbs": 12, "fat": 0.3 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles40",
     "color": "#603f2b",
     "description": "",
     "id": "118"
@@ -1056,9 +1046,9 @@ export const foods = [
   {
     "name": "Maple Syrup",
     "unit": "tbsp",
-    "categories": [],
+    "categories": [foodCategories[0]],
     "nutrition": { "calories": 52, "protein": 0, "carbs": 13.4, "fat": 0 },
-    "icon": "fooddoodles303",
+    "icon": "fooddoodles17",
     "color": "#d38b2a",
     "description": "",
     "id": "119"

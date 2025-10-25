@@ -56,7 +56,7 @@ const Profile = () => {
     const [confirmMenuData, setConfirmMenuData] = useState();
 
     const [popupMenuActive, setPopupMenuActive] = useState(false);
-
+    
     const [currentPopupContent, setCurrentPopupContent] = useState("") // birthday, height, gender
 
     useEffect(() => {

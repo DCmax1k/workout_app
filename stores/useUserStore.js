@@ -51,8 +51,6 @@ const fillMissingKeys = (base, user) => {
     filled.tracking.insights.expenditure.layout = "expenditure";
   }
 
-  console.log(filled.tracking.visibleWidgets);
-
   return filled;
 }
 
