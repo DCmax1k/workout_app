@@ -1,6 +1,8 @@
 import { Dimensions, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import noEye from '../../assets/icons/noEye.png'
+import trashIcon from '../../assets/icons/trash.png'
+import silverwareIcon from '../../assets/icons/silverware.png'
 import ThemedView from '../../components/ThemedView'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import TitleWithBack from '../../components/TitleWithBack'
@@ -25,7 +27,7 @@ import calculateCalories from '../../util/calculateNutrition/calculateCalories'
 import calculateProtein from '../../util/calculateNutrition/calculateProtein'
 import calculateCarbs from '../../util/calculateNutrition/calculateCarbs'
 import calculateFat from '../../util/calculateNutrition/calculateFat'
-import { runOnJS, scheduleOnRN } from 'react-native-worklets'
+import ActionMenu from '../../components/ActionMenu'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -73,7 +75,7 @@ const Nutrition = () => {
             }, 100)
             
         }
-      }, []); 
+      }, [user.editActivePlate]); 
     //   useEffect(() => {
     //     console.log(animatedPosition.value, keyboardVisible, screenHeight);
     //     if (keyboardVisible && animatedPosition.value < screenHeight - 200) {
@@ -245,15 +247,7 @@ const Nutrition = () => {
         }, 600  )
     }
     const useSavedPlate = () => {
-        setConfirmMenuData({
-            title: "Coming soon!",
-            subTitle: "This feature is not yet available but will be coming in a future update.",
-            subTitle2: "",
-            option1: "Awesome!",
-            option1color: "#546FDB",
-            confirm: () => setConfirmMenuActive(false),
-        });
-        setConfirmMenuActive(true);
+        router.push("/savedMeals")
     }
     const resumePlate = () => {
         //router.push("/editPlate");
@@ -263,10 +257,37 @@ const Nutrition = () => {
         {text: "Use saved plate", icon: require("../../assets/icons/silverware.png"), onPress: useSavedPlate},
         {text: "Start new plate", icon: require("../../assets/icons/plus.png"), onPress: startNewPlate},
     ];
-    if (user.editActivePlate !== null) {
-        logFoodOptions.unshift(
-            {text: "Resume editting", icon: require("../../assets/icons/playCircle.png"), onPress: resumePlate, iconSize: 25},
-        )
+    // if (user.editActivePlate !== null) {
+    //     logFoodOptions.unshift(
+    //         {text: "Resume editting", icon: require("../../assets/icons/playCircle.png"), onPress: resumePlate, iconSize: 25},
+    //     )
+    // }
+
+    const removeMeal = (meal) => {
+        const dateKey = getDateKey();
+        const consumedMeals = user.consumedMeals;
+        const todaysMeals = consumedMeals[dateKey] ?? [];
+        const newMeals = todaysMeals.filter(m => m.id !== meal.id);
+        const newConsumedMeals = {...consumedMeals, [dateKey]: newMeals};
+        updateUser({consumedMeals: newConsumedMeals});
+    }
+
+    const requestRemoveMeal = (meal) => {
+        setConfirmMenuData({
+            title: "Delete Consumed Meal?",
+            subTitle: "All nutritional data from this meal will be deleted.",
+            option1: "Delete Meal",
+            option1color: Colors.protein,
+            option2: "Go Back",
+            confirm: () => removeMeal(meal),
+        });
+        setConfirmMenuActive(true);
+    }
+
+    const addToSavedMeals = (meal) => {
+        const savedMeals = user.savedMeals;
+        const newSavedMeals = [meal, ...savedMeals];
+        updateUser({savedMeals: newSavedMeals});
     }
 
     return (
@@ -290,7 +311,7 @@ const Nutrition = () => {
 
 
             <SafeAreaView style={{flex: 1, width: "100%",  marginBottom: -50, position: "relative"}}>
-                <TitleWithBack title={"Nutrition"} actionBtn={{actionMenu: false, image: require("../../assets/icons/threeEllipses.png"), options: menuOptions}} />
+                <TitleWithBack title={"Nutrition"} actionBtn={{active: true, image: silverwareIcon, action: useSavedPlate}} />
                 <Spacer height={20} />
 
 
@@ -415,8 +436,20 @@ const Nutrition = () => {
                         <View>
                             {todaysConsumptionHistory.map((meal, i) => {
 
+                                const actionMenuData = [
+                                        {title: "Remove Meal from Consumed", icon: trashIcon, onPress: () => requestRemoveMeal(meal), color: Colors.redText },
+                                        ];
+
+                                // If saved meals does not contain this meal, add the option to save
+                                if (!user.savedMeals.map(m => m.id).includes(meal.id)) {
+                                    actionMenuData.unshift({title: "Add to Saved Meals", icon: silverwareIcon, onPress: () => addToSavedMeals(meal), },);
+                                }
+
                                 return (
-                                    <ConsumedMealCard meal={meal} key={meal.id} setConfirmMenuData={setConfirmMenuData} setConfirmMenuActive={setConfirmMenuActive} />
+                                    <ActionMenu key={meal.id} data={actionMenuData}>
+                                        <ConsumedMealCard meal={meal} requestRemoveMeal={requestRemoveMeal} style={{marginTop: 10}} />
+                                    </ActionMenu>
+                                    
                                 )
                                 
                             })}

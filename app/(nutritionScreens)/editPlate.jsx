@@ -137,17 +137,7 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
             updatePlate({foods: foodsToAdd});
         }
 
-        const saveAsMeal = () => {
-            setConfirmMenuData({
-                title: "Save meal coming soon!",
-                subTitle: "",
-
-                option1: "Okay",
-                option1color: Colors.primaryBlue,
-                confirm: () => {},
-            });
-            setConfirmMenuActive(true);
-        }
+        
 
         const getTotalNutrition = (meal) => {
             const mealNutrition = {
@@ -165,9 +155,8 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
             return mealNutrition;
         }
 
-        const logFoods = () => {
+        const formatCompletedMeal = () => {
             const dateToday = new Date();
-            const dateKey = getDateKey(dateToday);
             const totalNutrition =  getTotalNutrition(plate);
             const meal = {
                 name: plate.name,
@@ -176,6 +165,12 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
                 date: dateToday,
                 fullMeal: plate,
             };
+            return meal;
+        }
+
+        const logFoods = () => {
+            const meal = formatCompletedMeal();
+            const dateKey = getDateKey(meal.date);
             const consumedMeals = user.consumedMeals;
             const todaysMeals = consumedMeals[dateKey] ?? [];
             const newMeals = [meal, ...todaysMeals];
@@ -186,6 +181,13 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
             setTimeout(() => {
                 updateUser({editActivePlate: null});
             }, 100)
+        }
+
+        const saveAsMeal = () => {
+            const meal = formatCompletedMeal();
+            const savedMeals = user.savedMeals;
+            const newSavedMeals = [meal, ...savedMeals];
+            updateUser({savedMeals: newSavedMeals});
         }
 
         const logAndSaveMeal = () => {
@@ -275,7 +277,7 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
             <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
 
             {/* Food Preview */}
-            {foodPreviewOpen&& (
+            {foodPreviewOpen && (
                 <Portal >
                     <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
 

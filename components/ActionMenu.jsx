@@ -92,16 +92,22 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
       <Pressable
         ref={buttonRef}
         onPress={openMenu}
-        style={[{
-          paddingVertical: 0,
-          paddingHorizontal: 5,
-          backgroundColor,
-          borderRadius: 5,
-          flexDirection: "row",
-        }, style]}
       >
-        <Image style={{ width: 20, height: 20, resizeMode: 'contain',  }} source={icon} />
-        {title && <Text style={{fontSize: 15, color: "white", fontWeight: 600, marginLeft: 10}}>{title}</Text>}
+        {props.children ? (
+          {...props.children}
+        ) : (
+          <View style={[{
+                paddingVertical: 0,
+                paddingHorizontal: 5,
+                backgroundColor,
+                borderRadius: 5,
+                flexDirection: "row",
+              }, style]}>
+            <Image style={{ width: 20, height: 20, resizeMode: 'contain',  }} source={icon} />
+            {title && <Text style={{fontSize: 15, color: "white", fontWeight: 600, marginLeft: 10}}>{title}</Text>}
+          </View>
+        )}
+        
 
       </Pressable>
 

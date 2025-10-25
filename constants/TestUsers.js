@@ -61,7 +61,7 @@ const USER = {
     customFoods: {}, // {id: {name, image, timeCreated, id, category, nutrition: {cal, pro, car, fat}}} deepMerge(food, edittedFood)
     archivedFoods: {}, // {foodId: true, foodId2: false, ...}
     foodCategories: [], // "name"
-    savedMeals: [], // {name, id, foodIds }
+    savedMeals: [], // {name, id, totalNutrition, date, fullMeal }
     consumedMeals: {}, // {"00/00/0000": [{name, id, totalNutrition, fullMeal, ]}
 
     tracking: {

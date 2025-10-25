@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import ActionMenu from '../ActionMenu'
-import trashIcon from '../../assets/icons/trash.png'
+import threeEllipses from '../../assets/icons/threeEllipses.png'
 import { truncate } from '../../util/truncate'
 import MacrosRow from './MacrosRow'
 import ThemedText from '../ThemedText'
@@ -11,9 +11,7 @@ import getDateKey from '../../util/getDateKey'
 import { Colors } from '../../constants/Colors'
 import sinceWhen from '../../util/sinceWhen'
 
-const ConsumedMealCard = ({style, meal, setConfirmMenuData, setConfirmMenuActive, ...props}) => {
-    const user = useUserStore(state => state.user);
-    const updateUser = useUserStore(state => state.updateUser);
+const ConsumedMealCard = ({style, meal, requestRemoveMeal, ...props}) => {
 
     const getFoodsDescription = () => {
         const foods = meal.fullMeal.foods;
@@ -28,38 +26,21 @@ const ConsumedMealCard = ({style, meal, setConfirmMenuData, setConfirmMenuActive
         return desc;
     }
 
-    const requestRemoveMeal = () => {
-        setConfirmMenuData({
-            title: "Delete Consumed Meal?",
-            subTitle: "All nutritional data from this meal will be deleted.",
-            option1: "Delete Meal",
-            option1color: Colors.protein,
-            option2: "Go Back",
-            confirm: removeMeal,
-        });
-        setConfirmMenuActive(true);
-    }
-    const removeMeal = () => {
-        const dateKey = getDateKey();
-        const consumedMeals = user.consumedMeals;
-        const todaysMeals = consumedMeals[dateKey] ?? [];
-        const newMeals = todaysMeals.filter(m => m.id !== meal.id);
-        const newConsumedMeals = {...consumedMeals, [dateKey]: newMeals};
-        updateUser({consumedMeals: newConsumedMeals});
-    }
-
     const mealNutrition = meal.totalNutrition;
 
   return (
-    <View {...props} style={[{width: "100%", backgroundColor: "#202020", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 10, justifyContent: "center", alignItems: "center", marginTop: 10}, style]}>
-        <View style={{width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start"}}>
-            <View style={{flexDirection: "row"}}>
+    <View {...props} style={[{width: "100%", backgroundColor: "#202020", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 10, justifyContent: "center", alignItems: "center",}, style]}>
+        <View style={{width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start",}}>
+            <View style={{flexDirection: "row", marginBottom: 4}}>
                 <Text style={{color: "white", fontSize: 14, fontWeight: "600"}}>{meal.name}</Text>
                 <Text  style={{color: "#BCBCBC", fontSize: 14, fontWeight: "300"}}>{truncate(getFoodsDescription(), 20)}</Text>
             </View>
-            <ActionMenu data={[
-                            {title: "Delete Meal", icon: trashIcon, onPress: requestRemoveMeal, color: Colors.redText },
-            ]} />
+            <View style={{height: 10, width: 20}}>
+                <Image source={threeEllipses} style={{objectFit: "contain", height: "100%", width: "100%", tintColor: "#999999ff"}} />
+            </View>
+            {/* <ActionMenu data={[
+                            {title: "Delete Meal", icon: trashIcon, onPress: () => requestRemoveMeal(meal), color: Colors.redText },
+            ]} /> */}
         </View>
         <View style={{width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
             <ThemedText style={{fontSize: 13}}>{sinceWhen(meal.date ?? new Date())}</ThemedText>
