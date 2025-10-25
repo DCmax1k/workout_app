@@ -99,7 +99,7 @@ const CustomizeIconAndColor = ({style, updateFood, food, ...props}) => {
 
                 {/* Color content covers scrollview */}
                 <View style={[StyleSheet.absoluteFill, {backgroundColor: "#303030", paddingHorizontal: 50}]}>
-                    <ColorPicker style={{ width: '100%' }} value='red' onCompleteJS={onSelectColor}>
+                    <ColorPicker style={{ width: '100%' }} value={food.color} onCompleteJS={onSelectColor}>
                         <Spacer height={20} />
                         <HueSlider />
                         <Spacer height={20} />

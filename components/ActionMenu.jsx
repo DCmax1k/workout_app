@@ -74,7 +74,7 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
   useEffect(() => {
     setMenuMeasured(false);
     setMenuWidth(0);
-  }, [data]);
+  }, [data.length]);
   
 
   return (
