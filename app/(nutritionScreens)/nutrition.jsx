@@ -28,6 +28,7 @@ import calculateProtein from '../../util/calculateNutrition/calculateProtein'
 import calculateCarbs from '../../util/calculateNutrition/calculateCarbs'
 import calculateFat from '../../util/calculateNutrition/calculateFat'
 import ActionMenu from '../../components/ActionMenu'
+import { useIsFocused } from '@react-navigation/native'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -57,6 +58,7 @@ const Nutrition = () => {
         };
     }, []);
 
+     const [bottomSheetPosition, setBottomSheetPosition] = useState(0);
     
 
     // Bottom sheet
@@ -68,14 +70,38 @@ const Nutrition = () => {
     const snapPoints = [firstSnap, 0.95*screenHeight];
     const animatedPosition = useSharedValue(0);
     const [sheetShouldStartOpen, setSheetShouldStartOpen] = useState(false);
-      useEffect(() => {
+    useEffect(() => {
         if (user) {
-            setTimeout(() => {
+            const tm = setTimeout(() => {
                 setSheetShouldStartOpen(user.editActivePlate !== null);
             }, 100)
             
+            return () => clearTimeout(tm);
         }
-      }, [user.editActivePlate]); 
+    }, []); 
+
+    const [resumeAndOpenSheet, setResumeAndOpenSheet] = useState(false); // If true, on focused sheet should open
+    useEffect(() => {
+        const sub3 = emitter.addListener("addedToPlate", (boolHere) => {
+            if (boolHere) {
+                // Open if not opened
+                setResumeAndOpenSheet(true);
+            }
+            
+        });
+        return () => {
+            sub3.remove();
+        }
+    });
+    const isFocused = useIsFocused();
+    useEffect(() => {
+        if (isFocused && resumeAndOpenSheet) {
+            setResumeAndOpenSheet(false);
+            sheetRef.current?.snapToIndex(1);
+        } else if (isFocused && user.editActivePlate && bottomSheetPosition < 0) {
+            sheetRef.current?.snapToIndex(0);
+        }
+    }, [isFocused])
     //   useEffect(() => {
     //     console.log(animatedPosition.value, keyboardVisible, screenHeight);
     //     if (keyboardVisible && animatedPosition.value < screenHeight - 200) {
@@ -139,7 +165,7 @@ const Nutrition = () => {
     const [confirmMenuActive, setConfirmMenuActive] = useState(false);
     const [confirmMenuData, setConfirmMenuData] = useState();
 
-    const [bottomSheetPosition, setBottomSheetPosition] = useState(0);
+   
 
     const [floatingButtonActive, setFloatingButtonActive] = useState(false);
     const floatingButtonRef = useRef(null);
@@ -264,7 +290,7 @@ const Nutrition = () => {
     // }
 
     const removeMeal = (meal) => {
-        const dateKey = getDateKey();
+        const dateKey = getDateKey(meal.date);
         const consumedMeals = user.consumedMeals;
         const todaysMeals = consumedMeals[dateKey] ?? [];
         const newMeals = todaysMeals.filter(m => m.id !== meal.id);
@@ -437,8 +463,8 @@ const Nutrition = () => {
                             {todaysConsumptionHistory.map((meal, i) => {
 
                                 const actionMenuData = [
-                                        {title: "Remove Meal from Consumed", icon: trashIcon, onPress: () => requestRemoveMeal(meal), color: Colors.redText },
-                                        ];
+                                    {title: "Remove Meal from Consumed", icon: trashIcon, onPress: () => requestRemoveMeal(meal), color: Colors.redText },
+                                ];
 
                                 // If saved meals does not contain this meal, add the option to save
                                 if (!user.savedMeals.map(m => m.id).includes(meal.id)) {
@@ -446,9 +472,9 @@ const Nutrition = () => {
                                 }
 
                                 return (
-                                    <ActionMenu key={meal.id} data={actionMenuData}>
-                                        <ConsumedMealCard meal={meal} requestRemoveMeal={requestRemoveMeal} style={{marginTop: 10}} />
-                                    </ActionMenu>
+                                    <View key={meal.date + "" + meal.id} style={{marginTop: 10}} >
+                                        <ConsumedMealCard actionMenuData={actionMenuData} meal={meal} requestRemoveMeal={requestRemoveMeal} />
+                                    </View>
                                     
                                 )
                                 

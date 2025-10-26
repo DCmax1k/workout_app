@@ -79,7 +79,7 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
 
   return (
     <>
-    {/* {!menuMeasured && ( */}
+    {!menuMeasured && (
       <MeasureMenuItems
         key={data.length}
         data={data}
@@ -88,7 +88,7 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
           setMenuMeasured(true);
         }}
       />
-    {/* )} */}
+    )}
       <Pressable
         ref={buttonRef}
         onPress={openMenu}

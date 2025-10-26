@@ -141,6 +141,7 @@ const AddFood = ({...props}) => {
             pathname: '/editFood',
             params: {
                 food: JSON.stringify(food),
+                openedFrom: "addFood",
             }
         })
             
@@ -188,6 +189,7 @@ const AddFood = ({...props}) => {
             pathname: '/editFood',
             params: {
                 food: JSON.stringify(newFood),
+                autoSelectName: 1,
             }
         })
         return;

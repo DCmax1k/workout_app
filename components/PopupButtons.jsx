@@ -36,7 +36,7 @@ const PopupButtons = forwardRef(({
 
         {/* Bottom button */}
         <Pressable onPress={closeMenu}>
-            {active && (<Animated.View entering={FadeIn} exiting={FadeOut} style={[{position: "relative", backgroundColor: "transparent", borderWidth: buttonBorderWidth, borderColor: color, borderRadius: 9999999, width, height, justifyContent: "center", alignItems: "center"}]}>
+            {active && (<Animated.View entering={FadeIn} exiting={FadeOut} style={[{position: "relative", backgroundColor: "#000000b2", borderWidth: buttonBorderWidth, borderColor: color, borderRadius: 9999999, width, height, justifyContent: "center", alignItems: "center"}]}>
                 <Text style={{color: textColor, fontSize: 20, fontWeight: "800"}}>Close</Text>
                  <View style={{height: height, width: 30, position: "absolute", top: 0-buttonBorderWidth, left: 10, justifyContent: "center", alignItems: "center",}}>
                     <Image source={xIcon} style={{height: 30, width: 30, objectFit: "contain"}} />

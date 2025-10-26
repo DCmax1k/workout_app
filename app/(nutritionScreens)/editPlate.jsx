@@ -45,7 +45,7 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
             pathname: '/editFood',
             params: {
                 food: JSON.stringify(food),
-                openedFromPlate: true,
+                openedFrom: "plate",
             }
         })
             
@@ -66,7 +66,8 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
                 foods[foodIdx] = {...data.food, quantity};
                 updatePlate({foods});
             }
-        })
+        });
+        
         return () => {
             sub.remove();
             sub2.remove();
@@ -104,168 +105,160 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
             confirm: () => {},
         });
 
-        const requestDiscardPlate = () => {
-            setConfirmMenuData({
-                title: "Discard Plate?",
-                subTitle: "Any items added to your plate",
-                subTitle2: "will not be saved.",
-                option1: "Confirm Discard",
-                option1color: "#DB5454",
-                option2: "Go back",
-                confirm: discardPlate,
-            });
-            setConfirmMenuActive(true);
-        }
-        const discardPlate = () => {
-            closeKeyboardIfOpen();
-            closeSheet();
-            setTimeout(() => {
-                updateUser({editActivePlate: null})
-            }, 100)
-            
-        }
-
-        const addFood = (foods) => {
-            if (!foods || foods.length < 1) return; 
-            const foodsWithQuantity = foods.map(f => ({...f, quantity: 1}));
-
-            const plateFoodIds = plate.foods.map(f=>f.id);
-            const filterFoods = foodsWithQuantity.map(f => plateFoodIds.includes(f.id) ? null : f).filter(e => e !== null);
-
-            const foodsToAdd = [...plate.foods, ...filterFoods];
-            
-            updatePlate({foods: foodsToAdd});
-        }
-
+    const requestDiscardPlate = () => {
+        setConfirmMenuData({
+            title: "Discard Plate?",
+            subTitle: "Any items added to your plate",
+            subTitle2: "will not be saved.",
+            option1: "Confirm Discard",
+            option1color: "#DB5454",
+            option2: "Go back",
+            confirm: discardPlate,
+        });
+        setConfirmMenuActive(true);
+    }
+    const discardPlate = () => {
+        closeKeyboardIfOpen();
+        closeSheet();
+        setTimeout(() => {
+            updateUser({editActivePlate: null})
+        }, 100)
         
+    }
 
-        const getTotalNutrition = (meal) => {
-            const mealNutrition = {
-                "calories": 0,
-                "protein": 0,
-                "carbs": 0,
-                "fat": 0
-            };
-            meal.foods.forEach(f => {
-                new Array(4).fill(null).map((_, i) => {
-                    const nutritionKey = ["calories", "protein", "carbs", "fat"][i];
-                    mealNutrition[nutritionKey] += f.nutrition[nutritionKey]*f.quantity;
-                });
+    const addFood = (foods) => {
+        if (!foods || foods.length < 1) return; 
+        const foodsWithQuantity = foods.map(f => ({...f, quantity: 1}));
+
+        const plateFoodIds = plate.foods.map(f=>f.id);
+        const filterFoods = foodsWithQuantity.map(f => plateFoodIds.includes(f.id) ? null : f).filter(e => e !== null);
+
+        const foodsToAdd = [...plate.foods, ...filterFoods];
+        
+        updatePlate({foods: foodsToAdd});
+    }
+
+    
+
+    const getTotalNutrition = (meal) => {
+        const mealNutrition = {
+            "calories": 0,
+            "protein": 0,
+            "carbs": 0,
+            "fat": 0
+        };
+        meal.foods.forEach(f => {
+            new Array(4).fill(null).map((_, i) => {
+                const nutritionKey = ["calories", "protein", "carbs", "fat"][i];
+                mealNutrition[nutritionKey] += f.nutrition[nutritionKey]*f.quantity;
             });
-            return mealNutrition;
-        }
+        });
+        return mealNutrition;
+    }
 
-        const formatCompletedMeal = () => {
-            const dateToday = new Date();
-            const totalNutrition =  getTotalNutrition(plate);
-            const meal = {
-                name: plate.name,
-                id: generateUniqueId(),
-                totalNutrition,
-                date: dateToday,
-                fullMeal: plate,
-            };
-            return meal;
-        }
+    const formatCompletedMeal = () => {
+        const dateToday = new Date();
+        const totalNutrition =  getTotalNutrition(plate);
+        const meal = {
+            name: plate.name,
+            id: generateUniqueId(),
+            totalNutrition,
+            date: dateToday,
+            fullMeal: plate,
+        };
+        return meal;
+    }
 
-        const logFoods = () => {
-            const meal = formatCompletedMeal();
-            const dateKey = getDateKey(meal.date);
-            const consumedMeals = user.consumedMeals;
-            const todaysMeals = consumedMeals[dateKey] ?? [];
-            const newMeals = [meal, ...todaysMeals];
-            const newConsumedMeals = {...consumedMeals, [dateKey]: newMeals};
-            closeKeyboardIfOpen();
-            updateUser({consumedMeals: newConsumedMeals});
-            closeSheet();
-            setTimeout(() => {
-                updateUser({editActivePlate: null});
-            }, 100)
-        }
+    const logFoods = (meal = null) => {
+        meal = meal ? meal : formatCompletedMeal();
+        const dateKey = getDateKey(meal.date);
+        const consumedMeals = user.consumedMeals;
+        const todaysMeals = consumedMeals[dateKey] ?? [];
+        const newMeals = [meal, ...todaysMeals];
+        const newConsumedMeals = {...consumedMeals, [dateKey]: newMeals};
+        closeKeyboardIfOpen();
+        updateUser({consumedMeals: newConsumedMeals});
+        closeSheet();
+        setTimeout(() => {
+            updateUser({editActivePlate: null});
+        }, 100)
+    }
 
-        const saveAsMeal = () => {
-            const meal = formatCompletedMeal();
-            const savedMeals = user.savedMeals;
-            const newSavedMeals = [meal, ...savedMeals];
-            updateUser({savedMeals: newSavedMeals});
-        }
+    const saveAsMeal = () => {
+        const meal = formatCompletedMeal();
+        const savedMeals = user.savedMeals;
+        const newSavedMeals = [meal, ...savedMeals];
+        updateUser({savedMeals: newSavedMeals});
+        return meal;
+    }
 
-        const logAndSaveMeal = () => {
-            saveAsMeal();
-            setTimeout(() => {
-                logFoods();
-            }, 500);
-            
-        }
-        const requestLogFoods = () => {
-            if (!plate.foods || plate.foods.length < 1) {
-                setConfirmMenuData({
-                    title: "No plate items",
-                    subTitle: "Please add at least one food item",
-                    subTitle2: "to your plate before logging.",
-                    option1: "Okay",
-                    option1color: Colors.primaryBlue,
-                    confirm: () => {},
-                });
-                setConfirmMenuActive(true);
-                return;
-            }
-            // setConfirmMenuData({
-            //     title: "Log Foods?",
-            //     subTitle: "You are about to log the foods in this plate.",
-            //     subTitle2: "Would you like to proceed?",
-            //     option1: "Log Foods",
-            //     option1color: Colors.protein,
-            //     option2: "Go back",
-            //     confirm: logFoods,
-            // });
+    const logAndSaveMeal = () => {
+        const savedMeal = saveAsMeal();
+        setTimeout(() => {
+            logFoods(savedMeal);
+        }, 500);
+        
+    }
+    const requestLogFoods = () => {
+        if (!plate.foods || plate.foods.length < 1) {
             setConfirmMenuData({
-                title: "Log Foods and Save as Meal?",
-                subTitle: "You are about to log the foods in this plate.",
-                subTitle2: "Would you also like to save this meal for future use?",
-                option1: "Log Foods",
-                option1color: Colors.protein,
-                option3: "Log and Save Meal",
-                option3onPress: logAndSaveMeal,
-                option2: "Go back",
-                confirm: logFoods,
+                title: "No plate items",
+                subTitle: "Please add at least one food item",
+                subTitle2: "to your plate before logging.",
+                option1: "Okay",
+                option1color: Colors.primaryBlue,
+                confirm: () => {},
             });
             setConfirmMenuActive(true);
+            return;
         }
+        setConfirmMenuData({
+            title: "Log Foods and Save as Meal?",
+            subTitle: "You are about to log the foods in this plate.",
+            subTitle2: "Would you also like to save this meal for future use?",
+            option1: "Log Foods",
+            option1color: Colors.protein,
+            option3: "Log and Save Meal",
+            option3onPress: logAndSaveMeal,
+            option2: "Go back",
+            confirm: logFoods,
+        });
+        setConfirmMenuActive(true);
+    }
 
-        const removeFoodItem = (food) => {
-            const newFoods = plate.foods.filter(f => f.id !== food.id);
-            updatePlate({foods: newFoods});
+    const removeFoodItem = (food) => {
+        const newFoods = plate.foods.filter(f => f.id !== food.id);
+        updatePlate({foods: newFoods});
+    }
+
+    const openAddFood = () => {
+        //setFoodModal(true);
+
+        router.push({
+                    pathname: "/addFood",
+                });
+    }
+
+    const clickChangeQuantity = (food) => {
+        const info = {
+            title: food.name + " Quantity",
+            target: 'changeFoodQuantity',
+            value: food.quantity,
+            unit: food.unit,
+            increment: 0.1,
+            range: [0, 100],
+            scrollItemWidth: 10,
+            defaultValue: 1,
+
+            food,
         }
-
-        const openAddFood = () => {
-            //setFoodModal(true);
-
-            router.push({
-                        pathname: "/addFood",
-                    });
-        }
-
-        const clickChangeQuantity = (food) => {
-            const info = {
-                title: food.name + " Quantity",
-                target: 'changeFoodQuantity',
-                value: food.quantity,
-                unit: food.unit,
-                increment: 0.1,
-                range: [0, 100],
-                scrollItemWidth: 10,
-                defaultValue: 1,
-
-                food,
-            }
-            router.push({
-                pathname: "/inputValueScreen",
-                params: {
-                    data: JSON.stringify(info),
-                },
-            });
-        }
+        router.push({
+            pathname: "/inputValueScreen",
+            params: {
+                data: JSON.stringify(info),
+            },
+        });
+    }
 
     const openFoodPreview = (f) => {
         setFoodPreview(f);

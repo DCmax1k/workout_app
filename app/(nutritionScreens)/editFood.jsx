@@ -136,7 +136,8 @@ const EditFood = () => {
     const f = JSON.parse(params.food) ?? {};
     const foodBeforeEdits = f;
 
-    const openedFromPlate = params.openedFromPlate ?? false;
+    const openedFrom = params.openedFrom ?? "addFood"; // addFood, plate, editMeal
+    const autoSelectName = params.autoSelectName ?? 0;
 
     const [food, setFood] = useState(JSON.parse(JSON.stringify(f)));
     const [popupMenuActive, setPopupMenuActive] = useState(false);
@@ -153,7 +154,18 @@ const EditFood = () => {
     const [categoryIds, setCategoryIds] = useState(preSetCategoryIds);
     
     
-    
+    useEffect(() => {
+        if (autoSelectName && foodNameInputRef) {
+            const tm = setTimeout(() => {
+                foodNameInputRef.current?.focus();
+            }, 510)
+            
+
+            return () => {
+                clearTimeout(tm);
+            }
+        }
+    }, [autoSelectName])
 
     useEffect(() => {
         const newCategories = categoryIds.map(id => categoryData.find(c => c.id === id)).map(c => c.title);
@@ -220,13 +232,15 @@ const EditFood = () => {
         customFoods[food.id] = food;
         //console.log("Saving food", food);
         updateUser({customFoods});
-        if (openedFromPlate) {
+        if (openedFrom === "plate") {
             const foodsInActivePlate = user.editActivePlate.foods;
             const newFoods = foodsInActivePlate.map(f => {
                 if (f.id !== food.id) return f;
                 return food;
             });
             updateUser({editActivePlate: {...user.editActivePlate, foods: newFoods}});
+        } else if (openedFrom === "editMeal") {
+            emitter.emit("completeEditOnFoodForEditMeal", ({food}));
         }
         router.back();
       }

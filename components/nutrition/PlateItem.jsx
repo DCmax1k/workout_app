@@ -6,13 +6,13 @@ import MacrosRow from './MacrosRow';
 import { truncate } from '../../util/truncate';
 const screenWidth = Dimensions.get('screen').width;
 
-const PlateItem = ({style, food, clickChangeQuantity, ...props}) => {
+const PlateItem = ({style, food, clickChangeQuantity, width = screenWidth-20, edit=true, ...props}) => {
 
     const icon = food.icon ? icons[food.icon] : icons["fooddoodles303"];
     const size = 60; 
 
   return (
-    <View style={[style, {height: size, width: screenWidth-20, backgroundColor: "#272727", borderRadius: 10, flexDirection: "row", }]} {...props}>
+    <View style={[{height: size, width, backgroundColor: "#272727", borderRadius: 10, flexDirection: "row", }, style]} {...props}>
         {/* ICON */}
         <View style={{height: size, width: size, justifyContent: "center", alignItems: "center"}}>
             <View style={{height: size/1.5, width: size/1.5, backgroundColor: food.color, borderRadius: 10, justifyContent: "center", alignItems: "center", overflow: "hidden"}}>
@@ -27,7 +27,7 @@ const PlateItem = ({style, food, clickChangeQuantity, ...props}) => {
         </View>
         {/* Serving input */}
         <View style={{height: size, justifyContent: "center", alignItems: "center", paddingRight: 10, marginLeft: 5, }}>
-            <Pressable onPress={() => clickChangeQuantity(food)} style={{height: size/1.5, backgroundColor: "#333333",borderColor: "#272727", borderWidth: 2,  borderRadius: 10, justifyContent: 'center', alignItems: "center", paddingHorizontal: 10}}>
+            <Pressable onPress={edit ? () => clickChangeQuantity(food) : () => {} } style={{height: size/1.5, backgroundColor: edit ? "#333333" : "transparent", borderColor: edit ? "#272727" : "transparent", borderWidth: 2,  borderRadius: 10, justifyContent: 'center', alignItems: "center", paddingHorizontal: 10}}>
                 <Text style={{color: "white", fontSize: 14, fontWeight: "600",}}>{food.quantity} {food.unit}</Text>
             </Pressable>
             
