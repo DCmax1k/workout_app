@@ -266,7 +266,7 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
     }
 
     return (
-        <ThemedView style={{flex: 1, backgroundColor: "#313131"}}>
+        <ThemedView style={{flex: 1, maxHeight: screenHeight-80, backgroundColor: "#313131"}}>
             <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
 
             {/* Food Preview */}
@@ -321,8 +321,8 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
             </BottomSheetHandle>
 
             {/* This makes everything fade in */}
-            <Animated.View style={[{flex: 1}, animatedButtonsOpacity]}>
-                <BottomSheetScrollView style={{flex: 1}} contentContainerStyle={{ paddingBottom: 50}}>
+            <Animated.View style={[{flex: 1, maxHeight: screenHeight-180}, animatedButtonsOpacity]}>
+                <BottomSheetScrollView style={{flex: 1,}} contentContainerStyle={{ paddingBottom: 100}} >
                     <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20, paddingHorizontal: 20}}>
                         <Pressable style={{ height: 40, width: 40, justifyContent: "center", alignItems: "center"}} onPress={() => {if (plateNameInputRef.current) {plateNameInputRef.current.focus()}}}>
                             <Image style={{height: 15, width: 15, marginRight: 10}} source={pencil} />

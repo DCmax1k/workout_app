@@ -2,6 +2,8 @@ import { Dimensions, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } f
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import noEye from '../../assets/icons/noEye.png'
 import trashIcon from '../../assets/icons/trash.png'
+import plusIcon from '../../assets/icons/plus.png'
+import eyeIcon from '../../assets/icons/eye.png'
 import silverwareIcon from '../../assets/icons/silverware.png'
 import ThemedView from '../../components/ThemedView'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -18,7 +20,7 @@ import { router, useLocalSearchParams } from 'expo-router'
 import PageSwiper from '../../components/PageSwiper'
 import ConfirmMenu from '../../components/ConfirmMenu'
 import PopupButtons from '../../components/PopupButtons'
-import Animated, { Extrapolation, FadeIn, FadeOut, interpolate, useAnimatedReaction, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated'
+import Animated, { Extrapolation, FadeIn, FadeInDown, FadeOut, FadeOutDown, interpolate, useAnimatedReaction, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated'
 import { generateUniqueId } from '../../util/uniqueId'
 import BottomSheet from '@gorhom/bottom-sheet'
 import EditPlate from './editPlate'
@@ -29,6 +31,8 @@ import calculateCarbs from '../../util/calculateNutrition/calculateCarbs'
 import calculateFat from '../../util/calculateNutrition/calculateFat'
 import ActionMenu from '../../components/ActionMenu'
 import { useIsFocused } from '@react-navigation/native'
+import { Portal } from 'react-native-paper'
+import MealPreview from '../../components/nutrition/MealPreview'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -36,6 +40,9 @@ const screenHeight = Dimensions.get("screen").height;
 const Nutrition = () => {
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
+
+    const [mealPreview, setMealPreview] = useState(null); // {...food}
+    const [mealPreviewOpen, setMealPreviewOpen] = useState(false);
 
     // Stop calorie widget from animating if past initial open
     const [widgetAnimationDuration, setWidgetAnimationDuration] = useState(1000);
@@ -180,6 +187,22 @@ const Nutrition = () => {
 
     const pageSwiperRef = useRef(null);
 
+    const addMealToPlate = (meal) => {
+        if (mealPreviewOpen) setMealPreviewOpen(false);
+        const foodsInMeal = meal.fullMeal.foods;
+        const editActivePlate = user.editActivePlate;
+        if (editActivePlate) {
+            const filterFoods = foodsInMeal.filter(fim => !editActivePlate.foods.map(f => f.id).includes(fim.id));
+            const newFoods = [...editActivePlate.foods, ...filterFoods];
+            const newPlate = {...editActivePlate, foods: newFoods};
+            updateUser({editActivePlate: newPlate});
+        } else {
+            const newPlateData = {name: meal.name, id: generateUniqueId(), foods: foodsInMeal };
+            updateUser({editActivePlate: newPlateData});
+        }
+        sheetRef.current?.snapToIndex(1);
+    }
+
     useEffect(() => {
         const sub = emitter.addListener("done", (data) => {
             //console.log("Got data back:", data);
@@ -316,11 +339,43 @@ const Nutrition = () => {
         updateUser({savedMeals: newSavedMeals});
     }
 
+    const openMeal = (meal) => {
+        setMealPreview(meal);
+        setMealPreviewOpen(true);
+    }
+
+    const editMeal = (meal, newMeal = false) => {
+        if (mealPreviewOpen) setMealPreviewOpen(false);
+        router.push({
+            pathname: '/editMeal',
+            params: {
+                meal: JSON.stringify(meal),
+                openedFrom: "consumption",
+            }
+        })
+    }
+
     return (
         <>
         <ThemedView style={styles.container}>
             <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
-        
+            {/* Meal Preview */}
+            {mealPreviewOpen && (
+                <Portal >
+                    <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
+
+                        <Pressable onPress={() => setMealPreviewOpen(false)} style={{height: "100%", width: "100%", zIndex: 0}}></Pressable>
+
+                        <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
+                            <MealPreview meal={mealPreview} addMealToPlate={addMealToPlate} setMealPreviewOpen={setMealPreviewOpen} editMeal={editMeal} />
+                        </Animated.View>
+
+                    
+
+                    </Animated.View>    
+                </Portal>
+                
+                )}
 
             {floatingButtonActive && (
                 <Animated.View style={[{height: screenHeight, width: screenWidth, backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1}, StyleSheet.absoluteFill]} entering={FadeIn} exiting={FadeOut}>
@@ -463,6 +518,8 @@ const Nutrition = () => {
                             {todaysConsumptionHistory.map((meal, i) => {
 
                                 const actionMenuData = [
+                                    {title: "Add Foods to Plate", icon: plusIcon, onPress: () => addMealToPlate(meal), },
+                                    {title: "Open Meal", icon: eyeIcon, onPress: () => openMeal(meal), },
                                     {title: "Remove Meal from Consumed", icon: trashIcon, onPress: () => requestRemoveMeal(meal), color: Colors.redText },
                                 ];
 
@@ -472,9 +529,9 @@ const Nutrition = () => {
                                 }
 
                                 return (
-                                    <View key={meal.date + "" + meal.id} style={{marginTop: 10}} >
+                                    <Pressable onPress={() => openMeal(meal)} key={meal.date + "" + meal.id} style={{marginTop: 10}} >
                                         <ConsumedMealCard actionMenuData={actionMenuData} meal={meal} requestRemoveMeal={requestRemoveMeal} />
-                                    </View>
+                                    </Pressable>
                                     
                                 )
                                 

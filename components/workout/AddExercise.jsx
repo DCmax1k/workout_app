@@ -53,6 +53,8 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
     const [searchValue, setSearchValue] = useState("");
     const [createExercise, setCreateExercise] = useState(false);
 
+    
+
 
     // Using optimized search function
     const sectionalData = groupExercisesBySection(searchExercise(getAllExercises(user), searchValue));

@@ -10,20 +10,17 @@ import EditExercise from '../components/workout/EditExercise'
 import BlueButton from '../components/BlueButton'
 import Spacer from '../components/Spacer'
 import AddExercise from '../components/workout/AddExercise'
-import { PaperProvider, Portal } from 'react-native-paper'
 import ActionMenu from '../components/ActionMenu'
 import trashIcon from '../assets/icons/trash.png'
 
 import { workoutToSimple } from '../util/workoutToSimple'
 import ConfirmMenu from '../components/ConfirmMenu'
 import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown, LinearTransition, SlideInDown, SlideOutDown, useEvent } from 'react-native-reanimated'
-import SwipeToDelete from '../components/SwipeToDelete'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import getAllExercises from '../util/getAllExercises'
 import deepEqual from '../util/deepEqual'
 import { generateUniqueId } from '../util/uniqueId'
 import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist'
-import OpenExercise from '../components/workout/OpenExercise'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
@@ -54,9 +51,6 @@ const EditWorkout = () => {
       clearTimeout(timeout);
     };
   }, [autoSelectName]);
-
-  const [openExercise, setOpenExercise] = useState(false); // Is open or not
-  const [exerciseOpen, setExerciseOpen] = useState({}); // The exercise thats open
 
   const [isDragging, setIsDragging] = useState(false);
 
@@ -195,32 +189,13 @@ const EditWorkout = () => {
     updateWorkout({exercises: newExercises});
   }
 
-  const viewOpenExercise = (exercise) => {
-    const clone = JSON.parse(JSON.stringify(exercise));
-    setExerciseOpen(clone);
-    setOpenExercise(true);
-  }
+  
 
   return (
     // <PaperProvider>
       <ThemedView style={{flex: 1, padding: 20}}>
         <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
-        {openExercise && (
-            <Portal >
-              <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
-
-                  <Pressable onPress={() => setOpenExercise(false)} style={{height: "100%", width: "100%", zIndex: 0}}></Pressable>
-
-                  <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
-                    <OpenExercise exercise={exerciseOpen} setOpenExercise={setOpenExercise} forceCloseOpenExercise={() => setOpenExercise(false)} />
-                  </Animated.View>
-
-                
-
-              </Animated.View>
-            </Portal>
-            
-          )}
+        
         <SafeAreaView style={{flex: 1, marginBottom: -50}}>
 
           <View style={[styles.actionButtons]}>
@@ -273,7 +248,6 @@ const EditWorkout = () => {
                           index={item.index}
                           drag={drag}
                           dragActive={isActive}
-                          viewOpenExercise={viewOpenExercise}
                           />
                         </View>
                       {/* </SwipeToDelete> */}

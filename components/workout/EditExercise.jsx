@@ -1,4 +1,4 @@
-import { Alert, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, Dimensions, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import threeEllipses from '../../assets/icons/threeEllipses.png'
 import greyX from '../../assets/icons/greyX.png'
@@ -12,21 +12,29 @@ import check from '../../assets/icons/check.png'
 import lightBulb from '../../assets/icons/lightBulb.png'
 import doubleCheck from '../../assets/icons/doubleCheck.png'
 import dumbellIcon from '../../assets/icons/weight.png'
-import Animated, { FadeIn, FadeInRight, FadeOut, FadeOutRight, LinearTransition,  } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeInDown, FadeInRight, FadeOut, FadeOutDown, FadeOutRight, LinearTransition,  } from 'react-native-reanimated'
 import { useUserStore } from '../../stores/useUserStore'
 import { ScrollView } from 'react-native-gesture-handler'
 import ThemedText from '../ThemedText'
+import OpenExercise from './OpenExercise'
+import { Portal } from 'react-native-paper'
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWorkoutStyle, viewOpenExercise, drag=()=>{}, dragActive=false, ...props}) => {
+const screenHeight = Dimensions.get("screen").height;
+const screenWidth = Dimensions.get("screen").width;
+
+const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWorkoutStyle, drag=()=>{}, dragActive=false, ...props}) => {
     const user = useUserStore((state) => state.user);
 
     const exerciseNameRef = useRef(null);
     const noteRef = useRef(null);
     const [showNote, setShowNote] = useState(false);
+
+    const [openExercise, setOpenExercise] = useState(false); // Is open or not
+    const [exerciseOpen, setExerciseOpen] = useState({}); // The exercise thats open
 
     const [suggesstion, setSuggesstion] = useState("");
 
@@ -169,6 +177,12 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         setSuggesstion("");
     }
 
+    const viewOpenExercise = (exercise) => {
+        const clone = JSON.parse(JSON.stringify(exercise));
+        setExerciseOpen(clone);
+        setOpenExercise(true);
+    }
+
     // Find rules for suggesstions; Rules order matters, and each suggesstion is first come first serve
     useEffect(() => {
         if (activeWorkoutStyle) {
@@ -209,11 +223,27 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
 
     return (
     <Animated.View layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} style={[{backgroundColor: activeWorkoutStyle ? "":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10,}, false && {height: 40}]} {...props}>
+        {openExercise && (
+                <Portal >
+                    <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
+    
+                        <Pressable onPress={() => setOpenExercise(false)} style={{height: "100%", width: "100%", zIndex: 0}}></Pressable>
+    
+                        <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
+                            <OpenExercise exercise={exerciseOpen} setOpenExercise={setOpenExercise} forceCloseOpenExercise={() => setOpenExercise(false)} />
+                        </Animated.View>
+    
+                    
+    
+                    </Animated.View>
+                </Portal>
+                
+                )}
         {/* Header that covers the exercise name. Single press to select title. LongPress for drag. zIndex 1 but actionMenu is zIndez 2 */}
         <Pressable onPress={() => exerciseNameRef.current?.focus()} onLongPress={drag} style={{zIndex: 1, width: "100%", height: 35, position: "absolute", }}>
 
         </Pressable>
-
+        
 
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
             <Pressable onPressIn={drag} style={{height: 30, width: 30, marginVertical: -10, zIndex: 2, justifyContent: "center", alignItems: "center",}}>

@@ -139,7 +139,7 @@ const SavedMeals = () => {
 
   return (
     <ThemedView style={{flex: 1}}>
-        {/* Food Preview */}
+        {/* Meal Preview */}
         {mealPreviewOpen && (
             <Portal >
                 <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >

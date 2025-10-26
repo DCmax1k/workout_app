@@ -47,7 +47,7 @@ const EditMeal = () => {
     const mealId = m.id;
     const mealBeforEdits = m.fullMeal;
 
-    const openedFrom = params.openedFrom ?? "savedMeals";
+    const openedFrom = params.openedFrom ?? "savedMeals"; // savedMeals, consumption
     const autoSelectName = openedFrom === "savedMealsNew";
 
     const [meal, setMeal] = useState(JSON.parse(JSON.stringify(mealBeforEdits)));
