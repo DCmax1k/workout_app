@@ -6,8 +6,10 @@ import { Colors } from '../constants/Colors'
 import RightArrow from '../assets/icons/rightArrow.png'
 import SectionSelect from './SectionSelect'
 import sinceWhen from '../util/sinceWhen'
+import fillDailyData from '../util/fillDailyData'
+// import fillDailyData from '../util/fillDailyData'
 
-const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], showWarning = false, showDecimals=2, onPress = () => {}, disablePress=false, animationDuration=0, hideFooter=false, ...props}) => {
+const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=[], dates = [], showWarning = false, showDecimals=2, onPress = () => {}, disablePress=false, animationDuration=0, hideFooter=false, ...props}) => {
 
     const oriData = JSON.parse(JSON.stringify(data));
     const oriDates = JSON.parse(JSON.stringify(dates));
@@ -18,6 +20,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
     // Make data in form of daily points
     const sixMonthsAgo = new Date();
     const dayOffset = section===sectionOptions[0] ? 7 : section===sectionOptions[1] ? 28 : 180
+    const verticalGraphDivisionsCount = section===sectionOptions[0] ? 7+1 : section===sectionOptions[1] ? 4+1 : 6+1; // 7 (days), 4 (weeks), 6 (months); plus 1 for space-between justified
     const strokeWidth = section===sectionOptions[0] ? 7 : section===sectionOptions[1] ? 5 : 2;
     sixMonthsAgo.setDate(sixMonthsAgo.getDate() - dayOffset);
     sixMonthsAgo.setHours(0, 0, 0, 0);
@@ -26,8 +29,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
     today.setHours(0, 0, 0, 0);
 
    
-    
-    // Create 6 months of 0's if zeroMissingData == true
+
 
     if (data.length < 2) {
         data = [oriData[0] || 0, oriData[0] || 0];
@@ -35,6 +37,16 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
     }
     data = data.filter((d, ind) => new Date(dates[ind]).getTime() >= sixMonthsAgo.getTime());
     dates = dates.filter((d, ind) => new Date(dates[ind]).getTime() >= sixMonthsAgo.getTime());
+
+    // Use fillMissingDataPerDay here so that the graph fills in the last info or zero data to section out the data
+    if (fillDaily) {
+        const {dataAmounts: newAmounts, dataDates: newDates} = fillDailyData(data, dates, sixMonthsAgo, fillDaily);
+        data = newAmounts;
+        dates = newDates;
+    }
+    
+
+
     // else {
     //     if (section === sectionOptions[0]) {
     //         // Past 5
@@ -189,6 +201,17 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, data=[], dates = [], 
                         <Text style={{color: "#848484", fontSize: 12}}>{ parseDecimals(min, showDecimals) }</Text>
                     </View>
                 </View>)}
+            </View>
+
+            {/* Back grid verticalGraphDivisionsCount vertical lines */}
+            <View style={{ paddingVertical: backGridTopOffset, paddingRight: backGridRightOffset, zIndex: -1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+                {new Array(verticalGraphDivisionsCount).fill(null).map((v, i) => {
+                    return (
+                        <View key={i} style={{height: "100%", width: 1, backgroundColor: "#585858", borderRadius: 99999, position: "relative", top: 0, left: 0, transform: [{translateY: -2*backGridTopOffset}, {scaleY: 1.3}], opacity: (i === verticalGraphDivisionsCount-1 || i === 0) ? 0 : 1}} >
+                    
+                        </View>
+                    )
+                })}
             </View>
 
             {/* Dates, beginning and end */}

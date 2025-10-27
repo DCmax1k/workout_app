@@ -57,6 +57,7 @@ const IndexProgress = () => {
       pathname: "/progressExpanded",
       params: {
         data: JSON.stringify(data),
+        fillDaily: categoryData.fillDaily ?? null,
       },
     });
   } 
@@ -72,6 +73,7 @@ const IndexProgress = () => {
       pathname: "/progressExpanded",
       params: {
         data: JSON.stringify(data),
+        fillDaily: "last",
       },
     });
   }
@@ -331,6 +333,7 @@ const IndexProgress = () => {
                           style={{marginBottom: 20}}
                           fillWidth={true}
                           disablePress={true}
+                          fillDaily={"last"}
                         />
                       )}
 
@@ -364,6 +367,7 @@ const IndexProgress = () => {
                 const dates = widget.data.map(it => it.date);
                 widget.calculatedData = data;
                 widget.calculatedDates = dates;
+                widget.fillDaily = "last";
 
                 
                 if (key === 'water intake') {
@@ -373,6 +377,7 @@ const IndexProgress = () => {
                     if (!lastDate || lastDate.toDateString() !== today.toDateString()) {
                       widget.calculatedData = [...data, 0];
                       widget.calculatedDates = [...dates, today.toISOString()];
+                      widget.fillDaily = "zero";
                     }
                   }
                 
@@ -391,7 +396,7 @@ const IndexProgress = () => {
                     <TouchableOpacity
                       onLongPress={drag}
                       disabled={isActive}
-                      onPress={() => openProgressExpanded(item.key, item.widget)}
+                      onPress={() => openProgressExpanded(item.key, widget)}
                       style={{width: item.width, marginHorizontal: 20}}
                     >
                     <GraphWidget
@@ -403,6 +408,7 @@ const IndexProgress = () => {
                       color={widget.color || "#546FDB"}
                       style={{marginBottom: 20}}
                       disablePress={true}
+                      fillDaily={widget.fillDaily}
                     />
                     </TouchableOpacity>
                   </ScaleDecorator>

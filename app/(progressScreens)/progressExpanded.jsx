@@ -36,6 +36,8 @@ const ProgressExpanded = () => {
 
   const wi = user.tracking.logging[w.category] || user.tracking.insights[w.category] || w;
 
+  const fillDaily = params.fillDaily ?? null;
+
   let widget;
   if (w.layout === 'exercise') {
     widget = w;
@@ -430,6 +432,7 @@ const ProgressExpanded = () => {
               zeroMissingData={widget.zeroMissingData}
               showDecimals={widget.category === "expenditure" ? 0 : 2}
               animationDuration={1000}
+              fillDaily={fillDaily}
             />
           </View>
 
