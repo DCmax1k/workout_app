@@ -18,6 +18,7 @@ import ProgressBar from '../../components/ProgressBar'
 import ExpenditureBreakdown from '../../components/extra/ExpenditureBreakdown'
 import sinceWhen from '../../util/sinceWhen'
 import findInsertIndex from '../../util/findInsertIndex'
+import fillDailyData from '../../util/fillDailyData'
 
 const screenWidth = Dimensions.get('screen').width;
 
@@ -92,15 +93,24 @@ const ProgressExpanded = () => {
 
   let mostRecentValue = widget.data[widget.data.length - 1]?.amount || 0;
   let mostRecentDate = widget.data[widget.data.length - 1]?.date || null;
-  if (widget.layout === "water") {
-    const mostRecentDte = new Date(mostRecentDate);
-    const tdDte = new Date();
-    // NEEDS VERIFICATION IF THIS WORKS
-    if (mostRecentDte.getTime() < tdDte.getTime() && mostRecentDte.toLocaleDateString() !== tdDte.toLocaleDateString()) {
-      mostRecentValue = 0;
-      mostRecentDate = new Date().getTime();
-    }
+  if (widget.calculatedData) {
+    const {dataAmounts: newAmounts, dataDates: newDates} = fillDailyData(widget.calculatedData, widget.calculatedDates, new Date(), fillDaily);
+    mostRecentValue = newAmounts[0];
+    mostRecentDate = newDates[0];
   }
+  
+
+
+  // Replaed with fillDailyData
+  // if (widget.layout === "water") {
+  //   const mostRecentDte = new Date(mostRecentDate);
+  //   const tdDte = new Date();
+  //   // NEEDS VERIFICATION IF THIS WORKS
+  //   if (mostRecentDte.getTime() < tdDte.getTime() && mostRecentDte.toLocaleDateString() !== tdDte.toLocaleDateString()) {
+  //     mostRecentValue = 0;
+  //     mostRecentDate = new Date().getTime();
+  //   }
+  // }
   
 
   //console.log(widget);
@@ -339,9 +349,9 @@ const ProgressExpanded = () => {
                 
                 {/* Last recorded */}
                 <View style={{height: 100, width: (screenWidth-80)/3, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
-                  <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Last recorded</ThemedText>
+                  <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Last Recorded</ThemedText>
                   <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
-                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, textAlign: "center", color: "white", fontWeight: '800'}}>{mostRecentDate ? sinceWhen(mostRecentDate) : "- -"}</ThemedText>
+                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, textAlign: "center", color: "white", fontWeight: '800'}}>{widget.data[widget.data.length-1]?.date ? sinceWhen(widget.data[widget.data.length-1]?.date) : "- -"}</ThemedText>
                   </View>
                   
                 </View>

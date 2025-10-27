@@ -1,56 +1,64 @@
-function fillDailyData(dataAmounts, dataDates, sinceDate, fillWith = "last") {
-  if (
-    !Array.isArray(dataAmounts) ||
-    !Array.isArray(dataDates) ||
-    dataAmounts.length !== dataDates.length ||
-    dataAmounts.length === 0
-  ) {
-    return { dataAmounts: [], dates: [] };
+import getDateKey from "./getDateKey";
+
+function fillDailyData(data, dates, sinceDate, fillWith = "last") {
+  if (!data.length || !dates.length) return { dataAmounts: [], dataDates: [] };
+
+  // Sort pairs just in case (though you said they’re in order)
+  const paired = data
+    .map((value, i) => ({ value, date: new Date(dates[i]) }))
+    .sort((a, b) => a.date - b.date);
+
+  // Group by day (using yyyy-mm-dd)
+  const dailyMap = new Map();
+  for (const { value, date } of paired) {
+    const dayKey = getDateKey(date);
+    dailyMap.set(dayKey, value);
   }
 
-  // Combine and sort to ensure chronological order
-  const combined = dataDates.map((d, i) => ({ date: d, amount: dataAmounts[i] }));
-  combined.sort((a, b) => a.date - b.date);
+  const resultAmounts = [];
+  const resultDates = [];
 
-  const since = new Date(sinceDate);
-  since.setHours(0, 0, 0, 0);
+  const start = new Date(sinceDate);
+  const now = new Date();
 
-  const lastDate = new Date(combined[combined.length - 1].date);
-  lastDate.setHours(0, 0, 0, 0);
+  let currentDate = new Date(start);
+  let lastKnownValue = null;
 
-  // Map of last entry per day
-  const dayMap = new Map();
-  for (const { date, amount } of combined) {
-    const d = new Date(date);
-    d.setHours(0, 0, 0, 0);
-    dayMap.set(d.getTime(), amount); // overwrite so last one per day stays
+  // Find last known value before sinceDate (if fillWith = "last")
+  if (fillWith === "last") {
+    for (const { value, date } of paired) {
+      if (date < start) lastKnownValue = value;
+      else break;
+    }
   }
 
-  const outputAmounts = [];
-  const outputDates = [];
+  // Loop day by day until today
+  while (currentDate <= now) {
+    const dayKey = getDateKey(currentDate);
+    const timestamp = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate()
+    ).getTime();
 
-  let current = new Date(since);
-  let lastKnown = null;
-
-  while (current <= lastDate) {
-    const key = current.getTime();
-
-    if (dayMap.has(key)) {
-      lastKnown = dayMap.get(key);
-      outputAmounts.push(lastKnown);
+    if (dailyMap.has(dayKey)) {
+      lastKnownValue = dailyMap.get(dayKey);
+      resultAmounts.push(lastKnownValue);
     } else {
-      if (fillWith === "last" && lastKnown !== null) {
-        outputAmounts.push(lastKnown);
+      if (fillWith === "last") {
+        resultAmounts.push(lastKnownValue ?? 0);
       } else {
-        outputAmounts.push(0);
+        resultAmounts.push(0);
       }
     }
 
-    outputDates.push(key);
-    current.setDate(current.getDate() + 1);
+    resultDates.push(timestamp);
+
+    // Next day
+    currentDate.setDate(currentDate.getDate() + 1);
   }
 
-  return { dataAmounts: outputAmounts, dataDates: outputDates };
+  return { dataAmounts: resultAmounts, dataDates: resultDates };
 }
 
 export default fillDailyData;

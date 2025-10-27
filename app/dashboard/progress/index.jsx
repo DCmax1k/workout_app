@@ -371,16 +371,19 @@ const IndexProgress = () => {
 
                 
                 if (key === 'water intake') {
-                    // If last item of data is not from today, add a 0 value for today
-                    const today = new Date();
-                    const lastDate = dates[dates.length -1] ? new Date(dates[dates.length -1]) : null;
-                    if (!lastDate || lastDate.toDateString() !== today.toDateString()) {
-                      widget.calculatedData = [...data, 0];
-                      widget.calculatedDates = [...dates, today.toISOString()];
-                      widget.fillDaily = "zero";
-                    }
-                  }
-                
+                  widget.fillDaily = "zero";
+                  // If last item of data is not from today, add a 0 value for today - Dont need from fillDailyData
+                  // const today = new Date();
+                  // const lastDate = dates[dates.length -1] ? new Date(dates[dates.length -1]) : null;
+                  // if (!lastDate || lastDate.toDateString() !== today.toDateString()) {
+                  //   widget.calculatedData = [...data, 0];
+                  //   widget.calculatedDates = [...dates, today.toISOString()];
+                  //   
+                  // }
+                }
+                if (key === "sleep amount") {
+                  widget.fillDaily = "zero";
+                }
 
                 return (
                   

@@ -1,4 +1,4 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import LineGraph from './LineGraph'
 import Spacer from './Spacer'
@@ -35,15 +35,19 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
         data = [oriData[0] || 0, oriData[0] || 0];
         dates = [oriDates[0] || today.getTime(), oriDates[0] || today.getTime()];
     }
-    data = data.filter((d, ind) => new Date(dates[ind]).getTime() >= sixMonthsAgo.getTime());
-    dates = dates.filter((d, ind) => new Date(dates[ind]).getTime() >= sixMonthsAgo.getTime());
 
-    // Use fillMissingDataPerDay here so that the graph fills in the last info or zero data to section out the data
+     // Use fillMissingDataPerDay here so that the graph fills in the last info or zero data to section out the data
     if (fillDaily) {
         const {dataAmounts: newAmounts, dataDates: newDates} = fillDailyData(data, dates, sixMonthsAgo, fillDaily);
         data = newAmounts;
         dates = newDates;
+    } else {
+        data = data.filter((d, ind) => new Date(dates[ind]).getTime() >= sixMonthsAgo.getTime());
+        dates = dates.filter((d, ind) => new Date(dates[ind]).getTime() >= sixMonthsAgo.getTime());
     }
+    
+
+   
     
 
 
@@ -96,6 +100,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
     if (isNaN(percentDifference)) percentDifference = 0;
     if (!isFinite(percentDifference)) percentDifference = 100;
     const isPositive = percentDifference > 0 ? true : false;
+    const showPercentDifference = fillDaily !== "zero";
 
     const [graphHeight, setGraphHeight] = React.useState(0);
 
@@ -129,7 +134,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
     }
     
   return (
-    <View style={[styles.container, (fullWidget || fillWidth) ? {flex: 1, width: "100%", height: 205,} : {width: 200, height: 170,}, fullWidget && {height: 350}, props.style]} >
+    <View style={[styles.container, (fullWidget || fillWidth) ? {flex: 1, width: "100%", height: Platform.OS === "ios" ? 205 : 210,} : {width: 200, height: 170,}, fullWidget && {height: 350}, props.style]} >
         {fullWidget === false && disablePress === false && (<Pressable style={{position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 10}} onPress={onPress} />)} 
 
         <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
@@ -150,7 +155,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
 
            <View>
                 {(props.subtitle?.length > 0  === true) && (<Text  style={styles.title}>{props.subtitle}</Text>)}
-                {fullWidget && (<View style={{flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end"}}>
+                {fullWidget && showPercentDifference && (<View style={{flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end"}}>
                     <Text style={[{fontSize: 16, color: isPositive ? "#86BE79" : "#FF8686", fontWeight: "700"}]}>{isPositive ? "+":""}{percentDifference}%</Text>
                 </View>)}
             </View>
@@ -254,7 +259,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
         {/* Preview footer */}
         { fullWidget === false && hideFooter === false && (<View>
             <View style={{flexDirection: "row", alignItems: "center"}}>
-                <Text style={[styles.bottomText, {color: isPositive ? "#86BE79" : "#FF8686", fontWeight: "700"}]}>{isPositive ? "+":""}{percentDifference}%</Text>
+                {showPercentDifference && (<Text style={[styles.bottomText, {color: isPositive ? "#86BE79" : "#FF8686", fontWeight: "700"}]}>{isPositive ? "+":""}{percentDifference}%</Text>)}
                 {noData ? null : <Text style={styles.bottomText}>since {sinceWhen(dates[0])}</Text>}
                 <Image style={styles.arrowImage} source={RightArrow} />
             </View>

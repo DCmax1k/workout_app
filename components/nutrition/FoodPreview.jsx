@@ -63,10 +63,10 @@ const FoodPreview = ({style, food, setFoodPreviewOpen, editFood, ...props}) => {
             <View style={{width: "100%", flexDirection: "row", justifyContent: "space-around"}}>
                 {/* Caloie ring */}
                 <View style={{alignItems: "center"}}>
-                    <Text style={{color: Colors.primaryBlue, fontSize: 10, marginBottom: 10}}>Protein</Text>
+                    <Text style={{color: Colors.primaryBlue, fontSize: 10, marginBottom: 10}}>Calories</Text>
                     <ProgressRing value={calorieCount} target={calorieGoal} size={((screenWidth-60)/2)/3} strokeWidth={5} progressColor={Colors.primaryBlue} delay={0} >
                         <View style={{alignItems: "center"}}>
-                            <Text style={{fontSize: 12, fontWeight: "800", color: "white"}}>{Math.round(calorieCount)}g</Text>
+                            <Text style={{fontSize: 12, fontWeight: "800", color: "white"}}>{Math.round(calorieCount)}</Text>
                         </View>
                     </ProgressRing>
                     

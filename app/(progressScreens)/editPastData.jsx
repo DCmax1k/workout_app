@@ -166,10 +166,11 @@ const EditPastData = () => {
             <View style={{width: "50%", height: 2, borderRadius: 999, backgroundColor: "#AAAAAA", marginHorizontal: "auto"}}></View>
             <Spacer height={10} />
 
+            {/* Fill Daily Data fixed this problem */}
             {/* Only show if the selectedDate is today or earlier */}
-            {(selectedDate.getTime() < new Date().getTime() || selectedDate.toLocaleDateString() === new Date().toLocaleDateString()) && (
+            {/* {(selectedDate.getTime() < new Date().getTime() || selectedDate.toLocaleDateString() === new Date().toLocaleDateString()) && ( */}
                 <BlueButton title={"Add new data point"} icon={plusIcon} onPress={addDataPoint} />
-            )}
+            {/* )} */}
            
 
             <Spacer height={10} />
