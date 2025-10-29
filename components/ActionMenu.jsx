@@ -36,7 +36,7 @@ const MeasureMenuItems = ({ data, onMeasured }) => {
 };
 
 
-const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style, offset = false, ...props }) => {
+const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style, pressableStyle, offset = false, ...props }) => {
   const [active, setActive] = useState(false);
   const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
   const buttonRef = useRef(null);
@@ -92,6 +92,7 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
       <Pressable
         ref={buttonRef}
         onPress={openMenu}
+        style={pressableStyle}
       >
         {props.children ? (
           {...props.children}

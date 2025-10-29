@@ -20,10 +20,17 @@ const TitleWithBack = ({style, backBtn = true, backFunction = () => router.back(
             <Image style={styles.backBtnIcon} source={rightArrow} />
         </Pressable>}
         
-        <ThemedText numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 20, fontWeight: 700, textAlign: 'center'}}>{props.title}</ThemedText>
+        <View style={{width: "100%", alignItems: "center"}}>
+            <View style={{maxWidth: "70%",}}>
+                <ThemedText numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 20, fontWeight: 700, textAlign: 'center',}}>{props.title}</ThemedText>
+            </View>
+            
+        </View>
+        
+        
 
         {(actionBtn.actionMenu === true) && (actionBtn.options.length > 0) ? (
-            <ActionMenu style={styles.actionBtn} data={actionBtn.options} />
+            <ActionMenu pressableStyle={styles.actionBtn} data={actionBtn.options} />
         ) : null }
         {actionBtn.active &&
         <Pressable onPress={actionBtn.action} style={styles.actionBtn}>

@@ -1,18 +1,21 @@
 import { Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
-import LineGraph from './LineGraph'
-import Spacer from './Spacer'
-import { Colors } from '../constants/Colors'
-import RightArrow from '../assets/icons/rightArrow.png'
-import SectionSelect from './SectionSelect'
-import sinceWhen from '../util/sinceWhen'
-import fillDailyData from '../util/fillDailyData'
+import LineGraph from '../LineGraph'
+import Spacer from '../Spacer'
+import { Colors } from '../../constants/Colors'
+import RightArrow from '../../assets/icons/rightArrow.png'
+import SectionSelect from '.././SectionSelect'
+import sinceWhen from '../../util/sinceWhen'
+import fillDailyData from '../../util/fillDailyData'
 // import fillDailyData from '../util/fillDailyData'
 
-const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=[], dates = [], showWarning = false, initialSectionIndex=0, showDecimals=2, onPress = () => {}, disablePress=false, animationDuration=0, hideFooter=false, ...props}) => {
+const EnergyBalanceGraph = ({fullWidget = false, fillWidth=false, fillDaily=null, data=[], dates = [], calorieData=[], calorieDates=[], showWarning = false, initialSectionIndex=0, showDecimals=0, onPress = () => {}, disablePress=false, animationDuration=0, hideFooter=false, ...props}) => {
 
     const oriData = JSON.parse(JSON.stringify(data));
     const oriDates = JSON.parse(JSON.stringify(dates));
+    const oriCalorieData = JSON.parse(JSON.stringify(calorieData));
+    const oriCalorieDates = JSON.parse(JSON.stringify(calorieDates));
+
 
     const sectionOptions = ["Daily", "Weekly", "Monthly"]; // Daily shows 7 days, weeklyshows 4 weeks (28 days), monthly shows 6 months (180 days);
     const [section, setSection] = useState(sectionOptions[initialSectionIndex]);
@@ -21,7 +24,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
     const sixMonthsAgo = new Date();
     const dayOffset = section===sectionOptions[0] ? 7 : section===sectionOptions[1] ? 28 : 180
     const verticalGraphDivisionsCount = section===sectionOptions[0] ? 7+1 : section===sectionOptions[1] ? 4+1 : 6+1; // 7 (days), 4 (weeks), 6 (months); plus 1 for space-between justified
-    const strokeWidth = section===sectionOptions[0] ? 7 : section===sectionOptions[1] ? 5 : 2;
+    const strokeWidth = section===sectionOptions[0] ? 3 : section===sectionOptions[1] ? 3 : 3;
     sixMonthsAgo.setDate(sixMonthsAgo.getDate() - dayOffset);
     sixMonthsAgo.setHours(0, 0, 0, 0);
 
@@ -29,58 +32,12 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
     today.setHours(0, 0, 0, 0);
 
    
-
-
-    if (data.length < 2) {
-        data = [oriData[0] || 0, oriData[0] || 0];
-        dates = [oriDates[0] || today.getTime(), oriDates[0] || today.getTime()];
-    }
+    
 
      // Use fillMissingDataPerDay here so that the graph fills in the last info or zero data to section out the data
-    if (fillDaily) {
-        const {dataAmounts: newAmounts, dataDates: newDates} = fillDailyData(data, dates, sixMonthsAgo, fillDaily);
-        data = newAmounts;
-        dates = newDates;
-    } else {
-        data = data.filter((d, ind) => new Date(dates[ind]).getTime() >= sixMonthsAgo.getTime());
-        dates = dates.filter((d, ind) => new Date(dates[ind]).getTime() >= sixMonthsAgo.getTime());
-    }
-    
-
-   
-    
-
-
-    // else {
-    //     if (section === sectionOptions[0]) {
-    //         // Past 5
-    //         if (data.length > 5) {
-    //             data = oriData.splice(oriData.length - 5, 5);
-    //             dates = oriDates.splice(oriDates.length - 5, 5);
-    //         }
-            
-    //     } else if (section === sectionOptions[1]) {
-    //         // Past 10
-    //         if (data.length > 10) {
-    //             data = oriData.splice(oriData.length - 10, 10);
-    //             dates = oriDates.splice(oriDates.length - 10, 10);
-    //         }
-    //     } else {
-    //         // Monthly - Past 180 days
-    //         data = oriData;
-    //         dates = oriDates;
-    //     }
-    // }
-    if (data.length < 2 && oriData.length > 0) {
-        data = [oriData[oriData.length -1], oriData[oriData.length -1]];
-        dates = [oriDates[oriDates.length -1], oriDates[oriDates.length -1]];
-    }
-
-    
-
-    
-
-
+    data = oriData.filter((d, ind) => new Date(oriDates[ind]).getTime() >= sixMonthsAgo.getTime());
+    dates = oriDates.filter((d, ind) => new Date(oriDates[ind]).getTime() >= sixMonthsAgo.getTime());
+    calorieData = oriCalorieData.filter((d, ind) => new Date(oriCalorieDates[ind]).getTime() >= sixMonthsAgo.getTime());
     
 
 
@@ -94,6 +51,10 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
     
     const firstItem = data[0] || 0;
     const lastItem = data[data.length - 1] || 0;
+
+    const mostRecentCalorie = parseInt(calorieData[calorieData.length -1] || 0);
+    const mostRecentExpenditure = parseInt(lastItem);
+    const energyDifference = mostRecentCalorie - mostRecentExpenditure;
 
     const percentDifferenceTemp =  100*((lastItem-firstItem)/firstItem);
     let percentDifference = Math.round(percentDifferenceTemp * 10) / 10; // round to 1 decimal place
@@ -132,12 +93,14 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
     const parseDecimals = (value, fixedTo = 0) => {
         return parseFloat(parseFloat(value).toFixed(fixedTo));
     }
+
+    const maxDataValue = Math.max(...calorieData, ...data);
     
   return (
     <View style={[styles.container, (fullWidget || fillWidth) ? {flex: 1, width: "100%", height: Platform.OS === "ios" ? 205 : 210,} : {width: 200, height: 170,}, fullWidget && {height: 350}, props.style]} >
         {fullWidget === false && disablePress === false && (<Pressable style={{position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 10}} onPress={onPress} />)} 
 
-        <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
+        <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between",}}>
             <View>
                 <View style={{flexDirection: "row", alignItems: "center", marginBottom: 5}}>
                     {showWarning && (<View style={{height: 22, width: 22, backgroundColor: "#B13939", borderRadius: 99999, justifyContent: "center", alignItems: "center", marginRight: 5}}>
@@ -147,17 +110,24 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
                     
                 </View>
                 
-                <View style={{flexDirection: "row", alignItems: "flex-end"}}>
-                    <Text style={styles.amount}>{noData ? "No data" : parseDecimals(lastItem, showDecimals)}</Text>
-                    <Text style={styles.unit}>{noData ? "" : props.unit}</Text>
+                <View style={{flexDirection: "row", alignItems: "center"}}>
+                    <Text style={{fontSize: 17, color: Colors.primaryBlue}}>{mostRecentCalorie}</Text>
+                    <Text style={{fontSize: 12, color: "#939393", marginHorizontal: 7}}>-</Text>
+                    <Text style={{fontSize: 17, color: Colors.primaryOrange}}>{mostRecentExpenditure}</Text>
+                    <Text style={{fontSize: 12, color: "#939393", marginHorizontal: 7}}>=</Text>
+                    <Text style={{fontSize: 17, color: "white", fontWeight: "800"}}>{energyDifference}</Text>
                 </View>
             </View>
 
-           <View>
-                {(props.subtitle?.length > 0  === true) && (<Text  style={styles.title}>{props.subtitle}</Text>)}
-                {fullWidget && showPercentDifference && (<View style={{flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end"}}>
-                    <Text style={[{fontSize: 16, color: isPositive ? "#86BE79" : "#FF8686", fontWeight: "700"}]}>{isPositive ? "+":""}{percentDifference}%</Text>
-                </View>)}
+           <View style={{flexDirection: "column"}}>
+                    <View style={{flexDirection: "row", alignItems: "center", marginBottom: 3}}>
+                        <View style={{height: 6, width: 6, backgroundColor: Colors.primaryBlue, marginRight: 5, borderRadius: 999}} />
+                        <Text style={{fontSize: 12, color: "#939393", fontWeight: "400"}}>Calories</Text>
+                    </View>
+                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                        <View style={{height: 6, width: 6, backgroundColor: Colors.primaryOrange, marginRight: 5, borderRadius: 999}} />
+                        <Text style={{fontSize: 12, color: "#939393", fontWeight: "400"}}>Expenditure</Text>
+                    </View>
             </View>
             
 
@@ -168,7 +138,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
 
         <View style={{ paddingRight: backGridRightOffset, marginLeft: fullWidget ? 10 : 5, marginBottom: fullWidget ? 50 : 20, width: "100%", zIndex: 1}} onLayout={(e) => setGraphHeight(e.nativeEvent.layout.height) }>
             {/* SVG graph */}
-            <LineGraph data={data} color={props.color} duration={animationDuration} aspectRatio={fullWidget ? 1/2 : 1/4} strokeWidth={strokeWidth} />
+            <LineGraph style={{zIndex: 1}} data={data} color={props.color} duration={animationDuration} otherMaxValue={maxDataValue} aspectRatio={fullWidget ? 1/2 : 1/4} strokeWidth={strokeWidth} dashed={true} />
 
             {/* Back grid Three data horizontal line */}
             <View style={{ paddingVertical: backGridTopOffset, paddingRight: backGridRightOffset, zIndex: -1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", justifyContent: "space-between", alignItems: "center"}}>
@@ -183,7 +153,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
                 {(<View style={{width: "100%", height: 1, backgroundColor: "#585858", borderRadius: 99999, position: "relative", top: 0, left: 0, transform: [{translateY: -2*backGridTopOffset}], opacity: showMax ? 1 : 0}} >
                     
                     <View style={{position: "absolute", height: 50, top: -25, left: "101%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                        <Text style={{color: "#848484", fontSize: 12}}>{parseDecimals(max, showDecimals)}</Text>
+                        <Text style={{color: "#848484", fontSize: 12}}>{parseDecimals(maxDataValue, showDecimals)}</Text>
                     </View>
                 </View>)}
 
@@ -209,7 +179,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
             </View>
 
             {/* Back grid verticalGraphDivisionsCount vertical lines */}
-            <View style={{ paddingVertical: backGridTopOffset, paddingRight: backGridRightOffset, zIndex: -1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+            {/* <View style={{ paddingVertical: backGridTopOffset, paddingRight: backGridRightOffset, zIndex: -1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
                 {new Array(verticalGraphDivisionsCount).fill(null).map((v, i) => {
                     return (
                         <View key={i} style={{height: "100%", width: 1, backgroundColor: "#585858", borderRadius: 99999, position: "relative", top: 0, left: 0, transform: [{translateY: -2*backGridTopOffset}, {scaleY: 1.3}], opacity: (i === verticalGraphDivisionsCount-1 || i === 0) ? 0 : 1}} >
@@ -217,10 +187,23 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
                         </View>
                     )
                 })}
+            </View> */}
+
+            {/* Calorie bars */}
+            <View style={{ paddingVertical: backGridTopOffset, paddingRight: backGridRightOffset, zIndex: -1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end"}}>
+                {calorieData.map((v, i) => {
+                    const height = (calorieData[i]/maxDataValue) * graphHeight;
+                    return (
+                        <View key={i} style={{height, width: 5, backgroundColor: Colors.primaryBlue, borderRadius: 99999, position: "relative", top: 0, left: 0, transform: [{translateY: -2*backGridTopOffset}],}} >
+                    
+                        </View>
+                    )
+                })}
             </View>
 
-            {/* Dates, beginning and end */}
-            {fullWidget === true && (<View style={{ paddingVertical: backGridTopOffset, marginRight: backGridRightOffset, zIndex: -1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+
+            {/* Dates, beginning and end - energy balance force true */}
+            {(true || fullWidget === true ) && (<View style={{ paddingVertical: backGridTopOffset, marginRight: backGridRightOffset, zIndex: -1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
 
                 {(<View style={{width: 1, height: 7, backgroundColor: "#585858", borderRadius: 99999, position: "absolute", top: "99%", left: 0,  }} >
                     
@@ -270,7 +253,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
   )
 }
 
-export default GraphWidget
+export default EnergyBalanceGraph;
 
 const styles = StyleSheet.create({
     container: {

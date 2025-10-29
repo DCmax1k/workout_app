@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ThemedView from '../../components/ThemedView'
 import { router, useLocalSearchParams } from 'expo-router';
@@ -16,11 +16,12 @@ import { useUserStore } from '../../stores/useUserStore';
 import formatTime from '../../util/formatTime';
 import ActionMenu from '../../components/ActionMenu';
 import SwipeToDelete from '../../components/SwipeToDelete';
-import { SCREEN_WIDTH } from '@gorhom/bottom-sheet';
 import { Colors } from '../../constants/Colors';
 import BlueButton from '../../components/BlueButton';
 import emitter from '../../util/eventBus';
 import findInsertIndex from '../../util/findInsertIndex';
+
+const SCREEN_WIDTH = Dimensions.get('screen').width;
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -155,7 +156,7 @@ const EditPastData = () => {
     <ThemedView style={[styles.container, ]}>
         <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
         <SafeAreaView style={{flex: 1, marginBottom: -50}}>
-            <TitleWithBack title={"Edit " + data.title} style={{marginHorizontal: -20}} actionBtn={{actionMenu: true, image: require("../../assets/icons/threeEllipses.png"), options: [ {title: "Reset data", icon: rotate, onPress: () => requestResetData(),}]}} />
+            <TitleWithBack title={"Edit " + data.title} style={{marginHorizontal: -20}} actionBtn={{actionMenu: true, image: require("../../assets/icons/threeEllipses.png"), options: [ {title: "Reset data", icon: rotate, onPress: () => requestResetData(), color: Colors.redText}]}} />
 
             <Spacer height={20} />
 

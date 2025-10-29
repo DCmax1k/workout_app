@@ -33,6 +33,9 @@ import ActionMenu from '../../components/ActionMenu'
 import { useIsFocused } from '@react-navigation/native'
 import { Portal } from 'react-native-paper'
 import MealPreview from '../../components/nutrition/MealPreview'
+import { Platform } from 'react-native'
+import EnergyBalanceGraph from '../../components/nutrition/EnergyBalanceGraph'
+import calculateExpenditure from '../../util/calculateExpenditure'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -227,6 +230,8 @@ const Nutrition = () => {
 
     const menuOptions = [{title: "Hide widget", icon: noEye, onPress: () => console.log(""),}]
 
+    const expenditureData = calculateExpenditure(user);
+
     // const calorieData = [3454, 3453, 1345, 2346, 4442, 3654, 1346, 2345, 5234, 1160];
     // const calorieDates = [Date.now(), Date.now(), Date.now(), Date.now(), Date.now(), Date.now(), Date.now(), Date.now(), Date.now(), Date.now(),];
     const calorieCalculation = calculateCalories(user, 29);
@@ -355,6 +360,14 @@ const Nutrition = () => {
         })
     }
 
+    const openConsumedMealHistory = () => {
+        router.push({
+            pathname: '/consumedMealsHistory',
+        })
+    }
+
+    const caloriesGraphHeight = Platform.OS==="ios"?205:210;
+
     return (
         <>
         <ThemedView style={styles.container}>
@@ -410,27 +423,48 @@ const Nutrition = () => {
 
                     
                     <Spacer height={10} />
-                    <PageSwiper ref={pageSwiperRef} width={screenWidth} height={215} >
-                        <View style={{height: 185, width: pageSwipeWidth}}>
-                            <GraphWidget
-                                fillWidth={true}
-                                data={calorieData}
-                                dates={calorieDates}
-                                title={"Energy Intake"}
-                                subtitle={"Last 30 days"}
-                                unit={"/" + colorieGoal + " calories"}
-                                color={"#546FDB"}
-                                disablePress={true}
-                                style={[styles.widgetCont, { height: 185}]}
-                                titleStyles={{fontWeight: "800", color: "white", fontSize: 16, marginBottom: -3}}
-                                hideFooter={true}
-                                animationDuration={widgetAnimationDuration}
-                            />
+                    <PageSwiper ref={pageSwiperRef} width={screenWidth} height={caloriesGraphHeight+30} >
+                        <View style={{height: caloriesGraphHeight, width: pageSwipeWidth}}>
+                            <Pressable style={{flex: 1}} onPress={showComingSoonMessage}>
+                                <GraphWidget
+                                    fillWidth={true}
+                                    data={calorieData}
+                                    dates={calorieDates}
+                                    title={"Energy Intake"}
+                                    subtitle={"Last 30 days"}
+                                    unit={"/" + colorieGoal + " calories"}
+                                    color={"#546FDB"}
+                                    disablePress={true}
+                                    style={[styles.widgetCont]}
+                                    titleStyles={{fontWeight: "800", color: "white", fontSize: 16, marginBottom: -3}}
+                                    hideFooter={false} // Used to be true
+                                    initialSectionIndex={1}
+                                    animationDuration={widgetAnimationDuration}
+                                />
+                            </Pressable>
+                            
                         </View>
-                        <View style={{height: 185, width: pageSwipeWidth}}>
-                            <ThemedText style={{flex: 1, textAlign: "center", padding: 10}}>oh hey there... this is awkward, nothing here yet</ThemedText>
-                            <Spacer height={10} />
-                            <ThemedText style={{flex: 1, textAlign: "center", padding: 10}}>how about lets pretend you see the energy balance graph here</ThemedText>
+                        <View style={{height: caloriesGraphHeight, width: pageSwipeWidth}}>
+                            <Pressable style={{flex: 1}} onPress={showComingSoonMessage}>
+                                <EnergyBalanceGraph
+                                    fillWidth={true}
+                                    data={expenditureData.data}
+                                    dates={expenditureData.dates}
+                                    calorieData={calorieData}
+                                    calorieDates={calorieDates}
+                                    title={"Energy Balance"}
+                                    subtitle={"Last 30 days"}
+                                    unit={"/" + colorieGoal + " calories"}
+                                    color={Colors.primaryOrange}
+                                    disablePress={true}
+                                    style={[styles.widgetCont]}
+                                    titleStyles={{fontWeight: "800", color: "white", fontSize: 16, marginBottom: -3}}
+                                    hideFooter={true}
+                                    initialSectionIndex={1}
+                                    animationDuration={0}
+                                />
+                            </Pressable>
+                            
                         </View>
                         
                     </PageSwiper>
@@ -505,7 +539,7 @@ const Nutrition = () => {
                         {/* Todays consumption */}
                         <View style={{flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
                             <ThemedText style={ [{fontSize: 15, fontWeight: "700"}]} >Todays Consumption</ThemedText>
-                            <Pressable onPress={showComingSoonMessage} style={{}}>
+                            <Pressable onPress={openConsumedMealHistory} style={{}}>
                                 <ThemedText style={{textAlign: "center", textDecorationLine: "underline"}}>View history</ThemedText>
                             </Pressable>
                         </View> 
@@ -530,7 +564,7 @@ const Nutrition = () => {
 
                                 return (
                                     <Pressable onPress={() => openMeal(meal)} key={meal.date + "" + meal.id} style={{marginTop: 10}} >
-                                        <ConsumedMealCard actionMenuData={actionMenuData} meal={meal} requestRemoveMeal={requestRemoveMeal} />
+                                        <ConsumedMealCard actionMenuData={actionMenuData} meal={meal} />
                                     </Pressable>
                                     
                                 )

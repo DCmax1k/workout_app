@@ -174,11 +174,16 @@ const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 const LineGraph = ({
   data,
+  otherMaxValue = 0,
   aspectRatio = 0.5,
   color = 'black',
   strokeWidth = 7,
   duration = 1000,
   delay = 0,
+  dashed = false,
+  dashPattern = [5, 7], 
+  style,
+  ...props
 }) => {
   const [width, setWidth] = useState(0);
   const height = width * aspectRatio;
@@ -189,7 +194,7 @@ const LineGraph = ({
 
   const padding = strokeWidth;
   const min = Math.min(...data);
-  const max = Math.max(...data);
+  const max = Math.max(...data, otherMaxValue);
 
   const yScale = d3.scaleLinear().domain([min, max]).range([height - padding, padding]);
   const xScale = d3.scaleLinear().domain([0, data.length - 1]).range([padding, width - padding]);
@@ -216,12 +221,12 @@ const LineGraph = ({
   }, [data, width, duration, delay]);
 
   const animatedProps = useAnimatedProps(() => ({
-    strokeDasharray: pathLength,
+    strokeDasharray: dashed ? dashPattern.join(',') : pathLength,
     strokeDashoffset: pathLength - progress.value,
   }));
 
   return (
-    <View style={{ width: '100%' }} onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
+    <View style={[{ width: '100%' }, style]} onLayout={(e) => setWidth(e.nativeEvent.layout.width)} {...props}>
       {width > 0 && (
         <Svg width={width} height={height}>
           <AnimatedPath

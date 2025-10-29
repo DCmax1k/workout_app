@@ -73,8 +73,8 @@ const MealPreview = ({style, meal, setMealPreviewOpen, addMealToPlate, editMeal,
                 <Image source={whiteX} style={{ height: 30, width: 30, marginRight: 5}} />
             </Pressable>
             
-            <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, }}>
-                <Text adjustsFontSizeToFit style={[styles.screenText,]}>{meal.name}</Text>
+            <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, maxWidth: "60%" }}>
+                <Text adjustsFontSizeToFit numberOfLines={1} style={[styles.screenText,]}>{meal.name}</Text>
             </View>
             
 
@@ -83,7 +83,7 @@ const MealPreview = ({style, meal, setMealPreviewOpen, addMealToPlate, editMeal,
 
         <Spacer height={20} />
 
-        <BlueButton onPress={() => addMealToPlate(meal)} title={"Add Foods to Plate"} />
+        {addMealToPlate && (<BlueButton onPress={() => addMealToPlate(meal)} title={"Add Foods to Plate"} />)}
 
         <Spacer height={20} />
 
