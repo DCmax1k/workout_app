@@ -1,4 +1,4 @@
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ThemedView from '../ThemedView'
 import downloadData from '../../util/server/downloadData';
@@ -6,12 +6,18 @@ import { useUserStore } from '../../stores/useUserStore';
 import ThemedText from '../ThemedText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import greyX from '../../assets/icons/greyX.png'
+import ConfirmMenu from '../ConfirmMenu';
+import { Colors } from '../../constants/Colors';
 
 const ViewDownloadedData = ({style, closeScreen, ...props}) => {
     const user = useUserStore(state => state.user);
+    const updateUser = useUserStore(state => state.updateUser);
 
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState({});
+
+    const [confirmMenuActive, setConfirmMenuActive] = useState(false);
+    const [confirmMenuData, setConfirmMenuData] = useState();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -34,8 +40,32 @@ const ViewDownloadedData = ({style, closeScreen, ...props}) => {
 
     }, [])
 
+    const applyData = (key) => {
+        // Problems with doing for example just schedule would cause errors with non existing workouts
+    }
+
+    const applyAllData = () => {
+        const updates = {...data};
+        updateUser(updates);
+        console.log("Success");
+    }
+
+    const requestApplyAllData = () => {
+        setConfirmMenuData({
+            title: "Are you sure?",
+            subTitle: "All the data shown will overwrite any data saved on your local account.",
+            subTitle2: "This action cannot be undone. Are you sure you would like to continue?",
+            option1: "Overwrite",
+            option1color: Colors.protein,
+            option2: "Cancel",
+            confirm: applyAllData,
+        });
+        setConfirmMenuActive(true);
+    }
+
   return (
     <ThemedView style={[{flex: 1}, style]} {...props}>
+        <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
         <SafeAreaView style={{flex: 1}}>
             <View style={styles.actionButtons}>
                 <View>
@@ -48,9 +78,9 @@ const ViewDownloadedData = ({style, closeScreen, ...props}) => {
                     </Pressable>
                 </View>
                 <View>
-                    {/* <Pressable onPress={openEditWorkout} style={{paddingHorizontal: 20, paddingVertical: 10, backgroundColor: "#DB8854", borderRadius: 10, }}>
-                        <Text style={{fontSize: 15, color: "white",}}>Edit</Text>
-                    </Pressable> */}
+                    <Pressable onPress={requestApplyAllData} style={{paddingHorizontal: 20, paddingVertical: 10, backgroundColor: "#DB8854", borderRadius: 10, }}>
+                        <Text style={{fontSize: 15, color: "white",}}>Apply All Data</Text>
+                    </Pressable>
                 </View>
             </View>
             <ScrollView style={{flex: 1, }} contentContainerStyle={{paddingBottom: 120}}>
@@ -61,8 +91,11 @@ const ViewDownloadedData = ({style, closeScreen, ...props}) => {
                     <View>
                         {/* <ThemedText>{JSON.stringify(data)}</ThemedText> */}
                         {Object.keys(data).map(key => (
-                            <View>
-                                <ThemedText style={{fontSize: 18, fontWeight: "800", color: "white"}}>{key}:</ThemedText>
+                            <View key={key}>
+                                <View>
+                                    <ThemedText style={{fontSize: 18, fontWeight: "800", color: "white"}}>{key}:</ThemedText>
+                                </View>
+                                
                                 <ThemedText style={{fontSize: 12}}>{JSON.stringify(data[key])}:</ThemedText>
                             </View>
                         ))}
@@ -84,5 +117,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 20,
+        marginHorizontal: 10
     },
 })

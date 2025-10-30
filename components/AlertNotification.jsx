@@ -38,11 +38,11 @@ export default AlertNotification
 
 const styles = StyleSheet.create({
     fullScreenOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: screenWidth,
-    height: screenHeight,
-    pointerEvents: "none",
-  },
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: screenWidth,
+        height: screenHeight,
+        pointerEvents: "none",
+    },
 })

@@ -72,7 +72,7 @@ const AccountRecovery = () => {
             subTitle: "The user data for '" + users[id].username + "' is about to overwrite data for '" + user.username +"'!",
             subTitle2: "This action cannot be undone. Are you sure you would like to continue?",
             option1: "Overwrite",
-            option1color: Colors.redText,
+            option1color: Colors.protein,
             option2: "Cancel",
             confirm: () => replaceUser(id),
         });
@@ -187,7 +187,7 @@ const AccountRecovery = () => {
                                     ];
 
                                     return (
-                                        <Pressable onPress={() => {selectUser(uId)}} key={uId} style={{width: screenWidth-40, marginBottom: 10, backgroundColor: Colors.primaryBlue, padding: 10, borderRadius: 10, flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+                                        <Pressable onPress={() => {selectUser(uId)}} key={uId} style={{width: screenWidth-40, marginBottom: 10, backgroundColor: uId===user._id?"#686868ff":Colors.primaryBlue, padding: 10, borderRadius: 10, flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
                                             <View>
                                                 <Text style={{color: "white"}}>{u.username} {uId==="1"?"- {Beta User}":""} {uId===user._id?"- Current":""}</Text>
                                                 <Text style={{color: "white"}}>{u.savedWorkouts.length} workout{u.savedWorkouts.length===1?"":"s"}</Text>
@@ -213,7 +213,9 @@ const AccountRecovery = () => {
                             <BlueButton title={loadingBackup ? "Loading..." : "Backup all data"} onPress={backupAllData} />
 
                             <Spacer />
-                            <ThemedText style={{textAlign: "center"}}>View data that is backed up here.</ThemedText>
+                            <ThemedText style={{textAlign: "center"}}>To verify your data has been backed up,</ThemedText>
+                            <Spacer height={5} />
+                            <ThemedText style={{textAlign: "center"}}>Fetch and view data that is backed up here.</ThemedText>
                             <Spacer height={10} />
                             <BlueButton title={"Download data and view"} onPress={() => {setPreviewDownloadedData(true)}} />
 
