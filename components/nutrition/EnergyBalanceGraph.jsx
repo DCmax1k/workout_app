@@ -138,7 +138,7 @@ const EnergyBalanceGraph = ({fullWidget = false, fillWidth=false, fillDaily=null
 
         <View style={{ paddingRight: backGridRightOffset, marginLeft: fullWidget ? 10 : 5, marginBottom: fullWidget ? 50 : 20, width: "100%", zIndex: 1}} onLayout={(e) => setGraphHeight(e.nativeEvent.layout.height) }>
             {/* SVG graph */}
-            <LineGraph style={{zIndex: 1}} data={data} color={props.color} duration={animationDuration} otherMaxValue={maxDataValue} aspectRatio={fullWidget ? 1/2 : 1/4} strokeWidth={strokeWidth} dashed={true} />
+            <LineGraph style={{zIndex: 1}} data={data} color={props.color} duration={animationDuration} otherMaxValue={maxDataValue} otherMinValue={0} aspectRatio={fullWidget ? 1/2 : 1/4} strokeWidth={strokeWidth} dashed={true} />
 
             {/* Back grid Three data horizontal line */}
             <View style={{ paddingVertical: backGridTopOffset, paddingRight: backGridRightOffset, zIndex: -1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", justifyContent: "space-between", alignItems: "center"}}>

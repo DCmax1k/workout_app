@@ -538,13 +538,13 @@ const Nutrition = () => {
 
                         {/* Todays consumption */}
                         <View style={{flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
-                            <ThemedText style={ [{fontSize: 15, fontWeight: "700"}]} >Todays Consumption</ThemedText>
+                            <ThemedText style={ [{fontSize: 15, fontWeight: "700"}]} >Today's Consumption</ThemedText>
                             <Pressable onPress={openConsumedMealHistory} style={{}}>
                                 <ThemedText style={{textAlign: "center", textDecorationLine: "underline"}}>View history</ThemedText>
                             </Pressable>
                         </View> 
                         {todaysConsumptionHistory.length === 0 && (
-                            <ThemedText style={{paddingHorizontal: 50, paddingVertical: 20, textAlign: "center"}}>Find meals you eat today here!</ThemedText>
+                            <ThemedText style={{paddingHorizontal: 50, paddingVertical: 20, textAlign: "center"}}>Find meals you consume today here!</ThemedText>
                         )}
 
                         {/* MEALS FROM TODAY */}

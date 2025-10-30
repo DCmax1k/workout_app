@@ -175,6 +175,7 @@ const AnimatedPath = Animated.createAnimatedComponent(Path);
 const LineGraph = ({
   data,
   otherMaxValue = 0,
+  otherMinValue = Infinity,
   aspectRatio = 0.5,
   color = 'black',
   strokeWidth = 7,
@@ -193,7 +194,7 @@ const LineGraph = ({
   const progress = useSharedValue(0);
 
   const padding = strokeWidth;
-  const min = Math.min(...data);
+  const min = Math.min(...data, otherMinValue);
   const max = Math.max(...data, otherMaxValue);
 
   const yScale = d3.scaleLinear().domain([min, max]).range([height - padding, padding]);

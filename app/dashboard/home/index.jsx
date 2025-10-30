@@ -402,9 +402,10 @@ const IndexHome = () => {
           <BlueButton onPress={() => startEmptyWorkout()} title={"Start an empty workout"} icon={playCircle}/>
 
           <Spacer />
-          <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Activity</ThemedText>
+          {/* <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Activity</ThemedText> */}
 
-          <NotificationCard header={"3 min ago"} title={"{Friend} started a workout"} subtitle={"Chest and shoulders"} />
+          
+          {/* <NotificationCard header={"3 min ago"} title={"{Friend} started a workout"} subtitle={"Chest and shoulders"} /> */}
           
 
         </ScrollView>

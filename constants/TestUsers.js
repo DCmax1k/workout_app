@@ -11,15 +11,28 @@ const USER = {
       },
       "visibility": "visible" // visible, hidden
     }], // From seperate collection, Activity, received from server
+    jsonWebToken: null,
 
-    _id: "1",
+    _id: "1", // local user device id. uniqueId, but if 1 then beta user
+    dbId: null, // if null, tell user to log in 
     username: "User1",
     name: 'Test Name',
     email: '',
-    dateJoined: 234234234,
+    dateJoined: null,
     rank: 'user',
     premium: false,
-    premiumFeatures: {},
+    friendRequests: [],// [{friendID:, friendUsername:}]
+    friendsAdded: [], // [{friendID:, friendUsername:}]
+    friends: [], // [friend, friend] -> certain info specified from server. Just ids in db
+    subscriptions: [],
+    profileImg: {},
+    trouble: {},
+    googleId: null,
+    appleId: null,
+    facebookId: null,
+    // End necessary info from database
+    
+
     settings: {
       preferences: {
         heightUnit: "feet", // feet, cm
@@ -29,13 +42,10 @@ const USER = {
       birthday: null, // Date.now()
       gender: null, // male, female, other.
     },
-    prefix: '',
-    friendRequests: [],
-    friendsAdded: [],
-    friends: [],
-    subscriptions: [],
-    profileImg: {},
-    trouble: {},
+    usernameDecoration: {
+      prefixColor: "red",
+      prefix: "",
+    },
     schedule: {
       currentIndex: 0,
       rotation: [
@@ -63,6 +73,9 @@ const USER = {
     foodCategories: [], // "name"
     savedMeals: [], // {name, id, totalNutrition, date, fullMeal }
     consumedMeals: {}, // {"00/00/0000": [{name, id, totalNutrition, fullMeal, ]}
+    pastWorkouts: [], // [{workoutName, time, workoutLength, totalWeightLifted, exercises, fullWorkout}, {workoutName, time, workoutLength, totalWeightLifted, exercises, fullWorkout}, ],
+
+    
 
     tracking: {
       visibleWidgets: ["nutrition"], // ["calories", "ex_89023u42i0jr", "nutrition"] cannot remove nutrition
@@ -192,19 +205,15 @@ const USER = {
       }
     },
 
+    // Moved to top
+    // health: {
+    //   height: 70, // inches
+    //   age: 28,
+    //   gender: "male",
+    // },
 
-    health: {
-      height: 70, // inches
-      age: 28,
-      gender: "male",
-    },
 
-
-    pastWorkouts: [], // [{workoutName, time, workoutLength, totalWeightLifted, exercises, fullWorkout}, {workoutName, time, workoutLength, totalWeightLifted, exercises, fullWorkout}, ],
-    googleId: null,
-    appleId: null,
-    facebookId: null,
-
+    
     // Only local not in live db
     activeWorkout: null, // active working session
     editActiveWorkout: null, // Edit workout screen

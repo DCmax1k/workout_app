@@ -226,6 +226,9 @@ const Profile = () => {
       }
       
     }
+    const openAccountRecovery =() => {
+      router.push('/dashboard/home/accountRecovery');
+    }
 
 
     return (
@@ -418,6 +421,9 @@ const Profile = () => {
               
 
               <BlueButton onPress={clearUserData} title={"Sign out"} />
+              <Spacer />
+              <BlueButton onPress={openAccountRecovery} title={"Account Recovery"} color={Colors.primaryOrange} />
+
             </ScrollView>
           </SafeAreaView>
       </ThemedView>

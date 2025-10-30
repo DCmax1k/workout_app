@@ -4,7 +4,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TestUsers } from '../constants/TestUsers';
 import deepMerge from '../util/deepMerge';
 
-const STORAGE_KEY = 'user-storage';
 const DSTORAGE_KEY = 'data-storage';
 
 
@@ -103,6 +102,12 @@ export const useUserStore = create((set, get) => {
       const fillUser = fillMissingKeys(USER, user);
       const newUsers = { ...get().users, [user._id]: fillUser };
       const newState = { ...get(), user: fillUser, users: newUsers };
+      set(newState);
+      AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newState));
+    },
+
+    hardSetUsers: (users) => {
+      const newState = {...get(), users,};
       set(newState);
       AsyncStorage.setItem(DSTORAGE_KEY, JSON.stringify(newState));
     },
