@@ -1,4 +1,4 @@
-import { Alert, Dimensions, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, Dimensions, Image, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import threeEllipses from '../../assets/icons/threeEllipses.png'
 import greyX from '../../assets/icons/greyX.png'
@@ -18,6 +18,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 import ThemedText from '../ThemedText'
 import OpenExercise from './OpenExercise'
 import { Portal } from 'react-native-paper'
+import { Colors } from '../../constants/Colors'
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -28,6 +29,8 @@ const screenWidth = Dimensions.get("screen").width;
 
 const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWorkoutStyle, drag=()=>{}, dragActive=false, ...props}) => {
     const user = useUserStore((state) => state.user);
+
+    const [focusedInput, setFocusedInput] = useState({ setIndex: null, track: null });
 
     const exerciseNameRef = useRef(null);
     const noteRef = useRef(null);
@@ -290,7 +293,21 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                         <>
                             {exercise.tracks.map(track => {
                                 const placeholderValue = setIndex === 0 ? "0" : getSetValueBefore(setIndex, track);
-                                return (<TextInput selectTextOnFocus keyboardType='numeric' key={setIndex+""+track+""+placeholderValue} style={[styles.column, styles.valueInput]} value={set[track]} onChangeText={(value) => {updateValue(setIndex, track, value)}} placeholder={placeholderValue} placeholderTextColor={"#797979"} />)
+                                return (
+                                <TextInput
+                                caretHidden={Platform.OS === 'android'}
+                                selectTextOnFocus keyboardType='numeric'
+                                key={setIndex+""+track+""+placeholderValue}
+                                style={[
+                                    styles.column, styles.valueInput,
+                                    (focusedInput.setIndex === setIndex && focusedInput.track === track) ? styles.focusedInput : null]}
+                                value={set[track]}
+                                onChangeText={(value) => {updateValue(setIndex, track, value)}}
+                                placeholder={placeholderValue}
+                                placeholderTextColor={"#797979"}
+                                onFocus={() => setFocusedInput({ setIndex, track })}
+                                onBlur={() => setFocusedInput({ setIndex: null, track: null })}
+                                />)
                             })}
                         </>
                         {activeWorkoutStyle && (
@@ -352,6 +369,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: "white",
         fontSize: 13,
+        
     },
     column1: {
         width: 50,
@@ -381,5 +399,10 @@ const styles = StyleSheet.create({
         height: 30,
         paddingTop: 0,
         paddingBottom: 0,
+    },
+    focusedInput: {
+        borderWidth: 1,
+        borderColor: Colors.primaryBlue, 
+        borderRadius: 10,
     }
 })

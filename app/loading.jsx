@@ -1,14 +1,17 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import Loading from '../components/Loading'
 
-const Loading = () => {
+// This loading screen is not used. The loading component is just shown when needed instead
+
+const LoadingScreen = () => {
   return (
     <View>
-      <Text>Loading</Text>
+      {/* <Loading /> */}
     </View>
   )
 }
 
-export default Loading
+export default LoadingScreen
 
 const styles = StyleSheet.create({})

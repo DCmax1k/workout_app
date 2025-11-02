@@ -1,7 +1,7 @@
 import { Dimensions, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useEffect, useRef, useState, version } from 'react'
 import ThemedText from '../../components/ThemedText'
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import ThemedView from '../../components/ThemedView';
 import ConfirmMenu from '../../components/ConfirmMenu';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -152,6 +152,26 @@ const EditFood = () => {
         return food.categories.includes(d.title)
     }).map(c=> c.id);
     const [categoryIds, setCategoryIds] = useState(preSetCategoryIds);
+
+    // Prevent swipe out nav
+    const navigation = useNavigation();
+    const blockNav = useRef(true);
+
+    useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+        if (!blockNav.current) return; // allow navigation if unblocked
+
+        // Otherwise, block it
+        e.preventDefault();
+    });
+
+    return unsubscribe;
+    }, [navigation]);
+    const handleGoBack = () => {
+        blockNav.current = false;
+        //navigation.goBack(); 
+        router.back();
+    };
     
     
     useEffect(() => {
@@ -212,7 +232,8 @@ const EditFood = () => {
     const cancelEdit = () => {
         // Check if edits were made
         if ( deepEqual(foodBeforeEdits, food) ) {
-        router.back()
+        //router.back()
+        handleGoBack();
         } else {
         setConfirmMenuData({
             title: "Leave without saving?",
@@ -221,7 +242,7 @@ const EditFood = () => {
             option1: "Don't save and leave",
             option1color: "#DB5454",
             option2: "Stay",
-            confirm: () => router.back(),
+            confirm: handleGoBack,
         });
         setConfirmMenuActive(true);
         }
@@ -242,13 +263,15 @@ const EditFood = () => {
         } else if (openedFrom === "editMeal") {
             emitter.emit("completeEditOnFoodForEditMeal", ({food}));
         }
-        router.back();
+        //router.back();
+        handleGoBack();
       }
 
       const archiveFood = () => {
         const archivedFoods = user.archivedFoods;
         archivedFoods[food.id] = true;
-        router.back();
+        //router.back();
+        handleGoBack();
         setTimeout(() => {
             updateUser({archivedFoods});
         }, 300);
@@ -258,7 +281,8 @@ const EditFood = () => {
       const deleteFood = () => {
         const customFoods = user.customFoods;
         delete customFoods[food.id];
-        router.back();
+        //router.back();
+        handleGoBack();
         setTimeout(() => {
             updateUser({customFoods});
         }, 300);

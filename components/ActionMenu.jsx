@@ -92,7 +92,7 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
       <Pressable
         ref={buttonRef}
         onPress={openMenu}
-        style={pressableStyle}
+        style={[{zIndex: 2,}, pressableStyle]}
       >
         {props.children ? (
           {...props.children}

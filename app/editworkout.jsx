@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import ThemedView from '../components/ThemedView'
 import { useUserStore } from '../stores/useUserStore'
 import { Colors } from '../constants/Colors'
-import { router, useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 import pencil from '../assets/icons/pencil.png'
 import { Exercises } from '../constants/Exercises'
 import EditExercise from '../components/workout/EditExercise'
@@ -52,6 +52,26 @@ const EditWorkout = () => {
     };
   }, [autoSelectName]);
 
+  // Prevent swipe out nav
+  const navigation = useNavigation();
+  const blockNav = useRef(true);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      if (!blockNav.current) return; // allow navigation if unblocked
+
+      // Otherwise, block it
+      e.preventDefault();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+  const handleGoBack = () => {
+    blockNav.current = false;
+    //navigation.goBack(); 
+    router.back();
+  };
+
   const [isDragging, setIsDragging] = useState(false);
 
   const [exerciseModal, setExerciseModal] = useState(false);
@@ -94,7 +114,8 @@ const EditWorkout = () => {
       savedWorkouts[workoutIndex] = w;
     }
     updateUser({savedWorkouts: [...savedWorkouts]});
-    router.back();
+    //router.back();
+    handleGoBack();
   }
 
   const updateWorkoutName = (value) => {
@@ -131,7 +152,8 @@ const EditWorkout = () => {
       userWorkouts.splice(workoutToDeleteIndex, 1);
       removeFromRotation(workoutID);
     }
-    router.back();
+    //router.back();
+    handleGoBack();
   } // end copied
 
   const requestDeleteWorkout = () => {
@@ -158,7 +180,7 @@ const EditWorkout = () => {
   const cancelEdit = () => {
     // Check if edits were made
     if ( deepEqual(workoutBeforeEdits, workout) ) {
-      router.back()
+      handleGoBack();
     } else {
       setConfirmMenuData({
         title: "Leave without saving?",
@@ -167,7 +189,7 @@ const EditWorkout = () => {
         option1: "Don't save and leave",
         option1color: "#DB5454",
         option2: "Stay",
-        confirm: () => router.back(),
+        confirm: handleGoBack,
       });
       setConfirmMenuActive(true);
     }

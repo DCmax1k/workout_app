@@ -1,5 +1,5 @@
 import { Dimensions, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ThemedView from '../../components/ThemedView'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Spacer from '../../components/Spacer'
@@ -34,6 +34,8 @@ const SignUpPage = () => {
 
     const [loading, setLoading] = useState(false);
 
+    const alertRef = useRef(null);
+
     const loginToTestUser = () => {
         // ReLogin user
         if (Object.keys(users).length > 0) {
@@ -57,6 +59,7 @@ const SignUpPage = () => {
         if (response.status !== "success") {
             setLoading(false);
             console.log("Error:'", response.message);
+            alertRef.current.showAlert(response.message, false);
             return;
         } 
         const userInfo = response.userInfo;
@@ -89,7 +92,7 @@ const SignUpPage = () => {
     
   return (
     <ThemedView style={{flex: 1, height: screenHeight, width: screenWidth}}>
-        {/* <AlertNotification /> */}
+        <AlertNotification ref={alertRef} />
         <SafeAreaView style={{flex: 1, marginBottom: -50}}>
             <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? "padding" : "height"} >
                 <ScrollView style={{flex: 1, padding: 30,}} contentContainerStyle={{paddingBottom: 150}} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='handled'>

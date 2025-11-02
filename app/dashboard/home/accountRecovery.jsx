@@ -17,12 +17,14 @@ import uploadData from '../../../util/server/uploadData'
 import { Portal } from 'react-native-paper'
 import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated'
 import ViewDownloadedData from '../../../components/extra/ViewDownloadedData'
+import { useBottomSheet } from '../../../context/BottomSheetContext'
 
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
 
 const AccountRecovery = () => {
+    const {showAlert} = useBottomSheet();
 
     const users = useUserStore(state => state.users);
     const user = useUserStore(state => state.user);
@@ -52,13 +54,16 @@ const AccountRecovery = () => {
 
     const replaceUser = (id) => {
         const userToSet = users[id];
-        // user would be the new user they hopefully created an account with from the db
+        // user would be the new user they hopefully created an account with from the db - Username, dbId, login info,
         const userInfoToCarryOver = {
             dbId: user.dbId,
             username: user.username,
             email: user.email,
             dateJoined: user.dateJoined,
             jsonWebToken: user.jsonWebToken,
+            googleId: user.googleId,
+            appleId: user.appleId,
+            facebookId: user.facebookId,
 
         }
         const newUser = {...userToSet, _id: user._id, ...userInfoToCarryOver};
@@ -119,28 +124,33 @@ const AccountRecovery = () => {
         const backupResponse = await uploadData(user);
         if (backupResponse.status !== "success") {
             setLoadingBackup(false);
-            setConfirmMenuData({
-                title: "Error",
-                subTitle: "An error occured while attempting backup.",
-                subTitle2: "Please try again later.",
-                option1: "Okay",
-                option1color: Colors.primaryBlue,
-                confirm: () => {setConfirmMenuActive(false);},
-            });
-            setConfirmMenuActive(true);
+            // setConfirmMenuData({
+            //     title: "Error",
+            //     subTitle: "An error occured while attempting backup.",
+            //     subTitle2: "Please try again later.",
+            //     option1: "Okay",
+            //     option1color: Colors.primaryBlue,
+            //     confirm: () => {setConfirmMenuActive(false);},
+            // });
+            // setConfirmMenuActive(true);
+            showAlert("An error occured while attempting backup.", false);
+            setTimeout(() => {
+                showAlert("Please try again later.", false);
+            }, 500);
+            
             return;
         }
         setLoadingBackup(false);
-        setLoadingBackup(false);
-        setConfirmMenuData({
-            title: "Success",
-            subTitle: "Your data has been backed up.",
-            subTitle2: "",
-            option1: "Whoo-hoo!",
-            option1color: Colors.primaryBlue,
-            confirm: () => {setConfirmMenuActive(false);},
-        });
-        setConfirmMenuActive(true);
+        // setConfirmMenuData({
+        //     title: "Success",
+        //     subTitle: "Your data has been backed up.",
+        //     subTitle2: "",
+        //     option1: "Whoo-hoo!",
+        //     option1color: Colors.primaryBlue,
+        //     confirm: () => {setConfirmMenuActive(false);},
+        // });
+        // setConfirmMenuActive(true);
+        showAlert("Your data has been successfully backed up.");
     }
     
 

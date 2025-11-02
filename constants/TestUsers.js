@@ -26,7 +26,7 @@ const USER = {
     friends: [], // [friend, friend] -> certain info specified from server. Just ids in db
     subscriptions: [],
     profileImg: {},
-    trouble: {},
+    trouble: {}, //
     googleId: null,
     appleId: null,
     facebookId: null,

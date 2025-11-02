@@ -27,11 +27,9 @@ const auth = async (jsonWebToken) => {
     // Send data to page /auth
     const response = await sendData("/auth", ({jsonWebToken}));
     if (response.status !== "success") return response;
-    // If version mismatch, return {status: "error", message: "Version mismatch"}
-    if (response.version !== VERSION) return {status: "error", message: "Version mismatch"};
     // Get user data and server version
     const { userInfo } = response;
-    return {status: "success", userInfo};
+    return {status: "success", goodVersion: response.version === VERSION, userInfo};
     // return {status: "success", userInfo}
 }
 

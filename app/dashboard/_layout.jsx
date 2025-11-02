@@ -11,11 +11,18 @@ import Animated, { Extrapolation, interpolate, useAnimatedStyle, useDerivedValue
 import FinishWorkout from '../../components/workout/FinishWorkout'
 import { PaperProvider, Provider } from 'react-native-paper'
 import StackTabBar from '../../components/StackTabBar'
+import ThemedView from '../../components/ThemedView'
+import ThemedText from '../../components/ThemedText'
+import AlertNotification from '../../components/AlertNotification'
+import auth from '../../util/server/auth'
 
 const screenHeight = Dimensions.get("screen").height;
+const screenWidth = Dimensions.get("screen").width;
 
 const Dashboard = () => {
   const user = useUserStore((state) => state.user);
+  const updateUser = useUserStore(state => state.updateUser);
+  const options = useUserStore(state => state.options);
   const updateOptions = useUserStore((state) => state.updateOptions);
   const {animateDashboard} = useUserStore((state) => state.options);
   const colorScheme = useColorScheme()
@@ -24,6 +31,8 @@ const Dashboard = () => {
   const testingWorkout = {name: "Legs", id: "234", exercises: [ {id: "2", note:"", tracks: [], sets: [{lbs: "135", reps: "10"}]},], fullWorkout: {name: "Legs", id: "234", exercises: [ {id: "2", note:"", tracks: [], sets: [{lbs: "135", reps: "10"}]},], } };
   const [finishWorkoutData, setFinishWorkoutData] = useState(null);
 
+  const alertRef = useRef(null);
+
   const finishWorkoutPositionTop = useSharedValue(screenHeight);
   const finishWorkoutStyle = useAnimatedStyle(() => {
     return {
@@ -31,7 +40,56 @@ const Dashboard = () => {
     }
   }, [])
 
+  const showAlert = (message, good=true, time=3000) => {
+    alertRef.current.showAlert(message, good, time);
+  }
+
   const sheetRef = useRef(null);
+  // Check auth - Move to dashboard layout
+  useEffect(() => {
+    const checkAuth = async () => {
+      if (!user.jsonWebToken) {
+        showAlert("No authentication token provided.", false);
+        setTimeout(() => {
+          showAlert("Please go to Profile -> Account Recovery to transfer your data and back up your account.", false);
+        }, 1500);
+        
+        return;
+      } 
+      const authResponse = await auth(user.jsonWebToken);
+      console.log("auth response", authResponse);
+      if (authResponse.status !== "success") {
+        // Check if error was network issue of error auth
+        if (authResponse.status === "network_error") {
+          // Network error, sign in to loca account
+          console.log("network error, sign into local account");
+          showAlert(authResponse.message, false);
+        } else {
+          // Auth error, signing out
+          console.log("auth error");
+          showAlert(authResponse.message, false); 
+          //setUser(null);
+          //router.replace('/onboarding'); // Probably dont need from home index
+          //return;
+        }
+      } else {
+        // Auth success, update user with db info
+        console.log("Successfully authenticated");
+        if (!authResponse.goodVersion) showAlert("A new update is available. If not provided, ask the developer for the new updated developement build.", false);
+        //showAlert("Successfully authenticated", true);
+        const {userInfo} = authResponse;
+        updateUser(userInfo);
+      }
+      updateOptions({checkAuth: false});
+      
+      
+    }
+
+    if (options.checkAuth) {
+      console.log("Calling checkAuth");
+      checkAuth();
+    }
+  }, [options.checkAuth]);
 
 
   const [sheetShouldStartOpen, setSheetShouldStartOpen] = useState(false);
@@ -120,7 +178,13 @@ const Dashboard = () => {
 
   return user ? (
     <View style={{flex: 1, backgroundColor: theme.background}}>
-      <BottomSheetContext.Provider value={{ openSheet: handleSnapPress, closeSheet: handleCloseSheet, showFinishWorkout, setTabBarRoute: setCurrentRoute }}>
+      <BottomSheetContext.Provider value={{
+        openSheet: handleSnapPress,
+        closeSheet: handleCloseSheet,
+        showFinishWorkout,
+        setTabBarRoute: setCurrentRoute,
+        showAlert: showAlert,
+        }}>
         <>
           {/* <Tabs tabBar={props => <TabBar animatedTabbarPosition={animatedTabbarPosition} {...props} />} screenOptions={{animation: "none", headerShown: false, headerStyle: { backgroundColor: theme.background, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0,}, headerTintColor: theme.title, tabBarStyle: { backgroundColor: "#000" }, tabBarActiveTintColor: theme.title, tabBarInactiveTintColor: "#868686", }}> 
               <Tabs.Screen name="home" options={{ title: 'Home', headerTintColor: "transparent"  }} />
@@ -129,6 +193,9 @@ const Dashboard = () => {
               <Tabs.Screen name="exercises" options={{ title: 'Exercises' }} />
               <Tabs.Screen name="progress" options={{ title: 'Progress' }} />
             </Tabs> */}
+
+            <AlertNotification ref={alertRef} />
+
             <Stack screenOptions={{animation: "fade", animationDuration: 200, headerShown: false, contentStyle: {backgroundColor: theme.background,}}}>
               <Stack.Screen name="home" options={{ title: 'Home', }} />
               <Stack.Screen name="friends" options={{ title: 'Friends' }} />
@@ -165,12 +232,22 @@ const Dashboard = () => {
             
 
             <Animated.View style={[{position: "absolute", /* top: (finishWorkoutData !== null ? true : false) ? 0 : screenHeight, */ left: 0, height: screenHeight, width: "100%", zIndex: 5, elevation: 5}, finishWorkoutStyle]}>
-                      {finishWorkoutData !== null && (
-                      <FinishWorkout data={finishWorkoutData} closeModal={closeFinishWorkout} />
-                      )}
-                  </Animated.View>
+                {finishWorkoutData !== null && (
+                <FinishWorkout data={finishWorkoutData} closeModal={closeFinishWorkout} />
+                )}
+            </Animated.View>
+
+            {user.trouble.frozen && (
+            <ThemedView  style={{flex: 1, padding: 20, backgroundColor: "rgba(0, 0, 0, 0.77)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 99, justifyContent: "center", alignItems: "center"}}>
+              <ThemedText style={{fontSize: 15, textAlign: "center", color: "white"}}>Your account has been frozen.</ThemedText>
+              <ThemedText style={{fontSize: 15, textAlign: "center",}}>Please contact our support team if you believe this is an error.</ThemedText>
+            </ThemedView>
+            )}
+
 
           </>
+
+                
       
         
 

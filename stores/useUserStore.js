@@ -62,6 +62,7 @@ export const useUserStore = create((set, get) => {
       loading: true,
       animateDashboard: false,
       showOnboarding: true,
+      checkAuth: false,
     },
     user: null,
     users: {},

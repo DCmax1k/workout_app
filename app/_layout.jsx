@@ -48,7 +48,6 @@ const RootLayout = () => {
         //iconArray.forEach(img => Image.resolveAssetSource(img));
         if (loaded) {
           await SplashScreen.hideAsync();
-          updateOptions({loading: false});
         }
       } catch (e) {
         console.warn(e);
@@ -124,8 +123,8 @@ const RootLayout = () => {
                   <Stack.Screen name='index' options={{ headerShown: false }} />
                   <Stack.Screen name="dashboard" options={{ headerShown: false, animation: animateDashboard ? "default" : "fade" }} />
                   <Stack.Screen name="onboarding" options={{ headerShown: false, animation: "slide_from_left" }} />
-                  <Stack.Screen name="editworkout" options={{ headerShown: false, gestureEnabled: false }} />
-                  <Stack.Screen name="loading" options={{ headerShown: true, animation: "slide_from_bottom" }} />
+                  <Stack.Screen name="editworkout" options={{ headerShown: false, gestureEnabled: false,  }} />
+                  <Stack.Screen name="loading" options={{ headerShown: true, animation: "fade" }} />
                   {/* <Stack.Screen name="login" options={{ headerShown: false, animation: "fade" }} /> */}
                   <Stack.Screen name="previewWorkout" options={{ headerShown: false }} />
                   <Stack.Screen name="(progressScreens)/progressExpanded" options={{ headerShown: false }} />

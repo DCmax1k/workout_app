@@ -1,5 +1,5 @@
 import { Alert, Button, Dimensions, Image, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link, Slot, Stack, useRouter } from 'expo-router'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
@@ -27,6 +27,7 @@ import { Portal } from 'react-native-paper'
 import OpenExercise from '../../../components/workout/OpenExercise'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useIsFocused } from '@react-navigation/native'
+import auth from '../../../util/server/auth'
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -36,6 +37,8 @@ const QUICK_START_CARD_HEIGHT = 80;
 const IndexHome = () => {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
+  const options = useUserStore(state => state.options);
+  const updateOptions = useUserStore(state => state.updateOptions);
   const setUser = useUserStore((state) => state.setUser);
   const updateUser = useUserStore((state) => state.updateUser);
 
@@ -47,6 +50,8 @@ const IndexHome = () => {
   const [switchContinuedWorkouts, setSwitchContinuedWorkouts] = useState(false);
   const [openExercise, setOpenExercise] = useState(false);
   const [exerciseOpen, setExerciseOpen] = useState({});
+
+  
 
   // Rotate to next workout in schedule
   const findNextScheduleIndex = () => {
@@ -274,8 +279,6 @@ const IndexHome = () => {
 
   return (
     <ThemedView style={styles.container}> 
-
-
 
       {openExercise && (
         <Portal >

@@ -1,6 +1,6 @@
 import { Dimensions, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import getDateKey from '../../util/getDateKey';
 import deepEqual from '../../util/deepEqual';
 import ThemedView from '../../components/ThemedView';
@@ -50,6 +50,26 @@ const EditMeal = () => {
     const openedFrom = params.openedFrom ?? "savedMeals"; // savedMeals, consumption
     const autoSelectName = openedFrom === "savedMealsNew";
 
+    // Prevent swipe out nav
+    const navigation = useNavigation();
+    const blockNav = useRef(true);
+    
+    useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+        if (!blockNav.current) return; // allow navigation if unblocked
+
+        // Otherwise, block it
+        e.preventDefault();
+    });
+
+    return unsubscribe;
+    }, [navigation]);
+    const handleGoBack = () => {
+        blockNav.current = false;
+        //navigation.goBack(); 
+        router.back();
+    };
+
     const [meal, setMeal] = useState(JSON.parse(JSON.stringify(mealBeforEdits)));
 
     const [foodPreview, setFoodPreview] = useState(null); // {...food}
@@ -78,7 +98,8 @@ const EditMeal = () => {
     const cancelEdit = () => {
         // Check if edits were made
         if ( deepEqual(mealBeforEdits, meal) ) {
-            router.back()
+            //router.back()
+            handleGoBack();
         } else {
             setConfirmMenuData({
                 title: "Leave without saving?",
@@ -87,7 +108,7 @@ const EditMeal = () => {
                 option1: "Don't save and leave",
                 option1color: "#DB5454",
                 option2: "Stay",
-                confirm: () => router.back(),
+                confirm: handleGoBack,
             });
             setConfirmMenuActive(true);
         }
@@ -146,7 +167,8 @@ const EditMeal = () => {
             }
             
         }
-        router.back();
+        //router.back();
+        handleGoBack();
     }
 
     const openAddFood = () => {

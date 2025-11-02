@@ -93,6 +93,8 @@ const ProgressExpanded = () => {
 
   let mostRecentValue = widget.data[widget.data.length - 1]?.amount || 0;
   let mostRecentDate = widget.data[widget.data.length - 1]?.date || null;
+  const lastRecorded = mostRecentDate;
+  console.log("Last recorded", sinceWhen(lastRecorded));
   if (widget.calculatedData) {
     const {dataAmounts: newAmounts, dataDates: newDates} = fillDailyData(widget.calculatedData, widget.calculatedDates, new Date(), fillDaily);
     mostRecentValue = newAmounts[0];
@@ -351,7 +353,7 @@ const ProgressExpanded = () => {
                 <View style={{height: 100, width: (screenWidth-80)/3, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
                   <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Last Recorded</ThemedText>
                   <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
-                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, textAlign: "center", color: "white", fontWeight: '800'}}>{widget.data[widget.data.length-1]?.date ? sinceWhen(widget.data[widget.data.length-1]?.date) : "- -"}</ThemedText>
+                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, textAlign: "center", color: "white", fontWeight: '800'}}>{lastRecorded ? sinceWhen(lastRecorded) : "- -"}</ThemedText>
                   </View>
                   
                 </View>
@@ -420,7 +422,7 @@ const ProgressExpanded = () => {
                 <View style={{height: 100, width: (screenWidth-80)/3, backgroundColor: "#3A3A3A", borderRadius: 10, flexDirection: "column", alignItems: "center", paddingHorizontal: 10}}>
                   <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 16, marginTop: 10, textAlign: "center"}}>Last recorded</ThemedText>
                   <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
-                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize:  16, textAlign: "center", color: "white", fontWeight: '800'}}>{mostRecentDate ? sinceWhen(mostRecentDate) : "- -"}</ThemedText>
+                    <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize:  16, textAlign: "center", color: "white", fontWeight: '800'}}>{lastRecorded ? sinceWhen(lastRecorded) : "- -"}</ThemedText>
                   </View>
                   
                 </View>
