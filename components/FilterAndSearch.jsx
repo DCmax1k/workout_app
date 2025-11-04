@@ -42,9 +42,9 @@ const FilterAndSearch = ({style, value, onChangeText, selected, setSelected, opt
             <ActionMenu icon={filterIcon} data={actionMenuData} />
         </View>
 
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginTop: 5}} contentContainerStyle={{paddingHorizontal: padding, flexDirection: 'row', justifyContent: "flex-start", minWidth: "100%", alignItems: 'center', gap: 10}}>
+            <Animated.ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginTop: 5}} contentContainerStyle={{paddingHorizontal: padding, flexDirection: 'row', justifyContent: "flex-start", minWidth: "100%", alignItems: 'center', gap: 10}}>
                 {selected.map((option, index) => (
-                    <Animated.View entering={FadeIn} exiting={FadeOut} key={option} >
+                    <Animated.View entering={FadeIn} exiting={FadeOut} key={option} layout={LinearTransition.springify().damping(90)} >
                         <Option key={option} label={option} icon={greyX} iconScale={1.3} backgroundColor={"#303A66"} onPress={() => {
                             let newSelected = selected.filter((item) => item !== option);
                             setSelected(newSelected);
@@ -52,7 +52,7 @@ const FilterAndSearch = ({style, value, onChangeText, selected, setSelected, opt
                     </Animated.View>
                     
                 ))}
-            </ScrollView>
+            </Animated.ScrollView>
         
     </View>
     

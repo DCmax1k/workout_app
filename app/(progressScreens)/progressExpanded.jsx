@@ -89,7 +89,7 @@ const ProgressExpanded = () => {
       }
     });
     return () => sub.remove();
-  }, [emitter, updateUser]);
+  }, [emitter, updateUser, user]);
 
   let mostRecentValue = widget.data[widget.data.length - 1]?.amount || 0;
   let mostRecentDate = widget.data[widget.data.length - 1]?.date || null;

@@ -46,9 +46,11 @@ const Exercise = ({style, exercise, selected = false, disablePress = false, onPr
       <View style={styles.rightCont}>
         <Text style={{color: "white", fontSize: 15, fontWeight: 700}}>{exercise.name}</Text>
         <Text style={{color: "white", fontSize: 12, fontWeight: 300}}>{truncate(exercise.description || '', 100)}</Text>
-          <View style={{flexDirection: 'row', marginTop: 5, flexWrap: 'wrap'}}>
+          <View style={{flexDirection: 'row', marginTop: 5, flexWrap: 'wrap', paddingVertical: 2, paddingHorizontal: 10,}}>
             {exercise.muscleGroups.map(muscle => (
-                <Text style={{backgroundColor: selected ? "#34437F": "#262626", paddingVertical: 2, paddingHorizontal: 10, fontSize: 12, color: "#B1B1B1", borderRadius: 5000, marginRight: 5, marginBottom: 5}} key={muscle}>{capitalizeFirstLetter(muscle)}</Text>
+                <View key={muscle} style={{backgroundColor: "#353535", borderRadius: 5000,justifyContent: "center", alignItems: "center",marginRight: 5, marginBottom: 5,paddingVertical: 2, paddingHorizontal: 10,}}>
+                  <Text style={{  fontSize: 12, color: "#B1B1B1",  }} key={muscle}>{capitalizeFirstLetter(muscle)}</Text>
+                </View>
             ))}
         </View>
         

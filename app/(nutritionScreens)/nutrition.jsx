@@ -20,7 +20,7 @@ import { router, useLocalSearchParams } from 'expo-router'
 import PageSwiper from '../../components/PageSwiper'
 import ConfirmMenu from '../../components/ConfirmMenu'
 import PopupButtons from '../../components/PopupButtons'
-import Animated, { Extrapolation, FadeIn, FadeInDown, FadeOut, FadeOutDown, interpolate, useAnimatedReaction, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated'
+import Animated, { Extrapolation, FadeIn, FadeInDown, FadeOut, FadeOutDown, interpolate, LinearTransition, useAnimatedReaction, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated'
 import { generateUniqueId } from '../../util/uniqueId'
 import BottomSheet from '@gorhom/bottom-sheet'
 import EditPlate from './editPlate'
@@ -563,9 +563,12 @@ const Nutrition = () => {
                                 }
 
                                 return (
-                                    <Pressable onPress={() => openMeal(meal)} key={meal.date + "" + meal.id} style={{marginTop: 10}} >
-                                        <ConsumedMealCard actionMenuData={actionMenuData} meal={meal} />
-                                    </Pressable>
+                                    <Animated.View layout={LinearTransition.springify().damping(90)} key={meal.date + "" + meal.id}>
+                                        <Pressable onPress={() => openMeal(meal)}  style={{marginTop: 10}} >
+                                            <ConsumedMealCard actionMenuData={actionMenuData} meal={meal} />
+                                        </Pressable>
+                                    </Animated.View>
+                                    
                                     
                                 )
                                 

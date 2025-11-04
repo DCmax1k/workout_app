@@ -7,6 +7,8 @@ import Animated, { SlideInRight, SlideOutRight, Easing, LinearTransition, FadeOu
 
 const screenWidth = Dimensions.get("screen").width;
 
+// REPLACED WITH FILTERANDSEARCH COMPONENT
+
 const Option = ({style, label, onPress, iconScale=1, backgroundColor="#3D3D3D", icon=null}) => {
     return (
         <Pressable onPress={onPress} style={[{padding: 15, borderRadius: 10, flexDirection: 'row', alignItems: 'center', backgroundColor, gap: 5}, style]}>

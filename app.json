@@ -36,7 +36,8 @@
       "expo-audio",
       "expo-font",
       "expo-asset",
-      "expo-health-connect"
+      "expo-health-connect",
+      "expo-video"
     ],
     "extra": {
       "router": {},

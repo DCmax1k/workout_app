@@ -257,25 +257,26 @@ const EditWorkout = () => {
               keyExtractor={(item) => item.key}
               renderItem={({item, drag, isActive}) => {
                 return (
-                  <ScaleDecorator key={item.key}>
-                    <View key={item.key} style={{width: item.width, marginHorizontal: 20,}}>
+                    <ScaleDecorator key={item.key}>
+                      <View key={item.key} style={{width: item.width, marginHorizontal: 20,}}>
 
-                      {/* <SwipeToDelete style={{width: screenWidth}} openedRight={() => removeExercise(item.index)} > */}
-                        <View style={{ width: screenWidth-40}}>
-                          <EditExercise
-                          key={item.key}
-                          exercise={item.exercise}
-                          updateExercise={updateExercise}
-                          removeExercise={() => removeExercise(item.index)}
-                          index={item.index}
-                          drag={drag}
-                          dragActive={isActive}
-                          />
-                        </View>
-                      {/* </SwipeToDelete> */}
+                        {/* <SwipeToDelete style={{width: screenWidth}} openedRight={() => removeExercise(item.index)} > */}
+                          <View style={{ width: screenWidth-40}}>
+                            <EditExercise
+                            key={item.key}
+                            exercise={item.exercise}
+                            updateExercise={updateExercise}
+                            removeExercise={() => removeExercise(item.index)}
+                            index={item.index}
+                            drag={drag}
+                            dragActive={isActive}
+                            />
+                          </View>
+                        {/* </SwipeToDelete> */}
 
-                    </View>
-                  </ScaleDecorator>
+                      </View>
+                    </ScaleDecorator>
+                  
                 )
               }}
 

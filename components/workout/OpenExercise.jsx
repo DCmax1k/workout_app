@@ -7,6 +7,8 @@ import { Colors } from '../../constants/Colors';
 import SectionSelect from '../SectionSelect';
 import Spacer from '../Spacer';
 import noimage from '../../assets/icons/noimage.png';
+import pauseIcon from '../../assets/icons/pause.png';
+import playIcon from '../../assets/icons/play.png';
 import GlowImage from '../GlowImage';
 import WorkoutDescription from './WorkoutDescription';
 import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
@@ -16,6 +18,8 @@ import ThemedView from '../ThemedView';
 import ThemedText from '../ThemedText';
 import CreateExercise from './CreateExercise';
 import GraphWidget from '../GraphWidget';
+import { useVideoPlayer, VideoView } from 'expo-video';
+import ImageContain from '../ImageContain';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -45,6 +49,7 @@ function kgToLbs(kg) {
 
 const ExerciseHistory = ({style, exercise, forceCloseOpenExercise = () => {}, ...props}) => {
   const user = useUserStore(state => state.user);
+  
   
   const pastWorkouts = user.pastWorkouts || [];
   const pastWorkoutsWithExercise = pastWorkouts.filter(workout => workout.exercises.some(ex => ex.id === exercise.id)).reduce((acc, workout) => {
@@ -105,6 +110,16 @@ const ExerciseHistory = ({style, exercise, forceCloseOpenExercise = () => {}, ..
 
 
 const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise, ...props}) => {
+
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  let player;
+  if (exercise.video) {
+    player = useVideoPlayer(exercise.video, (player) => {
+        player.loop = true;
+        player.staysActiveInBackground = false;
+    });
+  }
+
   const user = useUserStore(state => state.user);
   const updateUser = useUserStore(state => state.updateUser);
   const archivedExercises = user.archivedExercises || [];
@@ -240,6 +255,16 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
       }
       
     }
+
+    const toggleVideoPlayer = () => {
+      if (player.playing) {
+        player.pause();
+        setVideoPlaying(false);
+      } else {
+        player.play()
+        setVideoPlaying(true)
+      }
+    }
     
   return (
     <Animated.View layout={LinearTransition.springify().damping(90)} style={[styles.cont, style]} {...props}>
@@ -265,12 +290,29 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
       {!editModeActive && section === "About" &&(
       <Animated.View entering={FadeIn} exiting={FadeOut}>
 
-        {/* Big image */}
-        <View style={styles.imageContCont}>
-          <View style={styles.imageCont}>
-            <GlowImage disable={true} style={[styles.image, isImage ? {} : {width: 30, height: 30, margin: "auto"}]} source={exercise.image || noimage} id={exercise.id} />
+        {/* Big image / Video */}
+        {exercise.video ? (
+            <View style={styles.imageContCont}>
+                <View style={[styles.imageCont, {height: screenWidth-200, width: (screenWidth-200)*0.84375, borderRadius: 10}]}>
+                  <VideoView nativeControls={false} player={player} style={{height: "100%", width: "100%", backgroundColor: "transparent"}} />
+
+                  {/* Play/pause button */}
+                  <Pressable style={[StyleSheet.absoluteFill, {zIndex: 1,}]} onPress={toggleVideoPlayer}>
+                    <View style={{position: "absolute", bottom: 2, right: 2, padding: 10, backgroundColor: Colors.primaryBlue, borderRadius: 40}}>
+                      <ImageContain source={videoPlaying ? pauseIcon : playIcon } size={15} style={{transform: [{translateX: videoPlaying ? 0 : 1}]}} />
+
+                    </View>
+                  </Pressable>
+                </View>
+            </View>
+        ) : (
+          <View style={styles.imageContCont}>
+            <View style={styles.imageCont}>
+              <GlowImage disable={true} style={[styles.image, isImage ? {} : {width: 30, height: 30, margin: "auto"}]} source={exercise.image || noimage} id={exercise.id} />
+            </View>
           </View>
-        </View>
+        )}
+        
 
         <Spacer height={10} />
 

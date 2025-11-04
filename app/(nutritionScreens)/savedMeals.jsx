@@ -17,7 +17,7 @@ import Spacer from '../../components/Spacer'
 import ThemedText from '../../components/ThemedText'
 import ConfirmMenu from '../../components/ConfirmMenu'
 import { generateUniqueId } from '../../util/uniqueId'
-import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown, LinearTransition } from 'react-native-reanimated'
 import ImageContain from '../../components/ImageContain'
 import MealPreview from '../../components/nutrition/MealPreview'
 import { Portal } from 'react-native-paper'
@@ -175,7 +175,7 @@ const SavedMeals = () => {
                 )}
                 {filteredMeals.map(meal => {
                     return (
-                        <View key={meal.id}>
+                        <Animated.View layout={LinearTransition.springify().damping(90) } key={meal.id}>
                             <Pressable onPress={() => openMeal(meal)} style={{marginBottom: 10}}>
                                 
                                 <ConsumedMealCard meal={meal} key={meal.id} actionMenuData={[
@@ -191,7 +191,7 @@ const SavedMeals = () => {
                                     </Animated.View>
                                 )}
                             </Pressable>
-                        </View>
+                        </Animated.View>
                             
                     )
                 })}
