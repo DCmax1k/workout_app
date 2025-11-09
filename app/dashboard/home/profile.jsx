@@ -20,6 +20,7 @@ import Calender from '../../../components/Calender'
 import ScrollPicker from '../../../components/ScrollPicker'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { Colors } from '../../../constants/Colors'
+import ProfileImg from '../../../components/ProfileImg'
 // import * as HealthConnect from 'expo-health-connect';
 
 
@@ -340,7 +341,7 @@ const Profile = () => {
               
 
               <View style={{justifyContent: "center", alignItems: "center"}}>
-                <Image style={{width: 80, height: 80}} source={profileIcon} />
+                <ProfileImg size={80} profileImg={user.profileImg} />
               </View>
 
               <Spacer />

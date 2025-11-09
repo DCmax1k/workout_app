@@ -288,7 +288,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                 </View>
                 {/* Each set */}
                 {exercise?.sets.map((set, setIndex) => (
-                    <Animated.View key={setIndex} style={[styles.row, {backgroundColor: set.complete ? "rgba(33, 134, 60, 0.14)":"transparent"}]} layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
+                    <Animated.View key={setIndex} style={[styles.row, {backgroundColor: (set.complete && activeWorkoutStyle) ? "rgba(33, 134, 60, 0.14)":"transparent"}]} layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
                         <Text style={[styles.column, styles.column1]}>{setIndex+1}</Text>
                         <>
                             {exercise.tracks.map(track => {

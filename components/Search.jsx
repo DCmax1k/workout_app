@@ -2,11 +2,12 @@ import { Image, Keyboard, Pressable, StyleSheet, Text, TextInput, View } from 'r
 import React, { useRef } from 'react'
 import ActionMenu from './ActionMenu'
 import searchIcon from '../assets/icons/search.png'
+import greyX from '../assets/icons/greyX.png'
 import keyboardIcon from '../assets/icons/keyboard.png';
 import { Colors } from '../constants/Colors';
 import Animated, { BounceInRight, BounceOutRight, FadeIn, FadeInRight, FadeOut, FadeOutRight, SlideOutRight } from 'react-native-reanimated';
 
-const Search = ({style, backgroundColor='#222222', actionMenuData = false, dismissKeyboard = false, autoCorrect=false, placeholder="Search", ...props }) => {
+const Search = ({style, backgroundColor='#222222', actionMenuData = false, dismissKeyboard = false, autoCorrect=false, placeholder="Search", setValue=null, ...props }) => {
 
   const [showDisKeyboard, setShowDisKeyboard] = React.useState(false);
 
@@ -29,7 +30,18 @@ const Search = ({style, backgroundColor='#222222', actionMenuData = false, dismi
             </Pressable>
           </Animated.View>
         
-      )}
+        )}
+
+        {/* Clear input */}
+        {props.value && setValue && (
+            <Animated.View style={[styles.disKeyboard,]} entering={FadeIn} exiting={FadeOut}>
+              <Pressable style={{flex: 1}} onPress={() => {setValue("")}} >
+                <Image style={{height: 30, width: 30, objectFit: 'contain'}} source={greyX} />
+              </Pressable>
+            </Animated.View>
+          
+        )}
+      
       </View>
         
         

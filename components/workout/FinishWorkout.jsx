@@ -21,10 +21,15 @@ import formatDate from '../../util/formatDate'
 import formatDuration from '../../util/formatDuration'
 import { truncate } from '../../util/truncate'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import sendData from '../../util/server/sendData'
+import { useBottomSheet } from '../../context/BottomSheetContext'
+
+const achievementAmounts = [10, 50, 100, 200, 500, 1000, 10000];
 
 const audioSource = require("../../assets/sounds/success.wav");
 
 const FinishWorkout = ({data, closeModal, ...props}) => {
+    const {showAlert} = useBottomSheet();
     const successPlayer = useAudioPlayer(audioSource);
 
     const user = useUserStore(state => state.user);
@@ -51,7 +56,36 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
         closeModal();
     }
 
+    const postActivity = async () => {
+        const pastWorkoutsLength = data.pastWorkoutsLength;
+        const showAchievement = achievementAmounts.includes(pastWorkoutsLength) && pastWorkoutsLength > user.streak.achievementAmount;
+
+        const activityData = {
+            type: "complete_workout",
+            details: {
+                workout: data,
+            },
+        }
+
+        if (showAchievement) {
+            activityData.type = "complete_workout_achievement";
+            activityData.details.totalWorkouts = pastWorkoutsLength;
+            updateUser({streak: {achievementAmount: pastWorkoutsLength}});
+        }
+
+        
+        const response = await sendData("/dashboard/requestactivity", {jsonWebToken: user.jsonWebToken, activityData});
+        if (response.status !== "success") showAlert("An error occured while attempting activity post.", false);
+        // Update client with activity model
+        const activity = response.activity;
+        const recentActivity = user.recentActivity;
+        const newRecentActivity = [activity, ...recentActivity];
+        updateUser({recentActivity: newRecentActivity});
+    }
+
     useEffect(() => {
+        postActivity();
+
         successPlayer.play();
 
         setTimeout(doChecks, 1500);

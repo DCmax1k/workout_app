@@ -50,6 +50,10 @@ const fillMissingKeys = (base, user) => {
     filled.tracking.insights.expenditure.layout = "expenditure";
   }
 
+  if (filled?.recentActivity?.length === 1 && filled.recentActivity[0].userId==="1" && filled.recentActivity[0].timestamp === "1746060519969") {
+    filled.recentActivity = [];
+  }
+
   return filled;
 }
 

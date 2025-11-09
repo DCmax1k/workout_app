@@ -17,7 +17,7 @@ const Option = ({style, label, onPress, iconScale=1, backgroundColor="#3D3D3D", 
     )
 }
 
-const FilterAndSearch = ({style, value, onChangeText, selected, setSelected, options = ["Chest", "Abs", "Back", "Biceps", "Triceps", "Forearms", "Shoulders", "Legs",], padding=10, ...props}) => {
+const FilterAndSearch = ({style, value, setValue, onChangeText, selected, setSelected, options = ["Chest", "Abs", "Back", "Biceps", "Triceps", "Forearms", "Shoulders", "Legs",], padding=10, ...props}) => {
 
 
     const actionMenuData = options.filter(o => !selected.includes(o)).map((o) => {
@@ -38,7 +38,7 @@ const FilterAndSearch = ({style, value, onChangeText, selected, setSelected, opt
   return (
     <View style={[{flexDirection: "column"}, style]} {...props}>
         <View style={[{ flexDirection: "row", alignItems: "center", paddingHorizontal: padding,}]} >
-            <Search value={value} onChangeText={onChangeText} style={{flex: 1, marginRight: 10 }} />
+            <Search setValue={setValue} value={value} onChangeText={onChangeText} style={{flex: 1, marginRight: 10 }} />
             <ActionMenu icon={filterIcon} data={actionMenuData} />
         </View>
 

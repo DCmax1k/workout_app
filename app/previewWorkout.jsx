@@ -8,6 +8,8 @@ import ConfirmMenu from '../components/ConfirmMenu'
 import { useUserStore } from '../stores/useUserStore'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import trash from '../assets/icons/trash.png'
+import rotate from '../assets/icons/rotate.png'
+import { generateUniqueId } from '../util/uniqueId'
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -19,7 +21,10 @@ const PreviewWorkoutPage = () => {
     const params = useLocalSearchParams();
     const rawdata = JSON.parse(params.data);
 
-    const reopenExercise = JSON.parse(params.reopenExercise);
+    const fromFriends = params.fromFriends ?? false; 
+    console.log("from friends? ", fromFriends);
+
+    const reopenExercise = params.reopenExercise ? JSON.parse(params.reopenExercise) : null;
     if (reopenExercise) {
         // console.log("got to preview page ");
         // console.log(user.activeReopenExercise);
@@ -67,7 +72,7 @@ const PreviewWorkoutPage = () => {
 
         // Subtract expenditure data from that day
         const expenditureData = JSON.parse(JSON.stringify(user.tracking.insights["expenditure"].data));
-        const idx = expenditureData.length - 1;
+        let idx = expenditureData.length - 1;
         let isSameDay = false; 
         while (!isSameDay) {
             isSameDay = new Date(expenditureData[idx].date).toDateString() === new Date(pastWorkouts[ind].time).toDateString();
@@ -94,11 +99,26 @@ const PreviewWorkoutPage = () => {
         router.back();
     }
 
+    const copyWorkout = (wrkt) => {
+        const newWorkoutData = {...wrkt, id: generateUniqueId()};
+        updateUser({editActiveWorkout: newWorkoutData});
+        router.push({
+            pathname: "/editworkout",
+            params: {
+                workout: JSON.stringify(newWorkoutData),
+                autoSelectName: false, // DOESNT EVEN WORK, STILL SELECTS NAME - BUG
+            }
+        });
+    }
+
+    let actionMenuOptions = [{title: "Delete Workout", icon: trash, color: "#FF6C6C", onPress: () => showDeletePastWorkoutConfirmation(data),}];
+    if (fromFriends) actionMenuOptions = [{title: "Copy Workout", icon: rotate, onPress: () => copyWorkout(data.fullWorkout),}];
+
   return (
     <ThemedView style={{flex: 1}}>
         <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
         <SafeAreaView zIndex={1} >
-            <TitleWithBack backBtn={true} actionBtn={{actionMenu: true, image: require("../assets/icons/threeEllipses.png"), options: [{title: "Delete workout", icon: trash, color: "#FF6C6C", onPress: () => showDeletePastWorkoutConfirmation(data),}],}} />
+            <TitleWithBack backBtn={true} actionBtn={{actionMenu: true, image: require("../assets/icons/threeEllipses.png"), options: actionMenuOptions,}} />
         </SafeAreaView>
         <WorkoutPreview style={{position: "absolute", width: screenWidth, height: screenHeight, zIndex: 0}} data={data} />
     </ThemedView>

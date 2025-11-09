@@ -173,7 +173,7 @@ const EnergyBalanceGraph = ({fullWidget = false, fillWidth=false, fillDaily=null
 
                 {(<View style={{width: "100%", height: 1, backgroundColor: "#585858", borderRadius: 99999, position: "relative", bottom: 0, left: 0, transform: [{translateY: -2*backGridTopOffset}], opacity: showMin ? 1 : 0}} >
                     <View style={{position: "absolute", height: 50, top: -25, left: "101%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                        <Text style={{color: "#848484", fontSize: 12}}>{ parseDecimals(min, showDecimals) }</Text>
+                        <Text style={{color: "#848484", fontSize: 12}}>{ parseDecimals(0, showDecimals) }</Text>
                     </View>
                 </View>)}
             </View>

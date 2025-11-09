@@ -2,6 +2,7 @@ import { VERSION } from '../../constants/ServerConstants';
 import sendData from './sendData';
 
 const allKeys = [
+        'streak',
         'settings',
         'usernameDecoration',
         'schedule',

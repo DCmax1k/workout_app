@@ -1,28 +1,23 @@
 
 
 const USER = {
-    recentActivity: [{  "userId": "1",
-      "timestamp": "1746060519969",
-      "type": "posted",
-      "details": {
-        "postId": "123",
-        "title": "User2 started a workout",
-        "subtitle": "Chest and shoulders",
-      },
-      "visibility": "visible" // visible, hidden
-    }], // From seperate collection, Activity, received from server
+    recentActivity: [], // From seperate collection, Activity, received from server
     jsonWebToken: null,
 
     _id: "1", // local user device id. uniqueId, but if 1 then beta user
     dbId: null, // if null, tell user to log in 
     username: "User1",
+    usernameDecoration: {
+      prefixColor: "red",
+      prefix: "",
+    },
     name: 'Test Name',
     email: '',
     dateJoined: null,
     rank: 'user',
     premium: false,
-    friendRequests: [],// [{friendID:, friendUsername:}]
-    friendsAdded: [], // [{friendID:, friendUsername:}]
+    friendRequests: [],// [{...userInfo, read: false}]
+    friendsAdded: [], // [userInfo, userInfo]
     friends: [], // [friend, friend] -> certain info specified from server. Just ids in db
     subscriptions: [],
     profileImg: {},
@@ -32,7 +27,11 @@ const USER = {
     facebookId: null,
     // End necessary info from database
     
-
+    streak: {
+      longestStreak: 0,
+      currentStreak: 0,
+      achievementAmount: 0,
+    },
     settings: {
       preferences: {
         heightUnit: "feet", // feet, cm
@@ -42,10 +41,7 @@ const USER = {
       birthday: null, // Date.now()
       gender: null, // male, female, other.
     },
-    usernameDecoration: {
-      prefixColor: "red",
-      prefix: "",
-    },
+    
     schedule: {
       currentIndex: 0,
       rotation: [

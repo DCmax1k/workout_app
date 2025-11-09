@@ -7,8 +7,20 @@ const sinceWhen = (dateInput) => {
     date.getMonth() === now.getMonth() &&
     date.getDate() === now.getDate();
 
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+
+  const isYesterday =
+    date.getFullYear() === yesterday.getFullYear() &&
+    date.getMonth() === yesterday.getMonth() &&
+    date.getDate() === yesterday.getDate();
+
   if (isToday) {
     return "Today";
+  }
+
+  if (isYesterday) {
+    return "Yesterday";
   }
 
   const diffTime = now - date; // difference in milliseconds

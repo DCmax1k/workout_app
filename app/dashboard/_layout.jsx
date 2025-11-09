@@ -1,4 +1,4 @@
-import { Dimensions, Modal, Platform, StyleSheet, Text, useColorScheme, View } from 'react-native'
+import { AppState, Dimensions, Modal, Platform, StyleSheet, Text, useColorScheme, View } from 'react-native'
 import { Redirect, router, Stack, Tabs } from 'expo-router'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {Colors} from '../../constants/Colors'
@@ -15,6 +15,7 @@ import ThemedView from '../../components/ThemedView'
 import ThemedText from '../../components/ThemedText'
 import AlertNotification from '../../components/AlertNotification'
 import auth from '../../util/server/auth'
+import { socket } from '../../util/server/socket'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
@@ -44,50 +45,87 @@ const Dashboard = () => {
     alertRef.current.showAlert(message, good, time);
   }
 
+  const checkAuth = async () => {
+    console.log("Called check auth");
+    if (!user.jsonWebToken) {
+      showAlert("No authentication token provided.", false);
+      setTimeout(() => {
+        showAlert("Please go to Profile -> Account Recovery to transfer your data and back up your account.", false);
+      }, 1500);
+      
+      return;
+    } 
+    const authResponse = await auth(user.jsonWebToken);
+    console.log("auth response", authResponse);
+    if (authResponse.status !== "success") {
+      // Check if error was network issue of error auth
+      if (authResponse.status === "network_error") {
+        // Network error, sign in to loca account
+        console.log("network error, sign into local account");
+        showAlert(authResponse.message, false);
+      } else {
+        // Auth error, signing out
+        console.log("auth error");
+        showAlert(authResponse.message, false); 
+        //setUser(null);
+        //router.replace('/onboarding'); // Probably dont need from home index
+        //return;
+      }
+    } else {
+      // Auth success, update user with db info, connect socket
+      console.log("Successfully authenticated");
+      if (!authResponse.goodVersion) {
+        showAlert("Version outdated! A new updated developement build is available.", true);
+        setTimeout(() => {showAlert("If not provided, ask the developer for the new build.", true, 6000)}, 1500)
+      };
+      //showAlert("Successfully authenticated", true);
+      const {userInfo} = authResponse;
+      updateUser(userInfo);
+      // Start SOCKET IO connection
+      console.log("Connecting socket...");
+      if (!socket.connected) {
+        socket.connect();
+      } else {
+        console.log("Already connected");
+      }
+    }
+    updateOptions({checkAuth: false});
+    
+    
+  }
+
+  const appState = useRef(AppState.currentState);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", nextState => {
+      if (appState.current.match(/inactive|background/) && nextState === "active") {
+        console.log("📲 App has come back to foreground!");
+        // Run your function here
+        checkAuth();
+      }
+      appState.current = nextState;
+    });
+
+    return () => subscription.remove();
+  }, []);
+
   const sheetRef = useRef(null);
   // Check auth - Move to dashboard layout
   useEffect(() => {
-    const checkAuth = async () => {
-      if (!user.jsonWebToken) {
-        showAlert("No authentication token provided.", false);
-        setTimeout(() => {
-          showAlert("Please go to Profile -> Account Recovery to transfer your data and back up your account.", false);
-        }, 1500);
-        
-        return;
-      } 
-      const authResponse = await auth(user.jsonWebToken);
-      console.log("auth response", authResponse);
-      if (authResponse.status !== "success") {
-        // Check if error was network issue of error auth
-        if (authResponse.status === "network_error") {
-          // Network error, sign in to loca account
-          console.log("network error, sign into local account");
-          showAlert(authResponse.message, false);
-        } else {
-          // Auth error, signing out
-          console.log("auth error");
-          showAlert(authResponse.message, false); 
-          //setUser(null);
-          //router.replace('/onboarding'); // Probably dont need from home index
-          //return;
-        }
-      } else {
-        // Auth success, update user with db info
-        console.log("Successfully authenticated");
-        if (!authResponse.goodVersion) showAlert("A new update is available. If not provided, ask the developer for the new updated developement build.", false);
-        //showAlert("Successfully authenticated", true);
-        const {userInfo} = authResponse;
-        updateUser(userInfo);
-      }
-      updateOptions({checkAuth: false});
-      
-      
-    }
+
+    socket.on("receiveMessage", (data) => {
+      console.log("Received message: ", data);
+    })
+
+    
 
     if (options.checkAuth) {
-      console.log("Calling checkAuth");
+      //console.log("Calling checkAuth");
       checkAuth();
+    }
+
+    return () => {
+      socket.off();
     }
   }, [options.checkAuth]);
 

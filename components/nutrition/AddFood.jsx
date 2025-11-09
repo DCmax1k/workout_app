@@ -85,7 +85,7 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, 
                 
             </View>
             
-            <FilterAndSearch value ={searchValue} onChangeText={(e) => setSearchValue(e)} options={[...userFoodCategories, ...foodCategories]} selected={filterSelected} setSelected={setFilterSelected} padding={15} style={{marginHorizontal: -20,}} />
+            <FilterAndSearch setValue={(e) => setSearchValue(e)} value ={searchValue} onChangeText={(e) => setSearchValue(e)} options={[...userFoodCategories, ...foodCategories]} selected={filterSelected} setSelected={setFilterSelected} padding={15} style={{marginHorizontal: -20,}} />
             {/* <Dropdown style={{zIndex: 2}} data={categoryData} selectedId={selectedCategory} setSelectedId={setSelectedCategory} actionIds={actionIds} actions={{"1": openCreateNewFood}} overflow={true} /> */}
             {filterSelected.length > 0 && (<Spacer height={10} />)}
 

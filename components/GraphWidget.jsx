@@ -225,7 +225,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
                 {(<View style={{width: 1, height: 7, backgroundColor: "#585858", borderRadius: 99999, position: "absolute", top: "99%", left: 0,  }} >
                     
                     <View style={{position: "absolute", height: 25, width: 100,  top: "100%", left: -10, display: "flex", justifyContent: "center"}}>
-                        <Text style={{textAlign: "left", color: "#848484", fontSize: 12}}>{new Date(dates[0]).toLocaleDateString()}</Text>
+                        <Text style={{textAlign: "left", color: "#848484", fontSize: 12}}>{sinceWhen(dates[0])}</Text>
                     </View>
                 </View>)}
 

@@ -28,6 +28,8 @@ import OpenExercise from '../../../components/workout/OpenExercise'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useIsFocused } from '@react-navigation/native'
 import auth from '../../../util/server/auth'
+import DisplayName from '../../../components/DisplayName'
+import ProfileImg from '../../../components/ProfileImg'
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -298,13 +300,13 @@ const IndexHome = () => {
       )}
 
       <SafeAreaView style={{flex: 1}} >
-        <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}} contentContainerStyle={{paddingBottom: 120}}>
+        <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}} contentContainerStyle={{paddingBottom: 120, }}>
           {/* <BlueButton onPress={clearUserData} title={"[BETA] RESET USER DATA"} style={{marginLeft: 20}} /> */}
           {/* <BlueButton onPress={changeUsernameTest} title={"Change username"} style={{marginLeft: 20}} /> */}
           <View style={styles.welcomeCont}>
             <View>
               <Text style={{color: Colors.primaryOrange, fontSize: 15}} >Welcome back,</Text>
-              <ThemedText title={true} style={{fontSize: 25, fontWeight: 700}}>{user.username}</ThemedText>
+              <DisplayName name={user.username} usernameDecoration={user.usernameDecoration} achievement={{show: false}} fontSize={25} premium={user.premium}  />
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               {/* Profile Icon */}
@@ -312,7 +314,8 @@ const IndexHome = () => {
                   <Image style={{width: "70%", height: "70%"}} source={search} />
               </Pressable> */}
               <Pressable style={styles.actionButtonCont} onPress={() => router.push('/dashboard/home/profile')}>
-                  <Image style={{width: "100%", height: "100%"}} source={profileIcon} />
+                  {/* <Image style={{width: "100%", height: "100%"}} source={profileIcon} /> */}
+                  <ProfileImg size={50} profileImg={user.profileImg} />
               </Pressable>
               
             </View>

@@ -17,6 +17,10 @@
 //             googleId: user.googleId,
 //             appleId: user.appleId,
 //             facebookId: user.facebookId,
+//             usernameDecoration: {
+//                  prefixColor: "red",
+//                  prefix: "",
+//              },
 
 //         }
 

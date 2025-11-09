@@ -165,7 +165,7 @@ const SavedMeals = () => {
             <Spacer height={20} />
 
             
-            <Search value={searchValue} onChangeText={setSearchValue} style={{marginHorizontal: 20}} />
+            <Search value={searchValue} setValue={setSearchValue} onChangeText={setSearchValue} style={{marginHorizontal: 20}} />
 
             <Spacer height={10} />
 

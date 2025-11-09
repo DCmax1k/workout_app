@@ -13,7 +13,7 @@ import { router } from 'expo-router'
 import { useUserStore } from '../../stores/useUserStore'
 
 
-const PastWorkoutCard = ({style, data, reopenExercise = null, onPress = () => {}, ...props}) => {
+const PastWorkoutCard = ({style, data, reopenExercise = null, onPress = () => {}, disablePress=false, ...props}) => {
 
     const openWorkout = () => {
         
@@ -40,43 +40,46 @@ const PastWorkoutCard = ({style, data, reopenExercise = null, onPress = () => {}
     }
 
   return (
-    <Pressable style={{flex: 1}} onPress={openWorkout}>
+    <View style={{flex: 1}} >
+
         <View style={[styles.card, style]}>
+            {!disablePress && (<Pressable onPress={openWorkout} style={[StyleSheet.absoluteFill, { zIndex: 1}]}></Pressable>)}
+
             {/* Top side */}
-        <View style={[styles.side, styles.top]}>
-            <ThemedText title={true} style={{fontSize: 17, fontWeight: "bold"}} >{truncate(data.workoutName, 22)}</ThemedText>
-            <ThemedText style={{fontSize: 13, fontWeight: "bold", color: Colors.primaryOrange}}>{data.exercises.length} EXERCISE{data.exercises.length === 1 ? "":"S"}</ThemedText>
-        </View>
-        {/* Bottom side */}
-        <View style={[styles.side, styles.bottom]}>
-            <ThemedText style={{fontSize: 13}}>{formatDate(data.time)}</ThemedText>
+            <View style={[styles.side, styles.top]}>
+                <ThemedText title={true} style={{fontSize: 17, fontWeight: "bold"}} >{truncate(data.workoutName, 22)}</ThemedText>
+                <ThemedText style={{fontSize: 13, fontWeight: "bold", color: Colors.primaryOrange}}>{data.exercises.length} EXERCISE{data.exercises.length === 1 ? "":"S"}</ThemedText>
+            </View>
+            {/* Bottom side */}
+            <View style={[styles.side, styles.bottom]}>
+                <ThemedText style={{fontSize: 13}}>{formatDate(data.time)}</ThemedText>
 
-            {/* Quick stats */}
-            <View style={styles.quickStats}>
+                {/* Quick stats */}
+                <View style={styles.quickStats}>
 
-                <View style={styles.quickStat}>
-                    <Image source={clock} style={{height: 15, width: 15, objectFit: "contain", tintColor: "white", marginRight: 5}} />
-                    <ThemedText style={{fontSize: 14, fontWeight: 600}}>{formatDuration(data.workoutLength)}</ThemedText>
+                    <View style={styles.quickStat}>
+                        <Image source={clock} style={{height: 15, width: 15, objectFit: "contain", tintColor: "white", marginRight: 5}} />
+                        <ThemedText style={{fontSize: 14, fontWeight: 600}}>{formatDuration(data.workoutLength)}</ThemedText>
+                    </View>
+
+                    {!showDistInstead && (<View style={[styles.quickStat, {marginLeft: 10}]}>
+                        <Image source={weight} style={{height: 20, width: 20, objectFit: "contain", tintColor: "white", marginRight: 5}} />
+                        <ThemedText style={{fontSize: 14, fontWeight: 600}}>{parseInt(data.totalWeightLifted)} lbs</ThemedText>
+                    </View>)}
+
+                    {showDistInstead && (<View style={[styles.quickStat, {marginLeft: 10}]}>
+                        <Image source={whiteRunner} style={{height: 20, width: 20, objectFit: "contain", tintColor: "white", marginRight: 5}} />
+                        <ThemedText style={{fontSize: 14, fontWeight: 600}}>{parseInt(data.totalDistanceTraveled)} miles</ThemedText>
+                    </View>)}
+
                 </View>
-
-                {!showDistInstead && (<View style={[styles.quickStat, {marginLeft: 10}]}>
-                    <Image source={weight} style={{height: 20, width: 20, objectFit: "contain", tintColor: "white", marginRight: 5}} />
-                    <ThemedText style={{fontSize: 14, fontWeight: 600}}>{parseInt(data.totalWeightLifted)} lbs</ThemedText>
-                </View>)}
-
-                {showDistInstead && (<View style={[styles.quickStat, {marginLeft: 10}]}>
-                    <Image source={whiteRunner} style={{height: 20, width: 20, objectFit: "contain", tintColor: "white", marginRight: 5}} />
-                    <ThemedText style={{fontSize: 14, fontWeight: 600}}>{parseInt(data.totalDistanceTraveled)} miles</ThemedText>
-                </View>)}
-
+            </View>
+            {/* Absolute */}
+            <View  style={[styles.absolute]}>
+                <Image source={rightCarrot} style={{height: 20, width: 20, objectFit: "contain"}} />
             </View>
         </View>
-        {/* Absolute */}
-        <View  style={[styles.absolute]}>
-            <Image source={rightCarrot} style={{height: 20, width: 20, objectFit: "contain"}} />
-        </View>
-        </View>
-    </Pressable>
+    </View>
     
   )
 }
