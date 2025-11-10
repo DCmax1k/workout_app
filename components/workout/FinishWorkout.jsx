@@ -23,6 +23,7 @@ import { truncate } from '../../util/truncate'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import sendData from '../../util/server/sendData'
 import { useBottomSheet } from '../../context/BottomSheetContext'
+import { socket } from '../../util/server/socket'
 
 const achievementAmounts = [10, 50, 100, 200, 500, 1000, 10000];
 
@@ -73,9 +74,11 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
             updateUser({streak: {achievementAmount: pastWorkoutsLength}});
         }
 
-        
+        // Server send        
         const response = await sendData("/dashboard/requestactivity", {jsonWebToken: user.jsonWebToken, activityData});
         if (response.status !== "success") showAlert("An error occured while attempting activity post.", false);
+        // Socket.io send
+        socket.emit("send_recent_activity", {jsonWebToken: user.jsonWebToken, dbActivity: response.activity})
         // Update client with activity model
         const activity = response.activity;
         const recentActivity = user.recentActivity;

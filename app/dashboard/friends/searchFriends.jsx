@@ -16,10 +16,13 @@ import ThemedText from '../../../components/ThemedText'
 import DisplayName from '../../../components/DisplayName'
 import ProfileImg from '../../../components/ProfileImg'
 import { Colors } from '../../../constants/Colors'
+import SectionSelect from '../../../components/SectionSelect'
+import { socket } from '../../../util/server/socket'
 
 
 const filterSearchUsers = (users, s) => {
     console.log("From filter, users: ", users);
+    if (!s) return users;
     const search = s.trim().toLowerCase();
     return users.filter(u => {
         if (u.username.toLowerCase().includes(search)) return true;
@@ -30,6 +33,8 @@ const filterSearchUsers = (users, s) => {
 const SearchFriends = () => {
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
+
+    const [section, setSection] = useState("Friends"); // Friends, All Users
 
     const {showAlert} = useBottomSheet();
 
@@ -61,7 +66,7 @@ const SearchFriends = () => {
         console.log("Cache: ", cacheUsersFromSearch.current);
         setSearch(e);
         if (e.length === 0) return;
-        if (e.length === 1) {
+        if (e.length > 0 && !cacheUsersFromSearch[e.charAt(0).toLowerCase()]) {
             const key = e.charAt(0).toLowerCase();
             // Check for cache, if not then search db
             if (cacheUsersFromSearch.current[key]) {
@@ -91,6 +96,8 @@ const SearchFriends = () => {
         // send server request
         const response = await sendData("/dashboard/adduser", {jsonWebToken: user.jsonWebToken, person});
         if (response.status !== "success") return showAlert(response.message, false);
+        // Send socket
+        socket.emit("send_add_user", {jsonWebToken: user.jsonWebToken, person, userInfo: response.freshUserInfo});
         //showAlert("Friend request sent.", true);
     }
     const requestRemoveUser = async (person) => {
@@ -100,6 +107,8 @@ const SearchFriends = () => {
         // send server request
         const response = await sendData("/dashboard/unadduser", {jsonWebToken: user.jsonWebToken, person});
         if (response.status !== "success") return showAlert(response.message, false);
+        // Send socket
+        socket.emit("send_unadd_user", {jsonWebToken: user.jsonWebToken, person, userInfo: response.freshUserInfo});
         //showAlert("Friend removed.", true);
     }
     const requestUnaddUser = async (person) => {
@@ -109,6 +118,8 @@ const SearchFriends = () => {
         // send server request
         const response = await sendData("/dashboard/unadduser", {jsonWebToken: user.jsonWebToken, person});
         if (response.status !== "success") return showAlert(response.message, false);
+        // Send socket
+        socket.emit("send_unadd_user", {jsonWebToken: user.jsonWebToken, person, userInfo: response.freshUserInfo});
         //showAlert("User unadded.", true);
     }
     const requestAcceptUser = async (person) => {
@@ -118,6 +129,8 @@ const SearchFriends = () => {
         // send server request
         const response = await sendData("/dashboard/adduser", {jsonWebToken: user.jsonWebToken, person});
         if (response.status !== "success") return showAlert(response.message, false);
+        // Send socket
+        socket.emit("send_add_user", {jsonWebToken: user.jsonWebToken, person, userInfo: response.freshUserInfo});
         //showAlert("Friend added", true);
       }
     
@@ -146,16 +159,23 @@ const SearchFriends = () => {
   return (
     <ThemedView style={{flex: 1}}>
         <SafeAreaView style={{flex: 1}}>
-            <TitleWithBack title={"Search Users"} />
+            <TitleWithBack title={"Search"} />
             <Spacer height={20} />
             <View style={{paddingHorizontal: 20}}>
                 <Search value={search} placeholder='Username' onChangeText={handleInput} setValue={(v) => handleInput(v)} />
             </View>
             <Spacer height={5} />
+            <SectionSelect section={section} setSection={setSection} sections={["Friends", "All Users"]} style={{marginHorizontal: 20}} />
+            <Spacer height={5} />
+            {user.friends.length === 0 && section === "Friends" && (
+            <View style={{width: "100%"}}>
+                <ThemedText style={{textAlign: "center", marginTop: 20}}>Add new friends from the All Users tab.</ThemedText>
+            </View>
+            )}
             <FlatList
                 contentContainerStyle={{paddingBottom: 120, paddingTop: 15, flex: 1}}
                 keyExtractor={(item) => item._id}
-                data={results}
+                data={section === "Friends" ? filterSearchUsers(user.friends, search) : results}
                 renderItem={({item}) => {
                     
                     let friendStatus = 'notadded'; // notadded, friend, added, request
@@ -169,7 +189,7 @@ const SearchFriends = () => {
 
 
                     return (
-                        <Pressable key={item._id} style={{flexDirection: "row", marginHorizontal: 20, alignItems: "center"}} onPress={() => {console.log("Click user: ", item)}}>
+                        <Pressable key={item._id} style={{flexDirection: "row", marginHorizontal: 20, marginBottom: 10, alignItems: "center"}} onPress={() => {console.log("Click user: ", item)}}>
                             <ProfileImg size={50} profileImg={item.profileImg} style={{marginRight: 10}}  />
                             <View style={{justifyContent: "center", }}>
                                 <DisplayName name={item.username} usernameDecoration={item.usernameDecoration} premium={item.premium} fontSize={18} />

@@ -29,6 +29,7 @@ import ProfileImg from '../../../components/ProfileImg'
 import getAchievementBadge from '../../../util/getAchievementBadge'
 import { Portal } from 'react-native-paper'
 import BlueButton from '../../../components/BlueButton'
+import { socket } from '../../../util/server/socket'
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -114,6 +115,9 @@ const Activity = ({style, activity, ...props}) => {
     // Send server request
     const response = await sendData("/dashboard/activityreact", {activityId: activity._id, emoji, jsonWebToken: user.jsonWebToken});
     if (response.status !== "success") showAlert(response.message, false);
+    // Send socket.io
+    console.log("Sending: ", response.activity);
+    socket.emit("send_activity_react", ({jsonWebToken: user.jsonWebToken, activityInfo: response.activity, emoji}))
   }
 
   const emojiOptions = ["cool", "laugh", "surprised", "wink", "bicep", "heart", "fire", "hundred", "goat", "gem", "money", "hole", "demon",  "trophy", "star", "nophone", "eyes", "shower", "toilet", "beer", "progress", ];
@@ -310,6 +314,8 @@ const FriendsIndex = () => {
     // send server request
     const response = await sendData("/dashboard/adduser", {jsonWebToken: user.jsonWebToken, person});
     if (response.status !== "success") return showAlert(response.message, false);
+    // Send socket
+    socket.emit("send_add_user", {jsonWebToken: user.jsonWebToken, person, userInfo: response.freshUserInfo});
     //showAlert("Friend added", true);
   }
   const requestDeclineAcceptUser = async (person) => { 
@@ -319,6 +325,8 @@ const FriendsIndex = () => {
     // send server request
     const response = await sendData("/dashboard/rejectuser", {jsonWebToken: user.jsonWebToken, person});
     if (response.status !== "success") return showAlert(response.message, false);
+    // Send socket
+    socket.emit("send_reject_user", {jsonWebToken: user.jsonWebToken, person, userInfo: response.freshUserInfo});
     //showAlert("User rejected.", true);
   }
 
@@ -395,7 +403,7 @@ const FriendsIndex = () => {
           actionBtnIconStyles={{height: 25, width: 25}}
           leftActionBtn={{active: true, image: require("../../../assets/icons/notification.png"), action: showNotifications, }}
           leftActionBtnIconStyles={{height: 20, width: 20}}
-          actionBtn={{active: true, image: require("../../../assets/icons/searchNoBg.png"), action: showSearch, }}
+          actionBtn={{active: true, image: require("../../../assets/icons/searchUser.png"), action: showSearch, }}
           leftBtnNotification={bellNotification}
           />
 

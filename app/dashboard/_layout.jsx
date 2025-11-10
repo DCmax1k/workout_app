@@ -85,6 +85,8 @@ const Dashboard = () => {
       console.log("Connecting socket...");
       if (!socket.connected) {
         socket.connect();
+        socket.emit("join_room", userInfo.dbId);
+        
       } else {
         console.log("Already connected");
       }
@@ -113,9 +115,79 @@ const Dashboard = () => {
   // Check auth - Move to dashboard layout
   useEffect(() => {
 
-    socket.on("receiveMessage", (data) => {
-      console.log("Received message: ", data);
-    })
+    socket.on('connect', () => {
+      console.log("connected");
+      socket.emit("join_room", user.dbId);
+    });
+
+    socket.on("receive_recent_activity", (activity) => {
+      if (!activity) return;
+      // Update client with activity model
+      const recentActivity = user.recentActivity;
+      const newRecentActivity = [activity, ...recentActivity];
+      console.log("Activity received: ", activity);
+      updateUser({recentActivity: newRecentActivity});
+    });
+
+    socket.on("receive_activity_react", ({senderID, activityInfo, emoji}) => {
+      if (!userInfo || !emoji || !senderID) return;
+      // Update client with new react in recent activity
+      const allRecentActivity = user.recentActivity;
+      const idx = allRecentActivity.findIndex(a => a._id === activityInfo._id);
+      if (idx < 0) return console.log('React not added to undefined activity');
+      const activity = allRecentActivity[idx];
+
+      const reactions = activity.reactions ?? {};
+      Object.keys(reactions).forEach(e => {
+          if (reactions[e].includes(senderID)) {
+              reactions[e] = reactions[e].filter(id => id !== senderID)
+          }
+      });
+      if (emoji) {
+          if (reactions[emoji]) {
+              reactions[emoji] = [...reactions[emoji], senderID];
+          } else {
+              reactions[emoji] = [senderID];
+          }
+      }
+      allRecentActivity[idx].reactions = reactions;
+      updateUser({recentActivity: allRecentActivity});
+    });
+
+    socket.on("receive_add_user", ({userInfo}) => {
+      if (!userInfo) return;
+      if (user.friendsAdded.findIndex(f => f._id === userInfo._id) < 0) {
+        // Client update as a a friend request received
+        const friendRequests = user.friendRequests.filter(fr => fr._id !== userInfo._id);
+        updateUser({friendRequests: [{...userInfo, read: false}, ...friendRequests]});
+      } else {
+        // Request was from someone in our added, just remove from friendsAdded and add to friends
+        const newAdded = user.friendsAdded.filter(fa => fa._id !== userInfo._id);
+        const newFriends = [...user.friends, userInfo];
+        updateUser({friendsAdded: newAdded, friends: newFriends});
+      }
+    });
+
+    socket.on("receive_unadd_user", ({userInfo}) => {
+      if (!userInfo) return;
+      if (user.friends.findIndex(f => f._id === userInfo._id) < 0) {
+        // User is not a friend, so remove the friend request
+        const friendRequests = user.friendRequests.filter(fr => fr._id !== userInfo._id);
+        updateUser({friendRequests: [...friendRequests]});
+      } else {
+        // User is friend, so remove from friends
+        const newFriends = user.friends.filter(f => f._id !== userInfo._id);
+        updateUser({friends: newFriends});
+      }
+    });
+
+    socket.on("receive_reject_user", ({userInfo}) => {
+      if (!userInfo) return;
+      // User is not a friend, so remove the friend request
+      const friendsAdded = user.friendsAdded.filter(fr => fr._id !== userInfo._id);
+      updateUser({friendsAdded,});
+
+    });
 
     
 
@@ -127,7 +199,7 @@ const Dashboard = () => {
     return () => {
       socket.off();
     }
-  }, [options.checkAuth]);
+  }, [user, updateUser, options.checkAuth]);
 
 
   const [sheetShouldStartOpen, setSheetShouldStartOpen] = useState(false);
@@ -139,7 +211,7 @@ const Dashboard = () => {
     }
     
     
-  }, []);
+  }, [user]);
 
 
     useEffect(() => {

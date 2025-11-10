@@ -18,7 +18,8 @@ import ThemedView from '../ThemedView';
 import ThemedText from '../ThemedText';
 import CreateExercise from './CreateExercise';
 import GraphWidget from '../GraphWidget';
-import { useVideoPlayer, VideoView } from 'expo-video';
+import { useVideoPlayer, VideoView } from 'expo-video'
+import { Video, InterruptionModeAndroid, InterruptionModeIOS, Audio } from 'expo-av'
 import ImageContain from '../ImageContain';
 
 const screenWidth = Dimensions.get("window").width;
@@ -117,6 +118,8 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
     player = useVideoPlayer(exercise.video, (player) => {
         player.loop = true;
         player.staysActiveInBackground = false;
+        player.muted = true;
+        player.audioMixingMode = 'mixWithOthers';
     });
   }
 

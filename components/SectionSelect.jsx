@@ -6,7 +6,7 @@ const screenWidth = Dimensions.get("window").width;
 
 
 
-const SectionSelect = ({style, sections, section, setSection, icons=[], paddingHorizontal = 40, barWidth = null, height=50, backgroundColor="#222222", textColor="white", fontSize=17, fontWeight=600, sliderColor="#5B5B5B", ...props}) => {
+const SectionSelect = ({style, sections, section, setSection, icons=[], paddingHorizontal = 40, barWidth = null, height=50, backgroundColor="#222222", textColor="#aaaaaaff", fontSize=17, fontWeight=600, sliderColor="#5B5B5B", ...props}) => {
  
     barWidth = barWidth ? barWidth : screenWidth-paddingHorizontal;
 
@@ -47,11 +47,11 @@ const SectionSelect = ({style, sections, section, setSection, icons=[], paddingH
                 </Animated.View>
                 
 
-            {sections.map((section, i) => {
+            {sections.map((s, i) => {
                 return (
-                    <Pressable onPress={() => setSectionTo(section)} style={[styles.section, {width: sectionWidth}]} key={i}>
+                    <Pressable onPress={() => setSectionTo(s)} style={[styles.section, {width: sectionWidth}]} key={i}>
                             {icons.length > 0 && <Image source={icons[i]} style={{height: 25, width: 25, objectFit: "contain", marginRight: 3}} />}
-                            <Text adjustsFontSizeToFit={true} numberOfLines={1} style={[styles.sectionText, {color: textColor, fontSize, fontWeight, }]}>{section}</Text>
+                            <Text adjustsFontSizeToFit={true} numberOfLines={1} style={[styles.sectionText, {color: textColor, fontSize, fontWeight, },  section===s && {color: "white"}]}>{s}</Text>
                     </Pressable>
                     
                 )
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     slider: {
          //
         borderRadius: 5,
-        height: "90%",
+        height: "80%",
         width: "90%",
     }
 })
