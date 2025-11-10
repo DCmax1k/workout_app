@@ -48,7 +48,7 @@ const ViewProfile = () => {
   return (
     <ThemedView style={{flex: 1, }}>
         <SafeAreaView>
-            <TitleWithBack actionBtn={{actionMenu: true, image: require("../../../assets/icons/threeEllipses.png"), options: actionMenuOptions,}} />
+            <TitleWithBack actionBtn={{actionMenu: isFriend ? true : false, image: require("../../../assets/icons/threeEllipses.png"), options: actionMenuOptions,}} />
             <Spacer height={20} />
             <View style={{width: "100%", justifyContent: "center", alignItems: "center"}}>
                 <ProfileImg profileImg={profile.profileImg} size={80} />
