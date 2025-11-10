@@ -131,6 +131,15 @@ const Activity = ({style, activity, ...props}) => {
   
   const achievement = activity.type === "complete_workout_achievement" ? getAchievementBadge(activity.details.totalWorkouts) : null;
 
+  const viewProfile = (profile) => {
+    router.push({
+      pathname: "/dashboard/friends/viewProfile",
+      params: {
+        profile: JSON.stringify(profile),
+      }
+    })
+  }
+
   return (
     <>
     <PopupSheet active={popupMenuActive} setActive={setPopupMenuActive}>
@@ -179,9 +188,9 @@ const Activity = ({style, activity, ...props}) => {
                 {activity.reactions[emojiInView].map(pId => {
                   const p = activity.peopleDetails[pId];
                   return (
-                    <View key={p.userId} style={{marginBottom: 10}}>
+                    <Pressable onPress={() => {setPopupMenuActive(false); viewProfile(p)}} key={p.userId} style={{marginBottom: 10}}>
                       <DisplayName name={p.username} usernameDecoration={p.usernameDecoration} premium={p.premium} profileImg={p.profileImg} />
-                    </View>
+                    </Pressable>
                   )
                 })}
             </ScrollView>
@@ -194,11 +203,15 @@ const Activity = ({style, activity, ...props}) => {
         <View style={[{width: "100%", flexDirection: "column", alignItems: "flex-start", paddingHorizontal: 20, gap: 10, marginVertical: 10, }, style]} {...props}>
       {/* Top */}
         <View style={{width: "100%", flexDirection: "row", alignItems: "center", gap: 10,}}>
-          <ProfileImg size={35} profileImg={sender.profileImg} />
+          <Pressable onPress={() => {viewProfile(sender)}}>
+            <ProfileImg size={35} profileImg={sender.profileImg} />
+          </Pressable>
+          
           {achievement && <ImageContain source={achievement.icon} size={35} style={{zIndex: 1, marginLeft: -10}} />}
           <View style={{flexShrink: 1}}>
             <Text style={{flexDirection: "row", alignItems: "center", }}>
               <DisplayName name={sender.username} premium={sender.premium} usernameDecoration={sender.usernameDecoration} fontSize={18} style={{ }} makeText={true} />
+              
               {!achievement ? (
                 <Text style={{fontSize: 15, color: "white", fontWeight: 300 }} > completed a workout!</Text>
               ) : (
@@ -398,7 +411,7 @@ const FriendsIndex = () => {
         <SafeAreaView style={{flex: 1}} >
           
           <TitleWithBack
-          title={"Friends"}
+          title={"Recent Activity"}
           backBtn={false}
           actionBtnIconStyles={{height: 25, width: 25}}
           leftActionBtn={{active: true, image: require("../../../assets/icons/notification.png"), action: showNotifications, }}

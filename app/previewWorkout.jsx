@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import trash from '../assets/icons/trash.png'
 import rotate from '../assets/icons/rotate.png'
 import { generateUniqueId } from '../util/uniqueId'
+import { Colors } from '../constants/Colors'
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -111,7 +112,7 @@ const PreviewWorkoutPage = () => {
         });
     }
 
-    let actionMenuOptions = [{title: "Delete Workout", icon: trash, color: "#FF6C6C", onPress: () => showDeletePastWorkoutConfirmation(data),}];
+    let actionMenuOptions = [{title: "Delete Workout", icon: trash, color: Colors.redText, onPress: () => showDeletePastWorkoutConfirmation(data),}];
     if (fromFriends) actionMenuOptions = [{title: "Copy Workout", icon: rotate, onPress: () => copyWorkout(data.fullWorkout),}];
 
   return (

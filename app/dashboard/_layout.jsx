@@ -130,7 +130,7 @@ const Dashboard = () => {
     });
 
     socket.on("receive_activity_react", ({senderID, activityInfo, emoji}) => {
-      if (!userInfo || !emoji || !senderID) return;
+      if (!activityInfo || !emoji || !senderID) return;
       // Update client with new react in recent activity
       const allRecentActivity = user.recentActivity;
       const idx = allRecentActivity.findIndex(a => a._id === activityInfo._id);

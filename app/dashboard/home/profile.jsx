@@ -8,7 +8,7 @@ import BlueButton from '../../../components/BlueButton'
 import Spacer from '../../../components/Spacer'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import profileIcon from '../../../assets/icons/profileIcon.png'
-import pencilIcon from '../../../assets/icons/pencil.png'
+import gearIcon from '../../../assets/icons/gear.png'
 import maleIcon from '../../../assets/icons/male.png'
 import femaleIcon from '../../../assets/icons/female.png'
 import otherGenderIcon from '../../../assets/icons/userHollow.png'
@@ -231,6 +231,14 @@ const Profile = () => {
       router.push('/dashboard/home/accountRecovery');
     }
 
+    const openSettings = () => {
+
+    }
+
+    const actionMenuOptions = [
+      // {title: "Settings", icon: gearIcon, onPress: openSettings,},
+      {title: "Sign Out",  onPress: clearUserData,},
+    ];
 
     return (
       <ThemedView style={styles.container}>
@@ -335,13 +343,17 @@ const Profile = () => {
             
           </PopupSheet>
           <SafeAreaView style={{flex: 1}} >
-            <TitleWithBack title={"Profile"} style={{marginHorizontal: 0}} />
+            <TitleWithBack title={"Profile"} style={{marginHorizontal: 0}} actionBtn={{actionMenu: true, image: require("../../../assets/icons/threeEllipses.png"), options: actionMenuOptions,}} />
             <Spacer height={20} />
             <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1,}} contentContainerStyle={{padding: 20, paddingBottom: 120}}>
               
 
               <View style={{justifyContent: "center", alignItems: "center"}}>
                 <ProfileImg size={80} profileImg={user.profileImg} />
+                <Spacer height={10} />
+                <Pressable onClick={() => {console.log("Edit account")}} style={{backgroundColor: "#686868ff", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5}} >
+                  <Text style={{fontSize: 15, color: "white",}} >Edit Account</Text>
+                </Pressable>
               </View>
 
               <Spacer />
@@ -421,8 +433,8 @@ const Profile = () => {
               <Spacer height={100} />
               
 
-              <BlueButton onPress={clearUserData} title={"Sign out"} />
-              <Spacer />
+              {/* <BlueButton onPress={clearUserData} title={"Sign out"} /> */}
+              {/* <Spacer /> */}
               <BlueButton onPress={openAccountRecovery} title={"Account Recovery"} color={Colors.primaryOrange} />
 
             </ScrollView>
