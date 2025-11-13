@@ -87,6 +87,7 @@ const LoginPage = () => {
             const newLocalUser = {...fullLocalUser, _id: generateUniqueId(), dbId: dbId, jsonWebToken};
             userToSet = newLocalUser;
         }
+        setLoading(false);
         setUser(userToSet);
         updateOptions({animateDashboard: true});
         router.replace("/dashboard");

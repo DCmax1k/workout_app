@@ -63,7 +63,7 @@ export const useUserStore = create((set, get) => {
   // Initial state
   const initialState = {
     options: {
-      loading: true,
+      loading: false,
       animateDashboard: false,
       showOnboarding: true,
       checkAuth: false,
