@@ -92,7 +92,7 @@ export default function Index() {
   // Redirect once loading is complete
   useEffect(() => {
 
-
+      // MATYBE instead of replacing, somehow display their content based on the if instead of the Loading
       if (user) {
         router.replace('/dashboard');
         updateOptions({loading: false, checkAuth: true});

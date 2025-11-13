@@ -59,7 +59,7 @@ const LoginPage = () => {
         setLoading(true);
         const response = await sendData('/login', ({ username, password, }));
         if (response.status !== "success") {
-            //setLoading(false);
+            setLoading(false);
             console.log("Error: ", response.message);
             alertRef.current.showAlert(response.message, false);
             return;
