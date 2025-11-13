@@ -96,7 +96,8 @@ const Profile = () => {
       setUser(null);
     }
 
-    const clickAppleHealth = () => {
+    const showComingSoon = () => {
+      console.log("Showing...");
       setConfirmMenuData({
             title: "Coming soon!",
             subTitle: "",
@@ -107,16 +108,12 @@ const Profile = () => {
         });
         setConfirmMenuActive(true);
     }
+
+    const clickAppleHealth = () => {
+      showComingSoon();
+    }
     const clickGoogleHealth = async () => {
-      setConfirmMenuData({
-            title: "Coming soon!",
-            subTitle: "",
-            subTitle2: "",
-            option1: "Okay",
-            option1color: "#546FDB",
-            confirm: () => setConfirmMenuActive(false),
-        });
-        setConfirmMenuActive(true);
+      showComingSoon();
       // console.log("Requesting access for google");
       // // Request permissions
       // const granted = await HealthConnect.requestPermissionsAsync([
@@ -351,7 +348,7 @@ const Profile = () => {
               <View style={{justifyContent: "center", alignItems: "center"}}>
                 <ProfileImg size={80} profileImg={user.profileImg} />
                 <Spacer height={10} />
-                <Pressable onClick={() => {console.log("Edit account")}} style={{backgroundColor: "#686868ff", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5}} >
+                <Pressable onPress={showComingSoon} style={{backgroundColor: "#686868ff", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5}} >
                   <Text style={{fontSize: 15, color: "white",}} >Edit Account</Text>
                 </Pressable>
               </View>

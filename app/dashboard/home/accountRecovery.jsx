@@ -105,25 +105,25 @@ const AccountRecovery = () => {
     }
 
     const requestRemoveAccountFromDevice = (id) => {
-        // setConfirmMenuData({
-        //     title: "Delete user data?",
-        //     subTitle: "The user data for '" + users[id].username + "' is about to be deleted!",
-        //     subTitle2: "This action cannot be undone. Are you sure you would like to continue?",
-        //     option1: "Delete",
-        //     option1color: Colors.redText,
-        //     option2: "Cancel",
-        //     confirm: () => removeAccountFromDevice(id),
-        // });
-        //setConfirmMenuActive(true);
         setConfirmMenuData({
-            title: "I don't think so..",
-            subTitle: "This option is currently disabled to protect beta testers.",
-            subTitle2: "",
-            option1: "Okay",
-            option1color: Colors.primaryBlue,
-            confirm: () => {setConfirmMenuActive(false);},
+            title: "Delete user data?",
+            subTitle: "The user data for '" + users[id].username + "' is about to be deleted!",
+            subTitle2: "This action cannot be undone. Are you sure you would like to continue?",
+            option1: "Delete",
+            option1color: Colors.redText,
+            option2: "Cancel",
+            confirm: () => removeAccountFromDevice(id),
         });
         setConfirmMenuActive(true);
+        // setConfirmMenuData({
+        //     title: "I don't think so..",
+        //     subTitle: "This option is currently disabled to protect beta testers.",
+        //     subTitle2: "",
+        //     option1: "Okay",
+        //     option1color: Colors.primaryBlue,
+        //     confirm: () => {setConfirmMenuActive(false);},
+        // });
+        // setConfirmMenuActive(true);
     }
 
     const signOut = () => {
@@ -210,7 +210,7 @@ const AccountRecovery = () => {
                                     return (
                                         <Pressable onPress={() => {selectUser(uId)}} key={uId} style={{width: screenWidth-40, marginBottom: 10, backgroundColor: uId===user._id?"#686868ff":Colors.primaryBlue, padding: 10, borderRadius: 10, flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
                                             <View>
-                                                <Text style={{color: "white"}}>{u.username} {uId==="1"?"- {Beta User}":""} {uId===user._id?"- Current":""}</Text>
+                                                <Text style={{color: "white"}}>{u.usernameDecoration.prefix} {u.username} {uId==="1"?"- {Beta User}":""} {uId===user._id?"- Current":""}</Text>
                                                 <Text style={{color: "white"}}>{u.savedWorkouts.length} workout{u.savedWorkouts.length===1?"":"s"}</Text>
                                             </View>
                                             <ActionMenu data={actionMenuData} style={{height: 50, width: 50, justifyContent: "center", alignItems: "center", backgroundColor: Colors.primaryOrange}} />

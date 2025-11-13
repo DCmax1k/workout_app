@@ -13,6 +13,7 @@ import ThemedTextInput from '../../components/workout/ThemedTextInput';
 import sendData from '../../util/server/sendData';
 import auth from '../../util/server/auth';
 import AlertNotification from '../../components/AlertNotification';
+import { generateUniqueId } from '../../util/uniqueId';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -58,7 +59,7 @@ const LoginPage = () => {
         setLoading(true);
         const response = await sendData('/login', ({ username, password, }));
         if (response.status !== "success") {
-            setLoading(false);
+            //setLoading(false);
             console.log("Error: ", response.message);
             alertRef.current.showAlert(response.message, false);
             return;
@@ -72,11 +73,20 @@ const LoginPage = () => {
             alertRef.current.showAlert(authResponse.message, false);
             return;
         }
-        const {userInfo} = authResponse;
+        const {userInfo, fullLocalUser} = authResponse;
         // Find user in users and set
         const localUserIds = Object.keys(users);
         const idx = localUserIds.findIndex(localId => users[localId].dbId === userInfo.dbId);
-        const userToSet = {...users[localUserIds[idx]], ...userInfo};
+        let userToSet;
+        if (idx > -1) {
+            // Local user found
+            userToSet = {...users[localUserIds[idx]], ...userInfo, jsonWebToken};
+        } else {
+            // Steal more data from db to complete user
+            const dbId = fullLocalUser._id;
+            const newLocalUser = {...fullLocalUser, _id: generateUniqueId(), dbId: dbId, jsonWebToken};
+            userToSet = newLocalUser;
+        }
         setUser(userToSet);
         updateOptions({animateDashboard: true});
         router.replace("/dashboard");

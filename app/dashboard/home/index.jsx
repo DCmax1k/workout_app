@@ -72,6 +72,7 @@ const IndexHome = () => {
   // Reopen exercise
   const isFocused = useIsFocused();
   useEffect(() => {
+    
     if (isFocused && user.activeReopenExercise) {
       const theExer = JSON.parse(JSON.stringify(user.activeReopenExercise))
       setExerciseOpen(theExer);

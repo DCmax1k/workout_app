@@ -33,7 +33,7 @@ const auth = async (jsonWebToken) => {
     if (response.status !== "success") return response;
     // Get user data and server version
     const { userInfo } = response;
-    return {status: "success", goodVersion: response.version === VERSION, userInfo};
+    return {goodVersion: response.version === VERSION, ...response};
     // return {status: "success", userInfo}
 }
 

@@ -343,12 +343,11 @@ const FriendsIndex = () => {
     //showAlert("User rejected.", true);
   }
 
-  let bellNotification = false;
-  if (user.friendRequests.filter(u => u.read === false).length > 0) bellNotification = true;
+  const bellNotificationAmount = user.friendRequests.filter(u => u.read === false).length;
 
   const showNotifications = async () => {
     setShowingNotifications(true);
-    if (!bellNotification) return;
+    if (!bellNotificationAmount) return;
     // mark all notis read on client
     const newFriendRequests = user.friendRequests.map(fr => {
       return {...fr, read: true}
@@ -417,7 +416,7 @@ const FriendsIndex = () => {
           leftActionBtn={{active: true, image: require("../../../assets/icons/notification.png"), action: showNotifications, }}
           leftActionBtnIconStyles={{height: 20, width: 20}}
           actionBtn={{active: true, image: require("../../../assets/icons/searchUser.png"), action: showSearch, }}
-          leftBtnNotification={bellNotification}
+          leftBtnNotificationAmount={bellNotificationAmount}
           />
 
           <Spacer height={10} />

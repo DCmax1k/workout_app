@@ -14,8 +14,22 @@ import Workout from '../assets/tabBarIcons/dumbbell.png';
 import Exercises from '../assets/icons/list.png';
 import Friends from '../assets/tabBarIcons/friends.png';
 import Animated from 'react-native-reanimated';
+import { useUserStore } from '../stores/useUserStore';
+
+// NO LONGER IN USE - SWITCHED FROM TABS TO STACK, AND MODIFIED THIS FILE TO StackTabBar
+//
+//
+//
+//
+//
+//
+//
+//
+// NO LONGER IN USE - SWITCHED FROM TABS TO STACK, AND MODIFIED THIS FILE TO StackTabBar
 
 function TabBar({animatedTabbarPosition, state, descriptors, navigation }) {
+  const user = useUserStore(state => state.user);
+
   const { colors } = useTheme();
   const { buildHref } = useLinkBuilder();
 
@@ -38,6 +52,9 @@ function TabBar({animatedTabbarPosition, state, descriptors, navigation }) {
         const isFocused = state.index === index;
 
         const isMiddleTab = index === 2; // Check if the current tab is the middle tab
+        const isSecondTab = index === 1; // Check if the current tab is the second
+
+        const bellNotificationAmount = user.friendRequests.filter(u => u.read === false).length;
 
         const onPress = () => {
           const event = navigation.emit({
@@ -57,6 +74,7 @@ function TabBar({animatedTabbarPosition, state, descriptors, navigation }) {
             target: route.key,
           });
         };
+
 
         return (
           <Pressable
@@ -81,6 +99,12 @@ function TabBar({animatedTabbarPosition, state, descriptors, navigation }) {
                 <ThemedText style={[styles.tabBarText, { color: isFocused ? theme.tabBar.textActive : theme.tabBar.text }, ]}>
                     {label === "Workout" ? "Workouts" : label}
                 </ThemedText>
+
+                {!isSecondTab && (
+                <View style={{zIndex: 1, borderColor: "red", borderWidth: 1, minWidth: 17, height: 17, paddingHorizontal: 3, justifyContent: "center", alignItems: "center", backgroundColor: Colors.protein, borderRadius: 9999,}}>
+                    <Text style={{color: "white", fontSize: 13, fontWeight: "600"}}>{bellNotificationAmount}</Text>
+                </View>
+            )}
             
           </Pressable>
         );

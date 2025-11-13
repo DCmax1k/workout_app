@@ -11,14 +11,16 @@ import { Colors } from '../constants/Colors'
 
 const screenWidth = Dimensions.get("window").width;
 
-const TitleWithBack = ({style, backBtn = true, leftBtnNotification=false, actionBtnIconStyles, leftActionBtnIconStyles, backFunction = () => router.back(), actionBtn = {active: false, actionMenu: false, image: threeEllipses, options: [{title: "Delete workout", icon: trash, onPress: () => console.log("Pressed"),}], },  leftActionBtn = {active: false, actionMenu: false, image: threeEllipses, options: [{title: "Delete workout", icon: trash, onPress: () => console.log("Pressed"),}], }, ...props}) => {
+const TitleWithBack = ({style, backBtn = true, leftBtnNotificationAmount=2, actionBtnIconStyles, leftActionBtnIconStyles, backFunction = () => router.back(), actionBtn = {active: false, actionMenu: false, image: threeEllipses, options: [{title: "Delete workout", icon: trash, onPress: () => console.log("Pressed"),}], },  leftActionBtn = {active: false, actionMenu: false, image: threeEllipses, options: [{title: "Delete workout", icon: trash, onPress: () => console.log("Pressed"),}], }, ...props}) => {
 
   return (
     <View style={[{position: "relative",  marginTop: 20, width: screenWidth,}, style]} {...props}>
         {leftActionBtn.active ? ( 
             <Pressable onPress={leftActionBtn.action} style={styles.backBtn}>
-                {leftBtnNotification && (
-                    <View style={{position: "absolute", height: 7, width: 7, backgroundColor: Colors.protein, borderRadius: 9999, top: 8, right: 8}}></View>
+                {leftBtnNotificationAmount > 0 && (
+                    <View style={{position: "absolute", minWidth: 17, height: 17, paddingHorizontal: 3, justifyContent: "center", alignItems: "center", backgroundColor: Colors.protein, borderRadius: 9999, top: 0, right: 0}}>
+                        <Text style={{color: "white", fontSize: 13, fontWeight: "600"}}>{leftBtnNotificationAmount}</Text>
+                    </View>
                 )}
                 <Image style={[styles.actionBtnIcon, leftActionBtnIconStyles]} source={leftActionBtn.image} />
             </Pressable>

@@ -31,6 +31,7 @@ const EditWorkout = () => {
   const user = useUserStore((state) => state.user);
   const updateUser = useUserStore((state) => state.updateUser);
   const workout = user.editActiveWorkout;
+  if (workout.startTime) delete workout.startTime;
   const exercises = workout.exercises;
   //const allExercises = [...user.createdExercises, ...Exercises];
   const allExercises = getAllExercises(user);

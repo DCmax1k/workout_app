@@ -19,7 +19,6 @@ import ThemedText from '../ThemedText';
 import CreateExercise from './CreateExercise';
 import GraphWidget from '../GraphWidget';
 import { useVideoPlayer, VideoView } from 'expo-video'
-import { Video, InterruptionModeAndroid, InterruptionModeIOS, Audio } from 'expo-av'
 import ImageContain from '../ImageContain';
 
 const screenWidth = Dimensions.get("window").width;

@@ -56,7 +56,7 @@ const Dashboard = () => {
       return;
     } 
     const authResponse = await auth(user.jsonWebToken);
-    console.log("auth response", authResponse);
+    //console.log("auth response", authResponse);
     if (authResponse.status !== "success") {
       // Check if error was network issue of error auth
       if (authResponse.status === "network_error") {
@@ -201,19 +201,6 @@ const Dashboard = () => {
     }
   }, [user, updateUser, options.checkAuth]);
 
-
-  const [sheetShouldStartOpen, setSheetShouldStartOpen] = useState(false);
-  useEffect(() => {
-    if (user) {
-      setTimeout(() => {
-        setSheetShouldStartOpen(user.activeWorkout !== null);
-      }, 100)
-    }
-    
-    
-  }, [user]);
-
-
     useEffect(() => {
       if (animateDashboard) {
         // do your animation here
@@ -234,8 +221,9 @@ const Dashboard = () => {
   const snapPoints = [firstSnap, 0.95*screenHeight];
 
   const animatedPosition = useSharedValue(0);
+  
+  // Bottom sheet position
   const [currentPosition, setCurrentPosition] = React.useState(0);
-
   const [currentRoute, setCurrentRoute] = useState(0); // route index 
 
   const handleSnapPress = useCallback((index) => {
@@ -321,7 +309,7 @@ const Dashboard = () => {
               backgroundStyle={{backgroundColor: "#313131"}}
               handleIndicatorStyle={{backgroundColor: "white", width: 80}}
               animatedPosition={animatedPosition}
-              index={sheetShouldStartOpen ? 0 : -1}
+              index={user.activeWorkout !== null ? 1 : -1}
               onChange={index => setCurrentPosition(index)}
             >
 

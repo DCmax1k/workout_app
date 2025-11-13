@@ -1,4 +1,4 @@
-import { View, Platform, StyleSheet, Image, useColorScheme, Pressable } from 'react-native';
+import { View, Platform, StyleSheet, Image, useColorScheme, Pressable, Text } from 'react-native';
 import { useLinkBuilder, useTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ThemedView from './ThemedView';
@@ -13,15 +13,19 @@ import Workout from '../assets/tabBarIcons/dumbbell.png';
 // import Exercises from '../assets/tabBarIcons/hamburger.png';
 import Exercises from '../assets/icons/list.png';
 import Friends from '../assets/tabBarIcons/friends.png';
-import Animated from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { useState } from 'react';
+import { useUserStore } from '../stores/useUserStore';
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 function StackTabBar({animatedTabbarPosition, currentRoute, setCurrentRoute}) {
+  const user = useUserStore(state => state.user);
+
+
   const { colors } = useTheme();
   const { buildHref } = useLinkBuilder();
 
@@ -40,6 +44,9 @@ function StackTabBar({animatedTabbarPosition, currentRoute, setCurrentRoute}) {
         const isFocused = currentRoute === index;
 
         const isMiddleTab = index === 2; // Check if the current tab is the middle tab
+        const isSecondTab = index === 1; // Check if the current tab is the second
+
+        const bellNotificationAmount = user.friendRequests.filter(u => u.read === false).length;
 
         const onPress = () => {
           if (!isFocused) {
@@ -60,15 +67,24 @@ function StackTabBar({animatedTabbarPosition, currentRoute, setCurrentRoute}) {
             <Image style={[styles.tabBarIcon, isMiddleTab ? styles.middleTabIcon : null, {tintColor: isFocused ? theme.title : "grey"}]} source={route.icon} />
 
 
-            {/* {!isMiddleTab && (
-                <ThemedText style={[styles.tabBarText, { color: isFocused ? theme.tabBar.textActive : theme.tabBar.text }]}>
-                    {label}
-                </ThemedText>
-            )} */}
+                {/* {!isMiddleTab && (
+                    <ThemedText style={[styles.tabBarText, { color: isFocused ? theme.tabBar.textActive : theme.tabBar.text }]}>
+                        {label}
+                    </ThemedText>
+                )} */}
 
                 <ThemedText style={[styles.tabBarText, { color: isFocused ? theme.tabBar.textActive : theme.tabBar.text }, ]}>
                     {firstCapital(label)}
                 </ThemedText>
+
+                {isSecondTab &&  bellNotificationAmount > 0 &&  (
+                  <Animated.View entering={FadeIn} exiting={FadeOut} style={{position: "absolute", left: 0, top: 0, width: "100%", alignItems: "flex-end", paddingHorizontal: 15, paddingVertical: 8 }}>
+                      <View style={{zIndex: 1, minWidth: 14, height: 14, paddingHorizontal: 3, justifyContent: "center", alignItems: "center", backgroundColor: Colors.protein, borderRadius: 9999,}}>
+                        <Text style={{color: "white", fontSize: 10, fontWeight: "600"}}>{bellNotificationAmount}</Text>
+                    </View>
+                  </Animated.View>
+                
+            )}
             
           </Pressable>
         );
