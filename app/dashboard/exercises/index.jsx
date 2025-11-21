@@ -91,30 +91,10 @@ const ExercisesIndex = () => {
   const sectionalData = filterSelected.length > 0 ? [{title: "Filtered", data: filteredData}] : groupExercisesByLetter(filteredData);
 
 
-  const allExercises = getAllExercises(user);
-  const filteredExercises = searchExercise(allExercises, searchValue).map(ex => {
-    return {
-      time: Date.now(),
-      value: ex.name,
-      key: ex.id,
-      ...ex,
-    };
-  });
-
-
   const openCreateExercise = () => {
     setCreateExercise(true);
   }
 
-  const scrollToExerciseByKey = (keyToFind) => {
-
-    const index = filteredExercises.findIndex(item => item.key === keyToFind);
-    if (index !== -1 && listRef.current) {
-      listRef.current.scrollToIndex({ index, animated: true });
-    } else {
-      console.warn("Exercise not found or listRef is not ready.");
-    }
-  };
 
   
 

@@ -19,6 +19,8 @@ import ExpenditureBreakdown from '../../components/extra/ExpenditureBreakdown'
 import sinceWhen from '../../util/sinceWhen'
 import findInsertIndex from '../../util/findInsertIndex'
 import fillDailyData from '../../util/fillDailyData'
+import sendData from '../../util/server/sendData'
+import { useBottomSheet } from '../../context/BottomSheetContext'
 
 const screenWidth = Dimensions.get('screen').width;
 
@@ -28,7 +30,7 @@ const firstCapital = (string) => {
 
 
 const ProgressExpanded = () => {
-
+  const {showAlert} = useBottomSheet();
   const user = useUserStore((state) => state.user);
   const updateUser = useUserStore((state) => state.updateUser);
 
@@ -53,26 +55,46 @@ const ProgressExpanded = () => {
   
 
 
-  
+  const pushLoggingWeightLayoutServer = async (category, obj) => {
+    // Push to server
+    const response = await sendData("/dashboard/pushloggingweightlayout", {category, obj, jsonWebToken: user.jsonWebToken});
+    if (response.status !== "success") {
+      showAlert(response.message, false);
+      return;
+    }
+  }
+  const saveLoggingGoalServer = async (category, value) => {
+    // Push to server
+    const response = await sendData("/dashboard/savelogginggoal", {category, value, jsonWebToken: user.jsonWebToken});
+    if (response.status !== "success") {
+      showAlert(response.message, false);
+      return;
+    }
+  }
 
   useEffect(() => {
     const sub = emitter.addListener("done", (data) => {
       //console.log("Got data back:", data);
       if (data.widget.layout === "weight") { // Push new data point with new date
         if (data.target === "value") {
+          
           const cData = user.tracking.logging[data.widget.category].data;
           const newTime = data.timeAndDate.getTime() ?? new Date().getTime();
+          const obj = {date: newTime, amount: data.value}
+          pushLoggingWeightLayoutServer(data.widget.category, obj);
           if (cData.length === 0 || new Date(cData[cData.length -1].date).getTime() < new Date(newTime).getTime()) {
-            cData.push({date: newTime, amount: data.value});
+            cData.push(obj);
           } else {
             const idx = findInsertIndex(cData.map(d => d.date), newTime);
-            cData.splice(idx, 0, {date: newTime, amount: data.value});
+            cData.splice(idx, 0, obj);
           }
           //const cData = [...nData, {date: Date.now(), amount: data.value}];
           const updated = {tracking: {logging: {[data.widget.category]: {data: cData}}}};
           updateUser(updated);
+          
           //console.log("updated ", updated);
         } else if (data.target === 'goal') {
+          saveLoggingGoalServer(data.widget.category, data.value);
           const updated = {tracking: {logging: {[data.widget.category]: {extraData: {goal: data.value}}}}};
           updateUser(updated);
         } 
@@ -80,6 +102,7 @@ const ProgressExpanded = () => {
 
       } else if (data.widget.layout === "water") { // Edit last data point if the last point is 
         if (data.target==="goal") {
+          saveLoggingGoalServer(data.widget.category, data.value);
           const updated = {tracking: {logging: {[data.widget.category]: {extraData: {goal: data.value}}}}};
           updateUser(updated);
         } else if (data.target === "valueToAdd") {
@@ -189,6 +212,14 @@ const ProgressExpanded = () => {
     });
   }
 
+  const addLoggingWaterLayoutServer = async (category, valueToAdd) => {
+    const response = await sendData("/dashboard/addloggingwaterlayout", {category, valueToAdd, jsonWebToken: user.jsonWebToken});
+    if (response.status !== "success") {
+      showAlert(response.message, false);
+      return;
+    }
+  }
+
   const addToToday = () => {
     //const currentTime = Date.now();
     const valueToAdd = widget.extraData.valueToAdd;
@@ -208,6 +239,7 @@ const ProgressExpanded = () => {
     // updateUser({tracking: {logging: {[widget.category]: {data: newData}}}});
 
     // Updated to update today, today isnt always the last entry - TESTING
+    addLoggingWaterLayoutServer(widget.category, valueToAdd);
     const currentTime = new Date();
     const cData = widget.data;
     const newTime = currentTime.getTime();
@@ -216,15 +248,21 @@ const ProgressExpanded = () => {
         // Edit existing entry
         const entryToEdit = dataEntriesOnDate[0];
         const entryIndex = cData.findIndex(e => e.date === entryToEdit.date);
-        cData[entryIndex] = {date: newTime, amount: valueToAdd+entryToEdit.amount};
+        const obj = {date: newTime, amount: valueToAdd+entryToEdit.amount};
+        
+        cData[entryIndex] = obj;
         updateUser({tracking: {logging: {[widget.category]: {data: cData}}}});
     } else {
         // Add new entry
         if (cData.length === 0 || new Date(cData[cData.length -1].date).getTime() < new Date(newTime).getTime()) {
-            cData.push({date: newTime, amount: valueToAdd});
+          const obj = {date: newTime, amount: valueToAdd};
+          cData.push(obj);
+
         } else {
-            const idx = findInsertIndex(cData.map(d => d.date), newTime);
-            cData.splice(idx, 0, {date: newTime, amount: valueToAdd});
+          const idx = findInsertIndex(cData.map(d => d.date), newTime);
+          const obj = {date: newTime, amount: valueToAdd};
+          cData.splice(idx, 0, obj);
+
         }
         updateUser({tracking: {logging: {[widget.category]: {data: cData}}}});
     }

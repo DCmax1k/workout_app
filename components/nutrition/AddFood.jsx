@@ -1,4 +1,4 @@
-import { Dimensions, Image, Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, FlatList, Image, Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ThemedView from '../ThemedView'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -12,7 +12,7 @@ import scanIcon from '../../assets/icons/scan.png'
 import searchIcon from '../../assets/icons/searchNoBg.png'
 import aiIcon from '../../assets/icons/aiSparkle.png'
 import plusIcon from '../../assets/icons/plus.png'
-import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown,useAnimatedStyle, useSharedValue, withDelay, withSpring, withTiming } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown,SlideInDown,SlideOutDown,useAnimatedStyle, useSharedValue, withDelay, withSpring, withTiming } from 'react-native-reanimated'
 import Search from '../Search'
 import Spacer from '../Spacer'
 import Dropdown from '../Dropdown'
@@ -71,6 +71,7 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, 
 
     return (
         <View style={{ position: 'relative',}}>
+
             {/* <Search value={searchValue} onChangeText={(e) => setSearchValue(e)} placeholder='Search' /> */}
             {/* <Spacer height={20} /> */}
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginLeft: 10, marginBottom: 10,}}>
@@ -89,7 +90,7 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, 
             {/* <Dropdown style={{zIndex: 2}} data={categoryData} selectedId={selectedCategory} setSelectedId={setSelectedCategory} actionIds={actionIds} actions={{"1": openCreateNewFood}} overflow={true} /> */}
             {filterSelected.length > 0 && (<Spacer height={10} />)}
 
-            <ScrollView style={{marginLeft: -20, marginRight: -20, height: screenHeight/1.5,}} contentContainerStyle={{paddingBottom: screenHeight/3, paddingHorizontal: 20, paddingTop: 10}} showsVerticalScrollIndicator={false}>
+            {/* <ScrollView style={{marginLeft: -20, marginRight: -20, height: screenHeight/1.5,}} contentContainerStyle={{paddingBottom: screenHeight/3, paddingHorizontal: 20, paddingTop: 10}} showsVerticalScrollIndicator={false}>
                 <View style={{paddingBottom: 50, flexWrap: "wrap", flexDirection: "row", justifyContent: "center", gap: 15,}}>
                     {filteredFoods.map((f, i) => {
                         const selected = foodToAdd.map(f => f.id).includes(f.id);
@@ -108,10 +109,85 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, 
                         </TouchableScale>
                     )})}
                 </View>
+            </ScrollView> */}
 
 
 
-            </ScrollView>
+
+            {/* New design flatlist */}
+            <FlatList
+                style={{ marginLeft: -20, marginRight: -20, }}
+                data={filteredFoods}
+                keyExtractor={(item, index) => index.toString()}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                    paddingBottom: screenHeight,
+                    paddingHorizontal: 20,
+                    paddingTop: 10,
+                }}
+                renderItem={({ item }) => {
+                    const selected = foodToAdd.map(f => f.id).includes(item.id);
+                    const icon = item.icon ? icons[item.icon] : icons["fooddoodles303"];
+                    const backgroundColor = editFoods
+                        ? "#AB3F41"
+                        : selected
+                        ? "#304998"
+                        : "#2E2E2E";
+
+                    return (
+                        <TouchableScale
+                            activeScale={1.05}
+                            friction={10}
+                            tension={200}
+                            onLongPress={() => openFoodPreview(item)}
+                            onPress={() => selectFood(item)}
+                            style={{
+                                paddingHorizontal: 10,
+                                paddingVertical: 10,
+                                borderRadius: 10,
+                                backgroundColor,
+                                flexDirection: "row",
+                                alignItems: "center",
+                                marginBottom: 5, // spacing between items
+                            }}
+                        >
+                            <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                <View
+                                    style={{
+                                        height: 40,
+                                        width: 40,
+                                        borderRadius: 5,
+                                        backgroundColor: item.color,
+                                        marginRight: 5,
+                                        overflow: "hidden",
+                                    }}
+                                >
+                                    <View
+                                        style={[
+                                            StyleSheet.absoluteFill,
+                                            { backgroundColor: "rgba(0,0,0,0.3)" },
+                                        ]}
+                                    />
+                                    <Image
+                                        source={icon}
+                                        style={{
+                                            height: "100%",
+                                            width: "100%",
+                                            objectFit: "contain",
+                                            tintColor: "white",
+                                        }}
+                                    />
+                                </View>
+
+                                <Text style={{ color: "white", fontSize: 15 }}>
+                                    {truncate(item.name, 30)}
+                                </Text>
+                            </View>
+                        </TouchableScale>
+                    );
+                }}
+            />
+
 
             
             
@@ -261,6 +337,14 @@ const AddFood = ({...props}) => {
             
         </KeyboardAvoidingView> */}
 
+        {/* Add items floating button */}
+        {foodToAdd.length > 0 && <Animated.View entering={SlideInDown.springify().damping(90)} exiting={SlideOutDown.springify().damping(90)} style={{position: 'absolute', bottom: 50, left: 20, right: 20, zIndex: 3, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Pressable onPress={requestAddFood} style={{paddingHorizontal: 20, paddingVertical: 20, backgroundColor: foodToAdd.length < 1 ? "grey":Colors.primaryBlue, borderRadius: 10, flexDirection: 'row', alignItems: 'center'}}>
+                <Image style={{height: 20, width: 20, marginRight: 10}} source={plus} />
+                <Text style={{fontSize: 20, color: "white", fontWeight: 400}}>Add <Text style={{fontWeight: 700}}>{foodToAdd.length}</Text> food{foodToAdd.length===1?"":"s"}</Text>
+            </Pressable>
+        </Animated.View>}
+
         {/* Food Preview */}
         {foodPreviewOpen&& (
             <Portal >
@@ -301,9 +385,13 @@ const AddFood = ({...props}) => {
                     </Pressable>
                 </View>
                 <View style={{zIndex: 1}}>
-                    <Pressable onPress={requestAddFood} style={{paddingHorizontal: 10, paddingVertical: 10, backgroundColor: foodToAdd.length < 1 ? "grey":Colors.primaryBlue, borderRadius: 10, flexDirection: 'row', alignItems: 'center'}}>
+                    {/* <Pressable onPress={requestAddFood} style={{paddingHorizontal: 10, paddingVertical: 10, backgroundColor: foodToAdd.length < 1 ? "grey":Colors.primaryBlue, borderRadius: 10, flexDirection: 'row', alignItems: 'center'}}>
                         <Image style={{height: 20, width: 20, marginRight: 5}} source={plus} />
                         <Text style={{fontSize: 20, color: "white", fontWeight: 700}}>{foodToAdd.length}</Text>
+                    </Pressable> */}
+
+                    <Pressable onPress={() => openCreateNewFood()} style={{paddingHorizontal: 10, paddingVertical: 10, flexDirection: 'row', alignItems: 'center',}}>
+                        <Text style={{fontSize: 15, color: "#FF696C", fontWeight: 400}}>New</Text>
                     </Pressable>
                 </View>
             </View>

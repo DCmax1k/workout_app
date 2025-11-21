@@ -23,11 +23,13 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useBottomSheet } from '../../../context/BottomSheetContext'
 import { useIsFocused } from '@react-navigation/native'
 import Search from '../../../components/Search'
+import sendData from '../../../util/server/sendData'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
 
 const IndexWorkout = () => {
+  const {showAlert, openSheet} = useBottomSheet();
     const user = useUserStore((state) => state.user);
     const updateUser = useUserStore((state) => state.updateUser);
     const [searchValue, setSearchValue] = useState("");
@@ -101,7 +103,15 @@ const IndexWorkout = () => {
         schedule = {...schedule, currentIndex: 0}
         updateUser({schedule});
       }
+      const removeWorkoutServer = async (workoutID) => {
+            const response = await sendData("/dashboard/removeworkout", {workoutID, jsonWebToken: user.jsonWebToken});
+            if (response.status !== "success") {
+                showAlert(response.message, false);
+                return;
+            }
+        }
       const deleteWorkout = (workoutID) => {
+        removeWorkoutServer(workoutID);
         const userWorkouts = user.savedWorkouts;
         const workoutToDeleteIndex = userWorkouts.findIndex(w => w.id === workoutID);
         if (workoutToDeleteIndex >= 0) {
@@ -131,7 +141,6 @@ const IndexWorkout = () => {
       }
     }
 
-    const { openSheet } = useBottomSheet();
     const openSheetForAndroid = () => {
       openSheet(1);
     }

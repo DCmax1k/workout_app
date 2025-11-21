@@ -13,7 +13,7 @@ import { router } from 'expo-router'
 import { useUserStore } from '../../stores/useUserStore'
 
 
-const PastWorkoutCard = ({style, data, reopenExercise = null, onPress = () => {}, disablePress=false, ...props}) => {
+const PastWorkoutCard = ({style, data, reopenExercise = null, onPress = () => {}, disablePress=false, hideDate = false, ...props}) => {
 
     const openWorkout = () => {
         
@@ -52,7 +52,7 @@ const PastWorkoutCard = ({style, data, reopenExercise = null, onPress = () => {}
             </View>
             {/* Bottom side */}
             <View style={[styles.side, styles.bottom]}>
-                <ThemedText style={{fontSize: 13}}>{formatDate(data.time)}</ThemedText>
+                <ThemedText style={{fontSize: 13}}>{ !hideDate ? formatDate(data.time) : "Workout"}</ThemedText>
 
                 {/* Quick stats */}
                 <View style={styles.quickStats}>

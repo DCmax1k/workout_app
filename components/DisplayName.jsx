@@ -6,6 +6,7 @@ import ImageContain from './ImageContain'
 import { Colors } from '../constants/Colors'
 import getAchievementBadge from '../util/getAchievementBadge'
 import ProfileImg from './ProfileImg'
+import { Portal } from 'react-native-paper'
 
 const screenWidth = Dimensions.get("screen").width;
 
@@ -37,10 +38,20 @@ const DisplayName = ({style, fontSize=25, name = "testName123", premium=false, o
     )
 
   return makeText ? (
+    <>
+    <Portal>
+      <View style={[style, {flexDirection: "row", alignItems: "center", maxWidth: maxWidth, position: "absolute", top: -99999999, left: -99999999 }]} onLayout={handleLayout}>
+
+          {LayoutContent}
+      </View>
+    </Portal>
+    
     <Text style={[style, {flexDirection: "row", alignItems: "center", maxWidth: maxWidth,  }]} {...props}>
 
         {LayoutContent}
     </Text>
+    </>
+    
   ) : (
     <View style={[style, {flexDirection: "row", alignItems: "center", maxWidth: maxWidth,  }]} {...props}>
 

@@ -26,11 +26,14 @@ import SwipeToDelete from '../../components/SwipeToDelete'
 import emitter from '../../util/eventBus'
 import TouchableScale from '../../components/TouchableScale'
 import FoodPreview from '../../components/nutrition/FoodPreview'
+import { useBottomSheet } from '../../context/BottomSheetContext'
+import sendData from '../../util/server/sendData'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
 
 const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOpacity, animatedButtonsOpacity, animatedLeftButtonTransform, animatedRightButtonTransform, handleSnapPress, bottomSheetPosition}, ref) => {
+    const {showAlert} = useBottomSheet();
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
 
@@ -169,8 +172,16 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
         return meal;
     }
 
+    const logConsumptionServer = async (meal) => {
+        const response = await sendData("/dashboard/logconsumption", {meal, jsonWebToken: user.jsonWebToken});
+        if (response.status !== "success") {
+            showAlert(response.message, false);
+            return;
+        }
+    }
     const logFoods = (meal = null) => {
         meal = meal ? meal : formatCompletedMeal();
+        logConsumptionServer(meal);
         const dateKey = getDateKey(meal.date);
         const consumedMeals = user.consumedMeals;
         const todaysMeals = consumedMeals[dateKey] ?? [];
@@ -184,6 +195,14 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
         }, 100)
     }
 
+    const saveMealServer = async (meal) => {
+        const response = await sendData("/dashboard/savemeal", {meal, jsonWebToken: user.jsonWebToken});
+        if (response.status !== "success") {
+            showAlert(response.message, false);
+            return;
+        }
+    }
+
     const saveAsMeal = () => {
         const meal = formatCompletedMeal();
         const savedMeals = user.savedMeals;
@@ -194,6 +213,7 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
 
     const logAndSaveMeal = () => {
         const savedMeal = saveAsMeal();
+        saveMealServer(savedMeal);
         setTimeout(() => {
             logFoods(savedMeal);
         }, 500);

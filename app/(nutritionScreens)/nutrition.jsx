@@ -36,6 +36,7 @@ import MealPreview from '../../components/nutrition/MealPreview'
 import { Platform } from 'react-native'
 import EnergyBalanceGraph from '../../components/nutrition/EnergyBalanceGraph'
 import calculateExpenditure from '../../util/calculateExpenditure'
+import sendData from '../../util/server/sendData'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -206,17 +207,29 @@ const Nutrition = () => {
         sheetRef.current?.snapToIndex(1);
     }
 
+    const saveMacroGoalServer = async (key, value) => {
+        const response = await sendData("/dashboard/savemacrogoal", {key, value, jsonWebToken: user.jsonWebToken});
+        if (response.status !== "success") {
+          showAlert(response.message, false);
+          return;
+        }
+      }
+
     useEffect(() => {
         const sub = emitter.addListener("done", (data) => {
             //console.log("Got data back:", data);
             if (data.target === 'calories') {
+                saveMacroGoalServer("calories", data.value);
                 updateUser({tracking: {nutrition: {["calories"]: { extraData: {goal: data.value}}}}})
             } else if (data.target === "protein") {
+                saveMacroGoalServer("protein", data.value);
                 updateUser({tracking: {nutrition: {["protein"]: { extraData: {goal: data.value}}}}})
             } else if (data.target === 'carbs') {
+                saveMacroGoalServer("carbs", data.value);
                 updateUser({tracking: {nutrition: {["carbs"]: { extraData: {goal: data.value}}}}})
 
             } else if  (data.target === 'fat') {
+                saveMacroGoalServer("fat", data.value);
                 updateUser({tracking: {nutrition: {["fat"]: { extraData: {goal: data.value}}}}})
             } else {
                 console.log("Tried changing value with emit but value not found");
@@ -317,7 +330,16 @@ const Nutrition = () => {
     //     )
     // }
 
+
+    const removeLogConsumptionServer = async (meal) => {
+        const response = await sendData("/dashboard/removeconsumption", {meal, jsonWebToken: user.jsonWebToken});
+        if (response.status !== "success") {
+            showAlert(response.message, false);
+            return;
+        }
+    }
     const removeMeal = (meal) => {
+        removeLogConsumptionServer(meal);
         const dateKey = getDateKey(meal.date);
         const consumedMeals = user.consumedMeals;
         const todaysMeals = consumedMeals[dateKey] ?? [];

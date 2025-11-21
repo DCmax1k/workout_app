@@ -50,7 +50,7 @@ const SectionSelect = ({style, sections, section, setSection, icons=[], paddingH
             {sections.map((s, i) => {
                 return (
                     <Pressable onPress={() => setSectionTo(s)} style={[styles.section, {width: sectionWidth}]} key={i}>
-                            {icons.length > 0 && <Image source={icons[i]} style={{height: 25, width: 25, objectFit: "contain", marginRight: 3}} />}
+                            {icons.length > 0 && <Image source={icons[i]} style={[{height: 25, width: 25, objectFit: "contain", marginRight: 3, tintColor: textColor}, section===s && {tintColor: "white"}]} />}
                             <Text adjustsFontSizeToFit={true} numberOfLines={1} style={[styles.sectionText, {color: textColor, fontSize, fontWeight, },  section===s && {color: "white"}]}>{s}</Text>
                     </Pressable>
                     

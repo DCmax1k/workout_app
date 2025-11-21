@@ -23,6 +23,8 @@ import MealPreview from '../../components/nutrition/MealPreview'
 import { Portal } from 'react-native-paper'
 import emitter from '../../util/eventBus'
 import { router } from 'expo-router'
+import { useBottomSheet } from '../../context/BottomSheetContext'
+import sendData from '../../util/server/sendData'
 
 const searchMeals = (meals, searchValue) => {
     if (!searchValue) return meals;
@@ -37,6 +39,7 @@ const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 
 const SavedMeals = () => {
+    const {showAlert} = useBottomSheet();
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
 
@@ -53,7 +56,15 @@ const SavedMeals = () => {
 
     const [activeCardConfirmationMealId, setActiveCardConfirmationMealId] = useState(null);
 
+    const removeMealServer = async (meal) => {
+        const response = await sendData("/dashboard/removemeal", {meal, jsonWebToken: user.jsonWebToken});
+        if (response.status !== "success") {
+            showAlert(response.message, false);
+            return;
+        }
+    }
     const removeMeal = (meal) => {
+        removeMealServer(meal);
         const savedMeals = user.savedMeals;
         const newSavedMeals = savedMeals.filter(m => m.id !== meal.id);
         updateUser({savedMeals: newSavedMeals});

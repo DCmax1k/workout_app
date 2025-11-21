@@ -11,6 +11,7 @@ import pencilIcon from '../../assets/icons/pencil.png'
 import check from '../../assets/icons/check.png'
 import lightBulb from '../../assets/icons/lightBulb.png'
 import doubleCheck from '../../assets/icons/doubleCheck.png'
+import rotateIcon from '../../assets/icons/rotate.png'
 import dumbellIcon from '../../assets/icons/weight.png'
 import Animated, { FadeIn, FadeInDown, FadeInRight, FadeOut, FadeOutDown, FadeOutRight, LinearTransition,  } from 'react-native-reanimated'
 import { useUserStore } from '../../stores/useUserStore'
@@ -27,7 +28,7 @@ const firstCapital = (string) => {
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
 
-const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWorkoutStyle, drag=()=>{}, dragActive=false, ...props}) => {
+const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWorkoutStyle, swapExercise=()=>{}, drag=()=>{}, dragActive=false, ...props}) => {
     const user = useUserStore((state) => state.user);
 
     const [focusedInput, setFocusedInput] = useState({ setIndex: null, track: null });
@@ -120,6 +121,18 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         const newExercise = {...exercise, sets};
         updateExercise(index, newExercise);
     }
+    const endEditing = (setIndex, track, value) => {
+        const sets = exercise.sets;
+        const set = sets[setIndex];
+        if (value === "" || value === "." ) {
+            set[track] = "0";
+        } else {
+            set[track] = JSON.stringify(parseFloat(value));
+        }
+        const newExercise = {...exercise, sets};
+        updateExercise(index, newExercise);
+    }
+
     const changeExerciseName = (value) => {
         updateExercise(index, {...exercise, name: value});
     }
@@ -224,6 +237,21 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         }
     }, [user.completedExercises])
 
+    const requestSwapExercise = () => {
+        swapExercise(exercise);
+    }
+
+    let actionMenuData = [
+                {title: "Open Exercise", icon: eyeIcon, onPress: () => viewOpenExercise(exercise)},
+                {title: "Add Note", icon: fileIcon, onPress: openNoteAndFocus, },
+                {title: "Rename Exercise", icon: pencilIcon, onPress: () => exerciseNameRef.current?.focus()},
+                {title: exercise.unit === "metric" ? ("Imperial Unit (" + imperialTag + ")") : ("Metric Unit (" + metricTag + ")"), icon: dumbellIcon, onPress: switchUnit},
+                {title: "Delete Exercise", icon: trashIcon, onPress: removeExercise, color: "#FF6C6C"},
+            ];
+    if (activeWorkoutStyle) {
+        actionMenuData.splice(4, 0, {title: "Swap for Today", icon: rotateIcon, onPress: () => requestSwapExercise(), });
+    }
+
     return (
     <Animated.View layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} style={[{backgroundColor: activeWorkoutStyle ? "":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10,}, false && {height: 40}]} {...props}>
         {openExercise && (
@@ -255,13 +283,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
 
             <TextInput ref={exerciseNameRef} value={exercise.name} onChangeText={changeExerciseName} style={{fontSize: 15, flex: 1, fontWeight: 500, color: activeWorkoutStyle?"white":"#DB8854", }} />
 
-            <ActionMenu style={{zIndex: 2}} offset={activeWorkoutStyle} backgroundColor={activeWorkoutStyle?"transparent":"#DB8854"} data={[
-                {title: "Open Exercise", icon: eyeIcon, onPress: () => viewOpenExercise(exercise)},
-                {title: "Add note", icon: fileIcon, onPress: openNoteAndFocus, },
-                {title: "Rename exercise", icon: pencilIcon, onPress: () => exerciseNameRef.current?.focus()},
-                {title: exercise.unit === "metric" ? ("Imperial unit (" + imperialTag + ")") : ("Metric unit (" + metricTag + ")"), icon: dumbellIcon, onPress: switchUnit},
-                {title: "Delete exercise", icon: trashIcon, onPress: removeExercise, color: "#FF6C6C"},
-            ]}
+            <ActionMenu style={{zIndex: 2}} offset={activeWorkoutStyle} backgroundColor={activeWorkoutStyle?"transparent":"#DB8854"} data={actionMenuData}
                 />
                 
         </View>
@@ -303,6 +325,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                                     (focusedInput.setIndex === setIndex && focusedInput.track === track) ? styles.focusedInput : null]}
                                 value={set[track]}
                                 onChangeText={(value) => {updateValue(setIndex, track, value)}}
+                                onEndEditing={(e) => {endEditing(setIndex, track, e.nativeEvent.text)}}
                                 placeholder={placeholderValue}
                                 placeholderTextColor={"#797979"}
                                 onFocus={() => setFocusedInput({ setIndex, track })}

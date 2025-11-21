@@ -116,10 +116,29 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
         }, 100);
     }, [])
 
-    const saveWorkout = (w) => {
+    const saveWorkout = async (w, swappedExercises=null) => {
         // Save simplified workout
         const savedWorkouts = user.savedWorkouts;
         const workoutIndex = savedWorkouts.findIndex(wk => wk.id === w.id);
+        // Swap exercises back in for the before exercise
+        if (swappedExercises) {
+            Object.keys(swappedExercises).forEach(beforeExId => {
+                const afterExIds = swappedExercises[beforeExId].slice(1).map(ex => ex.uniqueId);
+                const newWorkoutExercises = [];
+                let alreadyPutBefore = false;
+                w.exercises.forEach(ex => {
+                    if (afterExIds.includes(ex.uniqueId)) {
+                        if (alreadyPutBefore) return;
+                        alreadyPutBefore = true;
+                        newWorkoutExercises.push(swappedExercises[beforeExId][0]);
+                    } else {
+                        newWorkoutExercises.push(ex);
+                    }
+                });
+                w.exercises = newWorkoutExercises;
+            });
+        }
+
         if (workoutIndex < 0) {
             // If not found, unshift workout
             savedWorkouts.unshift(w);
@@ -128,6 +147,11 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
             savedWorkouts[workoutIndex] = w;
         }
         updateUser({savedWorkouts});
+        const response = await sendData('/dashboard/saveworkout', {workout: w, jsonWebToken: user.jsonWebToken});
+        if (response.status !== "success") {
+            showAlert(response.message, false);
+            return;
+        }
     }
 
     const updateOtherWorkoutsWithExercises = (w) => {
@@ -195,6 +219,7 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
 
     const checkForWorkoutUpdate = () => {
         const workout = data.fullWorkout;
+        const swappedExercises = data.swappedExercises;
         if (workout.exercises.length < 1) return;
         // After 1000 ms, ask if workout should be created or updated
         const w = workoutToSimple(workout)
@@ -209,7 +234,7 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
                 option1: "Save workout",
                 option2: "Don't save",
                 confirm: () => {
-                    saveWorkout(w);
+                    saveWorkout(w, swappedExercises);
                     checkForOtherWorkoutsWithExercises(w);
                 },
             });
@@ -226,7 +251,7 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
                     option1: "Update values",
                     option2: "Don't change",
                     confirm: () => {
-                        saveWorkout(w);
+                        saveWorkout(w, swappedExercises);
                         checkForOtherWorkoutsWithExercises(w);
                     },
                 });

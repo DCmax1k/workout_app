@@ -21,7 +21,7 @@ const USER = {
     friends: [], // [friend, friend] -> certain info specified from server. Just ids in db
     subscriptions: [],
     profileImg: {},
-    trouble: {}, //
+    trouble: {bans: [], warnings: [], frozen: false}, //
     googleId: null,
     appleId: null,
     facebookId: null,
@@ -42,12 +42,14 @@ const USER = {
       gender: null, // male, female, other.
     },
     
+    newSchedule: {}, // YET TO DO
     schedule: {
       currentIndex: 0,
       rotation: [
         //"234" // Id of workout 1, 0's are rest days
       ],
     },
+    
     archivedExercises: {}, // {exerciseId: true, exerciseId: false, ...},
     createdExercises: [],
   //   [{

@@ -23,6 +23,8 @@ import PopupSheet from '../../components/PopupSheet';
 import TouchableScale from '../../components/TouchableScale'
 import Animated, { FadeIn, FadeOut, interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import ColorPicker, { Panel1, Swatches, Preview, OpacitySlider, HueSlider } from 'reanimated-color-picker';
+import sendData from '../../util/server/sendData';
+import { useBottomSheet } from '../../context/BottomSheetContext';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -129,6 +131,7 @@ const CustomizeIconAndColor = ({style, updateFood, food, ...props}) => {
 }
 
 const EditFood = () => {
+    const {showAlert} = useBottomSheet();
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
 
@@ -248,7 +251,15 @@ const EditFood = () => {
         }
     }
 
+    const saveFoodServer = async () => {
+            const response = await sendData("/dashboard/savefood", {food, jsonWebToken: user.jsonWebToken});
+            if (response.status !== "success") {
+                showAlert(response.message, false);
+                return;
+            }
+        }
     const requestSaveFood = () => {
+        saveFoodServer();
         const customFoods = user.customFoods;
         customFoods[food.id] = food;
         //console.log("Saving food", food);

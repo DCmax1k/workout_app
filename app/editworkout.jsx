@@ -21,11 +21,16 @@ import getAllExercises from '../util/getAllExercises'
 import deepEqual from '../util/deepEqual'
 import { generateUniqueId } from '../util/uniqueId'
 import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist'
+import sendData from '../util/server/sendData'
+import { useBottomSheet } from '../context/BottomSheetContext'
+
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
 
 const EditWorkout = () => {
+  const {showAlert} =  useBottomSheet();
+
   const workoutNameInputRef = useRef(null);
 
   const user = useUserStore((state) => state.user);
@@ -102,7 +107,15 @@ const EditWorkout = () => {
     updateWorkout({exercises: newExercises});
   }
 
-  const requestSaveWorkout = () => {
+  const saveWorkoutServer = async (workout) => {
+    const response = await sendData('/dashboard/saveworkout', {workout, jsonWebToken: user.jsonWebToken});
+    if (response.status !== "success") {
+      showAlert(response.message, false);
+      return;
+    }
+  }
+
+  const requestSaveWorkout = async () => {
     const w = workoutToSimple(workout);
     // Save simplified workout
     const savedWorkouts = user.savedWorkouts;
@@ -115,6 +128,7 @@ const EditWorkout = () => {
       savedWorkouts[workoutIndex] = w;
     }
     updateUser({savedWorkouts: [...savedWorkouts]});
+    await saveWorkoutServer(w);
     //router.back();
     handleGoBack();
   }
@@ -145,7 +159,15 @@ const EditWorkout = () => {
     schedule = {...schedule, currentIndex: 0}
     updateUser({schedule});
   }
+  const removeWorkoutServer = async (workoutID) => {
+      const response = await sendData("/dashboard/removeworkout", {workoutID, jsonWebToken: user.jsonWebToken});
+      if (response.status !== "success") {
+          showAlert(response.message, false);
+          return;
+      }
+  }
   const deleteWorkout = (workoutID) => {
+    removeWorkoutServer(workoutID);
     const userWorkouts = user.savedWorkouts;
     const workoutToDeleteIndex = userWorkouts.findIndex(w => w.id === workoutID);
     if (workoutToDeleteIndex >= 0) {

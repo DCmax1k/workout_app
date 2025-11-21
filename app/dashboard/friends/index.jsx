@@ -30,6 +30,7 @@ import getAchievementBadge from '../../../util/getAchievementBadge'
 import { Portal } from 'react-native-paper'
 import BlueButton from '../../../components/BlueButton'
 import { socket } from '../../../util/server/socket'
+import formatTime from '../../../util/formatTime'
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -67,6 +68,8 @@ const Activity = ({style, activity, ...props}) => {
   const sender = activity.peopleDetails[senderId];
 
   const [popupMenuActive, setPopupMenuActive] = useState(false);
+
+  const [displayNameMeasured, setDisplayNameMeasured] = useState(null);
       
   const [currentPopupContent, setCurrentPopupContent] = useState("") // addReaction, viewReactions
   const [emojiInView, setEmojiInView] = useState(""); // emoji
@@ -140,82 +143,94 @@ const Activity = ({style, activity, ...props}) => {
     })
   }
 
+  const onDisplayNameMeasured = ({width, height}) => {
+    setDisplayNameMeasured({width, height});
+  }
+
   return (
     <>
     <PopupSheet active={popupMenuActive} setActive={setPopupMenuActive}>
-          {currentPopupContent === "addReaction" && (
-            <View>
-              <ThemedText style={{textAlign: "center"}}>Add Reaction</ThemedText>
-              <Spacer height={20} />
-              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{zIndex: 1, width: screenWidth, backgroundColor: "#303030", marginHorizontal: -20, }} contentContainerStyle={{paddingHorizontal: 20,  flexDirection: 'row', justifyContent: "flex-start",  gap: ITEM_GAP}}>
-                {emojiColumns.map((column, colIndex) => (
-                    <View key={colIndex} style={{flexDirection: "column"}}>
-                    {column.map((item) => {
-                      const chosen = reactions[item]?.includes(user.dbId);
-                      return (
-                        <TouchableScale activeScale={1.1} onPress={() => selectEmoji(chosen ? "" : item)} key={item} style={{height: 40, width: 40, backgroundColor: chosen ? "#3D52A6" : "transparent", borderRadius: 10, marginBottom: ITEM_GAP, justifyContent: "center", alignItems: "center"}}>
-                            <Image style={{height: "80%", width: "80%", objectFit: "contain" ,}} source={icons[item+"Emoji"]} />
-                        </TouchableScale>
-                      )  
-                      })}
-                    </View>
-                ))}
-            </ScrollView>
-
-            </View>
-            
-          )}
-          {currentPopupContent === "viewReactions" && (
-            <View>
-              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginHorizontal: -20}} contentContainerStyle={{paddingHorizontal: 20, flexDirection: 'row', justifyContent: "flex-start", minWidth: "100%", alignItems: 'center', gap: 10}}>
-                {emojis.map((emoji, i) => {
-                    const chosen = emojiInView === emoji;
-                    return (
-                        <Animated.View  key={i} style={{borderRadius: 15, backgroundColor: chosen ? "#4b4b4bff" : "transparent" }}>
-                            <Pressable onPress={() => setEmojiInView(emoji)} style={{flexDirection: "row", alignItems: "center",  gap: 10, padding: 15,}}>
-                                <View style={{height: 30, width: 30}}>
-                                    <Image style={{objectFit: "contain", height: "100%", width: '100%'}} source={icons[emoji+"Emoji"]} />
-                                </View>
-                            </Pressable>
-                        </Animated.View>
-                    )
-                })}   
-            </ScrollView>
-
+        {currentPopupContent === "addReaction" && (
+          <View>
+            <ThemedText style={{textAlign: "center"}}>Add Reaction</ThemedText>
             <Spacer height={20} />
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{zIndex: 1, width: screenWidth, backgroundColor: "#303030", marginHorizontal: -20, }} contentContainerStyle={{paddingHorizontal: 20,  flexDirection: 'row', justifyContent: "flex-start",  gap: ITEM_GAP}}>
+              {emojiColumns.map((column, colIndex) => (
+                  <View key={colIndex} style={{flexDirection: "column"}}>
+                  {column.map((item) => {
+                    const chosen = reactions[item]?.includes(user.dbId);
+                    return (
+                      <TouchableScale activeScale={1.1} onPress={() => selectEmoji(chosen ? "" : item)} key={item} style={{height: 40, width: 40, backgroundColor: chosen ? "#3D52A6" : "transparent", borderRadius: 10, marginBottom: ITEM_GAP, justifyContent: "center", alignItems: "center"}}>
+                          <Image style={{height: "80%", width: "80%", objectFit: "contain" ,}} source={icons[item+"Emoji"]} />
+                      </TouchableScale>
+                    )  
+                    })}
+                  </View>
+              ))}
+          </ScrollView>
 
-            <ScrollView scrollEnabled={activity.peopleDetails.length > 7}>
-                {activity.reactions[emojiInView].map(pId => {
-                  const p = activity.peopleDetails[pId];
-                  return (
-                    <Pressable onPress={() => {setPopupMenuActive(false); viewProfile(p)}} key={p.userId} style={{marginBottom: 10}}>
-                      <DisplayName name={p.username} usernameDecoration={p.usernameDecoration} premium={p.premium} profileImg={p.profileImg} />
-                    </Pressable>
-                  )
-                })}
-            </ScrollView>
-              
-            </View>
-          )}
+          </View>
           
-        </PopupSheet>
+        )}
+        {currentPopupContent === "viewReactions" && (
+          <View>
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginHorizontal: -20}} contentContainerStyle={{paddingHorizontal: 20, flexDirection: 'row', justifyContent: "flex-start", minWidth: "100%", alignItems: 'center', gap: 10}}>
+              {emojis.map((emoji, i) => {
+                  const chosen = emojiInView === emoji;
+                  return (
+                      <Animated.View  key={i} style={{borderRadius: 15, backgroundColor: chosen ? "#4b4b4bff" : "transparent" }}>
+                          <Pressable onPress={() => setEmojiInView(emoji)} style={{flexDirection: "row", alignItems: "center",  gap: 10, padding: 15,}}>
+                              <View style={{height: 30, width: 30}}>
+                                  <Image style={{objectFit: "contain", height: "100%", width: '100%'}} source={icons[emoji+"Emoji"]} />
+                              </View>
+                          </Pressable>
+                      </Animated.View>
+                  )
+              })}   
+          </ScrollView>
 
-        <View style={[{width: "100%", flexDirection: "column", alignItems: "flex-start", paddingHorizontal: 20, gap: 10, marginVertical: 10, }, style]} {...props}>
-      {/* Top */}
+          <Spacer height={20} />
+
+          <ScrollView scrollEnabled={activity.peopleDetails.length > 7}>
+              {activity.reactions[emojiInView].map(pId => {
+                const p = activity.peopleDetails[pId];
+                return (
+                  <Pressable onPress={() => {setPopupMenuActive(false); viewProfile(p)}} key={p.userId} style={{marginBottom: 10}}>
+                    <DisplayName name={p.username} usernameDecoration={p.usernameDecoration} premium={p.premium} profileImg={p.profileImg} />
+                  </Pressable>
+                )
+              })}
+          </ScrollView>
+            
+          </View>
+        )}
+        
+      </PopupSheet>
+
+      <View style={[{width: "100%", flexDirection: "column", alignItems: "flex-start", paddingHorizontal: 20, gap: 10, marginVertical: 10,  }, style]} {...props}>
+        {/* Time */}
+        <View style={{width: "100%", alignItems: "flex-end",  marginBottom: -10}}>
+          <ThemedText style={{ fontSize: 12}}>{formatTime(activity.timestamp)}</ThemedText>
+        </View>
+        
+        {/* Top */}
         <View style={{width: "100%", flexDirection: "row", alignItems: "center", gap: 10,}}>
           <Pressable onPress={() => {viewProfile(sender)}}>
             <ProfileImg size={35} profileImg={sender.profileImg} />
           </Pressable>
           
           {achievement && <ImageContain source={achievement.icon} size={35} style={{zIndex: 1, marginLeft: -10}} />}
-          <View style={{flexShrink: 1}}>
+          <View style={{flexShrink: 1,}}>
+            {/* Make username clickable */}
+            <Pressable onPress={() => {viewProfile(sender)}} style={[displayNameMeasured && {width: displayNameMeasured.width, height: displayNameMeasured.height}, {position: 'absolute', top: 0, left: 0, zIndex: 1,}]} ></Pressable>
+
             <Text style={{flexDirection: "row", alignItems: "center", }}>
-              <DisplayName name={sender.username} premium={sender.premium} usernameDecoration={sender.usernameDecoration} fontSize={18} style={{ }} makeText={true} />
+              <DisplayName name={sender.username} premium={sender.premium} onMeasured={onDisplayNameMeasured} usernameDecoration={sender.usernameDecoration} fontSize={18} style={{ }} makeText={true} />
               
               {!achievement ? (
                 <Text style={{fontSize: 15, color: "white", fontWeight: 300 }} > completed a workout!</Text>
               ) : (
-                <Text style={{fontSize: 15, color: "white", fontWeight: 300 }} >{" achieved"} <Text style={{fontWeight: "800"}}> {firstCapital(achievement.key)} </Text> {"for completing 200 lifetime workouts!" } </Text>
+                <Text style={{fontSize: 15, color: "white", fontWeight: 300 }} >{" achieved"} <Text style={{fontWeight: "800"}}> {firstCapital(achievement.key)} </Text> {"for completing " + activity.details.totalWorkouts + " lifetime workouts!" } </Text>
               )}
             </Text>
           </View>
@@ -231,6 +246,7 @@ const Activity = ({style, activity, ...props}) => {
                 <PastWorkoutCard
                   disablePress={true}
                   data={activity.details.workout}
+                  hideDate={true}
                   />
               </Pressable>
               

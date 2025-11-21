@@ -17,9 +17,12 @@ import Dropdown from '../Dropdown'
 import MultiSelectDropdown from '../MultiSelectDropdown'
 import { generateUniqueId } from '../../util/uniqueId'
 import { useUserStore } from '../../stores/useUserStore'
+import sendData from '../../util/server/sendData'
+import { useBottomSheet } from '../../context/BottomSheetContext'
 
 const CreateExercise = React.forwardRef(({setCreateExercise, callback = () => {}, editData, setEditModeActive, editMode, locked = false, editBackgroundColor = "#282828", ...props}, ref) => {
-    const user = useUserStore(state => state.user);
+  const {showAlert} = useBottomSheet();  
+  const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
 
     const muscleGroupData = [{id: "0", title: "Chest"}, {id: "1", title: "Abs"}, {id: "2", title: 'Back'}, {id: "3", title: "Bicep"}, {id: "4", title: "Tricep"}, {id: "5", title: "Forearm"}, {id: "6", title: "Shoulder"}, {id: "7", title: "Leg"}, {id: "8", title: "Other"}];
@@ -78,6 +81,13 @@ const CreateExercise = React.forwardRef(({setCreateExercise, callback = () => {}
     // const categoryToFill = categoryToFillIndex > 0 ? JSON.stringify(categoryToFillIndex) : null;
     // const [categoryIdSelected, setCategoryIdSelected] = useState(categoryToFill !== null ? categoryToFill : "0");
 
+    const saveExerciseServer = async (exercise) => {
+            const response = await sendData("/dashboard/saveexercise", {exercise, jsonWebToken: user.jsonWebToken});
+            if (response.status !== "success") {
+                showAlert(response.message, false);
+                return;
+            }
+        }
     const saveExercise = () => {
         const tracks = categoryDataTracking[categoryData.findIndex(d => d.id === categoryIdSelected)];
         const muscleGroups = muscleGroupIds.map(id => muscleGroupData.find(d => d.id === id)?.title).filter(e => e !== undefined);
@@ -94,6 +104,7 @@ const CreateExercise = React.forwardRef(({setCreateExercise, callback = () => {}
             id: generateUniqueId(),
         }
 
+        saveExerciseServer(exercise);
         const createdExercises = user.createdExercises;
         createdExercises.unshift(exercise);
         updateUser({createdExercises});

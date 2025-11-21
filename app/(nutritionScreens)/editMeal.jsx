@@ -21,12 +21,14 @@ import SwipeToDelete from '../../components/SwipeToDelete';
 import TouchableScale from '../../components/TouchableScale';
 import PlateItem from '../../components/nutrition/PlateItem';
 import ThemedText from '../../components/ThemedText';
+import sendData from '../../util/server/sendData';
+import { useBottomSheet } from '../../context/BottomSheetContext';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 
 const EditMeal = () => {
-
+    const {showAlert} = useBottomSheet();
 
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
@@ -142,6 +144,14 @@ const EditMeal = () => {
         return newMeal;
     }
 
+    const saveMealServer = async (meal) => {
+        const response = await sendData("/dashboard/savemeal", {meal, jsonWebToken: user.jsonWebToken});
+        if (response.status !== "success") {
+            showAlert(response.message, false);
+            return;
+        }
+    }
+
     const requestSaveMeal = () => {
         const mealToSave = formatCompletedMeal();
         if (openedFrom === "consumption") {
@@ -155,6 +165,7 @@ const EditMeal = () => {
             updateUser({consumedMeals: newConsumedMeals});
         } else {
             // Opened from saved meals
+            saveMealServer(mealToSave);
             const savedMeals = user.savedMeals;
             if (openedFrom==="savedMealsNew") {
                 const newSavedMeals = [mealToSave, ...savedMeals];

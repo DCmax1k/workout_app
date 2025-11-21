@@ -29,6 +29,9 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
     const {closeSheet, showFinishWorkout} = useBottomSheet();
 
     const [exerciseModal, setExerciseModal] = useState(false);
+    const [swapIsLive, setSwapIsLive] = useState(null); // beforeExObj
+    const [swappedExercises, setSwappedExercises] = useState({}); // {beforeUniqueId: [beforeExObj, afterExObj, afterExObj]}
+
     const [isDragging, setIsDragging] = useState(false);
 
     const allExercises = [...user.createdExercises, ...Exercises];
@@ -70,7 +73,27 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
             if (finding.sets) return finding;
             else return {...finding, sets: [], uniqueId: generateUniqueId(),}
         });
-        const exercisesAddedTo = [...exercises, ...completeExercises];
+        let exercisesAddedTo = [];
+
+        // If swapping, remove the original exercise being swapped and note it in swappedExercises
+        if (swapIsLive) {
+            const indexToSwap = exercises.findIndex(ex => ex.uniqueId === swapIsLive.uniqueId);
+            const beforeSwapExercise = swapIsLive; //exercises[indexToSwap];
+            // remove the exercise and put the new one in the same index place
+            const newExercisesList = [...exercises];
+            newExercisesList.splice(indexToSwap, 1); // remove the original
+            newExercisesList.splice(indexToSwap, 0, ...completeExercises); // add the new ones
+            exercisesAddedTo = newExercisesList;
+            // Log the swap
+            const newSwappedExercises = {...swappedExercises};
+            newSwappedExercises[beforeSwapExercise.uniqueId] = [beforeSwapExercise, ...completeExercises];
+            setSwappedExercises(newSwappedExercises);
+            setSwapIsLive(null);
+
+        } else {
+            exercisesAddedTo = [...exercises, ...completeExercises];
+        }
+
         updateWorkout({exercises: exercisesAddedTo});
 
     }
@@ -204,8 +227,9 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
              totalWeightLifted,
              totalDistanceTraveled,
              exercises: completedExercises,
-                totalExpenditure,
+            totalExpenditure,
              fullWorkout: ultimateCloneOfActiveWorkout, // Used to save if user chooses to
+             swappedExercises,
              pastWorkoutsLength: user.pastWorkouts.length + 1,
          }
         closeSheet();
@@ -257,6 +281,11 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
         updateWorkout({exercises: newExercises});
       }
 
+      const swapExercise = (exerciseToSwap) => {
+            setSwapIsLive(exerciseToSwap);
+            setExerciseModal(true);
+        }
+
   return (
        <View style={{flex: 1,}}>
             {/* <PaperProvider> */}
@@ -301,7 +330,17 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
 
                             {/* <SwipeToDelete style={{width: screenWidth}} openedRight={() => removeExercise(item.index)} > */}
                                 <View style={{ width: screenWidth}}>
-                                    <EditExercise key={item.key} exercise={item.exercise} updateExercise={updateExercise} removeExercise={() => removeExercise(item.index)} index={item.index} activeWorkoutStyle={true} drag={drag} dragActive={isActive} />
+                                    <EditExercise
+                                    key={item.key}
+                                    exercise={item.exercise}
+                                    updateExercise={updateExercise}
+                                    removeExercise={() => removeExercise(item.index)}
+                                    index={item.index}
+                                    activeWorkoutStyle={true}
+                                    drag={drag}
+                                    dragActive={isActive}
+                                    swapExercise={swapExercise}
+                                    />
                                 </View>
                             {/* </SwipeToDelete> */}
 
@@ -313,7 +352,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                         <>
                             <Spacer height={20} />
                             <Animated.View layout={LinearTransition.springify().damping(90)}>
-                                <BlueButton title={"Add Exercise"} style={{marginRight: 10, marginLeft: 10}} onPress={() => setExerciseModal(true)} />
+                                <BlueButton title={"Add Exercise"} style={{marginRight: 10, marginLeft: 10}} onPress={() => {setExerciseModal(true); }} setSwapIsLive={setSwapIsLive} />
                                 <Spacer height={40} />
                                 <BlueButton title={"Cancel Workout"} color={"#572E32"} style={{marginRight: 30, marginLeft: 30}} onPress={() => cancelWorkout(true)} />
                             </Animated.View>
@@ -346,7 +385,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                 {( exerciseModal === true && (
                     <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{position: "absolute", top: 0, left: 0, height: screenHeight, width: screenWidth, zIndex: 5, elevation: 5}}>
                         
-                             <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} bottomSheet={false} notModal={true} />
+                             <AddExercise addExercises={addExercises} setExerciseModal={setExerciseModal} bottomSheet={false} notModal={true} swapIsLive={swapIsLive} setSwapIsLive={setSwapIsLive} />
                         
                        
                     </Animated.View>

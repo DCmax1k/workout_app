@@ -21,6 +21,8 @@ import ScrollPicker from '../../../components/ScrollPicker'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { Colors } from '../../../constants/Colors'
 import ProfileImg from '../../../components/ProfileImg'
+import sendData from '../../../util/server/sendData'
+import { useBottomSheet } from '../../../context/BottomSheetContext'
 // import * as HealthConnect from 'expo-health-connect';
 
 
@@ -47,6 +49,8 @@ function feetInchesToCm(feet, inches) {
 const screenWidth = Dimensions.get("screen").width;
 
 const Profile = () => {
+    const {showAlert} = useBottomSheet();
+
     const user = useUserStore((state) => state.user);
     const setUser = useUserStore((state) => state.setUser);
     const updateUser = useUserStore((state) => state.updateUser);
@@ -60,14 +64,24 @@ const Profile = () => {
     
     const [currentPopupContent, setCurrentPopupContent] = useState("") // birthday, height, gender
 
+    const pushLoggingWeightLayoutServer = async (category, obj) => {
+        const response = await sendData("/dashboard/pushloggingweightlayout", {category, obj, jsonWebToken: user.jsonWebToken});
+        if (response.status !== "success") {
+          showAlert(response.message, false);
+          return;
+        }
+      }
+
     useEffect(() => {
         const sub = emitter.addListener("done", (data) => {
           console.log("Got data back:", data);
             if (data.target === "weight") {
               const nData = user.tracking.logging["weight"].data;
-              const cData = [...nData, {date: Date.now(), amount: data.value}];
+              const obj = {date: Date.now(), amount: data.value};
+              const cData = [...nData, obj];
               const updated = {tracking: {logging: {weight: {data: cData}}}};
               updateUser(updated);
+              pushLoggingWeightLayoutServer("weight", obj);
               //console.log("updated ", updated);
             }  else {
               console.log("Tried changing value with emit but value not found");
@@ -163,7 +177,9 @@ const Profile = () => {
 
     const setBirthday = (d) => {
       if (currentPopupContent !== "birthday") return;
-      updateUser({settings: {birthday: new Date(d).getTime()}});
+      const birthday = new Date(d).getTime();
+      updateUser({settings: {birthday}});
+      updateServerSettings("birthday", birthday);
     }
 
     const clickWeight = () => {
@@ -204,13 +220,16 @@ const Profile = () => {
     const setFeet = (feet) => {
       const newCmValue = feetInchesToCm(feet, heightInches);
       updateUser({settings: {height: newCmValue}});
+      updateServerSettings("height", newCmValue);
     }
     const setInches = (inches) => {
       const newCmValue = feetInchesToCm(heightFeet, inches);
       updateUser({settings: {height: newCmValue}});
+      updateServerSettings("height", newCmValue);
     }
     const setCm = (cm) => {
       updateUser({settings: {height: cm}});
+      updateServerSettings("height", cm);
     }
 
     const displayUserHeight = (height) => {
@@ -237,6 +256,14 @@ const Profile = () => {
       {title: "Sign Out",  onPress: clearUserData,},
     ];
 
+    const updateServerSettings = async (key, value) => {
+      const response = await sendData("/dashboard/updatesettings", {key, value, jsonWebToken: user.jsonWebToken});
+      if (response.status !== "success") {
+        showAlert(response.message, false);
+        return;
+      }
+    }
+
     return (
       <ThemedView style={styles.container}>
           <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
@@ -246,21 +273,21 @@ const Profile = () => {
             )}
             {currentPopupContent === "gender" && (
               <View>
-                <Pressable onPress={() => updateUser({settings: {gender: "male"}})} style={{height: 60, backgroundColor: user.settings.gender === "male" ? "#546FDB" : "#595959", borderRadius: 15, justifyContent: 'center', alignItems: "center", position: "relative"}}>
+                <Pressable onPress={() => {updateUser({settings: {gender: "male"}}); updateServerSettings("gender", "male")}} style={{height: 60, backgroundColor: user.settings.gender === "male" ? "#546FDB" : "#595959", borderRadius: 15, justifyContent: 'center', alignItems: "center", position: "relative"}}>
                   <View style={{position: "absolute", height: 60, width: 40, left: 10, justifyContent: "center"}}>
                     <Image source={maleIcon} style={{height: "60%", width: "100%", objectFit: "contain"}} />
                   </View>
                   <Text style={{color: "white", fontSize: 20, fontWeight: "700", }}>Male</Text>
                 </Pressable>
                 <Spacer height={10} />
-                <Pressable onPress={() => updateUser({settings: {gender: "female"}})} style={{height: 60, backgroundColor: user.settings.gender === "female" ? "#546FDB" : "#595959", borderRadius: 15, justifyContent: 'center', alignItems: "center", position: "relative"}}>
+                <Pressable onPress={() => {updateUser({settings: {gender: "female"}}); updateServerSettings("gender", "female")}} style={{height: 60, backgroundColor: user.settings.gender === "female" ? "#546FDB" : "#595959", borderRadius: 15, justifyContent: 'center', alignItems: "center", position: "relative"}}>
                   <View style={{position: "absolute", height: 60, width: 40, left: 10, justifyContent: "center"}}>
                     <Image source={femaleIcon} style={{height: "60%", width: "100%", objectFit: "contain"}} />
                   </View>
                   <Text style={{color: "white", fontSize: 20, fontWeight: "700", }}>Female</Text>
                 </Pressable>
                 <Spacer height={10} />
-                <Pressable onPress={() => updateUser({settings: {gender: "other"}})} style={{height: 60, backgroundColor: user.settings.gender === "other" ? "#546FDB" : "#595959", borderRadius: 15, justifyContent: 'center', alignItems: "center", position: "relative"}}>
+                <Pressable onPress={() => {updateUser({settings: {gender: "other"}}); updateServerSettings("gender", "other")}} style={{height: 60, backgroundColor: user.settings.gender === "other" ? "#546FDB" : "#595959", borderRadius: 15, justifyContent: 'center', alignItems: "center", position: "relative"}}>
                   <View style={{position: "absolute", height: 60, width: 40, left: 10, justifyContent: "center", alignItems: "center"}}>
                     <Image source={otherGenderIcon} style={{height: "40%", width: "100%", objectFit: "contain"}} />
                   </View>

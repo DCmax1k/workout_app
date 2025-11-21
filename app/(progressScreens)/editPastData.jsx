@@ -20,6 +20,8 @@ import { Colors } from '../../constants/Colors';
 import BlueButton from '../../components/BlueButton';
 import emitter from '../../util/eventBus';
 import findInsertIndex from '../../util/findInsertIndex';
+import sendData from '../../util/server/sendData';
+import { useBottomSheet } from '../../context/BottomSheetContext';
 
 const SCREEN_WIDTH = Dimensions.get('screen').width;
 
@@ -28,6 +30,7 @@ const firstCapital = (string) => {
 }
 
 const EditPastData = () => {
+    const {showAlert} = useBottomSheet();
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
 
@@ -57,8 +60,15 @@ const EditPastData = () => {
     const restData = () => {
         updateUser({tracking: {logging: {[data.widget.category]: {data: []}}}});
     }
-
+    const deleteDataPointServer = async (timeOfData) => {
+            const response = await sendData("/dashboard/deletedatapoint", {category: data.widget.category, timeOfData, jsonWebToken: user.jsonWebToken});
+            if (response.status !== "success") {
+                showAlert(response.message, false);
+                return;
+            }
+        }
     const deleteData = (timeOfData) => {
+        deleteDataPointServer(timeOfData);
         const dataa = user.tracking.logging[data.widget.category].data;
         const ind = dataa.findIndex(d => d.date === timeOfData);
         const newData = JSON.parse(JSON.stringify(dataa));
@@ -101,24 +111,50 @@ const EditPastData = () => {
 
     const dataEntriesOnDate = w.data.filter(k => new Date(k.date).toDateString() === selectedDate.toDateString());
 
+    const pushLoggingWeightLayoutServer = async (category, obj) => {
+        // Push to server
+        const response = await sendData("/dashboard/pushloggingweightlayout", {category, obj, jsonWebToken: user.jsonWebToken});
+        if (response.status !== "success") {
+            showAlert(response.message, false);
+            return;
+        }
+    }
+    const saveLoggingGoalServer = async (category, value) => {
+        // Push to server
+        const response = await sendData("/dashboard/savelogginggoal", {category, value, jsonWebToken: user.jsonWebToken});
+        if (response.status !== "success") {
+          showAlert(response.message, false);
+          return;
+        }
+      }
+    const addLoggingWaterLayoutServer = async (category, valueToAdd) => {
+        const response = await sendData("/dashboard/addloggingwaterlayout", {category, valueToAdd, jsonWebToken: user.jsonWebToken});
+        if (response.status !== "success") {
+        showAlert(response.message, false);
+        return;
+        }
+    }
     useEffect(() => {
         const sub = emitter.addListener("done", (d) => {
          //console.log("Got data back:", data);
-        if (d.widget.layout === "weight") { // Push new data point with new date
-            if (d.target === "valueFromEditPastData") {
-                const cData = user.tracking.logging[d.widget.category].data;
-                const newTime = d.timeAndDate.getTime() ?? new Date().getTime();
-                if (cData.length === 0 || new Date(cData[cData.length -1].date).getTime() < new Date(newTime).getTime()) {
-                    cData.push({date: newTime, amount: d.value});
-                } else {
-                    const idx = findInsertIndex(cData.map(d => d.date), newTime);
-                    cData.splice(idx, 0, {date: newTime, amount: d.value});
-                }
-                //const cData = [...nData, {date: Date.now(), amount: data.value}];
+            if (d.widget.layout === "weight") { // Push new data point with new date
+                if (d.target === "valueFromEditPastData") {
+                    const cData = user.tracking.logging[d.widget.category].data;
+                    const newTime = d.timeAndDate.getTime() ?? new Date().getTime();
+                    const obj = {date: newTime, amount: d.value}
+                    pushLoggingWeightLayoutServer(data.widget.category, obj);
+                    if (cData.length === 0 || new Date(cData[cData.length -1].date).getTime() < new Date(newTime).getTime()) {
+                        cData.push(obj);
+                    } else {
+                        const idx = findInsertIndex(cData.map(d => d.date), newTime);
+                        cData.splice(idx, 0, obj);
+                    }
+                    //const cData = [...nData, {date: Date.now(), amount: data.value}];
                     const updated = {tracking: {logging: {[d.widget.category]: {d: cData}}}};
                     updateUser(updated);
-                //console.log("updated ", updated);
+                    //console.log("updated ", updated);
                 } else if (d.target === 'goal') {
+                    saveLoggingGoalServer(d.widget.category, d.value);
                     const updated = {tracking: {logging: {[d.widget.category]: {extraData: {goal: d.value}}}}};
                     updateUser(updated);
                 } 
@@ -128,19 +164,21 @@ const EditPastData = () => {
                 if (d.target === "valueFromEditPastData") {
                     const cData = user.tracking.logging[d.widget.category].data;
                     const newTime = d.timeAndDate.getTime() ?? new Date().getTime();
+                    const valueToAdd = d.value;
+                    addLoggingWaterLayoutServer(d.widget.category, valueToAdd);
                     if (dataEntriesOnDate.length > 0) {
                         // Edit existing entry
                         const entryToEdit = dataEntriesOnDate[0];
                         const entryIndex = cData.findIndex(e => e.date === entryToEdit.date);
-                        cData[entryIndex] = {date: newTime, amount: d.value+entryToEdit.amount};
+                        cData[entryIndex] = {date: newTime, amount: valueToAdd+entryToEdit.amount};
                         updateUser({tracking: {logging: {[d.widget.category]: {data: cData}}}});
                     } else {
                         // Add new entry
                         if (cData.length === 0 || new Date(cData[cData.length -1].date).getTime() < new Date(newTime).getTime()) {
-                            cData.push({date: newTime, amount: d.value});
+                            cData.push({date: newTime, amount: valueToAdd});
                         } else {
                             const idx = findInsertIndex(cData.map(d => d.date), newTime);
-                            cData.splice(idx, 0, {date: newTime, amount: d.value});
+                            cData.splice(idx, 0, {date: newTime, amount: valueToAdd});
                         }
                         updateUser({tracking: {logging: {[d.widget.category]: {data: cData}}}});
                     }
