@@ -294,7 +294,7 @@ const Dashboard = () => {
 
             <AlertNotification ref={alertRef} />
 
-            <Stack screenOptions={{animation: "fade", animationDuration: 200, headerShown: false, contentStyle: {backgroundColor: theme.background,}}}>
+            <Stack screenOptions={{animation: "fade", animationDuration: 150, headerShown: false, contentStyle: {backgroundColor: theme.background,}}}>
               <Stack.Screen name="home" options={{ title: 'Home', }} />
               <Stack.Screen name="friends" options={{ title: 'Friends' }} />
               <Stack.Screen name="workout" options={{ title: 'Workouts', }} />

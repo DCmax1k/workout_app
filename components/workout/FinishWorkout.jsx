@@ -31,7 +31,11 @@ const audioSource = require("../../assets/sounds/success.wav");
 
 const FinishWorkout = ({data, closeModal, ...props}) => {
     const {showAlert} = useBottomSheet();
-    const successPlayer = useAudioPlayer(audioSource);
+    // TEST THIS HERE STILL
+    const successPlayer = useAudioPlayer(audioSource, player => {
+        // player.audioMixingMode = "mixWithOthers";
+        // player.shouldDuckAndroid = false;
+    });
 
     const user = useUserStore(state => state.user);
     

@@ -253,7 +253,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
     }
 
     return (
-    <Animated.View layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} style={[{backgroundColor: activeWorkoutStyle ? "":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10,}, false && {height: 40}]} {...props}>
+    <Animated.View layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} style={[{backgroundColor: activeWorkoutStyle ? "#2A2A2A":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10,}, false && {height: 40}]} {...props}>
         {openExercise && (
                 <Portal >
                     <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
@@ -310,7 +310,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                 </View>
                 {/* Each set */}
                 {exercise?.sets.map((set, setIndex) => (
-                    <Animated.View key={setIndex} style={[styles.row, {backgroundColor: (set.complete && activeWorkoutStyle) ? "rgba(33, 134, 60, 0.14)":"transparent"}]} layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
+                    <Animated.View key={setIndex} style={[styles.row, {backgroundColor: (set.complete && activeWorkoutStyle) ? "rgba(33, 134, 60, 0.14)":"transparent"}, ]} layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
                         <Text style={[styles.column, styles.column1]}>{setIndex+1}</Text>
                         <>
                             {exercise.tracks.map(track => {
@@ -362,7 +362,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                 </Animated.View>) : null}
                 {/* Add set */}
                 <Animated.View layout={LinearTransition} style={{flex: 1}}>
-                    <Pressable onPress={() => {addSet(1)}} style={{paddingVertical: 5, paddingHorizontal: 35, backgroundColor: "#2D2D2D", alignSelf: 'center', marginTop: 10, marginBottom: 5, borderRadius: 10}}>
+                    <Pressable onPress={() => {addSet(1)}} style={{paddingVertical: 5, paddingHorizontal: 25, backgroundColor: activeWorkoutStyle?Colors.primaryBlue:"#2D2D2D", alignSelf: 'center', marginTop: 10, marginBottom: 5, borderRadius: 999999}}>
                         <Text style={{color: "white", fontSize: 15, fontWeight: 500}}>Add Set</Text>
                     </Pressable>
                     {/* <View style={{position: "absolute", height: "100%", right: 0, top: 0, justifyContent: "center"}}>
@@ -414,6 +414,7 @@ const styles = StyleSheet.create({
         height: 30,
         borderRadius: 5,
         alignItems: "center",
+        overflow: "hidden",
     
     },
     valueInput: {

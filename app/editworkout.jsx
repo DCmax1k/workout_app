@@ -23,6 +23,7 @@ import { generateUniqueId } from '../util/uniqueId'
 import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist'
 import sendData from '../util/server/sendData'
 import { useBottomSheet } from '../context/BottomSheetContext'
+import SwipeToDelete from '../components/SwipeToDelete'
 
 
 const screenHeight = Dimensions.get("screen").height;
@@ -281,10 +282,10 @@ const EditWorkout = () => {
               renderItem={({item, drag, isActive}) => {
                 return (
                     <ScaleDecorator key={item.key}>
-                      <View key={item.key} style={{width: item.width, marginHorizontal: 20,}}>
+                      <View key={item.key} style={{width: item.width,}}>
 
-                        {/* <SwipeToDelete style={{width: screenWidth}} openedRight={() => removeExercise(item.index)} > */}
-                          <View style={{ width: screenWidth-40}}>
+                        <SwipeToDelete style={{width: screenWidth}} openedRight={() => removeExercise(item.index)} >
+                          <View style={{ width: screenWidth-20, alignSelf: "center"}}>
                             <EditExercise
                             key={item.key}
                             exercise={item.exercise}
@@ -295,7 +296,7 @@ const EditWorkout = () => {
                             dragActive={isActive}
                             />
                           </View>
-                        {/* </SwipeToDelete> */}
+                        </SwipeToDelete>
 
                       </View>
                     </ScaleDecorator>
@@ -308,7 +309,7 @@ const EditWorkout = () => {
                   <Spacer height={20} />
 
                   <Animated.View layout={LinearTransition} style={{marginHorizontal: 20}} >
-                    <BlueButton title={"Add Exercise"} onPress={() => setExerciseModal(true)} />
+                    <BlueButton color={Colors.primaryOrange} title={"Add Exercise"} onPress={() => setExerciseModal(true)} />
                   </Animated.View>
                 </>
               }

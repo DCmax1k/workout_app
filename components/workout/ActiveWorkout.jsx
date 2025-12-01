@@ -9,12 +9,14 @@ import { PaperProvider, Portal } from 'react-native-paper';
 import Spacer from '../Spacer';
 import AddExercise from './AddExercise';
 import BlueButton from '../BlueButton';
+import SwipeToDelete from '../SwipeToDelete';
 import { Exercises } from '../../constants/Exercises';
 import { BottomSheetHandle, BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
 import ConfirmMenu from '../ConfirmMenu';
 import { truncate } from '../../util/truncate';
 import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist';
 import { generateUniqueId } from '../../util/uniqueId';
+import { Colors } from '../../constants/Colors';
 
 const lbsToKgs = (lbs) => {
     return 0.453592*lbs;
@@ -328,8 +330,8 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                         <ScaleDecorator key={item.key } style={{width: item.width,}}>
                             <View key={item.key} style={{width: item.width,}}>
 
-                            {/* <SwipeToDelete style={{width: screenWidth}} openedRight={() => removeExercise(item.index)} > */}
-                                <View style={{ width: screenWidth}}>
+                            <SwipeToDelete style={{width: screenWidth}} openedRight={() => removeExercise(item.index)} >
+                                <View style={{ width: screenWidth-20, alignSelf: "center"}}>
                                     <EditExercise
                                     key={item.key}
                                     exercise={item.exercise}
@@ -342,7 +344,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                                     swapExercise={swapExercise}
                                     />
                                 </View>
-                            {/* </SwipeToDelete> */}
+                            </SwipeToDelete>
 
                             </View>
                         </ScaleDecorator>
@@ -352,7 +354,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                         <>
                             <Spacer height={20} />
                             <Animated.View layout={LinearTransition.springify().damping(90)}>
-                                <BlueButton title={"Add Exercise"} style={{marginRight: 10, marginLeft: 10}} onPress={() => {setExerciseModal(true); }} setSwapIsLive={setSwapIsLive} />
+                                <BlueButton title={"Add Exercise"} color={Colors.primaryOrange} style={{marginRight: 10, marginLeft: 10}} onPress={() => {setExerciseModal(true); }} setSwapIsLive={setSwapIsLive} />
                                 <Spacer height={40} />
                                 <BlueButton title={"Cancel Workout"} color={"#572E32"} style={{marginRight: 30, marginLeft: 30}} onPress={() => cancelWorkout(true)} />
                             </Animated.View>
