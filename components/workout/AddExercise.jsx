@@ -206,7 +206,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
                 contentContainerStyle={{ paddingBottom: 200 }}
                />
             ) : ( */}
-                <SectionList
+                {/* <SectionList
                 keyboardDismissMode={"on-drag"}
                 sections={sectionalData}
                 keyExtractor={(item) => item.id}
@@ -219,7 +219,21 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 200 }}
                 
-            />
+            /> */}
+
+
+            <FlatList
+                keyboardDismissMode="on-drag"
+                data={filteredData.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <Exercise disablePress={true} exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />
+                )}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 200 }}
+              />
+
+
             {/* )} */}
 
             

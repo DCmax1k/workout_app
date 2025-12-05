@@ -3,7 +3,7 @@ const badges = {
   starter: require("../assets/badgeIcons/00starter.png"),
   riser: require("../assets/badgeIcons/10riser.png"),
   warrior: require("../assets/badgeIcons/20warrior.png"),
-  champion:require("../assets/badgeIcons/30champion.png"),
+  champion: require("../assets/badgeIcons/30champion.png"),
   legend: require("../assets/badgeIcons/40legend.png"),
   titan: require("../assets/badgeIcons/50titan.png"),
 }

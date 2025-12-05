@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useUserStore } from '../stores/useUserStore'
 import sendData from '../util/server/sendData';
 import { useBottomSheet } from '../context/BottomSheetContext';
-import { socket } from '../util/server/socket';
+import {socket} from '../util/server/socket';
 import addUserIcon from '../assets/icons/addUser.png'
 import greyX from '../assets/icons/greyX.png'
 import checkIcon from '../assets/icons/check.png'

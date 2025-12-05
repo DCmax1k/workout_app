@@ -54,7 +54,10 @@ const EditMeal = () => {
 
     // Prevent swipe out nav
     const navigation = useNavigation();
-    const blockNav = useRef(true);
+    const blockNav = useRef(false);
+    useEffect(() => {
+        blockNav.current = true;
+    }, []);
     
     useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {

@@ -37,6 +37,7 @@ import { Platform } from 'react-native'
 import EnergyBalanceGraph from '../../components/nutrition/EnergyBalanceGraph'
 import calculateExpenditure from '../../util/calculateExpenditure'
 import sendData from '../../util/server/sendData'
+import { useBottomSheet } from '../../context/BottomSheetContext'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -47,6 +48,8 @@ const Nutrition = () => {
 
     const [mealPreview, setMealPreview] = useState(null); // {...food}
     const [mealPreviewOpen, setMealPreviewOpen] = useState(false);
+
+    const {showAlert} = useBottomSheet();
 
     // Stop calorie widget from animating if past initial open
     const [widgetAnimationDuration, setWidgetAnimationDuration] = useState(1000);

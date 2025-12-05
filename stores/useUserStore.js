@@ -54,6 +54,8 @@ const fillMissingKeys = (base, user) => {
     filled.recentActivity = [];
   }
 
+  //filled.tracking.visibleWidgets = ["nutrition"];
+
   return filled;
 }
 

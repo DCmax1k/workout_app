@@ -13,7 +13,7 @@ import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import loadIcons from '../util/loadIcons';
 import { iconArray } from '../constants/icons';
-
+import { setAudioModeAsync } from 'expo-audio';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -39,6 +39,12 @@ const RootLayout = () => {
     'DoppioOne-Regular': require('../assets/fonts/DoppioOne-Regular.ttf'),
   });
 
+  useEffect(() => {
+    setAudioModeAsync({
+      interruptionMode:  'doNotMix',
+      interruptionModeAndroid: 'duckOthers',
+    })
+  }, []);
 
 
   useEffect(() => {
@@ -135,8 +141,9 @@ const RootLayout = () => {
                   <Stack.Screen name="(nutritionScreens)/savedMeals" options={{ headerShown: false }} />
                   <Stack.Screen name="(nutritionScreens)/editFood" options={{ headerShown: false, gestureEnabled: false }} />
                   <Stack.Screen name="(nutritionScreens)/editMeal" options={{ headerShown: false, gestureEnabled: false }} />
-                  <Stack.Screen name="(nutritionScreens)/addFood" options={{ headerShown: false, animation: "slide_from_bottom", animationDuration: 300 }} />
+                  <Stack.Screen name="(nutritionScreens)/addFood" options={{ headerShown: false, animation: "slide_from_bottom", animationDuration: 150 }} />
                   {/* <Stack.Screen name="(nutritionScreens)/editPlate" options={{ headerShown: false }} /> */}
+                  <Stack.Screen name="viewProfile" options={{ headerShown: false }} />
 
                   <Stack.Screen name="GlowImageCont" options={{ headerShown: false, animation: "fade" }} />
                 </Stack>
@@ -156,7 +163,7 @@ const RootLayout = () => {
                       style={{
                         position: "absolute",
                         right: 20,
-                        bottom: keyboardHeight + (Platform.OS === "ios" ? 10 : 10),
+                        bottom: keyboardHeight + (Platform.OS === "ios" ? 10 : 30),
                         zIndex: 99999999,
                       }}
                     >

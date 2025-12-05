@@ -1,4 +1,4 @@
-import { Dimensions, FlatList, Image, Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, FlatList, Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ThemedView from '../ThemedView'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -29,6 +29,8 @@ import { Portal } from 'react-native-paper'
 import FoodPreview from './FoodPreview'
 import TouchableScale from '../TouchableScale'
 import FilterAndSearch from '../FilterAndSearch'
+import { Image } from 'expo-image'
+import MacrosRow from './MacrosRow'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
@@ -37,7 +39,6 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, 
     
 
     
-
     // const [searchValue, setSearchValue] = useState("");
     const userFoodCategories = user.foodCategories;
     const actionIds = [];
@@ -151,37 +152,37 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, 
                                 marginBottom: 5, // spacing between items
                             }}
                         >
-                            <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                <View
-                                    style={{
-                                        height: 40,
-                                        width: 40,
-                                        borderRadius: 5,
-                                        backgroundColor: item.color,
-                                        marginRight: 5,
-                                        overflow: "hidden",
-                                    }}
-                                >
+                            <View style={{flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                                <View style={{flexDirection: "row", alignItems: "center",}}>
                                     <View
-                                        style={[
-                                            StyleSheet.absoluteFill,
-                                            { backgroundColor: "rgba(0,0,0,0.3)" },
-                                        ]}
-                                    />
-                                    <Image
-                                        source={icon}
                                         style={{
-                                            height: "100%",
-                                            width: "100%",
-                                            objectFit: "contain",
-                                            tintColor: "white",
+                                            height: 40,
+                                            width: 40,
+                                            borderRadius: 5,
+                                            backgroundColor: item.color,
+                                            marginRight: 5,
+                                            overflow: "hidden",
                                         }}
-                                    />
-                                </View>
+                                    >
 
-                                <Text style={{ color: "white", fontSize: 15 }}>
-                                    {truncate(item.name, 30)}
-                                </Text>
+                                        <Image
+                                            source={icon}
+                                            contentFit='contain'
+                                            tintColor={item.iconColor ?? "white"}
+                                            style={{
+                                                height: "100%",
+                                                width: "100%",
+                                            }}
+                                        />
+                                    </View>
+
+                                    <Text style={{ color: "white", fontSize: 15 }}>
+                                        {truncate(item.name, 22)}
+                                    </Text>
+                                </View>
+                               
+
+                                <MacrosRow nutrition={item.nutrition} multiplier={1} showDecimal={false} />
                             </View>
                         </TouchableScale>
                     );

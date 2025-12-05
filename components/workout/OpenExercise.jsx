@@ -1,4 +1,4 @@
-import { Alert, Dimensions, Image, Pressable, SectionList, StyleSheet, Text, View } from 'react-native'
+import { Alert, Dimensions, Pressable, SectionList, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 
 import whiteX from '../../assets/icons/whiteX.png';
@@ -20,6 +20,8 @@ import CreateExercise from './CreateExercise';
 import GraphWidget from '../GraphWidget';
 import { useVideoPlayer, VideoView } from 'expo-video'
 import ImageContain from '../ImageContain';
+import { useIsFocused } from '@react-navigation/native';
+import { Image } from 'expo-image';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -111,23 +113,25 @@ const ExerciseHistory = ({style, exercise, forceCloseOpenExercise = () => {}, ..
 
 const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise, ...props}) => {
 
-  const [videoPlaying, setVideoPlaying] = useState(false);
-  let player;
-  if (exercise.video) {
-    player = useVideoPlayer(exercise.video, (player) => {
-        player.loop = true;
-        player.staysActiveInBackground = false;
-        player.muted = true;
-        player.audioMixingMode = 'mixWithOthers';
-    });
-  }
+    const [videoPlaying, setVideoPlaying] = useState(false);
+    let player;
+    if (exercise.video) {
+      player = useVideoPlayer(exercise.video, (player) => {
+          player.loop = true;
+          player.staysActiveInBackground = false;
+          player.muted = true;
+          player.audioMixingMode = 'mixWithOthers';
+      });
+    }
 
-  const user = useUserStore(state => state.user);
-  const updateUser = useUserStore(state => state.updateUser);
-  const archivedExercises = user.archivedExercises || [];
-  const createExerciseRef = React.useRef(null);
+    const user = useUserStore(state => state.user);
+    const updateUser = useUserStore(state => state.updateUser);
+    const archivedExercises = user.archivedExercises || [];
+    const createExerciseRef = React.useRef(null);
     const [section, setSection] = useState("About"); // About, Progress, History
     const [editModeActive, setEditModeActive] = useState(false);
+    
+    const isFocused = useIsFocused();
 
     const muscleGroupData = [{id: "0", title: "Chest"}, {id: "1", title: "Abs"}, {id: "2", title: 'Back'}, {id: "3", title: "Bicep"}, {id: "4", title: "Tricep"}, {id: "5", title: "Forearm"}, {id: "6", title: "Shoulder"}, {id: "7", title: "Leg"}, {id: "8", title: "Other"}];
     const categoryData = [{id: "0", title: "Strength - [Weight and reps]"}, {id: "1", title: "Cardio - [Time and distance]"}, {id: "2", title: 'Distance only'}, {id: "3", title: "Reps only"}];
@@ -296,7 +300,7 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
         {exercise.video ? (
             <View style={styles.imageContCont}>
                 <View style={[styles.imageCont, {height: screenWidth-200, width: (screenWidth-200)*0.84375, borderRadius: 10}]}>
-                  <VideoView nativeControls={false} player={player} style={{height: "100%", width: "100%", backgroundColor: "transparent"}} />
+                  <VideoView key={isFocused ? 'video-focused' : 'video-not-focused'} surfaceType='surfaceView' nativeControls={false} player={player} style={{height: "100%", width: "100%", backgroundColor: "transparent"}} />
 
                   {/* Play/pause button */}
                   <Pressable style={[StyleSheet.absoluteFill, {zIndex: 1,}]} onPress={toggleVideoPlayer}>

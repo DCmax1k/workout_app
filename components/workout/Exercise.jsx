@@ -1,4 +1,4 @@
-import { Dimensions, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import { truncate } from '../../util/truncate';
 import noimage from '../../assets/icons/noimage.png';
@@ -6,6 +6,7 @@ import GlowImage from '../GlowImage';
 import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from 'react-native-reanimated';
 import OpenExercise from './OpenExercise';
 import { Portal } from 'react-native-paper';
+import { Image } from 'expo-image';
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -41,15 +42,15 @@ const Exercise = ({style, exercise, selected = false, disablePress = false, onPr
 
     <Pressable onPress={() => disablePress ? (onPress ? onPress() : null) : setOpenExercise(true)} style={[styles.cont, {backgroundColor: selected ? "#283878" : "#1C1C1C"}, style]} {...props}>
       <View style={styles.imageCont}>
-        <Image style={[styles.image, isImage ? {} : {width: 30, height: 30, margin: "auto"}]} source={exercise.image || noimage} id={exercise.id} />
+        { exercise.image && <Image contentFit='cover' style={[styles.image, isImage ? {} : {width: 30, height: 30, margin: "auto"}]} source={exercise.image || noimage} id={exercise.id} />}
       </View>
       <View style={styles.rightCont}>
         <Text style={{color: "white", fontSize: 15, fontWeight: 700}}>{exercise.name}</Text>
         <Text style={{color: "white", fontSize: 12, fontWeight: 300}}>{truncate(exercise.description || '', 100)}</Text>
           <View style={{flexDirection: 'row', marginTop: 5, flexWrap: 'wrap', paddingVertical: 2, paddingHorizontal: 10,}}>
-            {exercise.muscleGroups.map(muscle => (
+            {exercise.muscleGroups.map((muscle, i) => (
                 <View key={muscle} style={{backgroundColor: selected ? "#34437F":"#353535", borderRadius: 5000,justifyContent: "center", alignItems: "center",marginRight: 5, marginBottom: 5,paddingVertical: 2, paddingHorizontal: 10,}}>
-                  <Text style={{  fontSize: 12, color: "#B1B1B1",  }} key={muscle}>{capitalizeFirstLetter(muscle)}</Text>
+                  <Text style={{  fontSize: 12, color: i === 0 ? "white" : "#B1B1B1",  }} key={muscle}>{capitalizeFirstLetter(muscle)}</Text>
                 </View>
             ))}
         </View>
@@ -85,7 +86,6 @@ const styles = StyleSheet.create({
     image: {
         height: 60,
         width: 60,
-        objectFit: 'cover'
 
     },
     rightCont: {

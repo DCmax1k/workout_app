@@ -16,6 +16,9 @@ import ThemedText from '../../components/ThemedText'
 import AlertNotification from '../../components/AlertNotification'
 import auth from '../../util/server/auth'
 import { socket } from '../../util/server/socket'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { Image } from 'expo-image'
+import noInternet from '../../assets/icons/noInternet.svg'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
@@ -45,6 +48,24 @@ const Dashboard = () => {
     alertRef.current.showAlert(message, good, time);
   }
 
+  const [showDisconnectIndicator, setShowDisconnectIndicator] = useState(false);
+
+  useEffect(() => {
+    let intervalId;
+
+    // Only start checking if disconnected
+    if (showDisconnectIndicator) {
+      intervalId = setInterval(async () => {
+
+
+          await checkAuth();
+        }, 5000);
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [showDisconnectIndicator]);
+
   const checkAuth = async () => {
     console.log("Called check auth");
     if (!user.jsonWebToken) {
@@ -60,19 +81,23 @@ const Dashboard = () => {
     if (authResponse.status !== "success") {
       // Check if error was network issue of error auth
       if (authResponse.status === "network_error") {
-        // Network error, sign in to loca account
+        // Network error, sign in to local account
         console.log("network error, sign into local account");
-        showAlert(authResponse.message, false);
+        // Swtich this network error alert to a no internet logo
+        //showAlert(authResponse.message, false);
+        setShowDisconnectIndicator(true);
       } else {
         // Auth error, signing out
         console.log("auth error");
         showAlert(authResponse.message, false); 
         //setUser(null);
         //router.replace('/onboarding'); // Probably dont need from home index
+        setShowDisconnectIndicator(false);
         //return;
       }
     } else {
       // Auth success, update user with db info, connect socket
+      setShowDisconnectIndicator(false);
       console.log("Successfully authenticated");
       if (!authResponse.goodVersion) {
         showAlert("Version outdated! A new updated developement build is available.", true);
@@ -282,6 +307,7 @@ const Dashboard = () => {
         showFinishWorkout,
         setTabBarRoute: setCurrentRoute,
         showAlert: showAlert,
+        setShowDisconnectIndicator,
         }}>
         <>
           {/* <Tabs tabBar={props => <TabBar animatedTabbarPosition={animatedTabbarPosition} {...props} />} screenOptions={{animation: "none", headerShown: false, headerStyle: { backgroundColor: theme.background, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0,}, headerTintColor: theme.title, tabBarStyle: { backgroundColor: "#000" }, tabBarActiveTintColor: theme.title, tabBarInactiveTintColor: "#868686", }}> 
@@ -340,6 +366,17 @@ const Dashboard = () => {
               <ThemedText style={{fontSize: 15, textAlign: "center", color: "white"}}>Your account has been frozen.</ThemedText>
               <ThemedText style={{fontSize: 15, textAlign: "center",}}>Please contact our support team if you believe this is an error.</ThemedText>
             </ThemedView>
+            )}
+
+
+            {showDisconnectIndicator && (
+              <View style={[StyleSheet.absoluteFill, { height: screenHeight, width: screenWidth, pointerEvents: "none", zIndex: 98, }]}>
+                <SafeAreaView >
+                  <View style={{width: "100%", alignItems: "flex-end", paddingHorizontal: 15, marginTop: -5}}>
+                    <Image source={noInternet} contentFit='contain' style={{height: 15, width: 15, tintColor: Colors.protein}} />
+                  </View>
+                </SafeAreaView>
+              </View>
             )}
 
 

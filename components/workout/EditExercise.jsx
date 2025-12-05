@@ -20,6 +20,8 @@ import ThemedText from '../ThemedText'
 import OpenExercise from './OpenExercise'
 import { Portal } from 'react-native-paper'
 import { Colors } from '../../constants/Colors'
+import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist'
+import { generateUniqueId } from '../../util/uniqueId'
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -81,7 +83,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
             return;
         } else {
             for (let i = 0; i < amount; i++) {
-                const set = {};
+                const set = {uniqueId: generateUniqueId()};
                 exercise.tracks.forEach(track => {
                     set[track] = sets.length < 1 ? "0" : sets[sets.length-1][track] === "0" ? "" : sets[sets.length-1][track];
                 });
@@ -124,9 +126,8 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
     const endEditing = (setIndex, track, value) => {
         const sets = exercise.sets;
         const set = sets[setIndex];
-        if (value === "" || value === "." ) {
-            set[track] = "0";
-        } else {
+        if (!value || isNaN(value)) set[track] = getSetValueBefore(setIndex, track);
+        else {
             set[track] = JSON.stringify(parseFloat(value));
         }
         const newExercise = {...exercise, sets};
@@ -252,17 +253,22 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         actionMenuData.splice(4, 0, {title: "Swap for Today", icon: rotateIcon, onPress: () => requestSwapExercise(), });
     }
 
+    const setExerciseSets = (data) => {
+        const newSets = [...data];
+        updateExercise({sets: newSets});
+    }
+
     return (
-    <Animated.View layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} style={[{backgroundColor: activeWorkoutStyle ? "#2A2A2A":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10,}, false && {height: 40}]} {...props}>
+    <View layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} style={[{backgroundColor: activeWorkoutStyle ? "#2A2A2A":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10,}, false && {height: 40}]} {...props}>
         {openExercise && (
                 <Portal >
                     <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
     
                         <Pressable onPress={() => setOpenExercise(false)} style={{height: "100%", width: "100%", zIndex: 0}}></Pressable>
     
-                        <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
+                        <View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
                             <OpenExercise exercise={exerciseOpen} setOpenExercise={setOpenExercise} forceCloseOpenExercise={() => setOpenExercise(false)} />
-                        </Animated.View>
+                        </View>
     
                     
     
@@ -290,11 +296,11 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
 
         {/* All content minus the header to fade out for sorting */}
         {true && (<View> 
-            {(showNote || exercise.note) ? (<Animated.View layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
+            {(showNote || exercise.note) ? (<View layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
                 <TextInput style={{color: activeWorkoutStyle ? "#A4A4A4" : "white", fontSize: 16, paddingVertical: 10, paddingHorizontal: 0}} multiline={true} ref={noteRef} value={exercise.note} onChangeText={updateNote} onEndEditing={() => exercise.note ? null : setShowNote(false)} />
-            </Animated.View>) : null}
+            </View>) : null}
             
-            <Animated.View layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
+            <View layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
                 {/* Top row, labels */}
                 <View style={styles.row}>
                         <Text style={[styles.column, styles.column1]}>Set</Text>
@@ -309,9 +315,16 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                     <View style={styles.columnForComplete}></View>
                 </View>
                 {/* Each set */}
+                
                 {exercise?.sets.map((set, setIndex) => (
-                    <Animated.View key={setIndex} style={[styles.row, {backgroundColor: (set.complete && activeWorkoutStyle) ? "rgba(33, 134, 60, 0.14)":"transparent"}, ]} layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
-                        <Text style={[styles.column, styles.column1]}>{setIndex+1}</Text>
+                    <View key={setIndex} style={[styles.row, {backgroundColor: (set.complete && activeWorkoutStyle) ? "rgba(33, 134, 60, 0.14)":"transparent"}, {borderRadius: 999}]} layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
+                        <View style={[styles.column, styles.column1, ]}>
+                            <View style={[{backgroundColor: "#444444ff", borderRadius: 999, width: 25, height: 25, justifyContent: "center", alignItems: "center", margin: "auto"}, (set.complete && activeWorkoutStyle) && {backgroundColor: "rgba(33, 134, 60, 0.14)"}]}>
+                                <Text style={{ color: "white", fontSize: 13, }} >{setIndex+1}</Text>
+                            </View>
+                            
+                        </View>
+                        
                         <>
                             {exercise.tracks.map(track => {
                                 const placeholderValue = setIndex === 0 ? "0" : getSetValueBefore(setIndex, track);
@@ -341,10 +354,10 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                         <Pressable onPress={() => {removeSet(setIndex)}} style={styles.columnForComplete}>
                             {(<Image style={{height: 20, width: 20, tintColor: "#673434"}} source={greyX}  />)}
                         </Pressable>
-                    </Animated.View>
+                    </View>
                 ))}
                 {/* Suggestions */}
-                {activeWorkoutStyle && suggesstion.length > 0 ? (<Animated.View style={styles.row} layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
+                {activeWorkoutStyle && suggesstion.length > 0 ? (<View style={styles.row} layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
                     <View style={{flex: 1, height: 25, backgroundColor: "#222222", borderRadius: 5, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
                         {/* Left side */}
                         <View style={{flexDirection: "row", height: "100%", alignItems: "center"}}>
@@ -359,9 +372,9 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                             </Pressable>
                         </View>
                     </View>
-                </Animated.View>) : null}
+                </View>) : null}
                 {/* Add set */}
-                <Animated.View layout={LinearTransition} style={{flex: 1}}>
+                <View layout={LinearTransition} style={{flex: 1}}>
                     <Pressable onPress={() => {addSet(1)}} style={{paddingVertical: 5, paddingHorizontal: 25, backgroundColor: activeWorkoutStyle?Colors.primaryBlue:"#2D2D2D", alignSelf: 'center', marginTop: 10, marginBottom: 5, borderRadius: 999999}}>
                         <Text style={{color: "white", fontSize: 15, fontWeight: 500}}>Add Set</Text>
                     </Pressable>
@@ -372,15 +385,15 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                             {title: "Remove all sets", icon: trashIcon, onPress: () => {addSet(0)}},
                             ]} />
                     </View> */}
-                </Animated.View>
+                </View>
                 
                 
-            </Animated.View>
+            </View>
         </View>)}
 
         
 
-    </Animated.View>
+    </View>
   )
 }
 
@@ -415,6 +428,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: "center",
         overflow: "hidden",
+        marginTop: 2,
     
     },
     valueInput: {

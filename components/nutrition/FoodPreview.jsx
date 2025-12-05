@@ -1,4 +1,4 @@
-import { Dimensions, Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import Animated, { LinearTransition } from 'react-native-reanimated'
 import whiteX from '../../assets/icons/whiteX.png'
@@ -9,6 +9,7 @@ import { icons } from '../../constants/icons'
 import { useUserStore } from '../../stores/useUserStore'
 import ProgressRing from '../ProgressRing'
 import { truncate } from '../../util/truncate'
+import { Image } from 'expo-image'
 
 const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -39,7 +40,7 @@ const FoodPreview = ({style, food, setFoodPreviewOpen, editFood, ...props}) => {
             
             <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, }}>
                 <Image source={food.icon ? icons[food.icon] : icons["fooddoodles303"]} style={{height: 30, width: 30, objectFit: "contain", tintColor: "white"}} />
-                <Text adjustsFontSizeToFit numberOfLines={1} style={[styles.screenText]}>{truncate(food.name, 18)}</Text>
+                <Text adjustsFontSizeToFit numberOfLines={1} style={[styles.screenText]}>{truncate(food.name, 18 )}</Text>
             </View>
             
 

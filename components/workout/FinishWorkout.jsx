@@ -32,10 +32,7 @@ const audioSource = require("../../assets/sounds/success.wav");
 const FinishWorkout = ({data, closeModal, ...props}) => {
     const {showAlert} = useBottomSheet();
     // TEST THIS HERE STILL
-    const successPlayer = useAudioPlayer(audioSource, player => {
-        // player.audioMixingMode = "mixWithOthers";
-        // player.shouldDuckAndroid = false;
-    });
+    const successPlayer = useAudioPlayer(audioSource);
 
     const user = useUserStore(state => state.user);
     
@@ -78,7 +75,10 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
             updateUser({streak: {achievementAmount: pastWorkoutsLength}});
         }
 
-        // Server send        
+        // Server send     
+        const response1 = await sendData("/dashboard/logpastworkout", {jsonWebToken: user.jsonWebToken, data});
+        if (response1.status !== "success") showAlert("An error occured while attempting log past workout.", false);
+        
         const response = await sendData("/dashboard/requestactivity", {jsonWebToken: user.jsonWebToken, activityData});
         if (response.status !== "success") showAlert("An error occured while attempting activity post.", false);
         // Socket.io send

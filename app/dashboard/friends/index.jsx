@@ -4,7 +4,6 @@ import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
 import TitleWithBack from '../../../components/TitleWithBack'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import Search from '../../../components/Search'
 import { useUserStore } from '../../../stores/useUserStore'
 import sinceWhen from '../../../util/sinceWhen'
 import { Colors } from '../../../constants/Colors'
@@ -12,9 +11,7 @@ import DisplayName from '../../../components/DisplayName'
 import Spacer from '../../../components/Spacer'
 import greyX from "../../../assets/icons/greyX.png"
 import eye from "../../../assets/icons/eye.png"
-import addReaction from "../../../assets/icons/addReaction.png"
-import WorkoutDescription from '../../../components/workout/WorkoutDescription'
-import { truncate } from '../../../util/truncate'
+import addReaction from "../../../assets/icons/addReaction.svg"
 import { router } from 'expo-router'
 import PastWorkoutCard from '../../../components/workout/PastWorkoutCard'
 import ImageContain from '../../../components/ImageContain'
@@ -23,12 +20,11 @@ import { icons } from '../../../constants/icons'
 import TouchableScale from '../../../components/TouchableScale'
 import sendData from '../../../util/server/sendData'
 import { useBottomSheet } from '../../../context/BottomSheetContext'
-import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown, interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown, } from 'react-native-reanimated'
 import auth from '../../../util/server/auth'
 import ProfileImg from '../../../components/ProfileImg'
 import getAchievementBadge from '../../../util/getAchievementBadge'
 import { Portal } from 'react-native-paper'
-import BlueButton from '../../../components/BlueButton'
 import { socket } from '../../../util/server/socket'
 import formatTime from '../../../util/formatTime'
 
@@ -136,7 +132,7 @@ const Activity = ({style, activity, ...props}) => {
 
   const viewProfile = (profile) => {
     router.push({
-      pathname: "/dashboard/friends/viewProfile",
+      pathname: "/viewProfile",
       params: {
         profile: JSON.stringify(profile),
       }
@@ -297,7 +293,7 @@ const FriendsIndex = () => {
   const user = useUserStore(state => state.user);
   const updateUser = useUserStore(state => state.updateUser);
 
-  const {showAlert} = useBottomSheet();
+  const {showAlert, setShowDisconnectIndicator} = useBottomSheet();
 
   const recentActivity = user.recentActivity;
   const sectionalData = groupActivityByDate(recentActivity);
@@ -320,14 +316,16 @@ const FriendsIndex = () => {
       if (authResponse.status === "network_error") {
         // Network error, sign in to loca account
         console.log("network error, sign into local account");
-        showAlert(authResponse.message, false);
+        //showAlert(authResponse.message, false);
+        setShowDisconnectIndicator(true);
       } else {
         // Auth error, signing out
+        setShowDisconnectIndicator(false);
         console.log("auth error");
         showAlert(authResponse.message, false); 
       }
     } else {
-
+      setShowDisconnectIndicator(false);
       //showAlert("Successfully authenticated", true);
       const {userInfo} = authResponse;
       updateUser(userInfo);
@@ -405,8 +403,8 @@ const FriendsIndex = () => {
                             <Pressable onPress={() => {requestAcceptUser(friend)}} style={{height: 40, paddingHorizontal: 15, borderRadius: 10, backgroundColor: Colors.primaryBlue, justifyContent: "center", alignItems: "center", marginLeft: "auto", marginRight: 10}}>
                               <Text style={{color: "white", fontWeight: "600"}}>Accept</Text>
                             </Pressable>
-                            <Pressable onPress={() => {requestDeclineAcceptUser(friend)}} style={{height: 50, width: 20, justifyContent: "center", alignItems: "center"}}>
-                              <ImageContain source={greyX} imgStyle={{tintColor: "#929292ff"}} size={20} />
+                            <Pressable onPress={() => {requestDeclineAcceptUser(friend)}} style={{height: 40, width: 40, borderRadius: 10,  backgroundColor: Colors.protein, justifyContent: "center", alignItems: "center"}}>
+                              <ImageContain source={greyX} imgStyle={{tintColor: "white"}} size={20} />
                             </Pressable>
                           </View>
                         )

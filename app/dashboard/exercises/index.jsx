@@ -1,4 +1,4 @@
-import { Dimensions, Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Dimensions, FlatList, Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
@@ -90,7 +90,6 @@ const ExercisesIndex = () => {
   const filteredData = filterByCategories(searchExercise(getAllExercises(user), searchValue), filterSelected);
   const sectionalData = filterSelected.length > 0 ? [{title: "Filtered", data: filteredData}] : groupExercisesByLetter(filteredData);
 
-
   const openCreateExercise = () => {
     setCreateExercise(true);
   }
@@ -171,8 +170,11 @@ const ExercisesIndex = () => {
                   </View>
                 )}
               /> */}
-              {/* TRYING REGULAR LIST INCASE THE ALPHABET ONE DOESNT UPDATE EXERCISES */}
-              <SectionList
+
+
+
+              {/* Sectional list works. Laggy on android */}
+              {/* <SectionList
                 keyboardDismissMode={"on-drag"}
                 sections={sectionalData}
                 keyExtractor={(item) => item.id}
@@ -186,7 +188,21 @@ const ExercisesIndex = () => {
                   </View>
                 )}
                 contentContainerStyle={{ paddingBottom: 50 }}
+              /> */}
+
+              <FlatList
+                keyboardDismissMode="on-drag"
+                data={filteredData.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <Exercise exercise={item} style={styles.exercise} />
+                )}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 100 }}
               />
+
+
+
             </View>
             
             

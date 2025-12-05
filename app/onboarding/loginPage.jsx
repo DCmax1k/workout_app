@@ -106,7 +106,7 @@ const LoginPage = () => {
 
                     <Text style={{color: "#6684FF", fontSize: 30,  fontFamily: "Bals-Bold"}}>Login Now</Text>
                     <Spacer height={10} />
-                    <Text style={{color: "white", fontSize: 17, fontFamily: "Exo2-ExtraLight"}}>Please login to continue using Pump Workouts.</Text>
+                    <Text style={{color: "white", fontSize: 17, fontFamily: "Exo2-ExtraLight"}}>Please login to continue using Pumped Up.</Text>
 
                     <Spacer height={20} />
 

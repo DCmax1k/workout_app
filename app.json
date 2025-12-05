@@ -19,6 +19,7 @@
     },
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.caldwell.pumpedup",
       "icon": "./assets/icon.png"
     },
     "android": {
@@ -36,7 +37,13 @@
       "expo-audio",
       "expo-font",
       "expo-asset",
-      "expo-video"
+      "expo-video",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.483624646164-htf0lctbmvq9cqm4vbi0t6vkk2v8f1rt"
+        }
+      ]
     ],
     "extra": {
       "router": {},

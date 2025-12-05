@@ -10,6 +10,7 @@ const USER = {
     usernameDecoration: {
       prefixColor: "red",
       prefix: "",
+      description: "",
     },
     name: 'Test Name',
     email: '',

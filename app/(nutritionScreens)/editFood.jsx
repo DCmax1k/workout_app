@@ -1,4 +1,4 @@
-import { Dimensions, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Dimensions, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useEffect, useRef, useState, version } from 'react'
 import ThemedText from '../../components/ThemedText'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
@@ -21,10 +21,11 @@ import MultiSelectDropdown from '../../components/MultiSelectDropdown';
 import emitter from '../../util/eventBus';
 import PopupSheet from '../../components/PopupSheet';
 import TouchableScale from '../../components/TouchableScale'
-import Animated, { FadeIn, FadeOut, interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import ColorPicker, { Panel1, Swatches, Preview, OpacitySlider, HueSlider } from 'reanimated-color-picker';
+import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import ColorPicker, { Panel1, HueSlider } from 'reanimated-color-picker';
 import sendData from '../../util/server/sendData';
 import { useBottomSheet } from '../../context/BottomSheetContext';
+import { Image } from 'expo-image';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -63,6 +64,9 @@ const CustomizeIconAndColor = ({style, updateFood, food, ...props}) => {
     const onSelectColor = ({ hex }) => {
         updateFood({color: hex});
     };
+    const onSelectIconColor = ({ hex }) => {
+        updateFood({iconColor: hex});
+    };
 
     return (
         <View style={[{flexDirection: "column"}, style]} {...props}>
@@ -82,7 +86,7 @@ const CustomizeIconAndColor = ({style, updateFood, food, ...props}) => {
                         <Animated.View  key={i} style={animatedStyle}>
                             <Pressable onPress={() => animateTo(i)} style={{flexDirection: "row", alignItems: "center",  gap: 10, padding: 15,}}>
                                 <View style={{height: 20, width: 20}}>
-                                    <Image style={{objectFit: "contain", height: "100%", width: '100%'}} source={pageIcons[i]} />
+                                    <Image contentFit='contain' style={{ height: "100%", width: '100%'}} source={pageIcons[i]} />
                                 </View>
                                 <Text style={{color: "white", fontWeight: "600", fontSize: 18}}>{page}</Text>
                             </Pressable>
@@ -100,18 +104,46 @@ const CustomizeIconAndColor = ({style, updateFood, food, ...props}) => {
             <View style={{width: screenWidth, marginHorizontal: -20}}>
 
                 {/* Color content covers scrollview */}
-                <View style={[StyleSheet.absoluteFill, {backgroundColor: "#303030", paddingHorizontal: 50}]}>
-                    <ColorPicker style={{ width: '100%' }} value={food.color} onCompleteJS={onSelectColor}>
-                        <Spacer height={20} />
-                        <HueSlider />
-                        <Spacer height={20} />
-                        <OpacitySlider />
-                        <Spacer height={20} />
-                        <Swatches colors={[Colors.protein, Colors.primaryOrange, Colors.carbs, Colors.primaryBlue, Colors.fat ]} />
-                    </ColorPicker>
+                <View style={[StyleSheet.absoluteFill, {backgroundColor: "#303030", paddingHorizontal: 20, flexDirection: "row", justifyContent: 'space-between'}]}>
+                    
+                    {/* Icon color */}
+                    <View style={{ width: '45%', overflow: 'hidden' }}>
+                        <Text style={{fontSize: 15, color: "#c2c2c2ff", textAlign: "center" }}>Icon Color</Text>
+                        <ColorPicker
+                            style={{flex: 1, width: '100%', flexDirection: "column", justifyContent: "center",}}
+                            value={food.iconColor}
+                            sliderThickness={25}
+                            thumbSize={25}
+                            boundedThumb
+                            onCompleteJS={onSelectIconColor}>
+                            <Panel1 style={{flex: 9}} />
+                            <Spacer height={20} />
+                            <HueSlider style={{ flex: 1, width: "100%", borderColor: "red", borderWidth: 1 }} />
+                            
+                        </ColorPicker>
+                    </View>
+                    
+                    
+
+                    {/* Background color */}
+                    <View style={{ width: '45%', overflow: 'hidden', }}>
+                        <Text style={{fontSize: 15, color: "#c2c2c2ff", textAlign: "center" }}>Background Color</Text>
+                        <ColorPicker
+                            style={{flex: 1, width: '100%', flexDirection: "column", justifyContent: "center",}}
+                            value={food.color}
+                            sliderThickness={25}
+                            thumbSize={25}
+                            boundedThumb
+                            onCompleteJS={onSelectColor}>
+                            <Panel1 style={{flex: 9}} />
+                            <Spacer height={20} />
+                            <HueSlider style={{ flex: 1, width: "100%", borderColor: "red", borderWidth: 1 }} />
+                        </ColorPicker>
+                    </View>
+
                 </View>
                 {/* Icons */}
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{zIndex: 1, opacity: pages[activePageIdx] === "Icon" ? 1 : 0, pointerEvents: pages[activePageIdx] === "Icon" ? "auto" : "none", minWidth: "100%", backgroundColor: "#303030",}} contentContainerStyle={{paddingHorizontal: 20,  flexDirection: 'row', justifyContent: "flex-start",  gap: ITEM_GAP}}>
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{zIndex: 1, opacity: pages[activePageIdx] === "Icon" ? 1 : 0, pointerEvents: pages[activePageIdx] === "Icon" ? "auto" : "none", minWidth: "100%", backgroundColor: "#303030",}} contentContainerStyle={{paddingHorizontal: 20, paddingBottom: 50,  flexDirection: 'row', justifyContent: "flex-start",  gap: ITEM_GAP}}>
                     {iconColumns.map((column, colIndex) => (
                         <View key={colIndex} style={{flexDirection: "column"}}>
                         {column.map((item) => (
@@ -158,7 +190,10 @@ const EditFood = () => {
 
     // Prevent swipe out nav
     const navigation = useNavigation();
-    const blockNav = useRef(true);
+    const blockNav = useRef(false);
+      useEffect(() => {
+        blockNav.current = true;
+      }, []);
 
     useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
@@ -372,12 +407,12 @@ const EditFood = () => {
               </View>
           </View>
 
-            <KeyboardAvoidingView behavior={"position"} keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 30} style={{flex: 1}} >
-                     <ScrollView contentContainerStyle={{paddingBottom: screenHeight/4, paddingTop: 170}} showsVerticalScrollIndicator={false}>
+            {/* <KeyboardAvoidingView behavior={"position"} keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 30} style={{flex: 1}} > */}
+                     <ScrollView contentContainerStyle={{paddingBottom: screenHeight/2, paddingTop: 170}} showsVerticalScrollIndicator={false}>
                         <View style={{width: screenWidth, height: screenWidth/2, alignItems: "center", marginLeft: -20}}>
                             <View style={{height: screenWidth/2, width: screenWidth/2, backgroundColor: food.color, borderRadius: 20, justifyContent: "center", alignItems: "center", overflow: "hidden"}}>
-                                <View style={[StyleSheet.absoluteFill, {backgroundColor: "rgba(0,0,0,0.3)"}]}></View>
-                                <Image source={food.icon ? icons[food.icon] : icons["fooddoodles303"]} style={{height: screenWidth/2, width: screenWidth/2, objectFit: "contain", tintColor: "white"}} />
+                                {/* <View style={[StyleSheet.absoluteFill, {backgroundColor: "rgba(0,0,0,0.3)"}]}></View> */}
+                                <Image source={food.icon ? icons[food.icon] : icons["fooddoodles303"]} style={{height: screenWidth/2, width: screenWidth/2, objectFit: "contain", tintColor: food.iconColor ?? "white"}} />
                             </View>
                         </View>
                         
@@ -464,7 +499,7 @@ const EditFood = () => {
 
 
                     </ScrollView> 
-            </KeyboardAvoidingView>
+            {/* </KeyboardAvoidingView> */}
 
           
 

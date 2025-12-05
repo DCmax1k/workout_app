@@ -91,7 +91,7 @@ const SearchFriends = () => {
     
     const viewProfile = (profile) => {
         router.push({
-          pathname: "/dashboard/friends/viewProfile",
+          pathname: "/viewProfile",
           params: {
             profile: JSON.stringify(profile),
           }

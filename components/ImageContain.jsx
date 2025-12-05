@@ -1,11 +1,12 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import exIcon from '../assets/icons/aiSparkle.png'
+import { Image } from 'expo-image'
 
 const ImageContain = ({style, imgStyle, source=exIcon, size=20, ...props}) => {
   return (
     <View style={[{height: size, width: size},style]} {...props}>
-      <Image source={source} style={[{height: "100%", width: "100%", objectFit: "contain"}, imgStyle]} />
+      <Image source={source} contentFit='contain' style={[{height: "100%", width: "100%",}, imgStyle]} />
     </View>
   )
 }

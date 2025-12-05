@@ -8,6 +8,24 @@ import googleIcon from "../../assets/onboarding/googleIcon.png";
 import appleIconWhite from "../../assets/onboarding/appleIconWhite.png";
 import { useUserStore } from '../../stores/useUserStore';
 import { Redirect, useRouter } from 'expo-router';
+// import { GoogleSignin, isSuccessResponse, isErrorWithCode, statusCodes } from '@react-native-google-signin/google-signin';
+import Constants from "expo-constants";
+
+const isExpoGo = Constants.executionEnvironment === "storeClient";
+
+let GoogleSignin = null;
+let isSuccessResponse = null;
+let isErrorWithCode = null;
+let statusCodes = null;
+
+if (!isExpoGo) {
+  ({
+    GoogleSignin,
+    isSuccessResponse,
+    isErrorWithCode,
+    statusCodes
+  } = require("@react-native-google-signin/google-signin"));
+}
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -20,21 +38,12 @@ const OnboardingIndex = () => {
     const router = useRouter();
     // Login automatically
     useEffect(() => {
-        const timoutId = setTimeout(() => {
-
-            // RESET USER
-            //setUser(JSON.parse(JSON.stringify(USER)));
-
-
-            // ReLogin user
-            // if (Object.keys(users).length > 0) {
-            //   setUser(JSON.parse(JSON.stringify(users[Object.keys(users)[0]])));
-            // } 
-            
-
-        }, 1000);
-
-        return () => clearTimeout(timoutId);
+        if (isExpoGo || !GoogleSignin) return;
+        GoogleSignin.configure({
+            webClientId: '483624646164-7ckn41ljobh2p7cv4ig3ni4hg1s6e77o.apps.googleusercontent.com',
+            iosClientId: "483624646164-htf0lctbmvq9cqm4vbi0t6vkk2v8f1rt.apps.googleusercontent.com",
+            profileImageSize: 120,
+        });
     }, []);
 
     
@@ -45,6 +54,56 @@ const OnboardingIndex = () => {
     const goToSignUp = () => {
         router.push("/onboarding/signUpPage");
     }
+
+
+    const handleGoogleSignIn = async () => {
+        if (isExpoGo || !GoogleSignin) return;
+        try {
+            await GoogleSignin.hasPlayServices();
+            const response = await GoogleSignin.signIn();
+            if (isSuccessResponse(response)) {
+                const {idToken, user} = response.data;
+                const {name, email, photo} = user;
+                // Send info to create username page that will create the user if username defined
+                const data = {
+                    partyType: "google",
+                    idToken,
+                    name,
+                    email,
+                    photo
+                }
+                router.push({
+                    pathname: "/onboarding/createUsername",
+                    params: {
+                        data: JSON.stringify(data),
+                    }
+                })
+
+            } else {
+                // sign in was cancelled by user
+            }
+        } catch (error) {
+            if (isErrorWithCode(error)) {
+            switch (error.code) {
+                case statusCodes.IN_PROGRESS:
+                // operation (eg. sign in) already in progress
+                break;
+                case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+                // Android only, play services not available or outdated
+                break;
+                default:
+                // some other error happened
+            }
+            } else {
+            // an error that's not related to google sign in occurred
+            }
+        }
+    };
+
+    const handleAppleSignIn = async () => {
+        
+    }
+
 
     return user ? (
             <Redirect href={"/dashboard"} />
@@ -68,17 +127,17 @@ const OnboardingIndex = () => {
                             {/* Third party logins */}
                             <View style={{alignItems: "center",}}>
 
-                            <View style={{backgroundColor: "white", flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10, paddingHorizontal: 20, borderRadius: 999999}}>
+                            <Pressable onPress={handleGoogleSignIn} style={{backgroundColor: "white", flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10, paddingHorizontal: 20, borderRadius: 999999}}>
                                 <Image style={{height: 30, width: 30, marginRight: 15, objectFit: "contain"}} source={googleIcon} />
                                 <Text style={{fontSize: 17}}>Sign in with Google</Text>
-                            </View>
+                            </Pressable>
 
                             <Spacer />
 
-                            <View style={{backgroundColor: "black", flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10, paddingHorizontal: 20, borderRadius: 999999, borderColor: "white", borderWidth: 1}}>
+                            {/* <Pressable onPress={handleAppleSignIn} style={{backgroundColor: "black", flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10, paddingHorizontal: 20, borderRadius: 999999, borderColor: "white", borderWidth: 1}}>
                                 <Image style={{height: 30, width: 30, marginRight: 15, objectFit: "contain"}} source={appleIconWhite} />
                                 <Text style={{fontSize: 17, color: "white"}}>Sign in with Apple </Text>
-                            </View>
+                            </Pressable> */}
 
                             </View>
 

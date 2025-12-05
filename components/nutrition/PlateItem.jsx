@@ -1,9 +1,10 @@
-import { Dimensions, Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { icons } from '../../constants/icons';
 import { Colors } from '../../constants/Colors';
 import MacrosRow from './MacrosRow';
 import { truncate } from '../../util/truncate';
+import { Image } from 'expo-image';
 const screenWidth = Dimensions.get('screen').width;
 
 const PlateItem = ({style, food, clickChangeQuantity, width = screenWidth-20, edit=true, ...props}) => {
@@ -16,8 +17,8 @@ const PlateItem = ({style, food, clickChangeQuantity, width = screenWidth-20, ed
         {/* ICON */}
         <View style={{height: size, width: size, justifyContent: "center", alignItems: "center"}}>
             <View style={{height: size/1.5, width: size/1.5, backgroundColor: food.color, borderRadius: 10, justifyContent: "center", alignItems: "center", overflow: "hidden"}}>
-                <View style={[StyleSheet.absoluteFill, {backgroundColor: "rgba(0,0,0,0.3)"}]}></View>
-                <Image source={icon} style={{height: size/1.5, width: size/1.5, objectFit: "contain", tintColor: "white"}} />
+                {/* <View style={[StyleSheet.absoluteFill, {backgroundColor: "rgba(0,0,0,0.3)"}]}></View> */}
+                <Image source={icon} style={{height: size/1.5, width: size/1.5, objectFit: "contain", tintColor: food.iconColor ?? "white"}} />
             </View>
         </View>
         {/* Name and details */}

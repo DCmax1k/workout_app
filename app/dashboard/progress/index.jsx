@@ -20,7 +20,6 @@ import ActionMenu from '../../../components/ActionMenu'
 import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist'
 import { ScrollView } from 'react-native-gesture-handler'
 import calculateExpenditure, { useCalculateExpenditure } from '../../../util/calculateExpenditure'
-import memoizeOne from 'memoize-one'
 import NutritionWidget from '../../../components/nutrition/NutritionWidget'
 import calculateBMI from '../../../util/calculateBMI'
 import getAllExercises from '../../../util/getAllExercises'
@@ -84,7 +83,7 @@ const IndexProgress = () => {
     });
   }
 
-  const updatedVisibleWidgets = user.tracking.visibleWidgets;
+  const updatedVisibleWidgets = user.tracking.visibleWidgets || [];
   const widgets = ["nutrition", "weight", "sleep amount", "sleep quality", "water intake"];
   const widgetsAvailable = widgets.filter(w => !updatedVisibleWidgets.includes(w));
   
@@ -136,30 +135,35 @@ const IndexProgress = () => {
     }
 
   const setVisibleWidgetsFlatlistData = (data) => {
-    const newVisibleWidgets = data.map(d => d.key);
-    updateUser({tracking: {visibleWidgets: newVisibleWidgets}});
+    //const newVisibleWidgets = data.map(d => d.key);
+    // updateUser({tracking: {visibleWidgets: newVisibleWidgets}});
+    updateUser({tracking: {visibleWidgets: data}});
   }
 
   
   if (!updatedVisibleWidgets.includes("nutrition")) updatedVisibleWidgets.unshift("nutrition");
 
-  const visibleWidgetsFlatlistData = updatedVisibleWidgets.map((key, i) => {
+
+  const visibleWidgetsFlatlistDataObject = {};
+  updatedVisibleWidgets.forEach((key, i) => {
+
+          
 
           if (key === "nutrition") {
-            return {
+            return visibleWidgetsFlatlistDataObject[key] = {
               key,
               height: (screenWidth-60)/2,
               width: screenWidth - 40,
-            }
+            };
           }
           const widget = user.tracking.logging[key];
-          return {
+          return  visibleWidgetsFlatlistDataObject[key] = {
             key,
             height: 205 + 20, // 20 margin bottom
             width: screenWidth - 40,
             widget,
-          }
-        })
+          };
+        });
 
   const pWidgetActionMenuData = widgetsAvailable.map(w => {
     return {
@@ -253,11 +257,12 @@ const IndexProgress = () => {
               contentContainerStyle={{paddingBottom: 220}}
               showsVerticalScrollIndicator={false}
               // nestedScrollEnabled={true}
-              data={visibleWidgetsFlatlistData}
+              data={updatedVisibleWidgets}
               onDragEnd={({data}) => setVisibleWidgetsFlatlistData(data)}
-              keyExtractor={(item) => item.key}
+              keyExtractor={(item) => item} // item.key if object
               
               renderItem={({item, drag, isActive}) => {
+                item = visibleWidgetsFlatlistDataObject[item];
 
                 if (item.key.length >= 3 && item.key.slice(0, 3) === "ex_") {
                   const exerciseId = item.key.slice(3, item.key.length);
