@@ -61,7 +61,7 @@ const OnboardingIndex = () => {
 
 
     // For testing purposes
-    const handleGoogleSignIn = async () => {
+    const _handleGoogleSignIn = async () => {
         try {
 
             const {idToken, user} = {idToken: "test token", user: {name: "Dylan", email: "digitalcadlwell35@gmail.com", photo: null}};
@@ -123,7 +123,7 @@ const OnboardingIndex = () => {
             console.error(error);
         }
     };
-    const _handleGoogleSignIn = async () => {
+    const handleGoogleSignIn = async () => {
         if (isExpoGo || !GoogleSignin) return;
         try {
             await GoogleSignin.hasPlayServices();
