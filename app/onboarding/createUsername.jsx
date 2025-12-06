@@ -14,7 +14,6 @@ import sendData from '../../util/server/sendData';
 import auth from '../../util/server/auth';
 import AlertNotification from '../../components/AlertNotification';
 import { generateUniqueId } from '../../util/uniqueId';
-import { useBottomSheet } from '../../context/BottomSheetContext';
 import Constants from "expo-constants";
 
 const isExpoGo = Constants.executionEnvironment === "storeClient";
@@ -31,7 +30,6 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const CreateUsernamePage = () => {
-    const {showAlert} = useBottomSheet();
 
     const users = useUserStore((state) => state.users);
     const user = useUserStore((state) => state.user);
@@ -59,22 +57,22 @@ const CreateUsernamePage = () => {
     }
 
     const signup = async () => {
-        const check = await checkUsername();
-        if (!check) return showAlert("Username taken", false);
         if (username.length === 0) return;
+        const check = await checkUsername();
+        if (!check) return alertRef.current.showAlert("Username taken", false);
         setLoading(true);
-        const response = await sendData('/login/createaccount', (
+        const response = await sendData('/login/createaccount', 
             {
                 partyType,
                 idToken,
                 email,
                 username,
             }
-        ));
+        );
         if (response.status !== "success") {
             setLoading(false);
             console.log("Error:'", response.message);
-            showAlert(response.message, false);
+            alertRef.current.showAlert(response.message, false);
             return;
         } 
         const userInfo = response.userInfo;

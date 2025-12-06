@@ -1,5 +1,5 @@
 import { Dimensions, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import ThemedView from '../../components/ThemedView';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Spacer from '../../components/Spacer';
@@ -10,6 +10,9 @@ import { useUserStore } from '../../stores/useUserStore';
 import { Redirect, useRouter } from 'expo-router';
 // import { GoogleSignin, isSuccessResponse, isErrorWithCode, statusCodes } from '@react-native-google-signin/google-signin';
 import Constants from "expo-constants";
+import auth from '../../util/server/auth';
+import AlertNotification from '../../components/AlertNotification';
+import sendData from '../../util/server/sendData';
 
 const isExpoGo = Constants.executionEnvironment === "storeClient";
 
@@ -35,6 +38,7 @@ const OnboardingIndex = () => {
     const users = useUserStore((state) => state.users);
     const user = useUserStore((state) => state.user);
     const setUser = useUserStore((state => state.setUser));
+    const updateOptions = useUserStore(state => state.updateOptions);
     const router = useRouter();
     // Login automatically
     useEffect(() => {
@@ -46,7 +50,7 @@ const OnboardingIndex = () => {
         });
     }, []);
 
-    
+    const alertRef = useRef(null);
 
     const goToLogin = () => {
         router.push("/onboarding/loginPage");
@@ -56,7 +60,70 @@ const OnboardingIndex = () => {
     }
 
 
+    // For testing purposes
     const handleGoogleSignIn = async () => {
+        try {
+
+            const {idToken, user} = {idToken: "test token", user: {name: "Dylan", email: "digitalcadlwell35@gmail.com", photo: null}};
+            const {name, email, photo} = user;
+            // Send info to create username page that will create the user if username defined
+            const data = {
+                partyType: "google",
+                idToken,
+                name,
+                email,
+                photo
+            }
+            // Check if account exists, if not send to create username page
+            const checkUserExists = await sendData('/login/loginthirdparty', data);
+            if (checkUserExists.status !== "success") {
+                console.log("Error checking third party user.");
+                alertRef.current.showAlert(checkUserExists.message, false);
+                return;
+            } else {
+                if (checkUserExists.userFound) {
+                    // Login user - below [block] is copied from loginPage.jsx
+                    const { jsonWebToken } = checkUserExists;
+                    //then call auth which will get userInfo to set with user
+                    const authResponse = await auth(jsonWebToken);
+                    if (authResponse.status !== "success") {
+                        console.log("Error: ", authResponse.message);
+                        alertRef.current.showAlert(authResponse.message, false);
+                        return;
+                    }
+                    const {userInfo, fullLocalUser} = authResponse;
+                    // Find user in users and set
+                    const localUserIds = Object.keys(users);
+                    const idx = localUserIds.findIndex(localId => users[localId].dbId === userInfo.dbId);
+                    let userToSet;
+                    if (idx > -1) {
+                        // Local user found
+                        userToSet = {...users[localUserIds[idx]], ...userInfo, jsonWebToken};
+                    } else {
+                        // Steal more data from db to complete user
+                        const dbId = fullLocalUser._id;
+                        const newLocalUser = {...fullLocalUser, _id: generateUniqueId(), dbId: dbId, jsonWebToken};
+                        userToSet = newLocalUser;
+                    }
+                    setUser(userToSet);
+                    updateOptions({animateDashboard: true});
+                    router.replace("/dashboard");
+                } else {
+                    // Create account
+                    router.push({
+                        pathname: "/onboarding/createUsername",
+                        params: {
+                            data: JSON.stringify(data),
+                        }
+                    });
+                }
+            }
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    const _handleGoogleSignIn = async () => {
         if (isExpoGo || !GoogleSignin) return;
         try {
             await GoogleSignin.hasPlayServices();
@@ -72,15 +139,54 @@ const OnboardingIndex = () => {
                     email,
                     photo
                 }
-                router.push({
-                    pathname: "/onboarding/createUsername",
-                    params: {
-                        data: JSON.stringify(data),
+                // Check if account exists, if not send to create username page
+                const checkUserExists = await sendData('/login/loginthirdparty', data);
+                if (checkUserExists.status !== "success") {
+                    console.log("Error checking third party user.");
+                    alertRef.current.showAlert(checkUserExists.message, false);
+                    return;
+                } else {
+                    if (checkUserExists.userFound) {
+                        // Login user - below [block] is copied from loginPage.jsx
+                        const { jsonWebToken } = checkUserExists;
+                        //then call auth which will get userInfo to set with user
+                        const authResponse = await auth(jsonWebToken);
+                        if (authResponse.status !== "success") {
+                            console.log("Error: ", authResponse.message);
+                            alertRef.current.showAlert(authResponse.message, false);
+                            return;
+                        }
+                        const {userInfo, fullLocalUser} = authResponse;
+                        // Find user in users and set
+                        const localUserIds = Object.keys(users);
+                        const idx = localUserIds.findIndex(localId => users[localId].dbId === userInfo.dbId);
+                        let userToSet;
+                        if (idx > -1) {
+                            // Local user found
+                            userToSet = {...users[localUserIds[idx]], ...userInfo, jsonWebToken};
+                        } else {
+                            // Steal more data from db to complete user
+                            const dbId = fullLocalUser._id;
+                            const newLocalUser = {...fullLocalUser, _id: generateUniqueId(), dbId: dbId, jsonWebToken};
+                            userToSet = newLocalUser;
+                        }
+                        setUser(userToSet);
+                        updateOptions({animateDashboard: true});
+                        router.replace("/dashboard");
+                    } else {
+                        // Create account
+                        router.push({
+                            pathname: "/onboarding/createUsername",
+                            params: {
+                                data: JSON.stringify(data),
+                            }
+                        });
                     }
-                })
+                }
 
             } else {
                 // sign in was cancelled by user
+                alertRef.current.showAlert("Google sign in was cancelled", false);
             }
         } catch (error) {
             if (isErrorWithCode(error)) {
@@ -110,6 +216,7 @@ const OnboardingIndex = () => {
         )
         : (
             <ThemedView style={{flex: 1, height: screenHeight, width: screenWidth}}>
+                <AlertNotification ref={alertRef} />
                 <SafeAreaView style={{flex: 1}}>
                     <ScrollView style={{flex: 1, padding: 30,}} showsVerticalScrollIndicator={false}>
                         <View style={{flexDirection: "column",}}>
