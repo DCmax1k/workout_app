@@ -5,7 +5,7 @@ import profileIcon from '../assets/icons/profileIcon.png'
 
 const ProfileImg = ({style, profileImg, size=25, ...props}) => {
   return (
-    <ImageContain style={[style, {backgroundColor: "grey", borderRadius: 9999}]} imgStyle={{borderRadius: 9999}} size={size} source={profileImg.url ? {uri: profileImg.url} : profileIcon} />
+    <ImageContain cover style={[style, {backgroundColor: "grey", borderRadius: 9999}]} imgStyle={{borderRadius: 9999}} size={size} source={profileImg.url ? {uri: profileImg.url} : profileIcon} />
   )
 }
 

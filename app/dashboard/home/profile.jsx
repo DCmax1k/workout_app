@@ -7,7 +7,7 @@ import { useUserStore } from '../../../stores/useUserStore'
 import BlueButton from '../../../components/BlueButton'
 import Spacer from '../../../components/Spacer'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import profileIcon from '../../../assets/icons/profileIcon.png'
+import pencilIcon from '../../../assets/icons/pencil.png'
 import gearIcon from '../../../assets/icons/gear.png'
 import maleIcon from '../../../assets/icons/male.png'
 import femaleIcon from '../../../assets/icons/female.png'
@@ -23,6 +23,7 @@ import { Colors } from '../../../constants/Colors'
 import ProfileImg from '../../../components/ProfileImg'
 import sendData from '../../../util/server/sendData'
 import { useBottomSheet } from '../../../context/BottomSheetContext'
+import { useIsFocused } from '@react-navigation/native'
 // import * as HealthConnect from 'expo-health-connect';
 
 
@@ -63,6 +64,24 @@ const Profile = () => {
     const [popupMenuActive, setPopupMenuActive] = useState(false);
     
     const [currentPopupContent, setCurrentPopupContent] = useState("") // birthday, height, gender
+
+    const [awaitEditProfile, setAwaitEditProfile] = useState(false);
+    useEffect(() => {
+        const sub = emitter.addListener("editProfileFromViewProfile", () => {
+            setAwaitEditProfile(true);
+        });
+        return () => sub.remove();
+    }, [emitter]);
+    const isFocused = useIsFocused();
+    useEffect(() => {
+      if (awaitEditProfile && isFocused) {
+        setAwaitEditProfile(false);
+        setTimeout(() => {
+          router.push("/dashboard/home/editProfile");
+        }, 450);
+        
+      }
+    }, [awaitEditProfile, isFocused])
 
     const pushLoggingWeightLayoutServer = async (category, obj) => {
         const response = await sendData("/dashboard/pushloggingweightlayout", {category, obj, jsonWebToken: user.jsonWebToken});
@@ -252,7 +271,7 @@ const Profile = () => {
     }
 
     const actionMenuOptions = [
-      // {title: "Settings", icon: gearIcon, onPress: openSettings,},
+      {title: "Edit Profile", icon: pencilIcon, onPress: () => router.push("/dashboard/home/editProfile"),},
       {title: "Sign Out",  onPress: clearUserData,},
     ];
 
@@ -262,6 +281,16 @@ const Profile = () => {
         showAlert(response.message, false);
         return;
       }
+    }
+
+    const viewPublicProfile = () => {
+      const profile = {_id: user.dbId, username: user.username, profileImg: user.profileImg, premium: user.premium, usernameDecoration: user.usernameDecoration}
+      router.push({
+          pathname: "/viewProfile",
+          params: {
+            profile: JSON.stringify(profile),
+          }
+        })
     }
 
     return (
@@ -373,11 +402,14 @@ const Profile = () => {
               
 
               <View style={{justifyContent: "center", alignItems: "center"}}>
-                <ProfileImg size={80} profileImg={user.profileImg} />
-                <Spacer height={10} />
-                <Pressable onPress={showComingSoon} style={{backgroundColor: "#686868ff", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5}} >
-                  <Text style={{fontSize: 15, color: "white",}} >Edit Account</Text>
+                <Pressable onPress={viewPublicProfile} style={{alignItems: "center"}}>
+                  <ProfileImg size={80} profileImg={user.profileImg} />
+                  <Spacer height={10} />
+                  <View  style={{backgroundColor: "#686868ff", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5}} >
+                    <Text style={{fontSize: 15, color: "white",}} >View Profile</Text>
+                  </View>
                 </Pressable>
+                
               </View>
 
               <Spacer />

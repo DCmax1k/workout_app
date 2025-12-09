@@ -21,19 +21,19 @@ const Loading = ({style, text="Loading...", ...props}) => {
     }));
 
   return (
-    <ThemedView style={[{flex: 1}, style]} {...props}>
-        <SafeAreaView style={{flex: 1}}>
+    <View style={[{flex: 1}, style]} {...props}>
+
             <View style={{flex: 1, flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
 
                 <Animated.View style={[{ marginRight: 10 }, animatedStyle]}>
                     <ImageContain size={20} source={loaderIcon} />
                 </Animated.View>
-                <ThemedText>{text}</ThemedText>
+                {/* <ThemedText>{text}</ThemedText> */}
 
             </View>
             
-        </SafeAreaView>
-    </ThemedView>
+
+    </View>
   )
 }
 

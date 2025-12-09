@@ -3,7 +3,7 @@
     "scheme": "pumpapp",
     "name": "Pumped Up",
     "slug": "Pump_App",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -27,7 +27,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.caldwell.pumpedup"
+      "package": "com.caldwell.pumpedup",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"

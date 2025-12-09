@@ -1,8 +1,8 @@
 import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useEffect } from 'react'
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import eyeIcon from "../../assets/icons/eye.png"
-import noEyeIcon from "../../assets/icons/noEye.png"
+import eyeIcon from "../assets/icons/eye.png"
+import noEyeIcon from "../assets/icons/noEye.png"
 
 const ThemedTextInput = ({height = 80, width = "100%", backgroundColor = "#252525", placeholder = "Placeholder", color="#7D7D7D", fontSize = 18, autoCorrect = false, value = "", type="text", onChange=(e) => {}, ...props}) => {
 

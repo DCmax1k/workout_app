@@ -9,7 +9,7 @@ import appleIconWhite from "../../assets/onboarding/appleIconWhite.png";
 import { useUserStore } from '../../stores/useUserStore';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { TestUsers } from "../../constants/TestUsers";
-import ThemedTextInput from '../../components/workout/ThemedTextInput';
+import ThemedTextInput from '../../components/ThemedTextInput';
 import sendData from '../../util/server/sendData';
 import auth from '../../util/server/auth';
 import AlertNotification from '../../components/AlertNotification';

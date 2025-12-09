@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import ThemedView from '../components/ThemedView'
 import ThemedText from '../components/ThemedText'
-import { useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import { useUserStore } from '../stores/useUserStore'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import TitleWithBack from '../components/TitleWithBack'
@@ -12,12 +12,14 @@ import DisplayName from '../components/DisplayName'
 import FriendActionBtn from '../components/FriendActionBtn'
 import { Colors } from '../constants/Colors'
 import trashIcon from '../assets/icons/trash.png'
+import pencilIcon from '../assets/icons/pencil.png'
 import ConfirmMenu from '../components/ConfirmMenu'
 import sendData from '../util/server/sendData'
 import { useBottomSheet } from '../context/BottomSheetContext'
 import { socket } from '../util/server/socket'
 import getAchievementBadge from '../util/getAchievementBadge'
 import { Image } from 'expo-image'
+import emitter from '../util/eventBus'
 
 const firstCapital = (string) => {
   const strToArr = string.split(' ');
@@ -57,6 +59,11 @@ const ViewProfile = () => {
         setConfirmMenuActive(true);
     }
 
+    const goBackAndEditProfile = () => {
+        emitter.emit("editProfileFromViewProfile", {  });
+        router.back();
+    }
+
     const removeUser = async (person) => {
         console.log("remove user");
         // Client side
@@ -69,19 +76,27 @@ const ViewProfile = () => {
         //showAlert("Friend removed.", true);
     }
 
-    const actionMenuOptions = [
-      // {title: "Settings", icon: gearIcon, onPress: openSettings,},
-      {title: "Remove Friend", icon: trashIcon, color: Colors.redText, onPress: () => requestRemoveUser(profile),},
-    ];
+    let actionMenuOptions = [];    
+    if (isFriend) {
+        actionMenuOptions = [
+            // {title: "Settings", icon: gearIcon, onPress: openSettings,},
+            {title: "Remove Friend", icon: trashIcon, color: Colors.redText, onPress: () => requestRemoveUser(profile),},
+        ];
+    } else if (isSelf) {
+        actionMenuOptions = [
+            // {title: "Settings", icon: gearIcon, onPress: openSettings,},
+            {title: "Edit Profile", icon: pencilIcon, onPress: goBackAndEditProfile},
+        ];
+    }
+    
 
     const achievement = getAchievementBadge(profile.pastWorkoutsLength);
-    console.log(profile);
 
   return (
     <ThemedView style={{flex: 1, }}>
         <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
         <SafeAreaView>
-            <TitleWithBack actionBtn={{actionMenu: isFriend ? true : false, image: require("../assets/icons/threeEllipses.png"), options: actionMenuOptions,}} />
+            <TitleWithBack actionBtn={{actionMenu: true, image: require("../assets/icons/threeEllipses.png"), options: actionMenuOptions,}} />
             <Spacer height={20} />
             <View style={{width: "100%", justifyContent: "center", alignItems: "center"}}>
                 <ProfileImg profileImg={profile.profileImg} size={80} />
@@ -90,7 +105,13 @@ const ViewProfile = () => {
                 <Spacer height={5} />
                 <ThemedText style={{fontSize: 12, fontWeight: "600", color: "#777777ff"}}>{isSelf ? "YOU" : isFriend ? "Friend" : "User"}</ThemedText>
                 <Spacer height={20} />
-                {profile.usernameDecoration.description && <ThemedText style={{fontSize: 15, fontWeight: "400", color: "#dfdfdfff"}}>{profile.usernameDecoration.description ?? ""}</ThemedText>}
+                
+                {profile.usernameDecoration.description && (
+                        <ScrollView style={{maxHeight: 205, width: "100%",}} contentContainerStyle={{padding: 20}}>
+                            <ThemedText style={{fontSize: 15, fontWeight: "400", color: "#dfdfdfff", textAlign: "center"}}>{profile.usernameDecoration.description ?? ""}</ThemedText>
+                        </ScrollView>
+                   
+                    )}
                 <Spacer height={40} />
                 {!isFriend && !isSelf && (
                     <View>

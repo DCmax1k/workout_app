@@ -9,7 +9,7 @@ import appleIconWhite from "../../assets/onboarding/appleIconWhite.png";
 import { useUserStore } from '../../stores/useUserStore'
 import { TestUsers } from "../../constants/TestUsers";
 import { Redirect, useRouter } from 'expo-router'
-import ThemedTextInput from '../../components/workout/ThemedTextInput'
+import ThemedTextInput from '../../components/ThemedTextInput'
 import BlueButton from '../../components/BlueButton'
 import sendData from '../../util/server/sendData'
 import { generateUniqueId } from '../../util/uniqueId'

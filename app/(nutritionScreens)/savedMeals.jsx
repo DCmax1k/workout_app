@@ -17,7 +17,7 @@ import Spacer from '../../components/Spacer'
 import ThemedText from '../../components/ThemedText'
 import ConfirmMenu from '../../components/ConfirmMenu'
 import { generateUniqueId } from '../../util/uniqueId'
-import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown, LinearTransition } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, FadeOutDown, LinearTransition, SlideOutDown } from 'react-native-reanimated'
 import ImageContain from '../../components/ImageContain'
 import MealPreview from '../../components/nutrition/MealPreview'
 import { Portal } from 'react-native-paper'
@@ -25,6 +25,7 @@ import emitter from '../../util/eventBus'
 import { router } from 'expo-router'
 import { useBottomSheet } from '../../context/BottomSheetContext'
 import sendData from '../../util/server/sendData'
+import SwipeToDelete from '../../components/SwipeToDelete'
 
 const searchMeals = (meals, searchValue) => {
     if (!searchValue) return meals;
@@ -180,28 +181,31 @@ const SavedMeals = () => {
 
             <Spacer height={10} />
 
-            <ScrollView style={{flex: 1, }} contentContainerStyle={{paddingBottom: 120, paddingTop: 20, paddingHorizontal: 20}}>
+            <ScrollView style={{flex: 1, }} contentContainerStyle={{paddingBottom: 120, paddingTop: 20,}}>
                 {filteredMeals.length === 0 && (
                     <ThemedText style={{paddingHorizontal: 50, paddingVertical: 20, textAlign: "center"}}>Find meals you save here!</ThemedText>
                 )}
                 {filteredMeals.map(meal => {
                     return (
-                        <Animated.View layout={LinearTransition.springify().damping(90) } key={meal.id}>
-                            <Pressable onPress={() => openMeal(meal)} style={{marginBottom: 10}}>
-                                
-                                <ConsumedMealCard meal={meal} key={meal.id} actionMenuData={[
-                                    {title: "Add Foods to Plate", icon: plusIcon, onPress: () => addMealToPlate(meal),},
-                                    {title: "Open Meal", icon: eyeIcon, onPress: () => openMeal(meal),},
-                                    {title: "Delete Meal", icon: trashIcon, onPress: () => requestRemoveMeal(meal), color: Colors.redText },
-                                ]} />
-                                {/* Show added to plate confirmation */}
-                                {activeCardConfirmationMealId === meal.id && (
-                                    <Animated.View entering={FadeIn} exiting={FadeOut} style={[StyleSheet.absoluteFill, {backgroundColor: "#2A5230", zIndex: 1, flexDirection: "row", justifyContent: "center", alignItems: "center", borderRadius: 10, padding: 20, paddingLeft: 10 }]}>
-                                        <Text style={{color: "white", fontWeight: "600", }}>Successfully added meal to plate</Text>
-                                        <ImageContain source={checkIcon} style={{marginTop: -5, marginLeft: 10}} />
-                                    </Animated.View>
-                                )}
-                            </Pressable>
+                        <Animated.View layout={LinearTransition.springify().damping(90) } entering={FadeInUp} exiting={SlideOutDown} key={meal.id}>
+                            <SwipeToDelete style={{width: screenWidth}} openedRight={() => requestRemoveMeal(meal)} >
+                                <Pressable onPress={() => openMeal(meal)} style={{marginBottom: 10, marginHorizontal: 20}}>
+                                       
+                                    <ConsumedMealCard meal={meal} key={meal.id} actionMenuData={[
+                                        {title: "Add Foods to Plate", icon: plusIcon, onPress: () => addMealToPlate(meal),},
+                                        {title: "Open Meal", icon: eyeIcon, onPress: () => openMeal(meal),},
+                                        {title: "Delete Meal", icon: trashIcon, onPress: () => requestRemoveMeal(meal), color: Colors.redText },
+                                    ]} />
+                                        
+                                    {/* Show added to plate confirmation */}
+                                    {activeCardConfirmationMealId === meal.id && (
+                                        <Animated.View entering={FadeIn} exiting={FadeOut} style={[StyleSheet.absoluteFill, {backgroundColor: "#2A5230", zIndex: 1, flexDirection: "row", justifyContent: "center", alignItems: "center", borderRadius: 10, padding: 20, paddingLeft: 10 }]}>
+                                            <Text style={{color: "white", fontWeight: "600", }}>Successfully added meal to plate</Text>
+                                            <ImageContain source={checkIcon} style={{marginTop: -5, marginLeft: 10}} />
+                                        </Animated.View>
+                                    )}
+                                </Pressable>
+                            </SwipeToDelete>
                         </Animated.View>
                             
                     )
