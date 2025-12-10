@@ -428,8 +428,8 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: "center",
         overflow: "hidden",
-        marginTop: 2,
-    
+        marginTop: 1,
+        marginBottom: 1,
     },
     valueInput: {
         fontWeight: 700,

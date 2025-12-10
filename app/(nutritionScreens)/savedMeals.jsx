@@ -81,17 +81,6 @@ const SavedMeals = () => {
         }
     }, [activeCardConfirmationMealId])
 
-    const requestRemoveMeal = (meal) => {
-        setConfirmMenuData({
-            title: "Delete Meal?",
-            subTitle: "This meal will be no longer saved.",
-            option1: "Delete Meal",
-            option1color: Colors.protein,
-            option2: "Go Back",
-            confirm: () => removeMeal(meal),
-        });
-        setConfirmMenuActive(true);
-    }
     const addMealToPlate = (meal) => {
         if (mealPreviewOpen) setMealPreviewOpen(false);
         const foodsInMeal = meal.fullMeal.foods;
@@ -188,7 +177,14 @@ const SavedMeals = () => {
                 {filteredMeals.map(meal => {
                     return (
                         <Animated.View layout={LinearTransition.springify().damping(90) } entering={FadeInUp} exiting={SlideOutDown} key={meal.id}>
-                            <SwipeToDelete style={{width: screenWidth}} openedRight={() => requestRemoveMeal(meal)} >
+                            <SwipeToDelete style={{width: screenWidth}} showConfirmation={true} confirmationData={{
+                                title: "Delete Meal?",
+                                subTitle: "This meal will be no longer saved.",
+                                option1: "Delete Meal",
+                                option1color: Colors.protein,
+                                option2: "Go Back",
+                                confirm: () => removeMeal(meal),
+                            }}>
                                 <Pressable onPress={() => openMeal(meal)} style={{marginBottom: 10, marginHorizontal: 20}}>
                                        
                                     <ConsumedMealCard meal={meal} key={meal.id} actionMenuData={[

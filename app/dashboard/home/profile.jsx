@@ -1,4 +1,4 @@
-import { Dimensions, Image, Platform, Pressable,ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Image, KeyboardAvoidingView, Platform, Pressable,ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
@@ -18,12 +18,14 @@ import emitter from '../../../util/eventBus'
 import PopupSheet from '../../../components/PopupSheet'
 import Calender from '../../../components/Calender'
 import ScrollPicker from '../../../components/ScrollPicker'
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut, SlideInRight, SlideOutRight } from 'react-native-reanimated'
 import { Colors } from '../../../constants/Colors'
 import ProfileImg from '../../../components/ProfileImg'
 import sendData from '../../../util/server/sendData'
 import { useBottomSheet } from '../../../context/BottomSheetContext'
 import { useIsFocused } from '@react-navigation/native'
+import ThemedTextInput from '../../../components/ThemedTextInput'
+import Loading from '../../../components/Loading'
 // import * as HealthConnect from 'expo-health-connect';
 
 
@@ -57,6 +59,7 @@ const Profile = () => {
     const updateUser = useUserStore((state) => state.updateUser);
 
     const { feet: heightFeet, inches: heightInches } = user.settings.height ? cmToFeetInches(user.settings.height) : {heightFeet: 0, heightInches: 0} ;
+    
 
     const [confirmMenuActive, setConfirmMenuActive] = useState(false);
     const [confirmMenuData, setConfirmMenuData] = useState();
@@ -292,6 +295,8 @@ const Profile = () => {
           }
         })
     }
+    
+    
 
     return (
       <ThemedView style={styles.container}>
@@ -398,7 +403,8 @@ const Profile = () => {
           <SafeAreaView style={{flex: 1}} >
             <TitleWithBack title={"Profile"} style={{marginHorizontal: 0}} actionBtn={{actionMenu: true, image: require("../../../assets/icons/threeEllipses.png"), options: actionMenuOptions,}} />
             <Spacer height={20} />
-            <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1,}} contentContainerStyle={{padding: 20, paddingBottom: 120}}>
+            
+            <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1,}} contentContainerStyle={{padding: 20, paddingBottom: 120}}  keyboardShouldPersistTaps='handled'>
               
 
               <View style={{justifyContent: "center", alignItems: "center"}}>
@@ -486,6 +492,8 @@ const Profile = () => {
                 </Pressable>
               </View>
               
+              <Spacer height={40} />
+              
               <Spacer height={100} />
               
 
@@ -494,6 +502,7 @@ const Profile = () => {
               <BlueButton onPress={openAccountRecovery} title={"Account Recovery"} color={Colors.primaryOrange} />
 
             </ScrollView>
+            
           </SafeAreaView>
       </ThemedView>
     )

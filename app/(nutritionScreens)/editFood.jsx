@@ -1,4 +1,4 @@
-import { Dimensions, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Dimensions, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useEffect, useRef, useState, version } from 'react'
 import ThemedText from '../../components/ThemedText'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
@@ -407,7 +407,7 @@ const EditFood = () => {
               </View>
           </View>
 
-            {/* <KeyboardAvoidingView behavior={"position"} keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 30} style={{flex: 1}} > */}
+            {/* <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? "padding" : "height"} > */}
                      <ScrollView contentContainerStyle={{paddingBottom: screenHeight/2, paddingTop: 170}} showsVerticalScrollIndicator={false}>
                         <View style={{width: screenWidth, height: screenWidth/2, alignItems: "center", marginLeft: -20}}>
                             <View style={{height: screenWidth/2, width: screenWidth/2, backgroundColor: food.color, borderRadius: 20, justifyContent: "center", alignItems: "center", overflow: "hidden"}}>

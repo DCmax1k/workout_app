@@ -23,7 +23,7 @@ const ThemedTextInput = ({height = 80, width = "100%", backgroundColor = "#25252
       placeholderFontSize.value = withTiming(initialFontSize, { duration: 200 });
       placeholderPosition.value = withTiming(initialPlaceholderPositionTop, { duration: 200 });
     }
-  }, [focused]);
+  }, [focused, value]);
 
   // Animations
   const placeholderFontSize = useSharedValue(initialFontSize);

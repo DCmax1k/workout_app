@@ -130,7 +130,6 @@ const HorizontalScrollInput = ({
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
-          height: 60,
         }}
       >
         {/* <ThemedText
@@ -139,14 +138,13 @@ const HorizontalScrollInput = ({
         >
           {value.toFixed(1)}
         </ThemedText> */}
-        <TextInput keyboardType="number-pad" style={{textAlign: "right", height: 60, fontSize: 40, marginLeft: -30, fontWeight: "bold", color: "white", width: 150}} selectTextOnFocus onFocus={() => setActiveEdit(value.toString())} onBlur={endEdit} value={activeEdit !== false ? activeEdit : value.toString() } onChangeText={setActiveEdit} />
+        <TextInput keyboardType="number-pad" style={{ textAlign: "right", fontSize: 40, lineHeight: 50, paddingVertical: 10, marginLeft: -30, fontWeight: "bold", color: "white", width: 150}} selectTextOnFocus onFocus={() => setActiveEdit(value.toString())} onBlur={endEdit} value={activeEdit !== false ? activeEdit : value.toString() } onChangeText={setActiveEdit} />
         <ThemedText
           style={{
-            height: 60,
             fontSize: 20,
             fontWeight: "300",
-            marginTop: 47,
             marginLeft: 10,
+            marginTop: 10,
           }}
         >
           {unit}
