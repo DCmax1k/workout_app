@@ -27,6 +27,17 @@ import { useIsFocused } from '@react-navigation/native'
 import ThemedTextInput from '../../../components/ThemedTextInput'
 import Loading from '../../../components/Loading'
 // import * as HealthConnect from 'expo-health-connect';
+import Constants from "expo-constants";
+
+const isExpoGo = Constants.executionEnvironment === "storeClient";
+
+let GoogleSignin = null;
+
+if (!isExpoGo) {
+  ({
+    GoogleSignin,
+  } = require("@react-native-google-signin/google-signin"));
+}
 
 
 const firstCapital = (string) => {
@@ -127,10 +138,17 @@ const Profile = () => {
       //   })();
       // })
 
-    const clearUserData = () => {
-      // Signout
-      setUser(null);
-    }
+    const signOut = async () => {
+      try {
+        if (GoogleSignin) {
+          await GoogleSignin.signOut();
+        }
+
+        setUser(null);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     const showComingSoon = () => {
       console.log("Showing...");
@@ -275,7 +293,7 @@ const Profile = () => {
 
     const actionMenuOptions = [
       {title: "Edit Profile", icon: pencilIcon, onPress: () => router.push("/dashboard/home/editProfile"),},
-      {title: "Sign Out",  onPress: clearUserData,},
+      {title: "Sign Out",  onPress: signOut,},
     ];
 
     const updateServerSettings = async (key, value) => {
@@ -497,7 +515,7 @@ const Profile = () => {
               <Spacer height={100} />
               
 
-              {/* <BlueButton onPress={clearUserData} title={"Sign out"} /> */}
+              {/* <BlueButton onPress={signOut} title={"Sign out"} /> */}
               {/* <Spacer /> */}
               <BlueButton onPress={openAccountRecovery} title={"Account Recovery"} color={Colors.primaryOrange} />
 

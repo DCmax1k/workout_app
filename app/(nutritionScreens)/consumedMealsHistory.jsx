@@ -30,6 +30,7 @@ import PopupSheet from '../../components/PopupSheet';
 import { generateUniqueId } from '../../util/uniqueId'
 import sendData from '../../util/server/sendData';
 import { useBottomSheet } from '../../context/BottomSheetContext';
+import ThemedText from '../../components/ThemedText';
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
