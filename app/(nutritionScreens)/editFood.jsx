@@ -108,7 +108,7 @@ const CustomizeIconAndColor = ({style, updateFood, food, ...props}) => {
                     
                     {/* Icon color */}
                     <View style={{ width: '45%', overflow: 'hidden' }}>
-                        <Text style={{fontSize: 15, color: "#c2c2c2ff", textAlign: "center" }}>Icon Color</Text>
+                        <Text style={{fontSize: 18, color: "#c2c2c2ff", textAlign: "center", marginBottom: 2, fontWeight: "800" }}>Icon</Text>
                         <ColorPicker
                             style={{flex: 1, width: '100%', flexDirection: "column", justifyContent: "center",}}
                             value={food.iconColor}
@@ -127,7 +127,7 @@ const CustomizeIconAndColor = ({style, updateFood, food, ...props}) => {
 
                     {/* Background color */}
                     <View style={{ width: '45%', overflow: 'hidden', }}>
-                        <Text style={{fontSize: 15, color: "#c2c2c2ff", textAlign: "center" }}>Background Color</Text>
+                        <Text style={{fontSize: 18, color: "#c2c2c2ff", textAlign: "center", marginBottom: 2, fontWeight: "800" }}>Background</Text>
                         <ColorPicker
                             style={{flex: 1, width: '100%', flexDirection: "column", justifyContent: "center",}}
                             value={food.color}
@@ -166,6 +166,8 @@ const EditFood = () => {
     const {showAlert} = useBottomSheet();
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
+
+    const [parentScroll, setParentScroll] = useState(true);
 
     const params = useLocalSearchParams();
     const f = JSON.parse(params.food) ?? {};
@@ -408,7 +410,7 @@ const EditFood = () => {
           </View>
 
             {/* <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? "padding" : "height"} > */}
-                     <ScrollView contentContainerStyle={{paddingBottom: screenHeight/2, paddingTop: 170}} showsVerticalScrollIndicator={false}>
+                     <ScrollView nestedScrollEnabled scrollEnabled={parentScroll} contentContainerStyle={{paddingBottom: screenHeight/2, paddingTop: 170}} showsVerticalScrollIndicator={false}>
                         <View style={{width: screenWidth, height: screenWidth/2, alignItems: "center", marginLeft: -20}}>
                             <View style={{height: screenWidth/2, width: screenWidth/2, backgroundColor: food.color, borderRadius: 20, justifyContent: "center", alignItems: "center", overflow: "hidden"}}>
                                 {/* <View style={[StyleSheet.absoluteFill, {backgroundColor: "rgba(0,0,0,0.3)"}]}></View> */}
@@ -474,12 +476,12 @@ const EditFood = () => {
                         <Spacer height={20} />
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginLeft: 10, marginBottom: 10,}}>
                             <ThemedText style={{fontSize: 13, fontWeight: 700,  }}>Category</ThemedText>
-                            <ActionMenu style={{zIndex: 2}} data={[
-                                {title: "Create New Category", icon: plusIcon, onPress: createNewCategory, },
-                                ]} />
+                            {/* <ActionMenu style={{zIndex: 2}} data={[
+                                {title: "Create/Edit Categories", icon: plusIcon, onPress: createNewCategory, },
+                                ]} /> */}
                         </View>
 
-                        <MultiSelectDropdown locked={false} selectedIds={categoryIds} setSelectedIds={setCategoryIds} data={categoryData} />
+                        <MultiSelectDropdown locked={false} selectedIds={categoryIds} setSelectedIds={setCategoryIds} data={categoryData} setParentScroll={setParentScroll} />
                             
                         <Spacer height={20} />
 

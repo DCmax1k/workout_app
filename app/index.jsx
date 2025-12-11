@@ -102,7 +102,7 @@ export default function Index() {
     
 
 
-  }, [user]);
+  }, []); // dependencies used to have user. fixed android crash bug
 
 
   return <Loading text={user ? "Authenticating..." : "Loading..."} />;

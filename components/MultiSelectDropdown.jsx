@@ -6,7 +6,7 @@ import whiteX from '../assets/icons/whiteX.png'
 import { Portal } from 'react-native-paper';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-const MultiSelectDropdown = ({data, height = 50, maxHeight = 225, style, selectedIds, setSelectedIds, locked = false,  ...props}) => {
+const MultiSelectDropdown = ({data, height = 50, maxHeight = 225, style, selectedIds, setSelectedIds, locked = false, setParentScroll=()=>{},  ...props}) => {
     const [active, setActive] = useState(false);
 
     const selected = selectedIds.map(id => data.find(d=>d.id===id));
@@ -74,7 +74,12 @@ const MultiSelectDropdown = ({data, height = 50, maxHeight = 225, style, selecte
             {(
                 <Animated.View style={[{width: "100%", elevation: 100, zIndex: 100}, heightAnimationStyle]}>
                     <View style={{flex: 1,}}>
-                        <ScrollView style={{ backgroundColor: "#323232", borderBottomRightRadius: 10, borderBottomLeftRadius: 10}} >
+                        <ScrollView
+                        style={{ backgroundColor: "#323232", borderBottomRightRadius: 10, borderBottomLeftRadius: 10}}
+                        onTouchStart={() => setParentScroll(false)}
+                        onTouchEnd={() => setParentScroll(true)}
+                        onMomentumScrollBegin={() => setParentScroll(false)}
+                        onMomentumScrollEnd={() => setParentScroll(true)}>
                     {notSelected.map((item, i) => {
                         return (<Pressable key={item.id} style={[styles.item, {height: height, fontSize: 18,},]} onPress={() => {selectItem(item.id);}}>
                                 <Text style={[styles.itemText]}>{item.title}</Text>

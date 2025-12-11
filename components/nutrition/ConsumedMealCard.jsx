@@ -11,7 +11,7 @@ import getDateKey from '../../util/getDateKey'
 import { Colors } from '../../constants/Colors'
 import sinceWhen from '../../util/sinceWhen'
 
-const ConsumedMealCard = ({style, meal, actionMenuData, ...props}) => {
+const ConsumedMealCard = ({style, meal, actionMenuData=null, ...props}) => {
 
     const getFoodsDescription = () => {
         const foods = meal.fullMeal.foods;
@@ -40,7 +40,7 @@ const ConsumedMealCard = ({style, meal, actionMenuData, ...props}) => {
             {/* <View style={{height: 10, width: 20}}>
                 <Image source={threeEllipses} style={{objectFit: "contain", height: "100%", width: "100%", tintColor: "#999999ff"}} />
             </View> */}
-            <ActionMenu data={actionMenuData} showDebug={true} style={{zIndex: 1, paddingTop: 10, marginTop: -10, paddingBottom: 10, marginBottom: -10}} />
+            {actionMenuData && <ActionMenu data={actionMenuData} showDebug={true} style={{zIndex: 1, paddingTop: 10, marginTop: -10, paddingBottom: 10, marginBottom: -10}} />}
         </View>
         <View style={{width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
             <ThemedText style={{fontSize: 13}}>{sinceWhen(meal.date ?? new Date())}</ThemedText>

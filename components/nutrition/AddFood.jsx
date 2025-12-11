@@ -77,13 +77,13 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, 
             {/* <Spacer height={20} /> */}
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginLeft: 10, marginBottom: 10,}}>
                 <ThemedText style={{fontSize: 13, fontWeight: 700,  }}>Category</ThemedText>
-                <View style={{flexDirection: "row", alignItems: "center"}}>
+                {/* <View style={{flexDirection: "row", alignItems: "center"}}>
                     <ThemedText style={{fontSize: 13, fontWeight: 700, marginRight: 5 }}>Food Options</ThemedText>
                     <ActionMenu style={{zIndex: 2}} data={[
                         {title: "Create New Food", icon: plusIcon, onPress: openCreateNewFood, },
                         {title: "Edit Foods", icon: pencilIcon, onPress: () => {setEditFoods(!editFoods)}, },
                         ]} />
-                </View>
+                </View> */}
                 
             </View>
             

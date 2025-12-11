@@ -62,6 +62,7 @@ const OnboardingIndex = () => {
 
     // For testing purposes
     const _handleGoogleSignIn = async () => {
+        return;
         try {
 
             const {idToken, user} = {idToken: "test token", user: {name: "Dylan", email: "digitalcadlwell35@gmail.com", photo: null}};
@@ -126,21 +127,14 @@ const OnboardingIndex = () => {
     const handleGoogleSignIn = async () => {
         if (isExpoGo || !GoogleSignin) return;
         try {
-            alertRef.current.showAlert("starting google signin...");
             await GoogleSignin.hasPlayServices();
-            alertRef.current.showAlert("hasPlayServices OK");
             const response = await GoogleSignin.signIn();
-            alertRef.current.showAlert("signIn returned: " + JSON.stringify(response));
             // debugging - send server the response to display
             //sendData("/debuglog", {response: JSON.stringify(response)});
 
             if (isSuccessResponse(response)) {
-                alertRef.current.showAlert("is success response");
                 const {idToken, user} = response.data;
-                alertRef.current.showAlert("id token " + idToken);
                 const {name, email, photo} = user;
-                alertRef.current.showAlert("name " + name);
-                return;
                 // Send info to create username page that will create the user if username defined
                 const data = {
                     partyType: "google",
@@ -153,7 +147,6 @@ const OnboardingIndex = () => {
                 const checkUserExists = await sendData('/login/loginthirdparty', data);
                 if (checkUserExists.status !== "success") {
                     console.log("Error checking third party user.");
-                    alertRef.current.showAlert(checkUserExists.message, false);
                     return;
                 } else {
                     if (checkUserExists.userFound) {
@@ -196,7 +189,6 @@ const OnboardingIndex = () => {
 
             } else {
                 // sign in was cancelled by user
-                alertRef.current.showAlert("Google sign in was cancelled", false);
             }
         } catch (error) {
             alertRef.current.showAlert("catch ERR: " + JSON.stringify(error));
@@ -204,20 +196,20 @@ const OnboardingIndex = () => {
                 switch (error.code) {
                     case statusCodes.IN_PROGRESS:
                         // operation (eg. sign in) already in progress
-                        alertRef.current.showAlert("operation already in progress", false);
+                        //alertRef.current.showAlert("operation already in progress", false);
                         break;
                     case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
                         // Android only, play services not available or outdated
-                        alertRef.current.showAlert("play services not available or outdated", false);
+                        //alertRef.current.showAlert("play services not available or outdated", false);
                         break;
                     default:
                         // some other error happened
-                        alertRef.current.showAlert("some other error happend", false);
+                        //alertRef.current.showAlert("some other error happend", false);
                         break;
                 }
             } else {
                 // an error that's not related to google sign in occurred
-                alertRef.current.showAlert("an error that's not related to google sign in occurred", false);
+                //alertRef.current.showAlert("an error that's not related to google sign in occurred", false);
             }
         }
     };

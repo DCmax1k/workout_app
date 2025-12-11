@@ -158,7 +158,7 @@ const EditMeal = () => {
     const requestSaveMeal = () => {
         const mealToSave = formatCompletedMeal();
         if (openedFrom === "consumption") {
-            const dateKey = getDateKey(mealToSave.date);
+            const dateKey = getDateKey(m.date);
             const consumedMeals = user.consumedMeals;
             const daysMeals = consumedMeals[dateKey] ?? [];
             const idx = daysMeals.findIndex(m => m.id === mealToSave.id);
