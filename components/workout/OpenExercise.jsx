@@ -49,6 +49,41 @@ function kgToLbs(kg) {
   return Math.round(pounds * 100) / 100;
 }
 
+const ExerciseVideoPlayer = ({exercise}) => {
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const player = useVideoPlayer(exercise.video, (player) => {
+      player.loop = true;
+      player.staysActiveInBackground = false;
+      player.muted = true;
+      player.audioMixingMode = 'mixWithOthers';
+  });
+
+  const toggleVideoPlayer = () => {
+    if (player.playing) {
+      player.pause();
+      setVideoPlaying(false);
+    } else {
+      player.play()
+      setVideoPlaying(true)
+    }
+    }
+  return (
+    <View style={styles.imageContCont}>
+        <View style={[styles.imageCont, {height: screenWidth-200, width: (screenWidth-200)*0.84375, borderRadius: 10}]}>
+          <VideoView  nativeControls={false} player={player} style={{height: "100%", width: "100%", backgroundColor: "transparent", }} />
+
+          {/* Play/pause button */}
+          <Pressable style={[StyleSheet.absoluteFill, {zIndex: 1,}]} onPress={toggleVideoPlayer}>
+            <View style={{position: "absolute", bottom: 2, right: 2, padding: 10, backgroundColor: Colors.primaryBlue, borderRadius: 40}}>
+              <ImageContain source={videoPlaying ? pauseIcon : playIcon } size={15} style={{transform: [{translateX: videoPlaying ? 0 : 1}]}} />
+
+            </View>
+          </Pressable>
+        </View>
+    </View>
+  )
+}
+
 const ExerciseHistory = ({style, exercise, forceCloseOpenExercise = () => {}, ...props}) => {
   const user = useUserStore(state => state.user);
   
@@ -113,16 +148,8 @@ const ExerciseHistory = ({style, exercise, forceCloseOpenExercise = () => {}, ..
 
 const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise, ...props}) => {
 
-    const [videoPlaying, setVideoPlaying] = useState(false);
-    let player;
-    if (exercise.video) {
-      player = useVideoPlayer(exercise.video, (player) => {
-          player.loop = true;
-          player.staysActiveInBackground = false;
-          player.muted = true;
-          player.audioMixingMode = 'mixWithOthers';
-      });
-    }
+    
+    
 
     const user = useUserStore(state => state.user);
     const updateUser = useUserStore(state => state.updateUser);
@@ -262,15 +289,7 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
       
     }
 
-    const toggleVideoPlayer = () => {
-      if (player.playing) {
-        player.pause();
-        setVideoPlaying(false);
-      } else {
-        player.play()
-        setVideoPlaying(true)
-      }
-    }
+    
     
   return (
     <Animated.View layout={LinearTransition.springify().damping(90)} style={[styles.cont, style]} {...props}>
@@ -298,19 +317,7 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
 
         {/* Big image / Video */}
         {exercise.video ? (
-            <View style={styles.imageContCont}>
-                <View style={[styles.imageCont, {height: screenWidth-200, width: (screenWidth-200)*0.84375, borderRadius: 10}]}>
-                  <VideoView key={isFocused ? 'video-focused' : 'video-not-focused'} surfaceType='surfaceView' nativeControls={false} player={player} style={{height: "100%", width: "100%", backgroundColor: "transparent"}} />
-
-                  {/* Play/pause button */}
-                  <Pressable style={[StyleSheet.absoluteFill, {zIndex: 1,}]} onPress={toggleVideoPlayer}>
-                    <View style={{position: "absolute", bottom: 2, right: 2, padding: 10, backgroundColor: Colors.primaryBlue, borderRadius: 40}}>
-                      <ImageContain source={videoPlaying ? pauseIcon : playIcon } size={15} style={{transform: [{translateX: videoPlaying ? 0 : 1}]}} />
-
-                    </View>
-                  </Pressable>
-                </View>
-            </View>
+            <ExerciseVideoPlayer exercise={exercise} />
         ) : (
           <View style={styles.imageContCont}>
             <View style={styles.imageCont}>

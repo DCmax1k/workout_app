@@ -140,11 +140,13 @@ const Profile = () => {
 
     const signOut = async () => {
       try {
-        if (GoogleSignin) {
-          await GoogleSignin.signOut();
-        }
-
         setUser(null);
+        if (GoogleSignin) {
+          const isSignedIn = await GoogleSignin.isSignedIn();
+          if (isSignedIn) {
+            await GoogleSignin.signOut();
+          }
+        }
       } catch (error) {
         console.error(error);
       }
