@@ -22,6 +22,11 @@ import { Portal } from 'react-native-paper'
 import { Colors } from '../../constants/Colors'
 import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist'
 import { generateUniqueId } from '../../util/uniqueId'
+import PopupSheet from '../PopupSheet'
+import Spacer from '../Spacer'
+import ScrollPicker from '../ScrollPicker'
+import minutesToHMS from '../../util/minutesToHMS'
+import formatExerciseTime from '../../util/formatExerciseTime'
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -41,6 +46,8 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
 
     const [openExercise, setOpenExercise] = useState(false); // Is open or not
     const [exerciseOpen, setExerciseOpen] = useState({}); // The exercise thats open
+
+    const [timeKeyboardVisible, setTimeKeyboardVisible] = useState(false);
 
     const [suggesstion, setSuggesstion] = useState("");
 
@@ -168,26 +175,27 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
     const imperialTag = exercise.tracks.includes("weight") ? "lbs" : "miles";
 
     const getTrackingTag = (track) => {
+        let returnValue = track;
         const defaultUnit = user.settings.preferences.liftUnit;
         if (track === "weight" || track === "weightPlus" || track === "mile") {
             if (exercise.unit) {
-                return exercise.unit === "metric" ? metricTag : imperialTag;
+                returnValue = exercise.unit === "metric" ? metricTag : imperialTag;
             } else {
-                return defaultUnit === "kgs" ? metricTag : imperialTag;
+                returnValue = defaultUnit === "kgs" ? metricTag : imperialTag;
             }
 
             
         }
         if (track === "weightPlus") {
             if (exercise.unit) {
-                return exercise.unit === "metric" ? (metricTag + "+") : (imperialTag + "+");
+                returnValue = exercise.unit === "metric" ? (metricTag + "+") : (imperialTag + "+");
             } else {
-                return defaultUnit === "kgs" ? (metricTag + "+") : (imperialTag + "+");
+                returnValue = defaultUnit === "kgs" ? (metricTag + "+") : (imperialTag + "+");
             }
 
         }
         
-        return track;
+        return returnValue;
     }
 
     const dismissSuggesstion = () => {
@@ -249,14 +257,54 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                 {title: exercise.unit === "metric" ? ("Imperial Unit (" + imperialTag + ")") : ("Metric Unit (" + metricTag + ")"), icon: dumbellIcon, onPress: switchUnit},
                 {title: "Delete Exercise", icon: trashIcon, onPress: removeExercise, color: "#FF6C6C"},
             ];
+    if (exercise.tracks.length === 1 && exercise.tracks[0] === "time") actionMenuData.splice(3, 1);
     if (activeWorkoutStyle) {
-        actionMenuData.splice(4, 0, {title: "Swap for Today", icon: rotateIcon, onPress: () => requestSwapExercise(), });
+        actionMenuData.splice(actionMenuData.length - 1, 0, {title: "Swap for Today", icon: rotateIcon, onPress: () => requestSwapExercise(), });
     }
 
     const setExerciseSets = (data) => {
         const newSets = [...data];
         updateExercise({sets: newSets});
     }
+
+    const formatExerciseTimePlaceholder = (value) => {
+        const {hours, minutes, seconds} = minutesToHMS(value);
+        let str = "";
+        if (hours > 0) {
+            str += `${hours}h`
+        }
+        if (minutes > 0) {
+            str += `${str.length > 0 ? " ":""}${minutes}m`
+        }
+        if (seconds > 0) {
+            str += `${str.length > 0 ? " ":""}${seconds}s`
+        }
+        return str ? str : "0";
+    }
+
+    const updateTimeValue = (unit="seconds", value) => {
+        const { setIndex, track } = focusedInput;
+        console.log(setIndex);
+        const {hours, minutes, seconds} = minutesToHMS(exercise.sets[setIndex][track]);
+        let totalMinutes;
+        switch (unit) {
+            case "hours":
+                totalMinutes = (value*60) + minutes + (seconds/60);
+                break;
+            case "minutes":
+                totalMinutes = (hours*60) + value + (seconds/60);
+                break;
+            case "seconds":
+                totalMinutes = (hours*60) + minutes + (value/60);
+                break;
+            default:
+                totalMinutes = 0;
+        }
+        updateValue(setIndex, track, totalMinutes);
+    }
+
+    const { setIndex: sI, track: trk } = focusedInput;
+    const {hours: initialPopupHourValue, minutes: initialPopupMinuteValue, seconds: initialPopupSecondValue,} = minutesToHMS(sI === null ? 0 : exercise.sets[sI][trk]);
 
     return (
     <View layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} style={[{backgroundColor: activeWorkoutStyle ? "#2A2A2A":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10,}, false && {height: 40}]} {...props}>
@@ -276,6 +324,51 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                 </Portal>
                 
                 )}
+
+        <PopupSheet active={timeKeyboardVisible} setActive={(val) =>  {setTimeKeyboardVisible(val); setFocusedInput({ setIndex: null, track: null })}}>
+            <View style={{flexDirection: "row", justifyContent: "center"}}>
+                <View style={{alignItems: "center"}}>
+                    <ThemedText title={true} style={{fontSize: 20, fontWeight: "800"}}>Hours</ThemedText>
+                    <Spacer height={10} />
+                    <ScrollPicker
+                    width={120}
+                    range={[0, 20]}
+                    increment={1}
+                    padWithZero={false}
+                    initialValue={initialPopupHourValue ?? 0}
+                    onValueChange={(val) => updateTimeValue("hours", val) }
+                    />
+                </View>
+                <View style={{alignItems: "center"}}>
+                    <ThemedText title={true} style={{fontSize: 20, fontWeight: "800"}}>Minutes</ThemedText>
+                    <Spacer height={10} />
+                    <ScrollPicker
+                    width={120}
+                    range={[0, 59]}
+                    increment={1}
+                    padWithZero={true}
+                    initialValue={initialPopupMinuteValue ?? 0}
+                    onValueChange={(val) => updateTimeValue("minutes", val)}
+                    />
+                </View>
+                <View style={{alignItems: "center"}}>
+                    <ThemedText title={true} style={{fontSize: 20, fontWeight: "800"}}>Seconds</ThemedText>
+                    <Spacer height={10} />
+                    <ScrollPicker
+                    width={120}
+                    range={[0, 59]}
+                    increment={1}
+                    padWithZero={true}
+                    initialValue={initialPopupSecondValue ?? 0}
+                    onValueChange={(val) => updateTimeValue("seconds", val)}
+                    />
+                </View>
+                
+
+            
+            </View>
+            <Spacer />
+        </PopupSheet>
         {/* Header that covers the exercise name. Single press to select title. LongPress for drag. zIndex 1 but actionMenu is zIndez 2 */}
         <Pressable onPress={() => exerciseNameRef.current?.focus()} onLongPress={drag} style={{zIndex: 1, width: "100%", height: 35, position: "absolute", }}>
 
@@ -289,7 +382,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
 
             <TextInput ref={exerciseNameRef} value={exercise.name} onChangeText={changeExerciseName} style={{fontSize: 15, flex: 1, fontWeight: 500, color: activeWorkoutStyle?"white":"#DB8854", }} />
 
-            <ActionMenu style={{zIndex: 2}} offset={activeWorkoutStyle} backgroundColor={activeWorkoutStyle?"transparent":"#DB8854"} data={actionMenuData}
+            <ActionMenu key={exercise.unit} style={{zIndex: 2}} offset={activeWorkoutStyle} backgroundColor={activeWorkoutStyle?"transparent":"#DB8854"} data={actionMenuData}
                 />
                 
         </View>
@@ -328,6 +421,22 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                         <>
                             {exercise.tracks.map(track => {
                                 const placeholderValue = setIndex === 0 ? "0" : getSetValueBefore(setIndex, track);
+                                // CUSTOM TIME INPUT
+                                if (track === "time") return (
+                                    <TextInput
+                                        showSoftInputOnFocus={false}
+                                        caretHidden={Platform.OS === 'android'}
+                                        key={setIndex+""+track+""+placeholderValue}
+                                        style={[
+                                            styles.column, styles.valueInput,
+                                            (focusedInput.setIndex === setIndex && focusedInput.track === track) ? styles.focusedInput : null]}
+                                        value={formatExerciseTime(set[track])}
+                                        placeholder={formatExerciseTimePlaceholder(parseFloat(placeholderValue))}
+                                        placeholderTextColor={"#797979"}
+                                        onPress={() => {setFocusedInput({ setIndex, track }); setTimeKeyboardVisible(true);}}
+                                        />
+                                );
+                                //  INPUT FOR EVERYTHING ELSE
                                 return (
                                 <TextInput
                                 caretHidden={Platform.OS === 'android'}

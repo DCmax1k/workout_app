@@ -135,6 +135,7 @@ const Activity = ({style, activity, ...props}) => {
       pathname: "/viewProfile",
       params: {
         profile: JSON.stringify(profile),
+        fromFriends: true,
       }
     })
   }
@@ -252,13 +253,13 @@ const Activity = ({style, activity, ...props}) => {
           {/* Reactions */}
           <View style={{width: "100%", flexDirection: "row", flexWrap: "wrap", gap: 5, paddingRight: 50, minHeight: 40, paddingBottom: 10}}>
             {/* Add emoji */}
-            <Pressable onPress={openAddReaction} style={[styles.reaction, {position: "absolute", right: 0, top: 0}]}>
+            <Pressable onPress={openAddReaction} style={[styles.reaction, {position: "absolute", right: 0, top: 0, backgroundColor: "transparent"}]}>
               <ImageContain size={25} source={addReaction} />
             </Pressable>
             {/* View reactions and all reactions */}
             {emojis.length > 0 && (
               <Animated.View entering={FadeIn} exiting={FadeOut}>
-                <Pressable onPress={openViewReactions} style={[styles.reaction]}>
+                <Pressable onPress={openViewReactions} style={[styles.reaction, {backgroundColor: "transparent"}]}>
                   <ImageContain size={25} source={eye} />
                 </Pressable>
               </Animated.View>

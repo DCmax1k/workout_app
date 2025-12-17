@@ -8,6 +8,8 @@ import clock from '../../assets/icons/clock.png';
 import weight from '../../assets/icons/weight.png';
 import whiteRunner from '../../assets/icons/whiteRunner.png';
 import formatDate from '../../util/formatDate';
+import minutesToHMS from '../../util/minutesToHMS';
+import formatExerciseTime from '../../util/formatExerciseTime';
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -67,6 +69,7 @@ const WorkoutPreview = ({style, data, ...props}) => {
               const showReps = (ex.tracks.includes("reps"));
               const showDistance = (ex.tracks.includes("mile"));
               const showTime = (ex.tracks.includes("time"));
+              const onlyTime = (ex.tracks.includes("time") && ex.tracks.length === 1)
               return (
                 <View key={i} style={{width: "100%", paddingHorizontal: 10}}>
                   <Text style={{color: "white", fontSize: 16, fontWeight: 500}}>{ex.sets.length} x {ex.name}</Text>
@@ -78,7 +81,7 @@ const WorkoutPreview = ({style, data, ...props}) => {
                         </View>
                         <View style={{flexDirection: "row"}}>
                           <Text style={{fontSize: 15, color: "white", fontWeight: 600}} >{showWeight ? `${set["weight"]} lb` : null }{showDistance ? `${set["mile"]} miles` : null }</Text>
-                          <Text style={{fontSize: 15, color: "#A2B4FF", fontWeight: 600}}>{showReps ? ` x ${set["reps"]}` : null }{showTime ? ` in ${set["time"]}` : null }</Text>
+                          <Text style={{fontSize: 15, color: "#A2B4FF", fontWeight: 600}}>{showReps ? ` x ${set["reps"]}` : null }{onlyTime ? `${formatExerciseTime(set["time"])}` : showTime ? ` in ${formatExerciseTime(set["time"])}` : null }</Text>
                         </View>
                       </View>
                     )

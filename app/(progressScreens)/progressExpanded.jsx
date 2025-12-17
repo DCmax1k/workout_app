@@ -120,7 +120,7 @@ const ProgressExpanded = () => {
   console.log("Last recorded", sinceWhen(lastRecorded));
   if (widget.calculatedData) {
     const {dataAmounts: newAmounts, dataDates: newDates} = fillDailyData(widget.calculatedData, widget.calculatedDates, new Date(), fillDaily);
-    mostRecentValue = newAmounts[0];
+    mostRecentValue = newAmounts[0] || 0;
     mostRecentDate = newDates[0];
   }
   

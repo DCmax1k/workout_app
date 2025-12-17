@@ -52,7 +52,7 @@ const ScrollPicker = ({
   useEffect(() => {
     if (flatListRef.current && initialIndex > -1) {
         requestAnimationFrame(() => {
-            flatListRef.current.scrollToIndex({ index: initialIndex, animated: false });
+            flatListRef.current?.scrollToIndex({ index: initialIndex, animated: false });
         });
     }
     }, [flatListRef, initialIndex]);

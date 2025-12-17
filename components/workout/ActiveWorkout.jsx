@@ -176,24 +176,29 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
             if (completeSets.length < 1) return;
             // Loop complete exercises to 1. get total weight/distance 2. calculate expenditure.
             completeSets.forEach(s => {
-                if (s["weight"]) {
+                if (s["weight"] && s["reps"]) {
                     totalWeightLifted+=parseFloat(s["weight"])*parseInt(s["reps"]);
                     const repTime = 3; // 3 seconds per rep
                     const defaultMET = 3.5;
-                    totalExpenditure+=calculateExerciseExpenditure(exercise.met ? exercise.met : defaultMET, repTime*parseInt(s["reps"]) );
+                    return totalExpenditure+=calculateExerciseExpenditure(exercise.met ? exercise.met : defaultMET, repTime*parseInt(s["reps"]) );
                 }
-                if (s["weightPlus"]) {
+                if (s["weightPlus"] && s["reps"]) {
                     totalWeightLifted+=parseFloat(s["weightPlus"])*parseInt(s["reps"]);
                     const repTime = 3; // 3 seconds per rep
                     const defaultMET = 3.5;
-                    totalExpenditure+=calculateExerciseExpenditure(exercise.met ? exercise.met : defaultMET, repTime*parseInt(s["reps"]) );
+                    return totalExpenditure+=calculateExerciseExpenditure(exercise.met ? exercise.met : defaultMET, repTime*parseInt(s["reps"]) );
                 }
-                if (s["mile"]) {
+                if (s["mile"] && s["time"]) {
                     totalDistanceTraveled+=parseFloat(s["mile"]);
                     const cardioTime = parseInt(s["time"])*60; // Saved in minutes, convert to secs
                     const defaultMET = 3.5;
-                    totalExpenditure+=calculateExerciseExpenditure(exercise.met ? exercise.met : defaultMET, cardioTime );
+                    return totalExpenditure+=calculateExerciseExpenditure(exercise.met ? exercise.met : defaultMET, cardioTime );
                 } 
+                if (s["time"]) {
+                    const cardioTime = parseInt(s["time"])*60; // Saved in minutes, convert to secs
+                    const defaultMET = 3.5;
+                    return totalExpenditure+=calculateExerciseExpenditure(exercise.met ? exercise.met : defaultMET, cardioTime );
+                }
             });
             const dbExercise = allExercises.find(e => e.id === exercise.id);
             const exerciseData = {

@@ -1,4 +1,4 @@
-import { Alert, Button, Dimensions, Image, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, Button, Dimensions, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { Link, Slot, Stack, useRouter } from 'expo-router'
 import ThemedView from '../../../components/ThemedView'
@@ -30,6 +30,8 @@ import { useIsFocused } from '@react-navigation/native'
 import auth from '../../../util/server/auth'
 import DisplayName from '../../../components/DisplayName'
 import ProfileImg from '../../../components/ProfileImg'
+import { SuggestedWorkouts } from '../../../constants/SuggestedWorkouts'
+import { Image } from 'expo-image'
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -405,12 +407,52 @@ const IndexHome = () => {
           
             
 
-          <ThemedText style={{fontSize: 10, paddingVertical: 20, textAlign: 'center'}}>or</ThemedText>
+          <ThemedText style={{fontSize: 12, paddingVertical: 15, textAlign: 'center'}}>or</ThemedText>
           <BlueButton onPress={() => startEmptyWorkout()} title={"Start an empty workout"} icon={playCircle}/>
 
           <Spacer />
-          {/* <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Activity</ThemedText> */}
+          <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Suggested Workout Templates</ThemedText>
+          
+          <View style={{flex: 1, flexWrap: "wrap", flexDirection: "row", gap: 20}}>
+            {SuggestedWorkouts.map((workout, i) => {
 
+                return(
+                  <View key={workout.id+""+i} >
+
+                    <Pressable onPress={() => {
+
+                        openWorkout(workout);
+
+                      
+                      }}>
+                      <View >
+                        <View style={styles.linearGradient}>
+                          <View style={{width: "100%", position: "relative"}}>
+                            <ThemedText style={{fontSize: 17, fontWeight: 700, paddingRight: 20, }} title={true}>{truncate(workout.name, 25)}</ThemedText>
+                            <WorkoutDescription workout={workout} truncateAmount={70} />
+                            <View style={{position: "absolute", top: 5, right: 5, height: 15, width: 15}}>
+                              <Image style={{height: "100%", width: "100%", transform: [{rotate: "-90deg"}]}} contentFit='contain' source={rightArrow}/>
+                            </View>
+                            
+                          </View>
+
+                          {/* <View style={[styles.boxShadow, {shadowRadius: 5, backgroundColor: "#546FDB", height: 40, width: 40, borderRadius: 99999, justifyContent: "center", alignItems: "center"}]}>
+                            <View style={{backgroundColor: "#3D52A6", height: 35, width: 35, borderRadius: 99999, justifyContent: "center", alignItems: "center"}}>
+                              <Image style={{height: 20, width: 20, transform: [{rotate: "0deg"}]}} source={rightArrow}/>
+                            </View>
+                          </View> */}
+                          
+                        </View>
+                      </View>
+                    </Pressable>
+                    
+                  </View>
+                  
+                
+                
+              )})}
+          </View>
+          
           
           {/* <NotificationCard header={"3 min ago"} title={"{Friend} started a workout"} subtitle={"Chest and shoulders"} /> */}
           
@@ -513,6 +555,21 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "center",
     paddingBottom: 5,
-  }
+  },
+  selectWorkout: {
+    marginHorizontal: 0,
+  },
+  linearGradient: {
+    flex: 1,
+    minHeight: 100,
+    width: (screenWidth-60)/2,
+    borderRadius: 15,
+    padding: 10,
+    flexDirection: 'row',
+    // alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    backgroundColor: "#2A2A2A",
+  },
   
 })

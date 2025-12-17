@@ -6,6 +6,7 @@ const track = {
     cardio: ['mile', 'time'],
     distance: ['mile'],
     repsOnly: ['reps'],
+    timeOnly: ['time'],
 }
 
 // FETCH from db, images have to be web if not local, check size of exercises before deciding
@@ -264,7 +265,7 @@ export const Exercises = [
     {
         "name": "Plank",
         "group": "abs",
-        "tracks": track.strength,
+        "tracks": track.timeOnly,
         "description": "The plank is an isometric core exercise that strengthens the abdominal muscles, lower back, and stabilizers through sustained tension.",
         "image": require("../assets/exercises/plank.webp"),
         "muscleGroups": ["abs", "core"],
@@ -334,7 +335,7 @@ export const Exercises = [
     {
         "name": "Side Plank",
         "group": "abs",
-        "tracks": track.strength,
+        "tracks": track.timeOnly,
         "description": "The side plank strengthens the obliques and core stabilizers through isometric tension, enhancing lateral strength and balance.",
         "image": require("../assets/exercises/sidePlank.webp"),
         "muscleGroups": ["abs", "obliques", "core"],
@@ -345,7 +346,7 @@ export const Exercises = [
     {
         "name": "Mountain Climber",
         "group": "abs",
-        "tracks": track.strength,
+        "tracks": track.repsOnly,
         "description": "The mountain climber is a fast-paced, full-body movement that primarily targets the core while also improving cardiovascular endurance.",
         "image": require("../assets/exercises/mountainClimber.webp"),
         "video": require("../assets/exercises/videos/mountainClimber.mp4"),

@@ -240,7 +240,7 @@ const IndexWorkout = () => {
 
             {workouts.length === 0 ? (
               <ThemedText style={{textAlign: "center"}}>
-                No workouts
+                No saved workouts
               </ThemedText>
             ) : (null)}
             

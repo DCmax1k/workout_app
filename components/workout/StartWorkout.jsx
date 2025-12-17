@@ -96,6 +96,8 @@ const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, setEx
         openExercise(exercise);
     }
 
+    const workoutIsSaved = user.savedWorkouts.map(w => w.id).includes(workout.id);
+
   return (
         <ThemedView style={{ paddingHorizontal: 20, paddingTop: Platform.OS === 'ios' ? 20 : 0, position: 'relative', height: screenHeight, width: screenWidth, elevation: 20}} {...props}>
 
@@ -112,7 +114,7 @@ const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, setEx
                 </View>
                 <View>
                     <Pressable onPress={openEditWorkout} style={{paddingHorizontal: 20, paddingVertical: 10, backgroundColor: "#DB8854", borderRadius: 10, }}>
-                        <Text style={{fontSize: 15, color: "white",}}>Edit</Text>
+                        <Text style={{fontSize: 15, color: "white",}}>{workoutIsSaved ? "Edit" : "Copy and Edit"}</Text>
                     </Pressable>
                 </View>
             </View>

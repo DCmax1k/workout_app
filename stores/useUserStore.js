@@ -56,6 +56,7 @@ const fillMissingKeys = (base, user) => {
 
   //filled.tracking.visibleWidgets = ["nutrition"];
   //filled.consumedMeals["12/12/2025"] = [];
+  //console.log(JSON.stringify(filled.savedWorkouts.reverse()));
 
   return filled;
 }

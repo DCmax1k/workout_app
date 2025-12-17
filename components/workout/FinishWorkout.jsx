@@ -24,6 +24,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import sendData from '../../util/server/sendData'
 import { useBottomSheet } from '../../context/BottomSheetContext'
 import { socket } from '../../util/server/socket'
+import minutesToHMS from '../../util/minutesToHMS'
 
 const achievementAmounts = [10, 50, 100, 200, 500, 1000, 10000];
 
@@ -302,6 +303,21 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
         }
       }, [])
 
+      const formatExerciseTime = (value) => {
+              const {hours, minutes, seconds} = minutesToHMS(value);
+              let str = "";
+              if (hours > 0) {
+                  str += `${hours}h`
+              }
+              if (minutes > 0) {
+                  str += ` ${minutes}m`
+              }
+              if (seconds > 0) {
+                  str += ` ${seconds}s`
+              }
+              return str;
+          }
+
   return (
     <PaperProvider>
         <ThemedView style={{flex: 1}} {...props}>
@@ -364,8 +380,8 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
                                         let highestAmount = 0;
                                         let highestAmountIndex = 0;
                                         exercise.sets.forEach((s, i) => {
-                                            const group = exercise.tracks.includes("weight") ? "strength" : exercise.tracks.includes("weightPlus") ? "strengthPlus" : (exercise.tracks.includes("mile") && exercise.tracks.includes("time")) ? "cardio" : exercise.tracks.includes("mile") ? "distance" : exercise.tracks.includes("reps") ? "repsOnly" : null;
-                                            const track = group === "strength" ? "weight" : group==="strengthPlus" ? "weightPlus" : group==="cardio" ? "mile" : group==="distance" ? "mile" : group==="repsOnly" ? "reps" : null;
+                                            const group = exercise.tracks.includes("weight") ? "strength" : exercise.tracks.includes("weightPlus") ? "strengthPlus" : (exercise.tracks.includes("mile") && exercise.tracks.includes("time")) ? "cardio" : exercise.tracks.includes("mile") ? "distance" : exercise.tracks.includes("reps") ? "repsOnly" : (exercise.tracks.includes("time") && exercise.tracks.length === 1) ? "timeOnly" : null;
+                                            const track = group === "strength" ? "weight" : group==="strengthPlus" ? "weightPlus" : group==="cardio" ? "mile" : group==="distance" ? "mile" : group==="repsOnly" ? "reps" : group==="timeOnly" ? "time" : null;
                                             const value = track ? parseFloat(s[track]) : 0;
                                             if (value > highestAmount) {
                                                 highestAmountIndex = i;
@@ -377,6 +393,7 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
                                         if (exercise.tracks.includes("mile")) returnValue = `${highestAmount} miles`;
                                         else if (exercise.tracks.includes("weight") || exercise.tracks.includes("weightPlus")) returnValue = `${highestAmount} lbs`;
                                         if (exercise.tracks.includes("reps")) returnValue += ` x${bestSet["reps"]}`;
+                                        if (exercise.tracks.includes("time") && exercise.tracks.length === 1) returnValue += formatExerciseTime(highestAmount);
                                         return (
                                             <ThemedText key={ind}>{returnValue}</ThemedText>
                                         )

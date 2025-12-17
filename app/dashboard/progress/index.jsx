@@ -436,9 +436,9 @@ const IndexProgress = () => {
                         
                         const calResting = ((user.tracking.logging["weight"].data.length > 0) && user.settings.height !== null && user.settings.gender !==null && user.settings.birthday !== null) === true; // True if use has their: weight, height, gender, and age
                         const calExercising = user.tracking.logging["weight"].data.length > 0 === true; // True if body: weight
-                        const calWalkingSteps = false; // True if: weight, and access to step count
+                        const calWalkingSteps = calExercising && false; // True if: weight, and access to step count
                         const calFood = true; // True when finished developing meals
-                        const blockExpenditure = key === "expenditure" && ( !calResting || !calExercising || !calWalkingSteps || !calFood);
+                        const blockExpenditure = key === "expenditure" && ( !calResting || !calExercising || !calFood);
                         widget.calResting = calResting;
                         widget.calExercising = calExercising;
                         widget.calWalkingSteps = calWalkingSteps;

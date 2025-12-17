@@ -34,6 +34,7 @@ const ViewProfile = () => {
 
     const params = useLocalSearchParams();
     const prof = JSON.parse(params.profile);
+    const fromFriends = params.fromFriends;
 
     const [confirmMenuActive, setConfirmMenuActive] = useState(false);
     const [confirmMenuData, setConfirmMenuData] = useState({});
@@ -82,7 +83,7 @@ const ViewProfile = () => {
             // {title: "Settings", icon: gearIcon, onPress: openSettings,},
             {title: "Remove Friend", icon: trashIcon, color: Colors.redText, onPress: () => requestRemoveUser(profile),},
         ];
-    } else if (isSelf) {
+    } else if (isSelf && !fromFriends) {
         actionMenuOptions = [
             // {title: "Settings", icon: gearIcon, onPress: openSettings,},
             {title: "Edit Profile", icon: pencilIcon, onPress: goBackAndEditProfile},
