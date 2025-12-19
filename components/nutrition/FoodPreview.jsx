@@ -39,7 +39,7 @@ const FoodPreview = ({style, food, setFoodPreviewOpen, editFood, ...props}) => {
             </Pressable>
             
             <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, }}>
-                <Image source={food.icon ? icons[food.icon] : icons["fooddoodles303"]} style={{height: 30, width: 30, objectFit: "contain", tintColor: "white"}} />
+                <Image source={food.icon ? icons[food.icon] : null} style={{height: 30, width: 30, objectFit: "contain", tintColor: "white"}} />
                 <Text adjustsFontSizeToFit numberOfLines={1} style={[styles.screenText]}>{truncate(food.name, 18 )}</Text>
             </View>
             

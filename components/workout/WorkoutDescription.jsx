@@ -27,7 +27,7 @@ const WorkoutDescription = ({workout, style, truncateAmount = 50, ...props}) => 
   return length === 0 ? (
     <ThemedText style={style}>Add workouts!</ThemedText>
   ) : (
-    <ThemedText style={style}>{length} exercise{length===1 ? '':'s'} - <Text style={{color: Colors.primaryOrange}}>{truncate(exercisesString, truncateAmount)}</Text></ThemedText>
+    <ThemedText style={style}>{length} exercise{length===1 ? '':'s'} - <Text style={{color: Colors.primaryOrange}}>{truncateAmount > 0 ? truncate(exercisesString, truncateAmount) : exercisesString}</Text></ThemedText>
   )
 }
 

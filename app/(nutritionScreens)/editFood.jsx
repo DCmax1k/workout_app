@@ -147,7 +147,7 @@ const CustomizeIconAndColor = ({style, updateFood, food, ...props}) => {
                     {iconColumns.map((column, colIndex) => (
                         <View key={colIndex} style={{flexDirection: "column"}}>
                         {column.map((item) => (
-                            <TouchableScale activeScale={1.1} onPress={() => updateFood({icon: item})} key={item} style={{height: 40, width: 40, marginBottom: ITEM_GAP,  backgroundColor: food.icon === item ? "#262626" : "transparent", borderColor: food.icon === item ? "#727272ff" : "transparent", borderWidth: 1, borderRadius: 10}}>
+                            <TouchableScale activeScale={1.1} onPress={() => updateFood({icon: item===food.icon ? null : item})} key={item} style={{height: 40, width: 40, marginBottom: ITEM_GAP,  backgroundColor: food.icon === item ? "#262626" : "transparent", borderColor: food.icon === item ? "#727272ff" : "transparent", borderWidth: 1, borderRadius: 10}}>
                                 <Image style={{height: "100%", width: "100%", objectFit: "contain" ,tintColor: "white"}} source={icons[item]} />
                             </TouchableScale>
                         ))}
@@ -414,7 +414,7 @@ const EditFood = () => {
                         <View style={{width: screenWidth, height: screenWidth/2, alignItems: "center", marginLeft: -20}}>
                             <View style={{height: screenWidth/2, width: screenWidth/2, backgroundColor: food.color, borderRadius: 20, justifyContent: "center", alignItems: "center", overflow: "hidden"}}>
                                 {/* <View style={[StyleSheet.absoluteFill, {backgroundColor: "rgba(0,0,0,0.3)"}]}></View> */}
-                                <Image source={food.icon ? icons[food.icon] : icons["fooddoodles303"]} style={{height: screenWidth/2, width: screenWidth/2, objectFit: "contain", tintColor: food.iconColor ?? "white"}} />
+                                <Image source={food.icon ? icons[food.icon] : null} style={{height: screenWidth/2, width: screenWidth/2, objectFit: "contain", tintColor: food.iconColor ?? "white"}} />
                             </View>
                         </View>
                         

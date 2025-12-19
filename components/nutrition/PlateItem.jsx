@@ -9,7 +9,7 @@ const screenWidth = Dimensions.get('screen').width;
 
 const PlateItem = ({style, food, clickChangeQuantity, width = screenWidth-20, edit=true, ...props}) => {
 
-    const icon = food.icon ? icons[food.icon] : icons["fooddoodles303"];
+    const icon = food.icon ? icons[food.icon] : null;
     const size = 60; 
 
   return (

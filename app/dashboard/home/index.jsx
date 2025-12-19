@@ -33,10 +33,37 @@ import ProfileImg from '../../../components/ProfileImg'
 import { SuggestedWorkouts } from '../../../constants/SuggestedWorkouts'
 import { Image } from 'expo-image'
 
+const truncate = (text, maxLength) =>
+    text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const QUICK_START_CARD_HEIGHT = 80;
+
+const SuggestedWorkoutTemplate = ({workout, ...props}) => {
+  return (
+    <View >
+      <View style={styles.linearGradient}>
+        <View style={{width: "100%", position: "relative"}}>
+          <ThemedText style={{fontSize: 17, fontWeight: 700, paddingRight: 20, }} title={true}>{truncate(workout.name, 25)}</ThemedText>
+          <WorkoutDescription workout={workout} truncateAmount={0} />
+          <View style={{position: "absolute", top: 5, right: 5, height: 15, width: 15}}>
+            <Image style={{height: "100%", width: "100%", transform: [{rotate: "-90deg"}]}} contentFit='contain' source={rightArrow}/>
+          </View>
+          
+        </View>
+
+        {/* <View style={[styles.boxShadow, {shadowRadius: 5, backgroundColor: "#546FDB", height: 40, width: 40, borderRadius: 99999, justifyContent: "center", alignItems: "center"}]}>
+          <View style={{backgroundColor: "#3D52A6", height: 35, width: 35, borderRadius: 99999, justifyContent: "center", alignItems: "center"}}>
+            <Image style={{height: 20, width: 20, transform: [{rotate: "0deg"}]}} source={rightArrow}/>
+          </View>
+        </View> */}
+        
+      </View>
+    </View>
+  )
+}
 
 const IndexHome = () => {
   const router = useRouter();
@@ -236,8 +263,7 @@ const IndexHome = () => {
     openSheet(1);
 }
 
-  const truncate = (text, maxLength) =>
-    text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+  
 
   const openTheExerciseFromWorkout = (exercise, workout) => {
       //console.log(workout);
@@ -413,44 +439,52 @@ const IndexHome = () => {
           <Spacer />
           <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Suggested Workout Templates</ThemedText>
           
-          <View style={{flex: 1, flexWrap: "wrap", flexDirection: "row", gap: 20}}>
-            {SuggestedWorkouts.map((workout, i) => {
-
-                return(
+          <View style={{flex: 1, justifyContent: "space-between", flexDirection: "row", gap: 15,}}>
+            {/* Left column */}
+            <View style={{gap: 15,}}>
+                {SuggestedWorkouts.map((workout, i) => {
+              return i%2 === 0 ? (
                   <View key={workout.id+""+i} >
 
                     <Pressable onPress={() => {
 
-                        openWorkout(workout);
+                        openWorkout({...workout, id: generateUniqueId()});
 
                       
                       }}>
-                      <View >
-                        <View style={styles.linearGradient}>
-                          <View style={{width: "100%", position: "relative"}}>
-                            <ThemedText style={{fontSize: 17, fontWeight: 700, paddingRight: 20, }} title={true}>{truncate(workout.name, 25)}</ThemedText>
-                            <WorkoutDescription workout={workout} truncateAmount={70} />
-                            <View style={{position: "absolute", top: 5, right: 5, height: 15, width: 15}}>
-                              <Image style={{height: "100%", width: "100%", transform: [{rotate: "-90deg"}]}} contentFit='contain' source={rightArrow}/>
-                            </View>
-                            
-                          </View>
-
-                          {/* <View style={[styles.boxShadow, {shadowRadius: 5, backgroundColor: "#546FDB", height: 40, width: 40, borderRadius: 99999, justifyContent: "center", alignItems: "center"}]}>
-                            <View style={{backgroundColor: "#3D52A6", height: 35, width: 35, borderRadius: 99999, justifyContent: "center", alignItems: "center"}}>
-                              <Image style={{height: 20, width: 20, transform: [{rotate: "0deg"}]}} source={rightArrow}/>
-                            </View>
-                          </View> */}
-                          
-                        </View>
-                      </View>
+                      <SuggestedWorkoutTemplate workout={workout} />
                     </Pressable>
                     
                   </View>
                   
                 
                 
-              )})}
+              ) : null;
+                })}
+            </View>
+            {/* Right column */}
+            <View style={{gap: 15,}}>
+                {SuggestedWorkouts.map((workout, i) => {
+              return i%2 === 1 ? (
+                  <View key={workout.id+""+i} >
+
+                    <Pressable onPress={() => {
+
+                        openWorkout({...workout, id: generateUniqueId()});
+
+                      
+                      }}>
+                      <SuggestedWorkoutTemplate workout={workout} />
+                    </Pressable>
+                    
+                  </View>
+                  
+                
+                
+              ) : null;
+                })}
+            </View>
+            
           </View>
           
           
@@ -562,13 +596,13 @@ const styles = StyleSheet.create({
   linearGradient: {
     flex: 1,
     minHeight: 100,
-    width: (screenWidth-60)/2,
+    width: (screenWidth-55)/2,
     borderRadius: 15,
     padding: 10,
     flexDirection: 'row',
     // alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    marginBottom: 0,
     backgroundColor: "#2A2A2A",
   },
   

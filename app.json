@@ -3,7 +3,7 @@
     "scheme": "pumpapp",
     "name": "Pumped Up",
     "slug": "Pump_App",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -28,7 +28,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.caldwell.pumpedup",
-      "versionCode": 7
+      "versionCode": 8
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -44,7 +44,10 @@
         {
           "iosUrlScheme": "com.googleusercontent.apps.483624646164-htf0lctbmvq9cqm4vbi0t6vkk2v8f1rt"
         }
-      ]
+      ],
+      [ "expo-camera", {
+        "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
+      }]
     ],
     "extra": {
       "router": {},

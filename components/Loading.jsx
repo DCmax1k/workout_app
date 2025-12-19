@@ -21,7 +21,7 @@ const Loading = ({style, text="Loading...", ...props}) => {
     }));
 
   return (
-    <View style={[{flex: 1}, style]} {...props}>
+    <View style={[style]} {...props}>
 
             <View style={{flex: 1, flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
 

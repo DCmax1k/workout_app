@@ -230,7 +230,7 @@ const AddExercise = ({setExerciseModal, addExercises, notModal=false, bottomShee
                   <Exercise disablePress={true} exercise={item} onPress={() => selectExercise(item.id)} selected={exercisesToAdd.includes(item.id)} />
                 )}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 200 }}
+                contentContainerStyle={{ paddingBottom: 260 }}
               />
 
 

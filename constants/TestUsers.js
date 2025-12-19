@@ -26,6 +26,15 @@ const USER = {
     googleId: null,
     appleId: null,
     facebookId: null,
+    extraDetails: {
+      ai: {
+          image: {
+              used: 0,
+              credits: 5,
+              lastReset: Date.now(),
+          }
+      }
+    },
     // End necessary info from database
     
     streak: {

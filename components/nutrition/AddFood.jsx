@@ -1,5 +1,5 @@
-import { Dimensions, FlatList, Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { Dimensions, FlatList, Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import ThemedView from '../ThemedView'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import greyX from '../../assets/icons/greyX.png'
@@ -10,8 +10,9 @@ import ThemedText from '../ThemedText'
 import SectionSelect from '../SectionSelect'
 import scanIcon from '../../assets/icons/scan.png'
 import searchIcon from '../../assets/icons/searchNoBg.png'
+import rightArrow from '../../assets/icons/rightArrow.png'
 import aiIcon from '../../assets/icons/aiSparkle.png'
-import plusIcon from '../../assets/icons/plus.png'
+import doubleCheck from '../../assets/icons/doubleCheck.png'
 import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown,SlideInDown,SlideOutDown,useAnimatedStyle, useSharedValue, withDelay, withSpring, withTiming } from 'react-native-reanimated'
 import Search from '../Search'
 import Spacer from '../Spacer'
@@ -31,9 +32,261 @@ import TouchableScale from '../TouchableScale'
 import FilterAndSearch from '../FilterAndSearch'
 import { Image } from 'expo-image'
 import MacrosRow from './MacrosRow'
+import Camera from '../Camera'
+import ConfirmMenu from '../ConfirmMenu'
+import ImageContain from '../ImageContain'
+import AIButton from '../AIButton'
+import sendData from '../../util/server/sendData'
+import PlateItem from './PlateItem'
+import { ImageManipulator, SaveFormat } from 'expo-image-manipulator'
+import Loading from '../Loading'
+
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
+
+const AITab = ({showCreditsTooltip, foodToAdd, selectFood, openFoodPreview, setFoodToAdd, page, setPage, foodsFound, setFoodsFound, ...props}) => {
+    const user = useUserStore(state => state.user);
+    const updateUser = useUserStore(state => state.updateUser);
+    const [photoUri, setPhotoUri] = useState(null);
+    const [aiDetails, setAiDetails] = useState("");
+    const [alert, setAlert] = useState("");
+    const imageBase64Ref = useRef(null);
+    const [analyzing, setAnalyzing] = useState(false);
+
+    
+    const imageTaken = async (photo) => {
+        
+        try {
+            const context = ImageManipulator.manipulate(photo.uri);
+            // Resize to 768px (The OpenAI "Sweet Spot" for token cost vs accuracy)
+            context.resize({ width: 768 });
+            // Render the changes
+            const imageRef = await context.renderAsync();
+            
+            // 3. GENERATE BASE64
+            // We only generate the string for the small, resized image
+            const result = await imageRef.saveAsync({
+                base64: true,
+                compress: 0.7,
+                format: SaveFormat.JPEG,
+            });
+
+            // 4. Update the Ref with the optimized string
+            // The user won't click "Analyze" fast enough to beat this (~200ms)
+            imageBase64Ref.current = `data:image/jpeg;base64,${result.base64}`;
+            setPhotoUri(photo.uri);
+            
+        } catch (error) {
+            console.error("Error optimizing image for AI:", error);
+            setAlert("Error processing image. Please retake.");
+        }
+    };
+
+    const requestAnalyze = async () => {
+        // Request AI analyze here
+        setPage(1);
+        setAnalyzing(true);
+        const response = await sendData('/ai/analyzefood', { imageBase64: imageBase64Ref.current, userPrompt: aiDetails, jsonWebToken: user.jsonWebToken});
+        // TESTING MOCK RESPONSE
+        // const response = await new Promise((resolve) => {
+        //     setTimeout(() => {
+        //         resolve({
+        //             status: "success",
+        //             analysis: {
+        //                 foods: [
+        //                     {
+        //                         name: "Sample Food Item",
+        //                         quantity: 1,
+        //                         unit: "unit",
+        //                         color: "#DB8854",
+        //                         description: "A placeholder food item",
+        //                         nutrition: { calories: 250, protein: 10, carbs: 30, fat: 8 },
+        //                     },
+        //                     {
+        //                         name: "Another Food Item",
+        //                         quantity: 1,
+        //                         unit: "unit",
+        //                         color: "#76BA1B",
+        //                         description: "Another placeholder",
+        //                         nutrition: { calories: 150, protein: 5, carbs: 20, fat: 4 },
+        //                     },
+
+        //                 ],
+        //             },
+        //         });
+        //     }, 3000); // Simulate a 3-second delay
+        // })
+        // console.log("AI Response:", response);
+        if (response.status !== "success") {
+            setAlert(response.message || "Error analyzing image. Please try again.");
+        } else {
+            // Update client credits
+            updateUser({extraDetails: {ai: {image: {credits: response.remaining}}}});
+            const rawfoods = response.analysis.foods || [];
+            const foods = rawfoods.map(f => ({
+                ...f,
+                id: generateUniqueId(),
+                categories: [],
+            }))
+            setFoodsFound(foods || []);  
+
+        }
+        setAnalyzing(false);
+    }
+
+    const selectAll = () => {
+        const newFoodsToAdd = [ ...foodsFound, ...foodToAdd.filter(f => !foodsFound.map(ff => ff.id).includes(f.id))];
+        setFoodToAdd(newFoodsToAdd);
+    }
+
+    const retake = () => {
+        setPhotoUri(null);
+        setPage(0);
+    }
+
+    return page === 0 ? (
+        <Animated.View entering={FadeIn} exiting={FadeOut} style={{paddingVertical: 0,}} {...props}>
+            <View style={{flexDirection: "row", alignItems: "center"}}>
+            <ThemedText style={[styles.header, { fontSize: 15}]} >Credits: {user.extraDetails.ai.image.credits ?? 5}</ThemedText>
+            <Pressable onPress={showCreditsTooltip} style={{height: 20, width: 20, borderColor: '#585858', borderWidth: 2, borderRadius: 99999 , marginLeft: 10, alignItems: "center", justifyContent: "center"}}>
+                <Text style={{color: "#585858", fontSize: 15, marginTop: -1 }}>?</Text>
+            </Pressable>
+            </View>
+            <View style={{height: screenHeight-320, width: "100%", borderRadius: 30, overflow: "hidden", marginTop: 10,}}>
+                <Camera imageTaken={imageTaken} cameraStyle={{borderRadius: 50}} />
+                {/* Camera */}
+                {photoUri && (
+                    <Animated.View entering={FadeIn} exiting={FadeOut} style={[StyleSheet.absoluteFill, {borderRadius: 30, zIndex: 10, }]}>
+                        <ImageContain source={{uri: photoUri}} cover={true} style={{height: "100%", width: "100%"}} />
+                        {/* Textbox and buttons */}
+                        <View style={{position: 'absolute', width: "100%", top: 20, alignSelf: 'center', alignItems: 'center', gap: 10,}}>
+                            {/* Text box */}
+                            <View style={{paddingHorizontal: 20, width: "100%",}}>
+                                <TextInput
+                                value={aiDetails}
+                                placeholder='Add details for better results...'
+                                onChangeText={(v) => {setAiDetails(v)}}
+                                editable
+                                multiline
+                                numberOfLines={4}
+                                maxLength={200}
+                                placeholderTextColor={"#AAAAAA"}
+                                style={{backgroundColor: "rgba(0,0,0,0.8)", borderRadius: 15, height: 120, width: "100%", textAlignVertical: 'top', color: "white", fontSize: 15, paddingHorizontal: 15, paddingVertical: 15, fontWeight: "300", fontFamily: "DoppioOne-Regular",}}
+                                />
+                            </View>
+                            
+                            {/* Buttons */}
+                            <View style={{width: "100%", flexDirection: 'row', justifyContent: "space-between", zIndex: 10, paddingHorizontal: 20,}}>
+                                <Pressable onPress={() => setPhotoUri(null)} style={{ backgroundColor: "white", borderRadius: 10, justifyContent: "center", paddingHorizontal: 20}}>
+                                    <Text style={{color: "black", fontSize: 20}}>Retake</Text>
+                                </Pressable>
+                                <AIButton fontSize={20} imageSize={30} onPress={() => requestAnalyze()} title={"Analyze"} />
+                            </View>
+                        </View>
+                    </Animated.View>
+                    
+                )}
+            </View>
+            <ThemedText style={{textAlign: "center", marginTop: 10}}>Image of Food or Nutrition Facts</ThemedText>
+        </Animated.View>
+    ) : (
+        <Animated.View entering={FadeIn} exiting={FadeOut} style={{paddingVertical: 0, marginHorizontal: -20, width: screenWidth}} {...props}>
+            <View style={{paddingHorizontal: 20, marginBottom: 10, marginTop: 10, flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+                <Pressable style={{alignSelf: "flex-start", flexDirection: "row", alignItems: "center", marginBottom: 10, paddingHorizontal: 20, paddingVertical: 10, gap: 10, backgroundColor: Colors.primaryOrange, borderRadius: 999,}} onPress={retake}>
+                    <ImageContain source={rightArrow} style={{transform: [{rotate: "180deg"}]}} />
+                    <Text style={{color: "white", fontSize: 18}}>Retake</Text>
+                </Pressable>
+                <Pressable onPress={() => selectAll()} style={{alignSelf: "flex-start", flexDirection: "row", alignItems: "center", marginBottom: 10, paddingHorizontal: 20, paddingVertical: 10, gap: 10, backgroundColor: "white", borderRadius: 999,}}>
+                    <Text style={{color: "black", fontSize: 18}}>Select All</Text>
+                    {/* <ImageContain source={doubleCheck} /> */}
+                </Pressable>
+            </View>
+            
+            {alert !== "" && (
+                <ThemedText style={{color: "red", textAlign: "center", marginBottom: 10, paddingHorizontal: 20}}>{alert}</ThemedText>
+            )}
+            <ScrollView style={{maxHeight: screenHeight-200,}} contentContainerStyle={{paddingBottom: 220, paddingHorizontal: 20}} showsVerticalScrollIndicator={false}>
+                {analyzing ? (
+                    <View style={{flexDirection: "row", marginTop: 50, alignItems: "center", justifyContent: "center", gap: 10,}}>
+                        <Loading />
+                        <ThemedText>Analyzing image...</ThemedText>
+                        
+                    </View>
+                    
+                ) : foodsFound.length < 1 ? (
+                    <ThemedText style={{textAlign: "center", marginTop: 20}}>No foods were identified. Try retaking the photo with a clearer view of the food or nutrition facts.</ThemedText>
+                ) : (
+                    foodsFound.length > 0 && (<Animated.View entering={FadeIn} exiting={FadeOut} >
+                        {foodsFound.map((item, i) => {
+                            const selected = foodToAdd.map(f => f.id).includes(item.id);
+                            const icon = item.icon ? icons[item.icon] : null;
+                            const backgroundColor = selected
+                                ? "#304998"
+                                : "#2E2E2E";
+
+                            return (
+                                <TouchableScale
+                                    key={item.id}
+                                    activeScale={1.05}
+                                    friction={10}
+                                    tension={200}
+                                    // onLongPress={() => openFoodPreview(item)}
+                                    onPress={() => selectFood(item)}
+                                    style={{
+                                        paddingHorizontal: 10,
+                                        paddingVertical: 10,
+                                        borderRadius: 10,
+                                        backgroundColor,
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        marginBottom: 5, // spacing between items
+                                    }}
+                                >
+                                    <View style={{flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                                        <View style={{flexDirection: "row", alignItems: "center",}}>
+                                            <View
+                                                style={{
+                                                    height: 40,
+                                                    width: 40,
+                                                    borderRadius: 5,
+                                                    backgroundColor: item.color,
+                                                    marginRight: 5,
+                                                    overflow: "hidden",
+                                                }}
+                                            >
+
+                                                <Image
+                                                    source={icon}
+                                                    contentFit='contain'
+                                                    tintColor={item.iconColor ?? "white"}
+                                                    style={{
+                                                        height: "100%",
+                                                        width: "100%",
+                                                    }}
+                                                />
+                                            </View>
+
+                                            <Text style={{ color: "white", fontSize: 15 }}>
+                                                {truncate(item.name, 22)}
+                                            </Text>
+                                        </View>
+                                    
+
+                                        <MacrosRow nutrition={item.nutrition} multiplier={1} showDecimal={false} />
+                                    </View>
+                                </TouchableScale>
+                            );
+                        }
+                    )}
+                    </Animated.View>)
+                    )}
+            </ScrollView>
+                        
+            
+        </Animated.View>
+    )
+}
 
 const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, searchValue, setSearchValue, editFoods, setEditFoods, user, allFoods, ...props}) => {
     
@@ -128,7 +381,7 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, 
                 }}
                 renderItem={({ item }) => {
                     const selected = foodToAdd.map(f => f.id).includes(item.id);
-                    const icon = item.icon ? icons[item.icon] : icons["fooddoodles303"];
+                    const icon = item.icon ? icons[item.icon] : null;
                     const backgroundColor = editFoods
                         ? "#AB3F41"
                         : selected
@@ -207,10 +460,16 @@ const AddFood = ({...props}) => {
     const [foodPreview, setFoodPreview] = useState(null); // {...food}
     const [foodPreviewOpen, setFoodPreviewOpen] = useState(false);
 
+    const [confirmMenuActive, setConfirmMenuActive] = useState(false);
+    const [confirmMenuData, setConfirmMenuData] = useState();
+
     const [searchValue, setSearchValue] = useState(""); // For library
 
     const [keyboardVisible, setKeyboardVisible] = useState(false);
     const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+    const [aiPage, setAiPage] = useState(0); // 0: capture, 1: details
+    const [foodsFound, setFoodsFound] = useState([]); // From AI
 
     const openEditFood = (food) => {
         if (foodPreviewOpen) setFoodPreviewOpen(false);
@@ -327,6 +586,17 @@ const AddFood = ({...props}) => {
         setFoodPreviewOpen(true);
     }
 
+    const showCreditsTooltip = () => {
+        setConfirmMenuData({
+            title: "AI Analysis Credits",
+            subTitle: user.premium ? "Currently you are limited to 5 AI analyses per day." : "You are limited to 5 free AI analyses.",
+            subTitle2: user.premium ? "AI is in beta. More credits will be allowed soon." : "Upgrade to Premium to get more analysis credits and unlock additional features.",
+            option1: "Okay",
+            option1color: "#546FDB",
+            confirm: () => setConfirmMenuActive(false),
+        });
+        setConfirmMenuActive(true);
+    }
 
   return (
     <ThemedView style={{flex: 1, padding: 20}}>
@@ -339,12 +609,13 @@ const AddFood = ({...props}) => {
         </KeyboardAvoidingView> */}
 
         {/* Add items floating button */}
-        {foodToAdd.length > 0 && <Animated.View entering={SlideInDown.springify().damping(90)} exiting={SlideOutDown.springify().damping(90)} style={{position: 'absolute', bottom: 50, left: 20, right: 20, zIndex: 3, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+        {foodToAdd.length > 0 && !(tab === tabs[2] && aiPage === 0) && <Animated.View entering={SlideInDown.springify().damping(90)} exiting={SlideOutDown.springify().damping(90)} style={{position: 'absolute', bottom: 50, left: 20, right: 20, zIndex: 3, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
             <Pressable onPress={requestAddFood} style={{paddingHorizontal: 20, paddingVertical: 20, backgroundColor: foodToAdd.length < 1 ? "grey":Colors.primaryBlue, borderRadius: 10, flexDirection: 'row', alignItems: 'center'}}>
                 <Image style={{height: 20, width: 20, marginRight: 10}} source={plus} />
                 <Text style={{fontSize: 20, color: "white", fontWeight: 400}}>Add <Text style={{fontWeight: 700}}>{foodToAdd.length}</Text> food{foodToAdd.length===1?"":"s"}</Text>
             </Pressable>
         </Animated.View>}
+
 
         {/* Food Preview */}
         {foodPreviewOpen&& (
@@ -377,7 +648,7 @@ const AddFood = ({...props}) => {
             
             </Animated.View>)} */}
 
-        
+        <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
         <SafeAreaView>
             <View style={[styles.actionButtons]}>
                 <View>
@@ -442,7 +713,17 @@ const AddFood = ({...props}) => {
             )}
             {tab === tabs[2] && (
                 <Animated.View entering={FadeIn} exiting={FadeOut}>
-                    <ThemedText style={{textAlign: "center", marginTop: 50}}>AI coming soon!</ThemedText>
+                    <AITab
+                    showCreditsTooltip={showCreditsTooltip}
+                    selectFood={selectFood}
+                    foodToAdd={foodToAdd}
+                    openFoodPreview={openFoodPreview}
+                    setFoodToAdd={setFoodToAdd}
+                    page={aiPage}
+                    setPage={setAiPage}
+                    foodsFound={foodsFound}
+                    setFoodsFound={setFoodsFound}
+                    />
                 </Animated.View>
             )}
 
@@ -466,6 +747,10 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         fontSize: 15,
         fontWeight: 600
+    },
+    header: {
+      fontSize: 20,
+      fontWeight: 700,
     },
 })
 

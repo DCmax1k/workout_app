@@ -137,7 +137,7 @@ const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, setEx
                 keyExtractor={(item, i) => item.id+""+i}
                 renderItem={({item}) => (<Exercise disablePress={true} onPress={() => openExerciseFromModal(item)} exercise={item} />)}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 120, paddingTop: 20 }}
+                contentContainerStyle={{ paddingBottom: 180, paddingTop: 20 }}
             />
 
             <View style={styles.floatingBtnCon}>

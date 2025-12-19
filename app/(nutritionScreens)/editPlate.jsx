@@ -131,7 +131,7 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
 
     const addFood = (foods) => {
         if (!foods || foods.length < 1) return; 
-        const foodsWithQuantity = foods.map(f => ({...f, quantity: 1}));
+        const foodsWithQuantity = foods.map(f => ({quantity: 1,...f }));
 
         const plateFoodIds = plate.foods.map(f=>f.id);
         const filterFoods = foodsWithQuantity.map(f => plateFoodIds.includes(f.id) ? null : f).filter(e => e !== null);
