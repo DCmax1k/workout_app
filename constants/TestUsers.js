@@ -30,7 +30,12 @@ const USER = {
       ai: {
           image: {
               used: 0,
-              credits: 5,
+              credits: 10,
+              lastReset: Date.now(),
+          },
+          foodText: {
+              used: 0,
+              credits: 30,
               lastReset: Date.now(),
           }
       }

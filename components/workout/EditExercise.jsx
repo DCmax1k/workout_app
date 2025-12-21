@@ -370,9 +370,9 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
             <Spacer />
         </PopupSheet>
         {/* Header that covers the exercise name. Single press to select title. LongPress for drag. zIndex 1 but actionMenu is zIndez 2 */}
-        <Pressable onPress={() => exerciseNameRef.current?.focus()} onLongPress={drag} style={{zIndex: 1, width: "100%", height: 35, position: "absolute", }}>
+        {/* <Pressable onPress={() => exerciseNameRef.current?.focus()} onLongPress={drag} style={{zIndex: 1, width: "100%", height: 35, position: "absolute", }}>
 
-        </Pressable>
+        </Pressable> */}
         
 
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
