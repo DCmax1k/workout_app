@@ -40,6 +40,23 @@ const USER = {
           }
       }
     },
+
+    premiumSubscription: {
+      service: "stripe", // stripe, apple, google
+      
+      stripe: {
+        customerId: "",
+        subscriptionId: "",
+      },
+
+      apple: {
+
+      },
+      google: {
+
+      }
+    },
+    
     // End necessary info from database
     
     streak: {

@@ -45,9 +45,13 @@
           "iosUrlScheme": "com.googleusercontent.apps.483624646164-htf0lctbmvq9cqm4vbi0t6vkk2v8f1rt"
         }
       ],
-      [ "expo-camera", {
-        "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
-      }]
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
+        }
+      ],
+      "expo-web-browser"
     ],
     "extra": {
       "router": {},

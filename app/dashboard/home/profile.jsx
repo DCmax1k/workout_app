@@ -8,6 +8,7 @@ import BlueButton from '../../../components/BlueButton'
 import Spacer from '../../../components/Spacer'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import pencilIcon from '../../../assets/icons/pencil.png'
+import premiumBadge from '../../../assets/icons/premiumBadge.png'
 import gearIcon from '../../../assets/icons/gear.png'
 import maleIcon from '../../../assets/icons/male.png'
 import femaleIcon from '../../../assets/icons/female.png'
@@ -28,6 +29,9 @@ import ThemedTextInput from '../../../components/ThemedTextInput'
 import Loading from '../../../components/Loading'
 // import * as HealthConnect from 'expo-health-connect';
 import Constants from "expo-constants";
+import AIButton from '../../../components/AIButton'
+import { LinearGradient } from 'expo-linear-gradient'
+import ImageContain from '../../../components/ImageContain'
 
 const isExpoGo = Constants.executionEnvironment === "storeClient";
 
@@ -512,7 +516,25 @@ const Profile = () => {
                 </Pressable>
               </View>
               
-              <Spacer height={40} />
+              <Spacer height={20} />
+
+              <Pressable onPress={() => router.navigate("/premiumAd")}>
+                <LinearGradient
+                  style={[ {height: 80, borderRadius: 15, padding: 5}]}
+                  colors={["#6C89FF", "#C030B2"]}
+                  start={{ x: 0, y: 0 }} 
+                  end={{ x: 1, y: 1 }}
+                >
+                  <View style={{height: "100%", width: "100%", backgroundColor: "#494949ff", borderRadius: 10, flexDirection: "row", alignItems: 'center', justifyContent: "space-between", paddingHorizontal: 10,}}>
+                    <ImageContain source={premiumBadge} size={40} />
+                    <View style={{flex: 1, marginLeft: 10,}}>
+                      <Text style={{color: "white", fontSize: 20, fontWeight: "800", marginBottom: -3 }} >Premium</Text>
+                      <Text style={{ color: "#CDCDCD", fontSize: 13, fontWeight: "400", paddingRight: 20, }} >Unlock AI Tools, Exercise Insights, Exclusive Reactions, Extended Graphs, and more! </Text>
+                    </View>
+                  </View>
+                </LinearGradient>
+              </Pressable>
+              
               
               <Spacer height={100} />
               

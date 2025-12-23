@@ -111,7 +111,7 @@ const AITab = ({showCreditsTooltip, foodToAdd, selectFood, openFoodPreview, setF
         setAnalyzing(false);
     }
     const requestAnalyze = async () => {
-        if (!imageBase64Ref.current) return requestTextAnalyze();
+        if (!photoUri) return requestTextAnalyze();
         // Request AI analyze here
         setFromPage('image');
         setPage(1);
@@ -188,7 +188,7 @@ const AITab = ({showCreditsTooltip, foodToAdd, selectFood, openFoodPreview, setF
         <View>
             {page === -1 ? (
             <Animated.View key={"page--1"} entering={FadeIn} exiting={FadeOut} style={{paddingVertical: 0,}} {...props}>
-                <BlueButton onPress={() => setPage(0)} title="Take Picture of Food or Nutrition Facts" subtitle={`Credits: ${user.extraDetails.ai.image.credits ?? 10}`} />
+                <BlueButton onPress={() => setPage(0)} title="Scan Picture of Food" subtitle={`Credits: ${user.extraDetails.ai.image.credits ?? 10}`} />
                 <ThemedText style={{fontSize: 12, paddingVertical: 15, textAlign: 'center'}}>or use only the prompt</ThemedText>
                 {/* Textbox and buttons */}
                 <View style={{width: "100%", alignItems: 'center', gap: 10,}}>
