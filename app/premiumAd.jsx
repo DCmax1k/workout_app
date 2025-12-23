@@ -1,4 +1,4 @@
-import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import ImageContain from '../components/ImageContain';
 import { Image } from 'expo-image';
@@ -31,7 +31,7 @@ const RadialBackground = () => {
                 gradientUnits="userSpaceOnUse"
             >
                 <Stop offset="0%" stopColor="#2F3E7C" stopOpacity="1" />
-                <Stop offset="100%" stopColor="#2b2b2b" stopOpacity="0.9" />
+                <Stop offset="100%" stopColor="#2b2b2b" stopOpacity="0.95" />
             </RadialGradient>
             </Defs>
             <Rect x="0" y="0" width="100%" height="100%" fill="url(#grad)" />
@@ -100,7 +100,7 @@ const PremiumAdPage = () => {
         <PopupSheet active={popupMenuActive} setActive={setPopupMenuActive}>
             <BlueButton onClick={() => {handleOpenBrowser()}} title={"Continue to Checkout"} />
         </PopupSheet>
-        <SafeAreaView style={{width: "100%", alignItems: "center", }}>
+        <SafeAreaView style={[{width: "100%", alignItems: "center", }, Platform.OS === "ios" && {paddingTop: 10}]}>
             <View style={{width: "100%", alignItems: "flex-end", paddingHorizontal: 20}}>
                 <Pressable onPress={() => router.back()} style={{height: 30, width: 30, justifyContent: "center", alignItems: "center", opacity: 0.3, backgroundColor: "#ffffff83", borderRadius: 10, zIndex: 5 }}>
                     <ImageContain source={whiteX} size={25} />
