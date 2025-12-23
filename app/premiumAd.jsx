@@ -12,6 +12,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import PopupSheet from '../components/PopupSheet';
 import BlueButton from '../components/BlueButton';
 import * as WebBrowser from 'expo-web-browser';
+import { useUserStore } from '../stores/useUserStore';
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -54,6 +55,8 @@ const FeatureCard = ({card, ...props}) => {
 }
 
 const PremiumAdPage = () => {
+    const user = useUserStore(state => state.user);
+
     const [popupMenuActive, setPopupMenuActive] = useState(false);
 
     const cards = [
@@ -100,12 +103,10 @@ const PremiumAdPage = () => {
         <PopupSheet active={popupMenuActive} setActive={setPopupMenuActive}>
             <BlueButton onClick={() => {handleOpenBrowser()}} title={"Continue to Checkout"} />
         </PopupSheet>
-        <SafeAreaView style={[{width: "100%", alignItems: "center", }, Platform.OS === "ios" && {paddingTop: 10}]}>
-            <View style={{width: "100%", alignItems: "flex-end", paddingHorizontal: 20}}>
-                <Pressable onPress={() => router.back()} style={{height: 30, width: 30, justifyContent: "center", alignItems: "center", opacity: 0.3, backgroundColor: "#ffffff83", borderRadius: 10, zIndex: 5 }}>
-                    <ImageContain source={whiteX} size={25} />
-                </Pressable>
-            </View>
+        <SafeAreaView style={[{width: "100%", alignItems: "center", }]}>
+            <Pressable onPress={() => router.back()} style={{position: "absolute", top: 50, right: 20, height: 30, width: 30, justifyContent: "center", alignItems: "center", opacity: 0.3, backgroundColor: "#ffffff83", borderRadius: 10, zIndex: 5 }}>
+                <ImageContain source={whiteX} size={25} />
+            </Pressable>
             <ScrollView style={{width: "100%", marginTop: -100, paddingTop: 100 }} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 100, alignItems: "center",}}>
 
                 <Spacer height={20} />
@@ -130,7 +131,7 @@ const PremiumAdPage = () => {
                             start={{ x: 0, y: 0 }} 
                             end={{ x: 1, y: 1 }}
                         >
-                            <Text style={{color: "white", fontSize: 20, fontWeight: "600"}}>Get Premium Now</Text>
+                            <Text style={{color: "white", fontSize: 20, fontWeight: "600"}}>{user.premium ? "Manage Billing" : "Get Premium Now"}</Text>
                             
                         </LinearGradient>
                     </Pressable>
