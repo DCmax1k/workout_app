@@ -7,11 +7,14 @@ import ImageContain from './ImageContain';
 import ThemedText from './ThemedText';
 import BlueButton from './BlueButton';
 import { ImageManipulator } from 'expo-image-manipulator';
+import TouchableScale from './TouchableScale';
 
 export default function Camera({cameraStyle, imageTaken=()=>{}, ...props}) {
   const [facing, setFacing] = useState('back');
   const [torch, setTorch] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
+
+  const [shutterColor, setShutterColor] = useState("white");
   
   const cameraRef = useRef(null);
 
@@ -78,12 +81,14 @@ export default function Camera({cameraStyle, imageTaken=()=>{}, ...props}) {
             )}
         </View>
         {/* Shutter button */}
-        <View style={{position: 'absolute', bottom: 30, alignSelf: 'center'}}>
-            <Pressable onPress={takePhoto} style={{height: 82, width: 82, borderRadius: 40, borderWidth: 2, borderColor: 'white', alignItems: 'center', justifyContent: 'center',}}>
-                    <View style={{height: 70, width: 70, borderRadius: 35, backgroundColor: 'white',}}>
+        <View style={{position: 'absolute', bottom: 30, alignSelf: 'center', }}>
+
+            <TouchableScale activeScale={1.2} onPress={takePhoto} onPressIn={() => setShutterColor("#7e7e7eff")} onPressOut={() => setShutterColor("white")} style={{height: 82, width: 82, borderRadius: 40, borderWidth: 2, borderColor: shutterColor, alignItems: 'center', justifyContent: 'center',}}>
+                    <View style={{height: 70, width: 70, borderRadius: 35, backgroundColor: shutterColor,}}>
                     
                     </View>
-            </Pressable>
+            </TouchableScale>
+            
 
         </View>
         

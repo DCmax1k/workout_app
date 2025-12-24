@@ -5,7 +5,7 @@ import { Image } from 'expo-image';
 import premiumBadge from '../assets/icons/premiumBadge.png'
 import whiteX from '../assets/icons/whiteX.png'
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Spacer from '../components/Spacer';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -57,6 +57,8 @@ const FeatureCard = ({card, ...props}) => {
 const PremiumAdPage = () => {
     const user = useUserStore(state => state.user);
 
+    const insets = useSafeAreaInsets();
+
     const [popupMenuActive, setPopupMenuActive] = useState(false);
 
     const cards = [
@@ -89,7 +91,12 @@ const PremiumAdPage = () => {
     const handleOpenBrowser = async () => {
         console.log("Attempting to open browser...");
         try {
-            let result = await WebBrowser.openBrowserAsync("https://pumpedup.digitalcaldwell.com/login", { presentationStyle: WebBrowser.WebBrowserPresentationStyle.OVER_FULL_SCREEN });
+            const domain = "https://pumpedup.digitalcaldwell.com";
+            //const domain = "http://192.168.8.195:3003";
+            let result = await WebBrowser.openBrowserAsync(`${domain}/login?auth=${user.jsonWebToken}`, {
+                    presentationStyle: WebBrowser.WebBrowserPresentationStyle.OVER_FULL_SCREEN,
+
+                });
             console.log("Browser closed, result:", result);
         } catch (error) {
             console.error("Failed to open browser:", error);
@@ -103,10 +110,13 @@ const PremiumAdPage = () => {
         <PopupSheet active={popupMenuActive} setActive={setPopupMenuActive}>
             <BlueButton onClick={() => {handleOpenBrowser()}} title={"Continue to Checkout"} />
         </PopupSheet>
-        <SafeAreaView style={[{width: "100%", alignItems: "center", }]}>
-            <Pressable onPress={() => router.back()} style={{position: "absolute", top: 50, right: 20, height: 30, width: 30, justifyContent: "center", alignItems: "center", opacity: 0.3, backgroundColor: "#ffffff83", borderRadius: 10, zIndex: 5 }}>
-                <ImageContain source={whiteX} size={25} />
-            </Pressable>
+        <View style={[{width: "100%", alignItems: "center", paddingTop: insets.top}]}>
+            <View style={{width: "100%", alignItems: "flex-end", marginBottom: -20, paddingHorizontal: 20}}>
+                <Pressable onPress={() => router.back()} style={{height: 30, width: 30, justifyContent: "center", alignItems: "center", opacity: 0.3, backgroundColor: "#ffffff83", borderRadius: 10, zIndex: 5 }}>
+                    <ImageContain source={whiteX} size={25} />
+                </Pressable>
+            </View>
+            
             <ScrollView style={{width: "100%", marginTop: -100, paddingTop: 100 }} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 100, alignItems: "center",}}>
 
                 <Spacer height={20} />
@@ -144,7 +154,7 @@ const PremiumAdPage = () => {
             
             
 
-        </SafeAreaView>
+        </View>
         
         
     </View>

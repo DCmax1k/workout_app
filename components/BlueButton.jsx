@@ -1,7 +1,8 @@
-import { Button, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { Colors } from '../constants/Colors'
 import rightCarrot from '../assets/icons/rightCarrot.png'
+import { Image } from 'expo-image'
 
 const BlueButton = ({style, title, showRight = false, icon, color, ...props }) => {
   return (
@@ -12,8 +13,8 @@ const BlueButton = ({style, title, showRight = false, icon, color, ...props }) =
       >
         {/* Icon */}
         {icon && (
-          <View style={{position: "absolute", top: 10, left: 10, height: 20, width: 20,  alignItems: "center", justifyContent: "center"}}>
-            <Image source={icon} style={{height: 20, width: 20, objectFit: "contain"}} />
+          <View style={{position: "absolute", top: 10, left: 10, height: "100%", width: 20,  alignItems: "center", justifyContent: "center"}}>
+            <Image source={icon} style={{height: 20, width: 20,}} contentFit='contain' />
           </View>
           
         )}

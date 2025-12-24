@@ -448,7 +448,7 @@ const Profile = () => {
               <View style={{flexDirection: "row", alignItems: "center"}}>
                 <ThemedText style={[styles.header, { fontSize: 15}]} >Health</ThemedText>
                 <Pressable onPress={showHealthTooltip} style={{height: 20, width: 20, borderColor: '#585858', borderWidth: 2, borderRadius: 99999 , marginLeft: 10, alignItems: "center", justifyContent: "center"}}>
-                  <Text style={{color: "#585858", fontSize: 15, marginTop: -1 }}>?</Text>
+                  <Text style={{color: "#585858", fontSize: 14, marginTop: Platform.OS==='ios'?0:-2, fontWeight: "800" }}>?</Text>
                 </Pressable>
               </View>
               <Spacer height={20} />
@@ -507,7 +507,7 @@ const Profile = () => {
                 <View style={{flexDirection: "row", alignItems: "center"}}>
                   <ThemedText style={[{ fontSize: 15}]} >{Platform.OS === "ios" ? "Apple Health" : "Google Health"}</ThemedText>
                   <Pressable onPress={showPlatformHealthTooltip} style={{height: 20, width: 20, borderColor: '#585858', borderWidth: 2, borderRadius: 99999 , marginLeft: 10, alignItems: "center", justifyContent: "center"}}>
-                    <Text style={{color: "#585858", fontSize: 15, marginTop: -1 }}>?</Text>
+                    <Text style={{color: "#585858", fontSize: 14, marginTop: Platform.OS==='ios'?0:-2, fontWeight: "800" }}>?</Text>
                   </Pressable>
                 </View>
                 

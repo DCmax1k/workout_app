@@ -264,7 +264,7 @@ const IndexProgress = () => {
               renderItem={({item, drag, isActive}) => {
                 item = visibleWidgetsFlatlistDataObject[item];
 
-                if (item.key.length >= 3 && item.key.slice(0, 3) === "ex_") {
+                if (item.key.length >= 3 && item.key.slice(0, 3) === "ex_") { // EXERCISE GRAPH ex_
                   const exerciseId = item.key.slice(3, item.key.length);
                   const completedExercises = user.completedExercises[exerciseId] || [];
                   const exercise = allExercises.find(e => e.id === exerciseId);
@@ -319,6 +319,7 @@ const IndexProgress = () => {
                             style={{marginBottom: 20}}
                             fillWidth={true}
                             disablePress={true}
+                            premiumLock={!user.premium}
                           />
                       ) : (
                         // Show completed exercise widgets
@@ -339,6 +340,7 @@ const IndexProgress = () => {
                           fillWidth={true}
                           disablePress={true}
                           fillDaily={"last"}
+                          premiumLock={!user.premium}
                         />
                       )}
 
@@ -347,7 +349,7 @@ const IndexProgress = () => {
                   </ScaleDecorator>
                 )}
 
-                if (item.key === "nutrition") return (
+                if (item.key === "nutrition") return ( // NUTRITION
                   <ScaleDecorator key={item.key}>
                     {/* Grip drag */}
                     <Pressable onPressIn={drag} style={{height: 30, width: 30, zIndex: 2, justifyContent: "center", alignItems: "center", position: "absolute", top: 0, left: 25}}>

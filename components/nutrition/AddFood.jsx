@@ -12,6 +12,7 @@ import scanIcon from '../../assets/icons/scan.png'
 import searchIcon from '../../assets/icons/searchNoBg.png'
 import rightArrow from '../../assets/icons/rightArrow.png'
 import aiIcon from '../../assets/icons/aiSparkle.png'
+import cameraIcon from '../../assets/icons/camera.svg'
 import doubleCheck from '../../assets/icons/doubleCheck.png'
 import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown,SlideInDown,SlideOutDown,useAnimatedStyle, useSharedValue, withDelay, withSpring, withTiming } from 'react-native-reanimated'
 import Search from '../Search'
@@ -41,6 +42,7 @@ import PlateItem from './PlateItem'
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator'
 import Loading from '../Loading'
 import BlueButton from '../BlueButton'
+import FoodItem from './FoodItem'
 
 
 const screenHeight = Dimensions.get("screen").height;
@@ -188,7 +190,7 @@ const AITab = ({showCreditsTooltip, foodToAdd, selectFood, openFoodPreview, setF
         <View>
             {page === -1 ? (
             <Animated.View key={"page--1"} entering={FadeIn} exiting={FadeOut} style={{paddingVertical: 0,}} {...props}>
-                <BlueButton onPress={() => setPage(0)} title="Scan Picture of Food" subtitle={`Credits: ${user.extraDetails.ai.image.credits ?? 10}`} />
+                <BlueButton onPress={() => setPage(0)} title="Scan Picture of Food" subtitle={`Credits: ${user.extraDetails.ai.image.credits ?? 10}`} icon={cameraIcon} />
                 <ThemedText style={{fontSize: 12, paddingVertical: 15, textAlign: 'center'}}>or use only the prompt</ThemedText>
                 {/* Textbox and buttons */}
                 <View style={{width: "100%", alignItems: 'center', gap: 10,}}>
@@ -213,7 +215,7 @@ const AITab = ({showCreditsTooltip, foodToAdd, selectFood, openFoodPreview, setF
                         <View style={{flexDirection: "row", alignItems: "center"}}>
                             <ThemedText style={[styles.header, { fontSize: 15}]} >Credits: {user.extraDetails.ai.foodText.credits ?? 10}</ThemedText>
                             <Pressable onPress={showCreditsTooltip} style={{height: 20, width: 20, borderColor: '#585858', borderWidth: 2, borderRadius: 99999 , marginLeft: 10, alignItems: "center", justifyContent: "center"}}>
-                                <Text style={{color: "#585858", fontSize: 15, marginTop: -1 }}>?</Text>
+                                <Text style={{color: "#585858", fontSize: 14, marginTop: Platform.OS==='ios'?0:-2, fontWeight: "800" }}>?</Text>
                             </Pressable>
                         </View>
                         <AIButton fontSize={20} imageSize={30} onPress={() => requestAnalyze()} title={"Analyze"} />
@@ -230,7 +232,7 @@ const AITab = ({showCreditsTooltip, foodToAdd, selectFood, openFoodPreview, setF
                     <View style={{flexDirection: "row", alignItems: "center"}}>
                         <ThemedText style={[styles.header, { fontSize: 15}]} >Credits: {user.extraDetails.ai.image.credits ?? 10}</ThemedText>
                         <Pressable onPress={showCreditsTooltip} style={{height: 20, width: 20, borderColor: '#585858', borderWidth: 2, borderRadius: 99999 , marginLeft: 10, alignItems: "center", justifyContent: "center"}}>
-                            <Text style={{color: "#585858", fontSize: 15, marginTop: -1 }}>?</Text>
+                            <Text style={{color: "#585858", fontSize: 14, marginTop: Platform.OS==='ios'?0:-2, fontWeight: "800" }}>?</Text>
                         </Pressable>
                     </View>
                 </View>
@@ -325,38 +327,7 @@ const AITab = ({showCreditsTooltip, foodToAdd, selectFood, openFoodPreview, setF
                                             marginBottom: 5, // spacing between items
                                         }}
                                     >
-                                        <View style={{flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                                            <View style={{flexDirection: "row", alignItems: "center",}}>
-                                                <View
-                                                    style={{
-                                                        height: 40,
-                                                        width: 40,
-                                                        borderRadius: 5,
-                                                        backgroundColor: item.color,
-                                                        marginRight: 5,
-                                                        overflow: "hidden",
-                                                    }}
-                                                >
-
-                                                    <Image
-                                                        source={icon}
-                                                        contentFit='contain'
-                                                        tintColor={item.iconColor ?? "white"}
-                                                        style={{
-                                                            height: "100%",
-                                                            width: "100%",
-                                                        }}
-                                                    />
-                                                </View>
-
-                                                <Text style={{ color: "white", fontSize: 15 }}>
-                                                    {truncate(item.name, 22)}
-                                                </Text>
-                                            </View>
-                                        
-
-                                            <MacrosRow nutrition={item.nutrition} multiplier={1} showDecimal={false} />
-                                        </View>
+                                        <FoodItem food={item}  />
                                     </TouchableScale>
                                 );
                             }
@@ -465,7 +436,6 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, 
                 }}
                 renderItem={({ item }) => {
                     const selected = foodToAdd.map(f => f.id).includes(item.id);
-                    const icon = item.icon ? icons[item.icon] : null;
                     const backgroundColor = editFoods
                         ? "#AB3F41"
                         : selected
@@ -489,38 +459,7 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, 
                                 marginBottom: 5, // spacing between items
                             }}
                         >
-                            <View style={{flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                                <View style={{flexDirection: "row", alignItems: "center",}}>
-                                    <View
-                                        style={{
-                                            height: 40,
-                                            width: 40,
-                                            borderRadius: 5,
-                                            backgroundColor: item.color,
-                                            marginRight: 5,
-                                            overflow: "hidden",
-                                        }}
-                                    >
-
-                                        <Image
-                                            source={icon}
-                                            contentFit='contain'
-                                            tintColor={item.iconColor ?? "white"}
-                                            style={{
-                                                height: "100%",
-                                                width: "100%",
-                                            }}
-                                        />
-                                    </View>
-
-                                    <Text style={{ color: "white", fontSize: 15 }}>
-                                        {truncate(item.name, 22)}
-                                    </Text>
-                                </View>
-                               
-
-                                <MacrosRow nutrition={item.nutrition} multiplier={1} showDecimal={false} />
-                            </View>
+                            <FoodItem food={item}  />
                         </TouchableScale>
                     );
                 }}

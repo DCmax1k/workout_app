@@ -100,8 +100,8 @@ const Dashboard = () => {
       setShowDisconnectIndicator(false);
       console.log("Successfully authenticated");
       if (!authResponse.goodVersion) {
-        showAlert("Version outdated! A new updated developement build is available.", true);
-        setTimeout(() => {showAlert("If not provided, ask the developer for the new build.", true, 6000)}, 1500)
+        showAlert("A new updated version is available.", true);
+        // setTimeout(() => {showAlert("If not provided, ask the developer for the new build.", true, 6000)}, 1500)
       };
       //showAlert("Successfully authenticated", true);
       const {userInfo} = authResponse;

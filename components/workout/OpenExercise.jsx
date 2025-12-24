@@ -22,6 +22,7 @@ import { useVideoPlayer, VideoView } from 'expo-video'
 import ImageContain from '../ImageContain';
 import { useIsFocused } from '@react-navigation/native';
 import { Image } from 'expo-image';
+import { router } from 'expo-router';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -362,6 +363,12 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
                         unit={""}
                         color={"#546FDB"}
                         fullWidget={true}
+                        premiumLock={!user.premium}
+                        onPremiumLockPress={() => {
+                          setOpenExercise(false);
+                          setTimeout(() => router.navigate('/premiumAd'), 300);
+                          
+                        }}
                       />
           ) : (
             // Show completed exercise widgets
@@ -383,6 +390,7 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
                         unit={weightOrDistance ? "lbs" : "miles"}
                         color={"#546FDB"}
                         fullWidget={true}
+                        premiumLock={!user.premium}
                       />
           )}
 

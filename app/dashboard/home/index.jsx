@@ -353,7 +353,7 @@ const IndexHome = () => {
           <Spacer />
 
           <View style={{flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
-                <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10,}}>Quick start</ThemedText>
+                <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10,}}>Quick Start</ThemedText>
 
                 {isThereWorkout !== "none" && (<Pressable onPress={rotateNext} style={{flexDirection: "row", alignItems: "center",  padding: 5}}>
                   <Text style={{color: "#5a5a5a"}}>Skip </Text>

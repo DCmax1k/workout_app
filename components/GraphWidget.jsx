@@ -7,9 +7,12 @@ import RightArrow from '../assets/icons/rightArrow.png'
 import SectionSelect from './SectionSelect'
 import sinceWhen from '../util/sinceWhen'
 import fillDailyData from '../util/fillDailyData'
+import { router } from 'expo-router'
+import AIButton from './AIButton'
+import { LinearGradient } from 'expo-linear-gradient'
 // import fillDailyData from '../util/fillDailyData'
 
-const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=[], dates = [], showWarning = false, initialSectionIndex=0, showDecimals=2, onPress = () => {}, disablePress=false, animationDuration=0, hideFooter=false, ...props}) => {
+const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=[], dates = [], showWarning = false, initialSectionIndex=0, showDecimals=2, onPress = () => {}, disablePress=false, animationDuration=0, hideFooter=false, premiumLock=false, onPremiumLockPress=() => router.navigate('/premiumAd'), ...props}) => {
 
     const oriData = JSON.parse(JSON.stringify(data));
     const oriDates = JSON.parse(JSON.stringify(dates));
@@ -134,8 +137,25 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
     }
     
   return (
-    <View style={[styles.container, (fullWidget || fillWidth) ? {flex: 1, width: "100%", height: Platform.OS === "ios" ? 205 : 210,} : {width: 200, height: 170,}, fullWidget && {height: 350}, props.style]} >
-        {fullWidget === false && disablePress === false && (<Pressable style={{position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 10}} onPress={onPress} />)} 
+    <View style={[styles.container, (fullWidget || fillWidth) ? {flex: 1, width: "100%", height: Platform.OS === "ios" ? 205 : 210,} : {width: 200, height: 170,}, fullWidget && {height: 350},  props.style]} >
+
+        {/* Premium Lock */}
+        {premiumLock && (
+            <Pressable onPress={onPremiumLockPress} style={[StyleSheet.absoluteFill, { zIndex: 10}]}>
+                <LinearGradient
+                    style={[ StyleSheet.absoluteFill]}
+                    colors={["#6c89ffa6", "#c030b2a6"]}
+                    start={{ x: 0, y: 0 }} 
+                    end={{ x: 1, y: 1 }}
+                >
+                    <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", backgroundColor: "#000000af"}]}>
+                        <AIButton onPress={onPremiumLockPress} title={"Unlock with Premium"} quickIcon={1} imageSize={30} borderRadius={100} paddingHorizontal={5} height={45} />
+                    </View>
+                </LinearGradient>
+            </Pressable>
+        )}
+
+        {!premiumLock && fullWidget === false && disablePress === false && (<Pressable style={{position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 10}} onPress={onPress} />)} 
 
         <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
             <View>
@@ -279,7 +299,7 @@ const styles = StyleSheet.create({
         marginRight: 20,
         backgroundColor: "#3A3A3A",
         borderRadius: 10,
-        
+        overflow: 'hidden',
     },
     title: {
         fontSize: 16,
