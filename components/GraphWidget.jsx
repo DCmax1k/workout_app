@@ -48,6 +48,10 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
         data = data.filter((d, ind) => new Date(dates[ind]).getTime() >= sixMonthsAgo.getTime());
         dates = dates.filter((d, ind) => new Date(dates[ind]).getTime() >= sixMonthsAgo.getTime());
     }
+
+    if (premiumLock) {
+        data = [500, 700, 0, 900, 100, 1234, ];
+    }
     
 
    

@@ -299,6 +299,7 @@ const Profile = () => {
 
     const actionMenuOptions = [
       {title: "Edit Profile", icon: pencilIcon, onPress: () => router.push("/dashboard/home/editProfile"),},
+      {title: "Account Recovery", icon: null, onPress: openAccountRecovery,},
       {title: "Sign Out",  onPress: signOut,},
     ];
 
@@ -541,7 +542,7 @@ const Profile = () => {
 
               {/* <BlueButton onPress={signOut} title={"Sign out"} /> */}
               {/* <Spacer /> */}
-              <BlueButton onPress={openAccountRecovery} title={"Account Recovery"} color={Colors.primaryOrange} />
+              {/* <BlueButton onPress={openAccountRecovery} title={"Account Recovery"} color={Colors.primaryOrange} /> */}
 
             </ScrollView>
             

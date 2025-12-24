@@ -13,9 +13,9 @@
       "android"
     ],
     "splash": {
-      "image": "./assets/splash-screen.png",
-      "resizeMode": "cover",
-      "backgroundColor": "#000000"
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#171717"
     },
     "ios": {
       "supportsTablet": true,
