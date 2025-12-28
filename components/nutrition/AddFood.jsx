@@ -692,7 +692,7 @@ const AddFood = ({...props}) => {
                 </View>
             </View>
 
-            <View style={[styles.header]}>
+            <View style={[styles.header, {transform: [{translateY: -15}]}]}>
                 <ThemedText title={true} style={{fontSize: 23, fontWeight: 700, textAlign: "center"}}>Add Food</ThemedText>
             </View>
 

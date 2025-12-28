@@ -46,8 +46,9 @@ const SuggestedWorkoutTemplate = ({workout, ...props}) => {
     <View >
       <View style={styles.linearGradient}>
         <View style={{width: "100%", position: "relative"}}>
-          <ThemedText style={{fontSize: 17, fontWeight: 700, paddingRight: 20, }} title={true}>{truncate(workout.name, 25)}</ThemedText>
-          <WorkoutDescription workout={workout} truncateAmount={0} />
+          <ThemedText style={{fontSize: 17, fontWeight: 700, paddingRight: 30, }} title={true}>{truncate(workout.name, 25)}</ThemedText>
+          <WorkoutDescription workout={workout} truncateAmount={-1} />
+
           <View style={{position: "absolute", top: 5, right: 5, height: 15, width: 15}}>
             <Image style={{height: "100%", width: "100%", transform: [{rotate: "-90deg"}]}} contentFit='contain' source={rightArrow}/>
           </View>
@@ -120,7 +121,9 @@ const IndexHome = () => {
         setContinuedWorkout({ name: "Rest Day", id: "0" });
       } else {
         const workout = user.savedWorkouts.find(w => w.id === currentId);
-        setContinuedWorkout(workout || null);
+        setContinuedWorkout(workout ?? null);
+        console.log("test");
+        console.log(workout);
       }
     } else {
       setContinuedWorkout(null);
@@ -293,8 +296,8 @@ const IndexHome = () => {
       }, 100);
     }
 
-  let isThereWorkout = (continuedWorkout !== null && continuedWorkout.id !== "0") ? "yes" : (continuedWorkout !== null && continuedWorkout.id === "0") ? "rest" : "none";
-  let isThereWorkoutNext = (continuedWorkoutNext !== null && continuedWorkoutNext.id !== "0") ? "yes" : (continuedWorkoutNext !== null && continuedWorkoutNext.id === "0") ? "rest" : "none";
+  let isThereWorkout = (continuedWorkout !== null && continuedWorkout?.id && continuedWorkout.id !== "0") ? "yes" : (continuedWorkout !== null && continuedWorkout?.id && continuedWorkout.id === "0") ? "rest" : "none";
+  let isThereWorkoutNext = (continuedWorkoutNext !== null && continuedWorkoutNext?.id && continuedWorkoutNext.id !== "0") ? "yes" : (continuedWorkoutNext !== null && continuedWorkoutNext?.id && continuedWorkoutNext.id === "0") ? "rest" : "none";
 
   // // Testing for when need to show user data on screen as text
   //   return (
@@ -595,7 +598,7 @@ const styles = StyleSheet.create({
   },
   linearGradient: {
     flex: 1,
-    minHeight: 100,
+    minHeight: 10,
     width: (screenWidth-55)/2,
     borderRadius: 15,
     padding: 10,

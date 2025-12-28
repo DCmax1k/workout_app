@@ -14,6 +14,7 @@ import sendData from '../../util/server/sendData';
 import auth from '../../util/server/auth';
 import AlertNotification from '../../components/AlertNotification';
 import { generateUniqueId } from '../../util/uniqueId';
+import ThemedText from '../../components/ThemedText';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -60,7 +61,7 @@ const LoginPage = () => {
         const response = await sendData('/login', ({ username, password, }));
         if (response.status !== "success") {
             setLoading(false);
-            console.log("Error: ", response.message);
+            //console.log("Error: ", response.message);
             alertRef.current.showAlert(response.message, false);
             return;
         };
@@ -69,7 +70,7 @@ const LoginPage = () => {
         const authResponse = await auth(jsonWebToken);
         if (authResponse.status !== "success") {
             setLoading(false);
-            console.log("Error: ", authResponse.message);
+            //console.log("Error: ", authResponse.message);
             alertRef.current.showAlert(authResponse.message, false);
             return;
         }
@@ -146,7 +147,13 @@ const LoginPage = () => {
                             <ThemedTextInput placeholder='Password' value={password} onChange={(value) => setPassword(value)} type='password'/>
                         </View>
 
-                        <Spacer />
+                        <View style={{alignItems: 'flex-end', width: "100%", padding: 5}}>
+                            <Pressable onPress={() => {router.push("/onboarding/forgotPassword")}}>
+                                <ThemedText style={{fontFamily: "DoppioOne-Regular"}}>Forgot Password?</ThemedText>
+                            </Pressable>
+                        </View>
+
+                        <Spacer height={20} />
 
                         {/* Big blue button */}
                         <Pressable onPress={login} style={{height: 80, backgroundColor: "#6684FF", width: "100%", borderRadius: 10, justifyContent: "center", alignItems: "center"}}>

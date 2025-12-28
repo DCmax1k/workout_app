@@ -58,8 +58,8 @@ const SignUpPage = () => {
         ));
         if (response.status !== "success") {
             setLoading(false);
-            console.log("Error:'", response.message);
-            // alertRef.current.showAlert(response.message, false);
+            //console.log("Error:'", response.message);
+            alertRef.current.showAlert(response.message, false);
             return;
         } 
         const userInfo = response.userInfo;

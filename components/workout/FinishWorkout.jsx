@@ -1,4 +1,4 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Platform, Pressable, Share, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import ThemedView from '../ThemedView'
 import ThemedText from '../ThemedText'
@@ -11,6 +11,7 @@ import Spacer from '../Spacer'
 import clock from '../../assets/icons/clock.png'
 import whiteRunner from '../../assets/icons/whiteRunner.png'
 import weight from '../../assets/icons/weight.png'
+import flame from '../../assets/icons/flame.svg'
 import { useAudioPlayer } from 'expo-audio'
 import { useUserStore } from '../../stores/useUserStore'
 import ConfirmMenu from '../ConfirmMenu'
@@ -25,6 +26,7 @@ import sendData from '../../util/server/sendData'
 import { useBottomSheet } from '../../context/BottomSheetContext'
 import { socket } from '../../util/server/socket'
 import minutesToHMS from '../../util/minutesToHMS'
+import { Image } from 'expo-image'
 
 const achievementAmounts = [10, 50, 100, 200, 500, 1000, 10000];
 
@@ -318,6 +320,27 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
               return str;
           }
 
+          const onShareWorkout = async ({expenditure, exerciseCount}) => {
+            const shareUrl = 'https://pumpedup.digitalcaldwell.com';
+            const shareMessage = `I just burned ${expenditure} calories completing ${exerciseCount} exercise${exerciseCount===1?"":"s"} using this app called Pumped Up Workouts / Nutrition, check it out!`;
+
+            const content = {
+                // For Android, we combine message + URL into one string
+                message: Platform.OS === 'android' 
+                ? `${shareMessage} ${shareUrl}` 
+                : shareMessage,
+                // For iOS, we keep the URL in its dedicated field
+                url: Platform.OS === 'ios' ? shareUrl : undefined,
+                title: "Completed a Pumped Up Workout"
+            };
+
+            try {
+                await Share.share(content);
+            } catch (error) {
+                console.error(error.message);
+            }
+            };
+
   return (
     <PaperProvider>
         <ThemedView style={{flex: 1}} {...props}>
@@ -330,7 +353,7 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
                         </Pressable>
                     </View>
                     <View style={{zIndex: 1}}>
-                        <Pressable onPress={() => {}} style={{paddingHorizontal: 20, paddingVertical: 10, backgroundColor: Colors.primaryBlue, borderRadius: 10, }}>
+                        <Pressable onPress={() => {onShareWorkout({expenditure: parseInt(data.totalExpenditure), exerciseCount: data.exercises.length})}} style={{paddingHorizontal: 20, paddingVertical: 10, backgroundColor: Colors.primaryBlue, borderRadius: 10, }}>
                             <Text style={{fontSize: 15, color: "white",}}>Share</Text>
                         </Pressable>
                     </View>
@@ -338,7 +361,7 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
 
                 <View style={[{ alignItems: "center"}]}>
                     <Animated.View style={partyAnimationStyle}>
-                        <Image source={party} style={{height: 150,  width: 150, objectFit: "contain"}} />
+                        <Image source={party} style={{height: 150,  width: 150, }} contentFit='contain' />
                     </Animated.View>
 
                     <Animated.Text title={true} style={[{ fontSize: 25, fontWeight: 700, color: "white"}, titleAnimationStyle]}>Well done!</Animated.Text>
@@ -352,15 +375,15 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
                             <ThemedText style={{ fontSize: 14, fontWeight: 400, textAlign: "center"}}>{formatDate(data.time)}</ThemedText>
                             <View style={styles.quickStats}>
                                 <View style={styles.quickStat}>
-                                    <Image source={clock} style={{height: 15, width: 15, objectFit: "contain", tintColor: "white", marginRight: 5}} />
+                                    <Image contentFit='contain' source={clock} style={{height: 15, width: 15, tintColor: "white", marginRight: 5}} />
                                     <ThemedText style={{fontSize: 14, fontWeight: 600}}>{formatDuration(data.workoutLength)}</ThemedText>
                                 </View>
                                 {data.totalWeightLifted > 0 && (<View style={styles.quickStat}>
-                                    <Image source={weight} style={{height: 20, width: 20, objectFit: "contain", tintColor: "white", marginRight: 5}} />
+                                    <Image contentFit='contain' source={weight} style={{height: 20, width: 20, tintColor: "white", marginRight: 5}} />
                                     <ThemedText style={{fontSize: 14, fontWeight: 600}}>{`${parseInt(data.totalWeightLifted)} lbs`}</ThemedText>
                                 </View>)}
                                 {data.totalDistanceTraveled > 0 && (<View style={styles.quickStat}>
-                                    <Image source={whiteRunner} style={{height: 20, width: 20, objectFit: "contain", tintColor: "white", marginRight: 5}} />
+                                    <Image contentFit='contain' source={whiteRunner} style={{height: 20, width: 20, tintColor: "white", marginRight: 5}} />
                                     <ThemedText style={{fontSize: 14, fontWeight: 600}}>{`${parseInt(data.totalDistanceTraveled)} miles`}</ThemedText>
                                 </View>)}
                             </View>
@@ -402,6 +425,13 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
                                     </>
                                 </View>
                             </View>
+                            <Spacer height={20} />
+                            <View style={[styles.quickStat, {alignItems: "flex-end"}]}>
+                                <Image source={flame} style={{height: 16, width: 16, tintColor: "white", marginRight: 5}} contentFit='contain' />
+                                <ThemedText style={{fontSize: 17, fontWeight: 600, marginBottom: -3}}>{`${parseInt(data.totalExpenditure)}`}</ThemedText>
+                                <ThemedText style={{fontSize: 12, fontWeight: 400, marginBottom: -2, marginLeft: 2}}>{`kcal`}</ThemedText>
+                            </View>
+
                         </Animated.View>
                     </View>
                 </View>

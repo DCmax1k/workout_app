@@ -1,5 +1,5 @@
 import { Alert, FlatList, Image, LayoutAnimation, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
 import Spacer from '../../../components/Spacer'
@@ -22,13 +22,30 @@ const Schedule = () => {
     const user = useUserStore((state) => state.user);
     const updateUser = useUserStore((state) => state.updateUser);
 
+    const clearIdFromRotation = (id) => {
+        
+        const newRotation = user.schedule.rotation.filter(i => i !== id);
+        updateUser({schedule: {rotation: newRotation}});
+    }
+    useEffect(() => {
+        // Check for workouts that dont exist
+        user.schedule.rotation.forEach(id => {
+            if (id !== "0") {
+                const foundWorkout = user.savedWorkouts.find(w => w.id === id) ?? null;
+                if (!foundWorkout) clearIdFromRotation(id);
+            }
+        })
+    }, []);
+
     const rotation = user.schedule.rotation.map(id => {
         if (id === "0") {
             return {id: "0", name: "Rest Day"}
         }
-
-        return user.savedWorkouts.find(w => w.id === id)
-    })
+        const foundWorkout = user.savedWorkouts.find(w => w.id === id) ?? null;
+        return foundWorkout;
+    }).filter(o => {
+        return o !== null;
+    });
     const unused = user.savedWorkouts.filter(workout => !user.schedule.rotation.includes(workout.id));
 
     const addToRotation = (workoutId) => {

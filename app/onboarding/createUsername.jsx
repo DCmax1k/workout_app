@@ -141,10 +141,10 @@ const CreateUsernamePage = () => {
 
                     <Spacer height={20} />
 
-                    {/* Don't have an account? */}
+                    {/* go back */}
                     <View style={{flexDirection: "row"}}>
                         <Pressable style={{marginLeft: 5}} onPress={goBack}>
-                            <Text style={{color: "#8FA6FF", fontSize: 13, fontFamily: "DoppioOne-Regular"}}>Go back</Text>
+                            <Text style={{color: "#8FA6FF", fontSize: 13, fontFamily: "DoppioOne-Regular"}}>Leave</Text>
                         </Pressable>
                     </View>
                     

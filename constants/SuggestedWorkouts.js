@@ -6,22 +6,22 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj92xmt9-a5eelrl3",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"6"
                },
                {
                   "uniqueId":"mj92xn6c-zifjlmc1",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"6"
                },
                {
                   "uniqueId":"mj92xnhy-kwzekhod",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"6"
                },
                {
                   "uniqueId":"mj92xnsi-z97ltx6c",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"6"
                }
             ],
@@ -38,22 +38,22 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj92xssa-m6dxedlh",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj92xvek-zye4c4c9",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj92xvse-vro19v8u",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj92xw82-qdccursz",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                }
             ],
@@ -70,17 +70,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj92y1ar-teyg3csc",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj92y1kj-jqmtvsfn",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj92y1w7-b2dcqypx",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                }
             ],
@@ -97,22 +97,22 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj92y99t-6ag42rcs",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj92y9l6-00a9y577",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj92yaif-gn31qtrz",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj92ycs7-2q62stkm",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                }
             ],
@@ -129,17 +129,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj92ygbj-3c288zr4",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj92ygsf-k4sf6niy",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj92yh6a-wu6vzh9g",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                }
             ],
@@ -156,17 +156,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj975xh7-bimaj3f2",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj975xuo-9ryyxllg",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj975y8d-r1rrpva7",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                }
             ],
@@ -214,22 +214,22 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj980mdc-55ixi4xx",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"6"
                },
                {
                   "uniqueId":"mj980n28-xtqk14gr",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"6"
                },
                {
                   "uniqueId":"mj980nsa-j7h2zu0m",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"6"
                },
                {
                   "uniqueId":"mj980o74-qksakv2x",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"6"
                }
             ],
@@ -246,22 +246,22 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj980t9c-7s71hf7i",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj980uma-tojm4za5",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj980vks-b2zxltgb",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj980w4p-xg4uvi8l",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                }
             ],
@@ -278,17 +278,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98107m-0pczqb8f",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj9810k3-dvrnorg5",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj9810xq-iryhnart",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                }
             ],
@@ -305,17 +305,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj981jb4-x2b5bzjg",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj981jn2-fn5nrcjd",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj981k10-ccg09en7",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                }
             ],
@@ -332,17 +332,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj981q0k-1za47yle",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"15"
                },
                {
                   "uniqueId":"mj981ra5-gotwi7x6",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"15"
                },
                {
                   "uniqueId":"mj981rri-1v4tu6lc",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"15"
                }
             ],
@@ -359,17 +359,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj9820kq-57xw82uv",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"25"
                },
                {
                   "uniqueId":"mj98210n-tq54do1p",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"25"
                },
                {
                   "uniqueId":"mj98222o-xc3x8d6x",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"25"
                }
             ],
@@ -386,17 +386,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj982nb4-1qqd53ep",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj982noq-z42lt9kh",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj982o57-kh8rp0x3",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                }
             ],
@@ -419,17 +419,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98578h-y7t3ftlt",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj9857m8-dczszvy5",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj9858o3-524mfxp8",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                }
             ],
@@ -446,17 +446,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj985bns-rdenm6c0",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj985c0s-8swf729m",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj985cew-r5o8jkic",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                }
             ],
@@ -473,17 +473,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj985fue-d09dpf0x",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj985gnz-p8ucid4m",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj985h4b-7brae5y1",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                }
             ],
@@ -500,17 +500,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj985jro-kmlans52",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj985k81-hqus1flf",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj985kp8-f8hel58a",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                }
             ],
@@ -527,17 +527,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj985rtc-06kuiop6",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj985s9q-y4i1stl3",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj985u1p-yjjaysyo",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                }
             ],
@@ -554,17 +554,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj985xa6-808sizql",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"15"
                },
                {
                   "uniqueId":"mj985xpb-gn44k52f",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"15"
                },
                {
                   "uniqueId":"mj985y34-opwrjbr4",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"15"
                }
             ],
@@ -587,17 +587,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj989wrd-92qrc698",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj989x4b-styhn8im",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj989xih-ori69mga",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                }
             ],
@@ -614,17 +614,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98a050-nsh7wuc2",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98a0hl-skpdvf5u",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98a0w2-sxrze09p",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                }
             ],
@@ -641,17 +641,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98a3d6-wxcwqolo",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj98a3u0-59n8cf76",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj98a5hw-bvpuqwi4",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                }
             ],
@@ -668,17 +668,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98ajxg-0frkyet1",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98akbe-c5kv1ggn",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98akrq-0s7ax7w2",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                }
             ],
@@ -695,17 +695,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98atlg-ncjmgzmr",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98atyg-bjpsjzla",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98aujv-wh2pj5ca",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                }
             ],
@@ -728,22 +728,22 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98e915-zlr6btcy",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj98e9pp-co5do6hf",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj98ea4y-n9o0qukd",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj98eamn-ugfz15fb",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                }
             ],
@@ -760,17 +760,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98edwj-4b5eyw5u",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98eea2-9ctqyerz",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98eepd-zfbcqzbd",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                }
             ],
@@ -787,17 +787,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98eho4-0584mq0w",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj98eij1-b8xc5sc2",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj98eiyy-jyntt5ww",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                }
             ],
@@ -814,17 +814,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98elkc-71v3kydq",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj98emtz-zwwzj1yh",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj98en8u-t1csk48c",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                }
             ],
@@ -841,17 +841,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98erd0-orf7lw37",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj98ert5-9n3cnj7d",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj98esen-d46ldg0w",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                }
             ],
@@ -868,17 +868,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98evti-ppsblyrt",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98ew5z-e7ez6zc3",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98ewkk-gqfck1ww",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                }
             ],
@@ -901,22 +901,22 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98gt2b-7ju8ylht",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"6"
                },
                {
                   "uniqueId":"mj98gtyj-998ar94z",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"6"
                },
                {
                   "uniqueId":"mj98guci-1dhv1x0s",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"6"
                },
                {
                   "uniqueId":"mj98gult-p3obrglb",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"6"
                }
             ],
@@ -933,22 +933,22 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98gy43-yb7aallz",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj98gysf-j0ts27lj",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj98gzp0-3l84st5g",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                },
                {
                   "uniqueId":"mj98h076-24vqa9fl",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"8"
                }
             ],
@@ -965,17 +965,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98h3x3-jot3p14p",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98h4s8-qqkizf3w",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98h59d-ce248xz6",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                }
             ],
@@ -992,17 +992,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98h8w0-ij2fugui",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98h9jq-nct3erev",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98h9xl-qc2tr675",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                }
             ],
@@ -1019,17 +1019,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98hj4a-tziqh9on",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98hjk6-k2i5q6io",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                },
                {
                   "uniqueId":"mj98hk06-kgrscdf3",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"10"
                }
             ],
@@ -1046,17 +1046,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98hota-fvw4h5f2",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj98hp8y-go5wwsfl",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                },
                {
                   "uniqueId":"mj98hpwz-zwjaz1bn",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"12"
                }
             ],
@@ -1073,17 +1073,17 @@ export const SuggestedWorkouts = [
             "sets":[
                {
                   "uniqueId":"mj98ht6n-29qk23m7",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"15"
                },
                {
                   "uniqueId":"mj98hukh-o2lz7rd0",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"15"
                },
                {
                   "uniqueId":"mj98huvz-1f18dyb6",
-                  "weight":"0",
+                  "weight":"",
                   "reps":"15"
                }
             ],

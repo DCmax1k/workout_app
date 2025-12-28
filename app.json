@@ -3,9 +3,9 @@
     "scheme": "pumpapp",
     "name": "Pumped Up",
     "slug": "Pump_App",
-    "version": "1.0.10",
+    "version": "1.0.11",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/ios-light.png",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "platforms": [
@@ -20,15 +20,20 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.caldwell.pumpedup",
-      "icon": "./assets/icon.png"
+      "icon": {
+        "dark": "./assets/ios-dark.png",
+        "light": "./assets/ios-light.png",
+        "tinted": "./assets/ios-tinted.png"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
+        "monochromeImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.caldwell.pumpedup",
-      "versionCode": 11
+      "versionCode": 12
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -51,7 +56,20 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "backgroundColor": "#191919"
+          }
+        }
+      ]
     ],
     "extra": {
       "router": {},
