@@ -551,5 +551,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.primaryBlue, 
         borderRadius: 10,
+        height: 28,
     }
 })
