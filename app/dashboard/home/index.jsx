@@ -32,6 +32,7 @@ import DisplayName from '../../../components/DisplayName'
 import ProfileImg from '../../../components/ProfileImg'
 import { SuggestedWorkouts } from '../../../constants/SuggestedWorkouts'
 import { Image } from 'expo-image'
+import * as Haptics from 'expo-haptics';
 
 const truncate = (text, maxLength) =>
     text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
@@ -255,7 +256,7 @@ const IndexHome = () => {
         )
         return;
     } 
-
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     const clonedWorkout = {
       name: "New workout",
       exercises: [],

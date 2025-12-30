@@ -14,6 +14,7 @@ import { useBottomSheet } from '../../context/BottomSheetContext'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { runOnJS, runOnUI } from 'react-native-reanimated'
 import getAllExercises from '../../util/getAllExercises'
+import * as Haptics from 'expo-haptics';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -73,6 +74,7 @@ const StartWorkout = ({workout, setModalVisible, openExercise = (e) => {}, setEx
             )
             return;
         } 
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         const clonedWorkout = JSON.parse(JSON.stringify(workout));
         // Make exercises data complex
         const complexExercises = exercisesToComplex(clonedWorkout.exercises);

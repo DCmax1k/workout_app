@@ -43,7 +43,7 @@ import { ImageManipulator, SaveFormat } from 'expo-image-manipulator'
 import Loading from '../Loading'
 import BlueButton from '../BlueButton'
 import FoodItem from './FoodItem'
-
+import * as Haptics from 'expo-haptics';
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
@@ -205,7 +205,7 @@ const AITab = ({showCreditsTooltip, foodToAdd, selectFood, openFoodPreview, setF
                         numberOfLines={4}
                         maxLength={200}
                         placeholderTextColor={"#AAAAAA"}
-                        style={{backgroundColor: "rgba(0,0,0,0.8)", borderRadius: 15, height: 120, width: "100%", textAlignVertical: 'top', color: "white", fontSize: 15, paddingHorizontal: 15, paddingVertical: 15, fontWeight: "300", fontFamily: "DoppioOne-Regular",}}
+                        style={{backgroundColor: "rgba(0,0,0,0.8)", borderRadius: 15, height: 120, width: "100%", textAlignVertical: 'top', color: "white", fontSize: 15, paddingHorizontal: 15, paddingVertical: 15,}}
                         />
                     </View>
                     
@@ -250,13 +250,14 @@ const AITab = ({showCreditsTooltip, foodToAdd, selectFood, openFoodPreview, setF
                                     <TextInput
                                     value={aiDetails}
                                     placeholder='Add details for better results...'
-                                    onChangeText={(v) => {setAiDetails(v)}}
-                                    editable
+                                    onChangeText={(v) => {
+                                        setAiDetails(v);
+                                    }}
                                     multiline
                                     numberOfLines={4}
                                     maxLength={200}
                                     placeholderTextColor={"#AAAAAA"}
-                                    style={{backgroundColor: "rgba(0,0,0,0.8)", borderRadius: 15, height: 120, width: "100%", textAlignVertical: 'top', color: "white", fontSize: 15, paddingHorizontal: 15, paddingVertical: 15, fontWeight: "300", fontFamily: "DoppioOne-Regular",}}
+                                    style={{backgroundColor: "rgba(0,0,0,0.8)", borderRadius: 15, height: 120, width: "100%", textAlignVertical: 'top', color: "white", fontSize: 15, paddingHorizontal: 15, paddingVertical: 15,}}
                                     />
                                 </View>
                                 
@@ -447,7 +448,7 @@ const LibraryTab = ({openCreateNewFood, foodToAdd, selectFood, openFoodPreview, 
                             activeScale={1.05}
                             friction={10}
                             tension={200}
-                            onLongPress={() => openFoodPreview(item)}
+                            onLongPress={() => {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); openFoodPreview(item)}}
                             onPress={() => selectFood(item)}
                             style={{
                                 paddingHorizontal: 10,

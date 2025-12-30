@@ -390,6 +390,7 @@ const OpenExercise = ({style, exercise, setOpenExercise, forceCloseOpenExercise,
                         unit={weightOrDistance ? "lbs" : "miles"}
                         color={"#546FDB"}
                         fullWidget={true}
+                        fillDaily={"last"}
                         premiumLock={!user.premium}
                       />
           )}

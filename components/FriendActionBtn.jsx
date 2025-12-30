@@ -10,6 +10,7 @@ import checkIcon from '../assets/icons/check.png'
 import ImageContain from './ImageContain';
 import { Colors } from '../constants/Colors';
 import ConfirmMenu from './ConfirmMenu';
+import * as Haptics from 'expo-haptics';
 
 const FriendActionBtn = ({style, friend, fontSize=15, ...props}) => {
     const user = useUserStore(state => state.user);
@@ -34,6 +35,7 @@ const FriendActionBtn = ({style, friend, fontSize=15, ...props}) => {
     }
 
     const handleUserBtn = (friendStatus, person) => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         switch (friendStatus) {
             case "notadded":
                 requestAddUser(person);

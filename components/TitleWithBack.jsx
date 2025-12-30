@@ -8,10 +8,12 @@ import threeEllipses from '../assets/icons/threeEllipses.png'
 import ActionMenu from './ActionMenu'
 import trash from '../assets/icons/trash.png'
 import { Colors } from '../constants/Colors'
+import * as Haptics from 'expo-haptics';
 
 const screenWidth = Dimensions.get("window").width;
 
 const TitleWithBack = ({style, backBtn = true, leftBtnNotificationAmount=2, actionBtnIconStyles, leftActionBtnIconStyles, backFunction = () => router.back(), actionBtn = {active: false, actionMenu: false, image: threeEllipses, options: [{title: "Delete workout", icon: trash, onPress: () => console.log("Pressed"),}], },  leftActionBtn = {active: false, actionMenu: false, image: threeEllipses, options: [{title: "Delete workout", icon: trash, onPress: () => console.log("Pressed"),}], }, ...props}) => {
+
 
   return (
     <View style={[{position: "relative",  marginTop: 20, width: screenWidth,}, style]} {...props}>
@@ -25,7 +27,7 @@ const TitleWithBack = ({style, backBtn = true, leftBtnNotificationAmount=2, acti
                 <Image style={[styles.actionBtnIcon, leftActionBtnIconStyles]} source={leftActionBtn.image} />
             </Pressable>
         ) : backBtn ? (
-            <Pressable onPress={() => {backFunction() }} style={styles.backBtn}>
+            <Pressable onPress={() => {Haptics.selectionAsync(); backFunction() }} style={styles.backBtn}>
                 <Image style={styles.backBtnIcon} source={rightArrow} />
             </Pressable>
         ) : null}

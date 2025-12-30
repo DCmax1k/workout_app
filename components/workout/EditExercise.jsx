@@ -27,6 +27,8 @@ import Spacer from '../Spacer'
 import ScrollPicker from '../ScrollPicker'
 import minutesToHMS from '../../util/minutesToHMS'
 import formatExerciseTime from '../../util/formatExerciseTime'
+import * as Haptics from 'expo-haptics';
+import ConfirmMenu from '../ConfirmMenu'
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -47,9 +49,40 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
     const [openExercise, setOpenExercise] = useState(false); // Is open or not
     const [exerciseOpen, setExerciseOpen] = useState({}); // The exercise thats open
 
+    const [confirmMenuActive, setConfirmMenuActive] = useState(false);
+    const [confirmMenuData, setConfirmMenuData] = useState();
+
     const [timeKeyboardVisible, setTimeKeyboardVisible] = useState(false);
 
     const [suggesstion, setSuggesstion] = useState("");
+    
+    const [oneRepMax, setOneRepMax] = useState(null);
+
+
+    const calculate1RM = (exer) => {
+        let highestAmount = 0;
+        let totalReps = 0;
+        exer.sets.forEach((s, i) => {
+            const group = exer.tracks.includes("weight") ? "strength" : exer.tracks.includes("weightPlus") ? "strengthPlus" : (exer.tracks.includes("mile") && exer.tracks.includes("time")) ? "cardio" : exer.tracks.includes("mile") ? "distance" : exer.tracks.includes("reps") ? "repsOnly" : null;
+            const track = group === "strength" ? "weight" : group==="strengthPlus" ? "weightPlus" : group==="cardio" ? "mile" : group==="distance" ? "mile" : group==="repsOnly" ? "reps" : null;
+            const value = track ? parseFloat(s[track]) : 0;
+            const reps = parseFloat(s['reps']) ?? 0;
+            if (value > highestAmount || (value>=highestAmount && reps > totalReps)) {
+                highestAmount = value;
+                totalReps = reps;
+
+            }
+        });
+        return highestAmount > 0 ? highestAmount * (1 + ( totalReps / 30)) : null;
+
+    }
+
+    useEffect(() => {
+        if (exercise.tracks.includes('weight') && exercise.tracks.includes('reps')) {
+            const value = calculate1RM(exercise);
+            setOneRepMax(value);
+        };
+    }, [])
 
     const [showHamHint, setShowHamHint] = useState(false);
     useEffect(() => {
@@ -66,22 +99,36 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         }, [showHamHint]);
 
     const removeSet = (setIndex) => {
+        Haptics.selectionAsync();
         const sets = exercise.sets;
         sets.splice(setIndex, 1);
         const newExercise = {...exercise, sets};
         updateExercise(index, newExercise);
     }
-    const completedSet = (setIndex) => {
+    const completedSet = (setIndex, haptic=true) => {
+        
+        
         exercise.tracks.forEach(track => {
             if (!exercise.sets[setIndex][track]) {
                 exercise.sets[setIndex][track] = getSetValueBefore(setIndex, track);
             }
         })
-        exercise.sets[setIndex].complete = exercise.sets[setIndex].complete ? false : true;
+        const bool = exercise.sets[setIndex].complete;
+        exercise.sets[setIndex].complete = bool ? false : true;
+        if (haptic) bool ? Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft) : Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         const newExercise = {...exercise, sets: exercise.sets};
+        // 1RM
+        if (newExercise.tracks.includes('weight') && newExercise.tracks.includes('reps')) {
+            const value = calculate1RM(newExercise)
+            setOneRepMax(value);
+        }
         updateExercise(index, newExercise);
     }
     const addSet = (amount = 3) => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        // Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        // Haptics.selectionAsync();
+
         const sets = exercise.sets;
         
         if (amount === 0) { // Remove all sets
@@ -106,14 +153,16 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         const allChecked = !exercise.sets.map(s => s.complete || false).includes(false);
         if (allChecked) {
             // Uncheck all
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
             sets = sets.map(s => {
                 s.complete = false;
                 return s;
             });
         } else {
             // Check all
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             sets.forEach((s, i) => {
-                if (!s.complete) completedSet(i);
+                if (!s.complete) completedSet(i, false);
             });
             return; // Return because the function updates already
         }
@@ -138,6 +187,11 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
             set[track] = JSON.stringify(parseFloat(value));
         }
         const newExercise = {...exercise, sets};
+        // 1RM
+        if (newExercise.tracks.includes('weight') && newExercise.tracks.includes('reps')) {
+            const value = calculate1RM(newExercise)
+            setOneRepMax(value);
+        }
         updateExercise(index, newExercise);
     }
 
@@ -284,7 +338,6 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
 
     const updateTimeValue = (unit="seconds", value) => {
         const { setIndex, track } = focusedInput;
-        console.log(setIndex);
         const {hours, minutes, seconds} = minutesToHMS(exercise.sets[setIndex][track]);
         let totalMinutes;
         switch (unit) {
@@ -303,11 +356,28 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         updateValue(setIndex, track, totalMinutes);
     }
 
+    const show1RMhint = () => {
+
+        setConfirmMenuData({
+            title: "Your One-Rep Max  (1RM)",
+            subTitle: "This value is an estimate based on your weight and rep count that represents the maximum weight you could lift for one repetition.",
+            subTitle2: "",
+            option1: "Got it!",
+            option1color: "#546FDB",
+            confirm: () => setConfirmMenuActive(false),
+        });
+        setConfirmMenuActive(true);
+        
+    }
+
     const { setIndex: sI, track: trk } = focusedInput;
     const {hours: initialPopupHourValue, minutes: initialPopupMinuteValue, seconds: initialPopupSecondValue,} = minutesToHMS(sI === null ? 0 : exercise.sets[sI][trk]);
 
+    
+    
+
     return (
-    <View layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} style={[{backgroundColor: activeWorkoutStyle ? "#2A2A2A":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10,}, false && {height: 40}]} {...props}>
+    <Animated.View layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} style={[{backgroundColor: activeWorkoutStyle ? "#2A2A2A":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10,}, false && {height: 40}]} {...props}>
         {openExercise && (
                 <Portal >
                     <Animated.View entering={FadeIn} exiting={FadeOut} style={{flex: 1, backgroundColor: "rgba(0,0,0,0.5)", position: "absolute", width: screenWidth, height: screenHeight, zIndex: 2}} >
@@ -324,6 +394,8 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                 </Portal>
                 
                 )}
+
+        <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
 
         <PopupSheet active={timeKeyboardVisible} setActive={(val) =>  {setTimeKeyboardVisible(val); setFocusedInput({ setIndex: null, track: null })}}>
             <View style={{flexDirection: "row", justifyContent: "center"}}>
@@ -387,8 +459,9 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                 
         </View>
 
-        {/* All content minus the header to fade out for sorting */}
-        {true && (<View> 
+        {/* {!dragActive && ( */}
+        {true && (
+        <Animated.View layout={LinearTransition} entering={FadeIn} exiting={FadeOut}> 
             {(showNote || exercise.note) ? (<View layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
                 <TextInput style={{color: activeWorkoutStyle ? "#A4A4A4" : "white", fontSize: 16, paddingVertical: 10, paddingHorizontal: 0}} multiline={true} ref={noteRef} value={exercise.note} onChangeText={updateNote} onEndEditing={() => exercise.note ? null : setShowNote(false)} />
             </View>) : null}
@@ -483,7 +556,8 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                     </View>
                 </View>) : null}
                 {/* Add set */}
-                <View layout={LinearTransition} style={{flex: 1}}>
+                <View layout={LinearTransition} style={{flex: 1,}}>
+
                     <Pressable onPress={() => {addSet(1)}} style={{paddingVertical: 5, paddingHorizontal: 25, backgroundColor: activeWorkoutStyle?Colors.primaryBlue:"#2D2D2D", alignSelf: 'center', marginTop: 10, marginBottom: 5, borderRadius: 999999}}>
                         <Text style={{color: "white", fontSize: 15, fontWeight: 500}}>Add Set</Text>
                     </Pressable>
@@ -494,15 +568,24 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                             {title: "Remove all sets", icon: trashIcon, onPress: () => {addSet(0)}},
                             ]} />
                     </View> */}
+                    
+                    {/* 1RM */}
+                    {oneRepMax && (
+                    <Animated.View entering={FadeIn} exiting={FadeOut} style={{position: "absolute", left: 0, top: 0, bottom: 0, justifyContent: "center"}}>
+                        <Pressable onPress={show1RMhint} style={[{borderRadius: 999,  paddingHorizontal: 7, justifyContent: "center", alignItems: "center", marginHorizontal: 5, marginRight: 10, marginBottom: -5,  }]}>
+                            <Text style={{ color: "#bbbbbbff", fontSize: 10, fontWeight: "800"  }} >{"1RM"}</Text>
+                            <Text style={{ color: "white", fontSize: 18, marginTop: -5, }} >{parseInt(oneRepMax)}</Text>
+                        </Pressable>
+                    </Animated.View>)}
                 </View>
                 
                 
             </View>
-        </View>)}
+        </Animated.View >)}
 
         
 
-    </View>
+    </Animated.View>
   )
 }
 

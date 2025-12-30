@@ -9,7 +9,7 @@ import sinceWhen from '../../util/sinceWhen'
 import fillDailyData from '../../util/fillDailyData'
 // import fillDailyData from '../util/fillDailyData'
 
-const EnergyBalanceGraph = ({fullWidget = false, fillWidth=false, fillDaily=null, data=[], dates = [], calorieData=[], calorieDates=[], showWarning = false, initialSectionIndex=0, showDecimals=0, onPress = () => {}, disablePress=false, animationDuration=0, hideFooter=false, ...props}) => {
+const EnergyBalanceGraph = ({fullWidget = false, fillWidth=false, fillDaily=null, data=[], dates = [], calorieData=[], calorieDates=[], showWarning = false, initialSectionIndex=0, showDecimals=0, onPress = () => {}, disablePress=false, animationDuration=0, hideFooter=false, premiumIndexs=[1, 2], ...props}) => {
 
     const oriData = JSON.parse(JSON.stringify(data));
     const oriDates = JSON.parse(JSON.stringify(dates));
@@ -138,7 +138,7 @@ const EnergyBalanceGraph = ({fullWidget = false, fillWidth=false, fillDaily=null
 
         <View style={{ paddingRight: backGridRightOffset, marginLeft: fullWidget ? 10 : 5, marginBottom: fullWidget ? 50 : 20, width: "100%", zIndex: 1}} onLayout={(e) => setGraphHeight(e.nativeEvent.layout.height) }>
             {/* SVG graph */}
-            <LineGraph style={{zIndex: 1}} data={data} color={props.color} duration={animationDuration} otherMaxValue={maxDataValue} otherMinValue={0} aspectRatio={fullWidget ? 1/2 : 1/4} strokeWidth={strokeWidth} dashed={true} />
+            <LineGraph style={{zIndex: 1}} data={data} color={props.color} duration={animationDuration} otherMaxValue={maxDataValue} otherMinValue={0} aspectRatio={fullWidget ? 1/2 : 1/4} strokeWidth={ strokeWidth} dashed={true} />
 
             {/* Back grid Three data horizontal line */}
             <View style={{ paddingVertical: backGridTopOffset, paddingRight: backGridRightOffset, zIndex: -1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", justifyContent: "space-between", alignItems: "center"}}>
@@ -193,8 +193,9 @@ const EnergyBalanceGraph = ({fullWidget = false, fillWidth=false, fillDaily=null
             <View style={{ paddingVertical: backGridTopOffset, paddingRight: backGridRightOffset, zIndex: -1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end"}}>
                 {calorieData.map((v, i) => {
                     const height = (calorieData[i]/maxDataValue) * graphHeight;
+                    const space = [5, 2, 0];
                     return (
-                        <View key={i} style={{height, width: 5, backgroundColor: Colors.primaryBlue, borderRadius: 99999, position: "relative", top: 0, left: 0, transform: [{translateY: -2*backGridTopOffset}],}} >
+                        <View key={i} style={{height, marginHorizontal: space[sectionOptions.indexOf(section)], flex: 1, backgroundColor: Colors.primaryBlue, borderRadius: 99999, position: "relative", top: 0, left: 0, transform: [{translateY: -2*backGridTopOffset}],}} >
                     
                         </View>
                     )
@@ -233,6 +234,7 @@ const EnergyBalanceGraph = ({fullWidget = false, fillWidth=false, fillDaily=null
             section={section}
             setSection={setSection}
             sections={sectionOptions}
+            premiumIndexs={premiumIndexs}
             />
         </View>)}
 

@@ -21,12 +21,20 @@ import findInsertIndex from '../../util/findInsertIndex'
 import fillDailyData from '../../util/fillDailyData'
 import sendData from '../../util/server/sendData'
 import { useBottomSheet } from '../../context/BottomSheetContext'
+import calculateCalories from '../../util/calculateNutrition/calculateCalories'
+import calculateProtein from '../../util/calculateNutrition/calculateProtein'
+import calculateCarbs from '../../util/calculateNutrition/calculateCarbs'
+import calculateFat from '../../util/calculateNutrition/calculateFat'
+import { Colors } from '../../constants/Colors'
+import calculateExpenditure from '../../util/calculateExpenditure'
+import EnergyBalanceGraph from '../../components/nutrition/EnergyBalanceGraph'
 
 const screenWidth = Dimensions.get('screen').width;
 
-const firstCapital = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const firstCapital = (str = '') =>
+  str
+    .toLowerCase()
+    .replace(/\b\w/g, char => char.toUpperCase());
 
 
 const ProgressExpanded = () => {
@@ -39,10 +47,12 @@ const ProgressExpanded = () => {
 
   const wi = user.tracking.logging[w.category] || user.tracking.insights[w.category] || w;
 
+  console.log(w.data);
+
   const fillDaily = params.fillDaily ?? null;
 
   let widget;
-  if (w.layout === 'exercise') {
+  if (w.layout === 'blank') {
     widget = w;
   } else {
     widget = {
@@ -325,6 +335,39 @@ const ProgressExpanded = () => {
 
     }
   }
+
+  
+  if (widget.layout === "calorie") {
+    const calorieCalculation = calculateCalories(user, 30 * 6);
+    widget.calculatedData = calorieCalculation.data;
+    widget.calculatedDates = calorieCalculation.dates;
+
+    widget.unit = "kcal";
+
+    const proteinCount = calculateProtein(user, 30*6);
+    widget.proteinData = proteinCount.data;
+    widget.proteinDates = proteinCount.dates;
+    
+    const carbCount = calculateCarbs(user, 30*6);
+    widget.carbData = carbCount.data;
+    widget.carbDates = carbCount.dates;
+    
+    const fatCount = calculateFat(user, 30*6);
+    widget.fatData = fatCount.data;
+    widget.fatDates = fatCount.dates;
+    
+  }
+
+  if (widget.layout === "energy balance") {
+    const calorieCalculation = calculateCalories(user, 30 * 6);
+    widget.calorieData = calorieCalculation.data;
+    widget.calorieDates = calorieCalculation.dates;
+
+    const expenditureCalculation = calculateExpenditure(user);
+    widget.expenditureData = expenditureCalculation.data;
+    widget.expenditureDates = expenditureCalculation.dates;
+  }
+
   let calResting = false;
   let calExercising = false;
   let calWalkingSteps = false;
@@ -468,23 +511,92 @@ const ProgressExpanded = () => {
 
             </View>
           )}
+
+          {widget.layout === "energy balance" ? (
+            <View style={{marginTop: 20, flex: 1, }}>
+              <EnergyBalanceGraph
+                  fullWidget={true}
+                  data={widget.expenditureData}
+                  dates={widget.expenditureDates}
+                  calorieData={widget.calorieData}
+                  calorieDates={widget.calorieDates}
+                  title={"Energy Balance"}
+                  color={Colors.primaryOrange}
+                  disablePress={true}
+                  titleStyles={{fontWeight: "800", color: "white", fontSize: 16, marginBottom: -3}}
+                  hideFooter={true}
+                  animationDuration={0}
+              />
+            </View>
+          ) : (
+            <View style={{marginTop: 20, flex: 1, }}>
+              <GraphWidget
+                
+                data={widget.calculatedData || widget.data.map((item) => item.amount)}
+                dates={widget.calculatedDates || widget.data.map((item) => item.date)}
+                title={firstCapital(widget.title || widget.category)}
+                unit={widget.unit}
+                color={widget.color || "#546FDB"}
+                fullWidget={true}
+                showWarning={blockExpenditure}
+                zeroMissingData={widget.zeroMissingData}
+                showDecimals={(widget.category === "expenditure" || widget.category === "energy intake") ? 0 : 2}
+                animationDuration={1000}
+                fillDaily={fillDaily}
+              />
+            </View>
+          )}
           
-          <View style={{marginTop: 20, flex: 1, }}>
-            <GraphWidget
-              
-              data={widget.calculatedData || widget.data.map((item) => item.amount)}
-              dates={widget.calculatedDates || widget.data.map((item) => item.date)}
-              title={firstCapital(widget.category)}
-              unit={widget.unit}
-              color={widget.color || "#546FDB"}
-              fullWidget={true}
-              showWarning={blockExpenditure}
-              zeroMissingData={widget.zeroMissingData}
-              showDecimals={widget.category === "expenditure" ? 0 : 2}
-              animationDuration={1000}
-              fillDaily={fillDaily}
-            />
-          </View>
+          
+
+          {widget.layout === "calorie" && (
+            <View>
+              <View style={{marginTop: 20, flex: 1, }}>
+                <GraphWidget
+                  
+                  data={widget.proteinData}
+                  dates={widget.proteinDates}
+                  title={"Protein"}
+                  unit={"g"}
+                  color={Colors.protein}
+                  fullWidget={true}
+                  showDecimals={2}
+                  animationDuration={1000}
+                  premiumLock={!user.premium}
+                />
+              </View>
+              <View style={{marginTop: 20, flex: 1, }}>
+                <GraphWidget
+                  
+                  data={widget.carbData}
+                  dates={widget.carbDates}
+                  title={"Carbs"}
+                  unit={"g"}
+                  color={Colors.carbs}
+                  fullWidget={true}
+                  showDecimals={2}
+                  animationDuration={1000}
+                  premiumLock={!user.premium}
+
+                />
+              </View>
+              <View style={{marginTop: 20, flex: 1, }}>
+                <GraphWidget
+                  
+                  data={widget.fatData}
+                  dates={widget.fatDates}
+                  title={"Fat"}
+                  unit={"g"}
+                  color={Colors.fat}
+                  fullWidget={true}
+                  showDecimals={2}
+                  animationDuration={1000}
+                  premiumLock={!user.premium}
+                />
+              </View>
+            </View>
+            
+          )}
 
           {widget.layout === "bmi" && (
             <View>

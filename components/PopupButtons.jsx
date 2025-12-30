@@ -4,6 +4,7 @@ import { Colors } from '../constants/Colors'
 import { Portal } from 'react-native-paper';
 import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown, SlideInDown, SlideOutDown } from 'react-native-reanimated';
 import xIcon from "../assets/icons/whiteX.png"
+import * as Haptics from 'expo-haptics';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
@@ -27,6 +28,7 @@ const PopupButtons = forwardRef(({
     }))
 
     const closeMenu = () => {
+        Haptics.selectionAsync();
         setActive(!active);
         setParentActive(!active)
     }

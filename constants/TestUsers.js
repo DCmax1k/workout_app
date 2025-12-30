@@ -38,7 +38,13 @@ const USER = {
               credits: 30,
               lastReset: Date.now(),
           }
-      }
+      },
+      preferences: {
+        heightUnit: "feet", // feet, cm
+        liftUnit: "imperial", // metric, imperial
+        distanceUnit: "imperial", // metric, imperial
+        systemTheme: "dark", // light, dark, system
+      },
     },
 
     premiumSubscription: {
@@ -65,7 +71,7 @@ const USER = {
       achievementAmount: 0,
     },
     settings: {
-      preferences: {
+      preferences: { // MOVED TO extraDetails
         heightUnit: "feet", // feet, cm
         liftUnit: "lbs" // lbs, kgs
       },

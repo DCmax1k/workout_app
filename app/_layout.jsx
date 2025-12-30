@@ -141,7 +141,7 @@ const RootLayout = () => {
                   <Stack.Screen name="(nutritionScreens)/savedMeals" options={{ headerShown: false }} />
                   <Stack.Screen name="(nutritionScreens)/editFood" options={{ headerShown: false, gestureEnabled: false }} />
                   <Stack.Screen name="(nutritionScreens)/editMeal" options={{ headerShown: false, gestureEnabled: false }} />
-                  <Stack.Screen name="(nutritionScreens)/addFood" options={{ headerShown: false, animation: "slide_from_bottom", animationDuration: 150 }} />
+                  <Stack.Screen name="(nutritionScreens)/addFood" options={{ headerShown: false, animation: "slide_from_bottom", animationDuration: 200 }} />
                   {/* <Stack.Screen name="(nutritionScreens)/editPlate" options={{ headerShown: false }} /> */}
                   <Stack.Screen name="viewProfile" options={{ headerShown: false}} />
                   <Stack.Screen name="premiumAd" options={{ headerShown: false, animation: "slide_from_bottom", presentation: "transparentModal", contentStyle: {backgroundColor: "transparent"}, }} />

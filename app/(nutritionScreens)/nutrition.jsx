@@ -38,6 +38,7 @@ import EnergyBalanceGraph from '../../components/nutrition/EnergyBalanceGraph'
 import calculateExpenditure from '../../util/calculateExpenditure'
 import sendData from '../../util/server/sendData'
 import { useBottomSheet } from '../../context/BottomSheetContext'
+import * as Haptics from 'expo-haptics';
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -304,6 +305,7 @@ const Nutrition = () => {
     }
 
     const startNewPlate = () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         const newPlateData = {name: "New Plate", id: generateUniqueId(), foods: [] };
         updateUser({editActivePlate: newPlateData});
         // router.push({
@@ -317,6 +319,7 @@ const Nutrition = () => {
         }, 600  )
     }
     const useSavedPlate = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         router.push("/savedMeals")
     }
     const resumePlate = () => {
@@ -391,6 +394,45 @@ const Nutrition = () => {
         })
     }
 
+    const openCalorieExpanded = () => {
+
+        const data = {
+            title: "Calories",
+            layout: "calorie",
+            category: "energy intake",
+            data: [],
+            calculatedData: calorieData,
+            calculatedDates: calorieDates,
+            color: Colors.primaryBlue,
+        }
+        router.push({
+            pathname: "/progressExpanded",
+            params: {
+                data: JSON.stringify(data),
+            },
+        });
+          
+    }
+
+    const openEnergyBalanceExpanded = () => {
+
+        const data = {
+            layout: "energy balance",
+            category: "energy balance",
+            data: [],
+            calculatedData: calorieData,
+            calculatedDates: calorieDates,
+            color: Colors.primaryBlue,
+        }
+        router.push({
+            pathname: "/progressExpanded",
+            params: {
+                data: JSON.stringify(data),
+            },
+        });
+          
+    }
+
     const caloriesGraphHeight = Platform.OS==="ios"?205:210;
 
     return (
@@ -417,7 +459,7 @@ const Nutrition = () => {
 
             {floatingButtonActive && (
                 <Animated.View style={[{height: screenHeight, width: screenWidth, backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1}, StyleSheet.absoluteFill]} entering={FadeIn} exiting={FadeOut}>
-                    <Pressable onPress={() => closeFloatingButton()} style={StyleSheet.absoluteFill} />
+                    <Pressable onPress={() => { closeFloatingButton()}} style={StyleSheet.absoluteFill} />
                 </Animated.View>
             )}
             {/* Floating footer button */}
@@ -450,12 +492,12 @@ const Nutrition = () => {
                     <Spacer height={10} />
                     <PageSwiper ref={pageSwiperRef} width={screenWidth} height={caloriesGraphHeight+30} >
                         <View style={{height: caloriesGraphHeight, width: pageSwipeWidth}}>
-                            <Pressable style={{flex: 1}} onPress={showComingSoonMessage}>
+                            <Pressable style={{flex: 1}} onPress={openCalorieExpanded}>
                                 <GraphWidget
                                     fillWidth={true}
                                     data={calorieData}
                                     dates={calorieDates}
-                                    title={"Energy Intake"}
+                                    title={"Calories"}
                                     subtitle={"Last 30 days"}
                                     unit={"/" + colorieGoal + " calories"}
                                     color={"#546FDB"}
@@ -470,7 +512,7 @@ const Nutrition = () => {
                             
                         </View>
                         <View style={{height: caloriesGraphHeight, width: pageSwipeWidth}}>
-                            <Pressable style={{flex: 1}} onPress={showComingSoonMessage}>
+                            <Pressable style={{flex: 1}} onPress={openEnergyBalanceExpanded}>
                                 <EnergyBalanceGraph
                                     fillWidth={true}
                                     data={expenditureData.data}
@@ -502,7 +544,7 @@ const Nutrition = () => {
                         {/* Macros */}
                         <ThemedText style={ [{fontSize: 15, fontWeight: "700"}]} >Macros</ThemedText>
                         <Spacer height={10} />
-                        <View style={[styles.widgetCont, { paddingVertical: 20, paddingHorizontal: 10}]}>
+                        <Pressable onPress={openCalorieExpanded} style={[styles.widgetCont, { paddingVertical: 20, paddingHorizontal: 10}]}>
                             <View style={{width: "100%", flexDirection: "row", justifyContent: "space-around"}}>
                                 {/* Protein ring */}
                                 <View style={{alignItems: "center"}}>
@@ -557,7 +599,7 @@ const Nutrition = () => {
                                 </View>
                                 
                             </View>
-                        </View>
+                        </Pressable>
                         
                         <Spacer height={30} />
 

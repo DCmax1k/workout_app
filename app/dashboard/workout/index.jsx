@@ -24,6 +24,7 @@ import { useBottomSheet } from '../../../context/BottomSheetContext'
 import { useIsFocused } from '@react-navigation/native'
 import Search from '../../../components/Search'
 import sendData from '../../../util/server/sendData'
+import * as Haptics from 'expo-haptics';
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -75,9 +76,11 @@ const IndexWorkout = () => {
     const openWorkout = (workout) => {
       setSelectedWorkout(workout);
       setModalVisible(true);
+      Haptics.selectionAsync();
     }
 
     const createNewWorkout = () => {
+      
       const newWorkoutData = {name: "New workout", id: generateUniqueId(), exercises: [] };
       updateUser({editActiveWorkout: newWorkoutData});
       router.push({
@@ -87,6 +90,7 @@ const IndexWorkout = () => {
           autoSelectName: true,
         }
       });
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
 
     

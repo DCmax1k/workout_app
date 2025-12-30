@@ -11,22 +11,26 @@ import { Portal } from 'react-native-paper';
 import Spacer from './Spacer';
 import { Colors } from '../constants/Colors';
 import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const ConfirmMenu = ({ style, active, setActive, data, ...props }) => {
 
     const closeAndConfirm = () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         setActive(false);
         data.confirm();
     }
 
     const closeAndCancel = () => {
+      Haptics.selectionAsync();
       setActive(false);
       data.goback ? data.goback() : null;
     }
 
     const selectOptionThree = () => {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setActive(false);
       data.option3onPress ? data.option3onPress() : null;
     }

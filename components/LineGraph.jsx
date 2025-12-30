@@ -208,6 +208,7 @@ const LineGraph = ({
   const svgLine = lineFn(data);
 
   useEffect(() => {
+    
     if (width === 0 || !pathRef.current) return;
 
     // measure on next tick

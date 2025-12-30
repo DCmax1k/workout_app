@@ -12,7 +12,7 @@ import AIButton from './AIButton'
 import { LinearGradient } from 'expo-linear-gradient'
 // import fillDailyData from '../util/fillDailyData'
 
-const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=[], dates = [], showWarning = false, initialSectionIndex=0, showDecimals=2, onPress = () => {}, disablePress=false, animationDuration=0, hideFooter=false, premiumLock=false, onPremiumLockPress=() => router.navigate('/premiumAd'), ...props}) => {
+const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=[], dates = [], showWarning = false, initialSectionIndex=0, showDecimals=2, onPress = () => {}, disablePress=false, animationDuration=0, hideFooter=false, premiumLock=false, onPremiumLockPress=() => router.navigate('/premiumAd'), premiumIndexs=[1, 2], ...props}) => {
 
     const oriData = JSON.parse(JSON.stringify(data));
     const oriDates = JSON.parse(JSON.stringify(dates));
@@ -148,11 +148,11 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
             <Pressable onPress={onPremiumLockPress} style={[StyleSheet.absoluteFill, { zIndex: 10}]}>
                 <LinearGradient
                     style={[ StyleSheet.absoluteFill]}
-                    colors={["#6c89ffa6", "#c030b2a6"]}
+                    colors={["#6c89ff80", "#c030b280"]}
                     start={{ x: 0, y: 0 }} 
                     end={{ x: 1, y: 1 }}
                 >
-                    <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", backgroundColor: "#000000af"}]}>
+                    <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center", backgroundColor: "#00000080"}]}>
                         <AIButton onPress={onPremiumLockPress} title={"Unlock with Premium"} quickIcon={1} imageSize={30} borderRadius={100} paddingHorizontal={5} height={45} />
                     </View>
                 </LinearGradient>
@@ -274,6 +274,7 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
             section={section}
             setSection={setSection}
             sections={sectionOptions}
+            premiumIndexs={premiumIndexs}
             />
         </View>)}
 

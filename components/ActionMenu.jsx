@@ -12,6 +12,7 @@ import { Portal } from 'react-native-paper';
 import threeEllipses from '../assets/icons/threeEllipses.png';
 import Animated, { FadeIn, FadeOut, LightSpeedInRight, withDelay, withSpring, withTiming, ZoomInRight, ZoomOutRight } from 'react-native-reanimated';
 import { transform } from 'typescript';
+import * as Haptics from 'expo-haptics';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 const MENU_WIDTH = 250;
@@ -50,6 +51,8 @@ const ActionMenu = ({ data, backgroundColor, icon=threeEllipses, title="", style
   const [menuMeasured, setMenuMeasured] = useState(false);
 
   const openMenu = () => {
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
 
     if (!menuMeasured) {
       console.log("Menu not measured"); // Recreate by holding grip drag but no moving

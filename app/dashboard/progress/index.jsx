@@ -63,7 +63,7 @@ const IndexProgress = () => {
 
   const openProgressExpandedExercise = (exercise, exerciseData) => {
     const data = {
-      layout: "exercise",
+      layout: "blank",
       category: exercise.name,
       data: exerciseData,
       color: Colors.primaryOrange,
@@ -341,6 +341,7 @@ const IndexProgress = () => {
                           disablePress={true}
                           fillDaily={"last"}
                           premiumLock={!user.premium}
+                          
                         />
                       )}
 
