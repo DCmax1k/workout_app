@@ -279,10 +279,10 @@ const Profile = () => {
     }
 
     const displayUserHeight = (height) => {
-      if (user.settings.preferences.heightUnit === "feet") {
+      if (user.extraDetails.preferences.heightUnit === "imperial") {
         const {feet, inches} = cmToFeetInches(height);
         return `${feet}'${inches}"`;
-      } else if (user.settings.preferences.heightUnit === "cm") {
+      } else if (user.extraDetails.preferences.heightUnit === "metric") {
         return height ? parseInt(height) : "- -"
       } else {
         return null;
@@ -362,7 +362,7 @@ const Profile = () => {
               
               <View >
                 {/* Both sides */}
-                {user.settings.preferences.heightUnit === "feet" && (
+                {user.extraDetails.preferences.heightUnit === "imperial" && (
                   <Animated.View entering={FadeIn} exiting={FadeOut} style={{flexDirection: "row", justifyContent: "center"}}>
                     <View style={{alignItems: "center"}}>
                       <ThemedText title={true} style={{fontSize: 20, fontWeight: "800"}}>Feet</ThemedText>
@@ -392,7 +392,7 @@ const Profile = () => {
                     
                   </Animated.View>
                 )}
-                {user.settings.preferences.heightUnit === "cm" && (
+                {user.extraDetails.preferences.heightUnit === "metric" && (
                   <Animated.View entering={FadeIn} exiting={FadeOut}>
                     <View style={{alignItems: "center"}}>
                         <ThemedText title={true} style={{fontSize: 20, fontWeight: "800"}}>Centimeters</ThemedText>
@@ -412,10 +412,10 @@ const Profile = () => {
                 <Spacer height={20} />
                 {/* Feet or centimeters options */}
                 <View style={{flexDirection: "row", justifyContent: "space-between"}}>
-                  <Pressable onPress={() => updateUser({settings: {preferences: {heightUnit: "feet"}}})} style={{flex: 1, marginRight: 5,  height: 60, backgroundColor: user.settings.preferences.heightUnit === "feet" ? "#546FDB" : "#595959", borderRadius: 15, justifyContent: 'center', alignItems: "center", position: "relative"}}>
+                  <Pressable onPress={() => updateUser({extraDetails: {preferences: {heightUnit: "imperial"}}})} style={{flex: 1, marginRight: 5,  height: 60, backgroundColor: user.extraDetails.preferences.heightUnit === "imperial" ? "#546FDB" : "#595959", borderRadius: 15, justifyContent: 'center', alignItems: "center", position: "relative"}}>
                     <Text style={{color: "white", fontSize: 20, fontWeight: "700", }}>ft / in</Text>
                   </Pressable>
-                  <Pressable onPress={() => updateUser({settings: {preferences: {heightUnit: "cm"}}})} style={{flex: 1, marginLeft: 5, height: 60, backgroundColor: user.settings.preferences.heightUnit === "cm" ? "#546FDB" : "#595959", borderRadius: 15, justifyContent: 'center', alignItems: "center", position: "relative"}}>
+                  <Pressable onPress={() => updateUser({extraDetails: {preferences: {heightUnit: "metric"}}})} style={{flex: 1, marginLeft: 5, height: 60, backgroundColor: user.extraDetails.preferences.heightUnit === "metric" ? "#546FDB" : "#595959", borderRadius: 15, justifyContent: 'center', alignItems: "center", position: "relative"}}>
                     <Text style={{color: "white", fontSize: 20, fontWeight: "700", }}>cm</Text>
                   </Pressable>
                 </View>
@@ -485,7 +485,7 @@ const Profile = () => {
                     <View style={{flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 10}}>
                       <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", height: 20,}}>
                         <ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 20, height: 20, textAlign: "center", color: "white", fontWeight: '800'}}>{displayUserHeight(user.settings.height)}</ThemedText>
-                        {user.settings.preferences.heightUnit==="cm" && (<ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 10, height: 20, textAlign: "center", marginTop: 12, color: "#979797", fontWeight: '800'}}>cm</ThemedText>)}
+                        {user.extraDetails.preferences.heightUnit==="metric" && (<ThemedText adjustsFontSizeToFit={true} numberOfLines={1} style={{fontSize: 10, height: 20, textAlign: "center", marginTop: 12, color: "#979797", fontWeight: '800'}}>cm</ThemedText>)}
                       </View>
                     </View>
                   </View>

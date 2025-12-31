@@ -40,9 +40,9 @@ const USER = {
           }
       },
       preferences: {
-        heightUnit: "feet", // feet, cm
         liftUnit: "imperial", // metric, imperial
         distanceUnit: "imperial", // metric, imperial
+        heightUnit: "imperial", // feet, cm
 
         // Theme
         systemTheme: "dark", // light, dark, system

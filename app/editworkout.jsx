@@ -146,8 +146,13 @@ const EditWorkout = () => {
   const addExercises = (exerciseIds) => { // [exerciseId,]
     const completeExercises = exerciseIds.map(id => {
       const finding = allExercises.find(ex => ex.id === id);
-      if (finding.sets) return finding;
-      else return {...finding, sets: [], uniqueId: generateUniqueId(),} // unique id for sorting purposes
+      //if (finding.sets) return finding;
+      const prefs = user.extraDetails.preferences;
+      const newExercise = {...finding, sets: [], uniqueId: generateUniqueId(), }; // unique id for sorting purposes, and global unit
+      if (newExercise.tracks.includes('weight') || newExercise.tracks.includes('weightPlus') || newExercise.tracks.includes('mile')) {
+        newExercise.unit = newExercise.tracks.includes('mile') ? prefs.distanceUnit : prefs.liftUnit;
+      }
+      return newExercise;
     });
     const exercisesAddedTo = [...exercises, ...completeExercises];
     updateWorkout({exercises: exercisesAddedTo});

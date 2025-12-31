@@ -240,6 +240,11 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
 
     const switchUnit = () => {
         const newUnit = exercise.unit === "metric" ? "imperial" : "metric";
+        // CALCULATE VALUES WHEN CHANGE
+        // CALCULATE VALUES WHEN CHANGE
+        // CALCULATE VALUES WHEN CHANGE
+        // CALCULATE VALUES WHEN CHANGE
+        // CALCULATE VALUES WHEN CHANGE
         const newExercise = {...exercise, unit: newUnit,};
         updateExercise(index, newExercise);
     }
