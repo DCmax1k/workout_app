@@ -300,7 +300,7 @@ const Profile = () => {
 
     const actionMenuOptions = [
       {title: "Edit Profile", icon: pencilIcon, onPress: () => router.push("/dashboard/home/editProfile"),},
-      {title: "Preferences", icon: null, onPress: openPreferences,},
+      {title: "User Preferences", icon: null, onPress: openPreferences,},
       {title: "Account Recovery", icon: null, onPress: openAccountRecovery,},
       {title: "Sign Out",  onPress: signOut,},
     ];

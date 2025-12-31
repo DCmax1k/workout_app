@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, Pressable, Dimensions, StyleSheet } from 'react-native';
 import { Portal } from 'react-native-paper';
 import Animated, { 
@@ -32,7 +32,7 @@ const formatTime = (totalSeconds) => {
         return `${m}:${displayS}`;
     };
 
-const Controls = ({ isRunning, onToggle, onSkip, onReset, onSetTime, onOffsetTime, isCompleted, seconds }) => {
+const Controls = ({ isRunning, onToggle, onSkip, onReset, onSetTime, onOffsetTime, isCompleted, seconds, restTimer }) => {
     return (
         <View style={styles.controlsContainer}>
             <Text style={styles.controlsTitle}>
@@ -68,6 +68,12 @@ const Controls = ({ isRunning, onToggle, onSkip, onReset, onSetTime, onOffsetTim
                     <Text style={styles.presetText}>1m</Text>
                 </TouchableScale>
             </View>
+            {restTimer && (
+                <View style={[styles.buttonRow, { marginTop: 15 , marginBottom: -30}]}>
+                    <Text style={[styles.buttonText, {fontWeight: "400", fontSize: 12}]}>Configure Rest Timer in User Preferences</Text>
+                </View>
+            )}
+            
         </View>
     );
 }
@@ -81,6 +87,7 @@ const TimerWidget = ({
     controlsPortalIndex = 0, 
     backgroundColor="transparent",
     activeScale=1.1,
+    restTimer=false,
     onTimerEnd = () => {},
     onSkip = () => {},
     ...props 
@@ -93,27 +100,51 @@ const TimerWidget = ({
     const [containerWidth, setContainerWidth] = useState(0);
     const [isCountdown, setIsCountdown] = useState(initialSeconds > 0);
 
+    const startTimeRef = useRef(Date.now());
+    const baseSecondsRef = useRef(initialSeconds);
+
     const animatedWidth = useSharedValue(0);
 
     useEffect(() => {
+        baseSecondsRef.current = initialSeconds;
+        setSeconds(initialSeconds);
+    }, [initialSeconds]);
+
+    useEffect(() => {
         let interval = null;
+
         if (isRunning && !isCompleted) {
+            startTimeRef.current = Date.now();
+
             interval = setInterval(() => {
-                setSeconds((prev) => {
-                    const nextVal = isCountdown ? prev - 1 : prev < 0 ? prev + 2 : prev + 1;
-                    
-                    if (isCountdown && nextVal <= 0) {
-                        clearInterval(interval);
-                        setIsRunning(false);
-                        setIsCompleted(true);
-                        setControlsActive(true);
-                        onTimerEnd();
-                        return 0;
+                const now = Date.now();
+                const delta = Math.floor((now - startTimeRef.current) / 1000);
+                
+                let nextVal;
+                if (isCountdown) {
+                    nextVal = baseSecondsRef.current - delta;
+                } else {
+                    // Corrected Logic: If starting from -1, the first second elapsed should result in 1.
+                    // Otherwise, it just adds the delta to the current base.
+                    if (baseSecondsRef.current === -1) {
+                        nextVal = -1 + (delta + 1); // delta of 0s = -1, delta of 1s = 1, delta of 2s = 2...
+                    } else {
+                        nextVal = baseSecondsRef.current + delta;
                     }
-                    return nextVal;
-                });
-            }, 1000);
+                }
+                
+                if (isCountdown && nextVal <= 0) {
+                    setSeconds(0);
+                    setIsRunning(false);
+                    setIsCompleted(true);
+                    setControlsActive(true);
+                    onTimerEnd();
+                } else {
+                    setSeconds(nextVal);
+                }
+            }, 100); 
         } else {
+            baseSecondsRef.current = seconds;
             clearInterval(interval);
         }
         return () => clearInterval(interval);
@@ -123,7 +154,7 @@ const TimerWidget = ({
         if (containerWidth > 0) {
             let targetWidth = containerWidth;
             if (isCountdown && totalSeconds > 0) {
-                targetWidth = containerWidth * (seconds / totalSeconds);
+                targetWidth = containerWidth * (Math.max(0, seconds) / totalSeconds);
             }
 
             if (seconds === totalSeconds || !isRunning) {
@@ -142,6 +173,8 @@ const TimerWidget = ({
     }));
 
     const handleSetTime = (secs) => {
+        baseSecondsRef.current = secs;
+        startTimeRef.current = Date.now();
         setSeconds(secs);
         setTotalSeconds(secs);
         setIsCountdown(true);
@@ -150,26 +183,24 @@ const TimerWidget = ({
     };
 
     const handleOffsetTime = (num) => {
-        setSeconds((prev) => {
-            const newSeconds = Math.max(0, prev + num);
-            
-            // If the new time is greater than the progress bar's current max, 
-            // update the max so the bar doesn't overflow or look broken.
-            if (newSeconds > totalSeconds) {
-                setTotalSeconds(newSeconds);
-            }
+        const newSeconds = Math.max(0, seconds + num);
+        baseSecondsRef.current = newSeconds;
+        startTimeRef.current = Date.now();
+        setSeconds(newSeconds);
 
-            // If we were completed but now have time, reset completion state
-            if (newSeconds > 0 && isCompleted) {
-                setIsCompleted(false);
-                setIsRunning(true);
-            }
+        if (newSeconds > totalSeconds) {
+            setTotalSeconds(newSeconds);
+        }
 
-            return newSeconds;
-        });
+        if (newSeconds > 0 && isCompleted) {
+            setIsCompleted(false);
+            setIsRunning(true);
+        }
     };
 
     const handleReset = () => {
+        baseSecondsRef.current = initialSeconds;
+        startTimeRef.current = Date.now();
         setSeconds(initialSeconds);
         setTotalSeconds(initialSeconds);
         setIsCountdown(initialSeconds > 0);
@@ -179,7 +210,9 @@ const TimerWidget = ({
 
     const handleSkip = () => {
         setIsRunning(false);
-        setSeconds(isCountdown ? 0 : seconds);
+        const finalSecs = isCountdown ? 0 : seconds;
+        baseSecondsRef.current = finalSecs;
+        setSeconds(finalSecs);
         setControlsActive(false);
         setIsCompleted(false);
         onSkip();
@@ -235,6 +268,7 @@ const TimerWidget = ({
                                         onSetTime={handleSetTime}
                                         onOffsetTime={handleOffsetTime}
                                         seconds={seconds}
+                                        restTimer={restTimer}
                                     />
                                 </Animated.View>
                             </Animated.View>
@@ -250,6 +284,7 @@ const TimerWidget = ({
                                 onSetTime={handleSetTime}
                                 onOffsetTime={handleOffsetTime}
                                 seconds={seconds}
+                                restTimer={restTimer}
                             />
                         </PopupSheet>
                     )
@@ -324,4 +359,3 @@ const styles = StyleSheet.create({
 });
 
 export default TimerWidget;
-

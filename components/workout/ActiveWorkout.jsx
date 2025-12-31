@@ -299,8 +299,8 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
             {/* <PaperProvider> */}
                 <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
                 
-                <BottomSheetHandle indicatorStyle={{backgroundColor: "transparent"}} style={{height: 100}}>
-                    <Animated.View style={[{flexDirection: "row", justifyContent: "space-between", alignItems: "center", position: "absolute", left: 0, top: 0, width: screenWidth, zIndex: 1, elevation: 1, }, animatedFinishOpacity]}>
+                <BottomSheetHandle indicatorStyle={{backgroundColor: "transparent"}} style={{height: 60}}>
+                    <Animated.View style={[{flexDirection: "row", justifyContent: "space-between", position: "absolute", left: 0, top: 0, width: screenWidth, zIndex: 1, elevation: 1, }, animatedFinishOpacity]}>
                         <View style={{ marginLeft: 10, width: 100}}>
                             <TimerWidget activeScale={1} style={{justifyContent: "center", alignItems: "center", height: "100%", borderRadius: 9999, borderColor: Colors.fat, borderWidth: 1}} backgroundColor={Colors.fat} autoStart={false} />
                         </View>
@@ -316,7 +316,9 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                     </Animated.View>
                 </BottomSheetHandle>
                 
+                <Animated.View style={[{height: screenHeight-150,}, animatedFinishOpacity]}>
 
+                
                 <DraggableFlatList
                     ListHeaderComponent={
                         <>
@@ -331,7 +333,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                             
                     }
                     style={{marginTop: 0, height: screenHeight-150,}}
-                    contentContainerStyle={{paddingBottom: 350}}
+                    contentContainerStyle={{paddingBottom: 350, paddingTop: 20}}
                     showsVerticalScrollIndicator={false}
                     data={exerciseFlatlistData}
                     onDragBegin={() => setIsDragging(true)}
@@ -375,7 +377,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                 >
 
                 </DraggableFlatList>
-                
+                </Animated.View>
 
                 
                 {/* {Platform.OS === 'ios' ? (
@@ -405,6 +407,8 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                     </Animated.View>
                 ))}
                 </Portal>
+
+                
 
             {/* </PaperProvider> */}
             

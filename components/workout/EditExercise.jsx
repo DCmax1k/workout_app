@@ -561,7 +561,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                         {timerActive && (
                             <View style={{alignItems: "center", width: "100%"}}>
                                 <Animated.View style={[{paddingVertical: 2, width: "100%"}]} layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut}>
-                                    <TimerWidget controlsPortalIndex={1} backgroundColor={Colors.fat} onSkip={() => setRestTimerIndex(null)} initialSeconds={user.extraDetails.preferences.restTimerAmount} textStyle={{fontSize: 16, color: "#fff"}} style={{ paddingHorizontal: 10, justifyContent: "center", alignItems: "center", borderRadius: 7, height: 26,}} />
+                                    <TimerWidget restTimer={true} controlsPortalIndex={1} backgroundColor={Colors.fat} onSkip={() => setRestTimerIndex(null)} initialSeconds={user.extraDetails.preferences.restTimerAmount} textStyle={{fontSize: 16, color: "#fff"}} style={{ paddingHorizontal: 10, justifyContent: "center", alignItems: "center", borderRadius: 7, height: 26,}} />
                                 </Animated.View>
                             </View>
                             

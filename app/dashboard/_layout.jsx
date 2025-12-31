@@ -241,7 +241,7 @@ const Dashboard = () => {
   
 
   const tabBarHeight = 115;
-  const activePreview = 85;
+  const activePreview = 75;
   const firstSnap = tabBarHeight+activePreview;
   const snapPoints = [firstSnap, 0.95*screenHeight];
 
