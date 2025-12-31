@@ -1,4 +1,4 @@
-import { Alert, Dimensions, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Dimensions, Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
@@ -301,7 +301,7 @@ const IndexProgress = () => {
                     <Pressable onPress={() => requestHideWidget(item.key)} style={{height: 30, width: 30, zIndex: 2, justifyContent: "center", alignItems: "center", position: "absolute", top: 5, right: 25}}>
                       <Image source={noEye} style={{objectFit: "contain", height: 17, width: 30, tintColor: "white", }} />
                     </Pressable>
-                    <TouchableOpacity
+                    <Pressable
                       onLongPress={drag}
                       disabled={isActive}
                       onPress={() => openProgressExpandedExercise(exercise, bestData)}
@@ -346,7 +346,7 @@ const IndexProgress = () => {
                       )}
 
 
-                    </TouchableOpacity>
+                    </Pressable>
                   </ScaleDecorator>
                 )}
 
@@ -356,7 +356,7 @@ const IndexProgress = () => {
                     <Pressable onPressIn={drag} style={{height: 30, width: 30, zIndex: 2, justifyContent: "center", alignItems: "center", position: "absolute", top: 0, left: 25}}>
                       <Image source={gripDots} style={{objectFit: "contain", height: 13, width: 30, tintColor: "#acacacff", }} />
                     </Pressable>
-                    <TouchableOpacity
+                    <Pressable
                       onLongPress={drag}
                       disabled={isActive}
                       onPress={() => openNutrition()}
@@ -365,7 +365,7 @@ const IndexProgress = () => {
                     <NutritionWidget
                       style={{marginBottom: 20}} drag={drag}
                     />
-                    </TouchableOpacity>
+                    </Pressable>
                   </ScaleDecorator>
                 ) 
 
@@ -404,7 +404,7 @@ const IndexProgress = () => {
                     <Pressable onPress={() => requestHideWidget(item.key)} style={{height: 30, width: 30, zIndex: 2, justifyContent: "center", alignItems: "center", position: "absolute", top: 5, right: 25}}>
                       <Image source={noEye} style={{objectFit: "contain", height: 17, width: 30, tintColor: "white", }} />
                     </Pressable>
-                    <TouchableOpacity
+                    <Pressable
                       onLongPress={drag}
                       disabled={isActive}
                       onPress={() => openProgressExpanded(item.key, widget)}
@@ -421,7 +421,7 @@ const IndexProgress = () => {
                       disablePress={true}
                       fillDaily={widget.fillDaily}
                     />
-                    </TouchableOpacity>
+                    </Pressable>
                   </ScaleDecorator>
                 )
               }}

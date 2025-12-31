@@ -7,6 +7,7 @@ import RightArrow from '../../assets/icons/rightArrow.png'
 import SectionSelect from '.././SectionSelect'
 import sinceWhen from '../../util/sinceWhen'
 import fillDailyData from '../../util/fillDailyData'
+import GraphScrubber from '../GraphScrubber'
 // import fillDailyData from '../util/fillDailyData'
 
 const EnergyBalanceGraph = ({fullWidget = false, fillWidth=false, fillDaily=null, data=[], dates = [], calorieData=[], calorieDates=[], showWarning = false, initialSectionIndex=0, showDecimals=0, onPress = () => {}, disablePress=false, animationDuration=0, hideFooter=false, premiumIndexs=[1, 2], ...props}) => {
@@ -137,6 +138,20 @@ const EnergyBalanceGraph = ({fullWidget = false, fillWidth=false, fillDaily=null
         <Spacer height={30} />
 
         <View style={{ paddingRight: backGridRightOffset, marginLeft: fullWidget ? 10 : 5, marginBottom: fullWidget ? 50 : 20, width: "100%", zIndex: 1}} onLayout={(e) => setGraphHeight(e.nativeEvent.layout.height) }>
+            {fullWidget && (
+                <GraphScrubber 
+                    dates={dates}
+                    max={maxDataValue}
+                    min={0}
+                    decimals={showDecimals}
+                    series={[
+                        { data: calorieData, color: Colors.primaryBlue, label: '' },
+                        { data: data, color: Colors.primaryOrange, label: '' }
+                    ]}
+                    style={{ zIndex: 10 }}
+                />
+            )}
+            
             {/* SVG graph */}
             <LineGraph style={{zIndex: 1}} data={data} color={props.color} duration={animationDuration} otherMaxValue={maxDataValue} otherMinValue={0} aspectRatio={fullWidget ? 1/2 : 1/4} strokeWidth={ strokeWidth} dashed={true} />
 
@@ -190,13 +205,14 @@ const EnergyBalanceGraph = ({fullWidget = false, fillWidth=false, fillDaily=null
             </View> */}
 
             {/* Calorie bars */}
-            <View style={{ paddingVertical: backGridTopOffset, paddingRight: backGridRightOffset, zIndex: -1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end"}}>
+            <View style={{ paddingVertical: backGridTopOffset, paddingRight: backGridRightOffset, paddingLeft: 20, zIndex: -1, position: "absolute", top: 0, left: -20, right: 0, bottom: 0, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end", }}>
                 {calorieData.map((v, i) => {
                     const height = (calorieData[i]/maxDataValue) * graphHeight;
-                    const space = [5, 2, 0];
+                    const space = [10, 5, 1];
+                    const width = space[sectionOptions.indexOf(section)];
                     return (
-                        <View key={i} style={{height, marginHorizontal: space[sectionOptions.indexOf(section)], flex: 1, backgroundColor: Colors.primaryBlue, borderRadius: 99999, position: "relative", top: 0, left: 0, transform: [{translateY: -2*backGridTopOffset}],}} >
-                    
+                        <View key={i} style={{height, width: 1, position: "relative",}} >
+                            <View style={{height, width, backgroundColor: Colors.primaryBlue, borderRadius: 99999, position: "absolute", left: -width/2}} />
                         </View>
                     )
                 })}

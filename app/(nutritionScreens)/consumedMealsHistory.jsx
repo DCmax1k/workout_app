@@ -31,6 +31,7 @@ import { generateUniqueId } from '../../util/uniqueId'
 import sendData from '../../util/server/sendData';
 import { useBottomSheet } from '../../context/BottomSheetContext';
 import ThemedText from '../../components/ThemedText';
+import TouchableScale from '../../components/TouchableScale';
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -93,6 +94,7 @@ const ConsumedMealHistory = () => {
         const newDaysMeals = [{...meal, id, date: date}, ...daysMeals];
         const newConsumedMeals = {...consumedMeals, [dateKey]: newDaysMeals};
         updateUser({consumedMeals: newConsumedMeals});
+        setPopupMenuActive(false);
         // Server request
         addMealToServer(meal, date, id);
     }
@@ -169,7 +171,8 @@ const ConsumedMealHistory = () => {
         
         )}
         <PopupSheet active={popupMenuActive} setActive={setPopupMenuActive}>
-            <ScrollView style={{flex: 1, maxHeight: 500 }} contentContainerStyle={{paddingBottom: 20, paddingTop: 20,}}>
+            <ScrollView style={{flex: 1, maxHeight: 500 }} contentContainerStyle={{paddingBottom: 20, paddingTop: 10,}}>
+                <ThemedText style={{textAlign: "center", marginBottom: 10}}>Saved Meals</ThemedText>
                 {filteredMeals.length === 0 && (
                     <ThemedText style={{paddingHorizontal: 50, paddingVertical: 20, textAlign: "center"}}>Find meals you save here!</ThemedText>
                 )}
@@ -177,10 +180,10 @@ const ConsumedMealHistory = () => {
                     return (
                         <Animated.View layout={LinearTransition.springify().damping(90) } entering={FadeInUp} exiting={SlideOutDown} key={meal.id}>
                             
-                                <Pressable onPress={() => addMealToDay(meal)} style={{marginBottom: 10, marginHorizontal: 20}}>
+                                <TouchableScale onPress={() => addMealToDay(meal)} style={{marginBottom: 10, marginHorizontal: 20}}>
                                        
                                     <ConsumedMealCard meal={meal} key={meal.id} style={{backgroundColor: "#464646ff"}} actionMenuData={null} />
-                                </Pressable>
+                                </TouchableScale>
                         </Animated.View>
                             
                     )
@@ -211,8 +214,7 @@ const ConsumedMealHistory = () => {
            
 
             <Spacer height={10} />
-            <ScrollView layout={LinearTransition.springify().damping(90)} style={{width: SCREEN_WIDTH, marginHorizontal: -20}} contentContainerStyle={{paddingBottom: 120, paddingTop: 10, alignItems: "center"}} showsVerticalScrollIndicator={false}>
-                <Spacer height={10} />
+            <ScrollView layout={LinearTransition.springify().damping(90)} style={{width: SCREEN_WIDTH, marginHorizontal: -20}} contentContainerStyle={{paddingBottom: 120, alignItems: "center"}} showsVerticalScrollIndicator={false}>
                 
                 
                 {dataEntriesOnDate.map((meal, i) => {

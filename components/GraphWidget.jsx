@@ -10,6 +10,7 @@ import fillDailyData from '../util/fillDailyData'
 import { router } from 'expo-router'
 import AIButton from './AIButton'
 import { LinearGradient } from 'expo-linear-gradient'
+import GraphScrubber from './GraphScrubber'
 // import fillDailyData from '../util/fillDailyData'
 
 const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=[], dates = [], showWarning = false, initialSectionIndex=0, showDecimals=2, onPress = () => {}, disablePress=false, animationDuration=0, hideFooter=false, premiumLock=false, onPremiumLockPress=() => router.navigate('/premiumAd'), premiumIndexs=[1, 2], ...props}) => {
@@ -191,6 +192,15 @@ const GraphWidget = ({fullWidget = false, fillWidth=false, fillDaily=null, data=
         <Spacer height={30} />
 
         <View style={{ paddingRight: backGridRightOffset, marginLeft: fullWidget ? 10 : 5, marginBottom: fullWidget ? 50 : 20, width: "100%", zIndex: 1}} onLayout={(e) => setGraphHeight(e.nativeEvent.layout.height) }>
+            {fullWidget && (<GraphScrubber 
+                data={data}
+                dates={dates}
+                max={max}
+                min={min}
+                decimals={showDecimals}
+                style={[ { zIndex: 10, }]} // Ensure it's on top
+            />)}
+            
             {/* SVG graph */}
             <LineGraph data={data} color={props.color} duration={animationDuration} aspectRatio={fullWidget ? 1/2 : 1/4} strokeWidth={strokeWidth} />
 

@@ -43,7 +43,16 @@ const USER = {
         heightUnit: "feet", // feet, cm
         liftUnit: "imperial", // metric, imperial
         distanceUnit: "imperial", // metric, imperial
+
+        // Theme
         systemTheme: "dark", // light, dark, system
+
+        // Workouts
+        restTimerAmount: 120, // seconds. 0 counts up 
+
+        // Sharing
+        workouts: true,
+        // .......
       },
     },
 

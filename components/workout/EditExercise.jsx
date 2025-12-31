@@ -29,6 +29,7 @@ import minutesToHMS from '../../util/minutesToHMS'
 import formatExerciseTime from '../../util/formatExerciseTime'
 import * as Haptics from 'expo-haptics';
 import ConfirmMenu from '../ConfirmMenu'
+import TimerWidget from '../TimerWidget'
 
 const firstCapital = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -55,10 +56,21 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
     const [timeKeyboardVisible, setTimeKeyboardVisible] = useState(false);
 
     const [suggesstion, setSuggesstion] = useState("");
+
+    
+    const [restTimerIndex, setRestTimerIndex] = useState(null); // set index of rest timer: 0, 1
     
     const [oneRepMax, setOneRepMax] = useState(null);
 
-
+    const update1RM = (newExercise) => {
+        // 1RM
+        if (newExercise.tracks.includes('weight') && newExercise.tracks.includes('reps')) {
+            const value = calculate1RM(newExercise)
+            setOneRepMax(value);
+        } else {
+            setOneRepMax(null);
+        }
+    }
     const calculate1RM = (exer) => {
         let highestAmount = 0;
         let totalReps = 0;
@@ -103,9 +115,11 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         const sets = exercise.sets;
         sets.splice(setIndex, 1);
         const newExercise = {...exercise, sets};
+        update1RM(newExercise);
+        if (restTimerIndex === setIndex) setRestTimerIndex(null);
         updateExercise(index, newExercise);
     }
-    const completedSet = (setIndex, haptic=true) => {
+    const completedSet = (setIndex, checkedAll=false) => {
         
         
         exercise.tracks.forEach(track => {
@@ -114,14 +128,23 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
             }
         })
         const bool = exercise.sets[setIndex].complete;
-        exercise.sets[setIndex].complete = bool ? false : true;
-        if (haptic) bool ? Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft) : Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        exercise.sets[setIndex].complete = !bool;
+        if (!checkedAll) bool ? Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft) : Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         const newExercise = {...exercise, sets: exercise.sets};
         // 1RM
-        if (newExercise.tracks.includes('weight') && newExercise.tracks.includes('reps')) {
-            const value = calculate1RM(newExercise)
-            setOneRepMax(value);
+        update1RM(newExercise);
+        // rest timer
+        if (checkedAll) {
+            setRestTimerIndex(null);
+        } else {
+            if (bool) {
+                // unconfirming, so close all timers
+                setRestTimerIndex(null);
+            } else {
+                setRestTimerIndex(setIndex);
+            }
         }
+        
         updateExercise(index, newExercise);
     }
     const addSet = (amount = 3) => {
@@ -162,7 +185,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
             // Check all
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             sets.forEach((s, i) => {
-                if (!s.complete) completedSet(i, false);
+                if (!s.complete) completedSet(i, true);
             });
             return; // Return because the function updates already
         }
@@ -187,11 +210,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
             set[track] = JSON.stringify(parseFloat(value));
         }
         const newExercise = {...exercise, sets};
-        // 1RM
-        if (newExercise.tracks.includes('weight') && newExercise.tracks.includes('reps')) {
-            const value = calculate1RM(newExercise)
-            setOneRepMax(value);
-        }
+        update1RM(newExercise);
         updateExercise(index, newExercise);
     }
 
@@ -374,7 +393,6 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
     const {hours: initialPopupHourValue, minutes: initialPopupMinuteValue, seconds: initialPopupSecondValue,} = minutesToHMS(sI === null ? 0 : exercise.sets[sI][trk]);
 
     
-    
 
     return (
     <Animated.View layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} style={[{backgroundColor: activeWorkoutStyle ? "#2A2A2A":"#1C1C1C", padding: 10, borderRadius: 15, marginBottom: 10,}, false && {height: 40}]} {...props}>
@@ -384,7 +402,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
     
                         <Pressable onPress={() => setOpenExercise(false)} style={{height: "100%", width: "100%", zIndex: 0}}></Pressable>
     
-                        <View entering={FadeInDown} exiting={FadeOutDown} style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
+                        <View style={{position: "absolute", width: screenWidth-20, top: 50, left: 10, zIndex: 2}}>
                             <OpenExercise exercise={exerciseOpen} setOpenExercise={setOpenExercise} forceCloseOpenExercise={() => setOpenExercise(false)} />
                         </View>
     
@@ -462,11 +480,11 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
         {/* {!dragActive && ( */}
         {true && (
         <Animated.View layout={LinearTransition} entering={FadeIn} exiting={FadeOut}> 
-            {(showNote || exercise.note) ? (<View layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
+            {(showNote || exercise.note) ? (<View >
                 <TextInput style={{color: activeWorkoutStyle ? "#A4A4A4" : "white", fontSize: 16, paddingVertical: 10, paddingHorizontal: 0}} multiline={true} ref={noteRef} value={exercise.note} onChangeText={updateNote} onEndEditing={() => exercise.note ? null : setShowNote(false)} />
             </View>) : null}
             
-            <View layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
+            <View>
                 {/* Top row, labels */}
                 <View style={styles.row}>
                         <Text style={[styles.column, styles.column1]}>Set</Text>
@@ -482,64 +500,77 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                 </View>
                 {/* Each set */}
                 
-                {exercise?.sets.map((set, setIndex) => (
-                    <View key={setIndex} style={[styles.row, {backgroundColor: (set.complete && activeWorkoutStyle) ? "rgba(33, 134, 60, 0.14)":"transparent"}, {borderRadius: 999}]} layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
-                        <View style={[styles.column, styles.column1, ]}>
-                            <View style={[{backgroundColor: "#444444ff", borderRadius: 999, width: 25, height: 25, justifyContent: "center", alignItems: "center", margin: "auto"}, (set.complete && activeWorkoutStyle) && {backgroundColor: "rgba(33, 134, 60, 0.14)"}]}>
-                                <Text style={{ color: "white", fontSize: 13, }} >{setIndex+1}</Text>
+                {exercise?.sets.map((set, setIndex) => {
+                    const timerActive = restTimerIndex === setIndex;
+                    return (
+                    <Animated.View layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} key={setIndex} style={[ {borderRadius: 999, flexDirection: "column"}]} >
+                        <View style={[styles.row, {backgroundColor: (set.complete && activeWorkoutStyle) ? "rgba(33, 134, 60, 0.14)":"transparent", borderRadius: 9999},]}>
+                            <View style={[styles.column, styles.column1, ]}>
+                                <View style={[{backgroundColor: "#444444ff", borderRadius: 999, width: 25, height: 25, justifyContent: "center", alignItems: "center", margin: "auto"}, (set.complete && activeWorkoutStyle) && {backgroundColor: "rgba(33, 134, 60, 0.14)"}]}>
+                                    <Text style={{ color: "white", fontSize: 13, }} >{setIndex+1}</Text>
+                                </View>
+                                
                             </View>
                             
-                        </View>
-                        
-                        <>
-                            {exercise.tracks.map(track => {
-                                const placeholderValue = setIndex === 0 ? "0" : getSetValueBefore(setIndex, track);
-                                // CUSTOM TIME INPUT
-                                if (track === "time") return (
+                            <>
+                                {exercise.tracks.map(track => {
+                                    const placeholderValue = setIndex === 0 ? "0" : getSetValueBefore(setIndex, track);
+                                    // CUSTOM TIME INPUT
+                                    if (track === "time") return (
+                                        <TextInput
+                                            showSoftInputOnFocus={false}
+                                            caretHidden={Platform.OS === 'android'}
+                                            key={setIndex+""+track+""+placeholderValue}
+                                            style={[
+                                                styles.column, styles.valueInput,
+                                                (focusedInput.setIndex === setIndex && focusedInput.track === track) ? styles.focusedInput : null]}
+                                            value={formatExerciseTime(set[track])}
+                                            placeholder={formatExerciseTimePlaceholder(parseFloat(placeholderValue))}
+                                            placeholderTextColor={"#797979"}
+                                            onPress={() => {setFocusedInput({ setIndex, track }); setTimeKeyboardVisible(true);}}
+                                            />
+                                    );
+                                    //  INPUT FOR EVERYTHING ELSE
+                                    return (
                                     <TextInput
-                                        showSoftInputOnFocus={false}
-                                        caretHidden={Platform.OS === 'android'}
-                                        key={setIndex+""+track+""+placeholderValue}
-                                        style={[
-                                            styles.column, styles.valueInput,
-                                            (focusedInput.setIndex === setIndex && focusedInput.track === track) ? styles.focusedInput : null]}
-                                        value={formatExerciseTime(set[track])}
-                                        placeholder={formatExerciseTimePlaceholder(parseFloat(placeholderValue))}
-                                        placeholderTextColor={"#797979"}
-                                        onPress={() => {setFocusedInput({ setIndex, track }); setTimeKeyboardVisible(true);}}
-                                        />
-                                );
-                                //  INPUT FOR EVERYTHING ELSE
-                                return (
-                                <TextInput
-                                caretHidden={Platform.OS === 'android'}
-                                selectTextOnFocus keyboardType='numeric'
-                                key={setIndex+""+track+""+placeholderValue}
-                                style={[
-                                    styles.column, styles.valueInput,
-                                    (focusedInput.setIndex === setIndex && focusedInput.track === track) ? styles.focusedInput : null]}
-                                value={set[track]}
-                                onChangeText={(value) => {updateValue(setIndex, track, value)}}
-                                onEndEditing={(e) => {endEditing(setIndex, track, e.nativeEvent.text)}}
-                                placeholder={placeholderValue}
-                                placeholderTextColor={"#797979"}
-                                onFocus={() => setFocusedInput({ setIndex, track })}
-                                onBlur={() => setFocusedInput({ setIndex: null, track: null })}
-                                />)
-                            })}
-                        </>
-                        {activeWorkoutStyle && (
-                            <Pressable onPress={() => {completedSet(setIndex)}} style={[styles.columnForComplete, styles.completeButton, {backgroundColor: set.complete ? "#21863C" : "#1D1D1D",}]}>
-                                <Image style={{height: 15, width: 15, objectFit: "contain"}} source={check}  />
+                                    caretHidden={Platform.OS === 'android'}
+                                    selectTextOnFocus keyboardType='numeric'
+                                    key={setIndex+""+track+""+placeholderValue}
+                                    style={[
+                                        styles.column, styles.valueInput,
+                                        (focusedInput.setIndex === setIndex && focusedInput.track === track) ? styles.focusedInput : null]}
+                                    value={set[track]}
+                                    onChangeText={(value) => {updateValue(setIndex, track, value)}}
+                                    onEndEditing={(e) => {endEditing(setIndex, track, e.nativeEvent.text)}}
+                                    placeholder={placeholderValue}
+                                    placeholderTextColor={"#797979"}
+                                    onFocus={() => setFocusedInput({ setIndex, track })}
+                                    onBlur={() => setFocusedInput({ setIndex: null, track: null })}
+                                    />)
+                                })}
+                            </>
+                            {activeWorkoutStyle && (
+                                <Pressable onPress={() => {completedSet(setIndex)}} style={[styles.columnForComplete, styles.completeButton, {backgroundColor: set.complete ? "#21863C" : "#1D1D1D",}]}>
+                                    <Image style={{height: 15, width: 15, objectFit: "contain"}} source={check}  />
+                                </Pressable>
+                            )}
+                            <Pressable onPress={() => {removeSet(setIndex)}} style={styles.columnForComplete}>
+                                {(<Image style={{height: 20, width: 20, tintColor: "#673434"}} source={greyX}  />)}
                             </Pressable>
+                        </View>
+                        {timerActive && (
+                            <View style={{alignItems: "center", width: "100%"}}>
+                                <Animated.View style={[{paddingVertical: 2, width: "100%"}]} layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut}>
+                                    <TimerWidget controlsPortalIndex={1} backgroundColor={Colors.fat} onSkip={() => setRestTimerIndex(null)} initialSeconds={user.extraDetails.preferences.restTimerAmount} textStyle={{fontSize: 16, color: "#fff"}} style={{ paddingHorizontal: 10, justifyContent: "center", alignItems: "center", borderRadius: 7, height: 26,}} />
+                                </Animated.View>
+                            </View>
+                            
                         )}
-                        <Pressable onPress={() => {removeSet(setIndex)}} style={styles.columnForComplete}>
-                            {(<Image style={{height: 20, width: 20, tintColor: "#673434"}} source={greyX}  />)}
-                        </Pressable>
-                    </View>
-                ))}
+
+                    </Animated.View>
+                )})}
                 {/* Suggestions */}
-                {activeWorkoutStyle && suggesstion.length > 0 ? (<View style={styles.row} layout={LinearTransition} entering={FadeIn} exiting={FadeOut}>
+                {activeWorkoutStyle && suggesstion.length > 0 ? (<View style={styles.row}>
                     <View style={{flex: 1, height: 25, backgroundColor: "#222222", borderRadius: 5, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
                         {/* Left side */}
                         <View style={{flexDirection: "row", height: "100%", alignItems: "center"}}>
@@ -556,7 +587,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                     </View>
                 </View>) : null}
                 {/* Add set */}
-                <View layout={LinearTransition} style={{flex: 1,}}>
+                <Animated.View layout={LinearTransition.springify().damping(90)} style={{flex: 1,}}>
 
                     <Pressable onPress={() => {addSet(1)}} style={{paddingVertical: 5, paddingHorizontal: 25, backgroundColor: activeWorkoutStyle?Colors.primaryBlue:"#2D2D2D", alignSelf: 'center', marginTop: 10, marginBottom: 5, borderRadius: 999999}}>
                         <Text style={{color: "white", fontSize: 15, fontWeight: 500}}>Add Set</Text>
@@ -577,7 +608,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                             <Text style={{ color: "white", fontSize: 18, marginTop: -5, }} >{parseInt(oneRepMax)}</Text>
                         </Pressable>
                     </Animated.View>)}
-                </View>
+                </Animated.View>
                 
                 
             </View>
@@ -616,7 +647,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         justifyContent: 'space-between',
-        height: 30,
+        // height: 30,
         borderRadius: 5,
         alignItems: "center",
         overflow: "hidden",

@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Animated, Pressable } from 'react-native';
 
-const TouchableScale = ({ children, style, friction=8, tension=100, activeScale = 1.05, ...props }) => {
+const TouchableScale = ({ children, style, parentStyle=null, friction=8, tension=100, activeScale = 1.05, ...props }) => {
   const scale = useRef(new Animated.Value(1)).current;
 
   const onPressIn = () => {
@@ -24,6 +24,7 @@ const TouchableScale = ({ children, style, friction=8, tension=100, activeScale 
 
   return (
     <Pressable
+    style={parentStyle}
       {...props}
       onPressIn={(e) => {
         onPressIn();

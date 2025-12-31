@@ -21,9 +21,10 @@ const doneBorderRadius = 20;
 const trapWidth = 25;
 const trapHeight = doneHeight - (doneBorderRadius/2) + 2;
 
-const PopupSheet = ({ style, active, setActive, data, ...props }) => {
+const PopupSheet = ({ style, active, setActive, data, onClose=()=>{}, ...props }) => {
 
     const close = () => {
+        onClose();
         setActive(false);
 
     }

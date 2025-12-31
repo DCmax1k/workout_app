@@ -17,6 +17,7 @@ import { truncate } from '../../util/truncate';
 import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist';
 import { generateUniqueId } from '../../util/uniqueId';
 import { Colors } from '../../constants/Colors';
+import TimerWidget from '../TimerWidget';
 
 const lbsToKgs = (lbs) => {
     return 0.453592*lbs;
@@ -299,7 +300,12 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                 <ConfirmMenu active={confirmMenuActive} setActive={setConfirmMenuActive} data={confirmMenuData} />
                 
                 <BottomSheetHandle indicatorStyle={{backgroundColor: "transparent"}} style={{height: 100}}>
-                    <Animated.View style={[{flexDirection: "row", justifyContent: "flex-end", position: "absolute", left: 0, top: 0, width: "100%", zIndex: 1, elevation: 1}, animatedFinishOpacity]}>
+                    <Animated.View style={[{flexDirection: "row", justifyContent: "space-between", alignItems: "center", position: "absolute", left: 0, top: 0, width: screenWidth, zIndex: 1, elevation: 1, }, animatedFinishOpacity]}>
+                        <View style={{ marginLeft: 10, width: 100}}>
+                            <TimerWidget activeScale={1} style={{justifyContent: "center", alignItems: "center", height: "100%", borderRadius: 9999, borderColor: Colors.fat, borderWidth: 1}} backgroundColor={Colors.fat} autoStart={false} />
+                        </View>
+                        
+
                         <Pressable onPress={true ? requestFinish : null} style={{backgroundColor: "#21863C", paddingVertical: 10, paddingHorizontal: 15, marginRight: 10, borderRadius: 10}}>
                             <Text style={styles.text}>Finish</Text>
                         </Pressable>
@@ -317,6 +323,7 @@ const ActiveWorkout = ({animatedFinishOpacity, animatedHeaderOpacity, currentPos
                             <View style={[{ paddingHorizontal: 10, }]}>
                                 <TextInput selectTextOnFocus onChangeText={updateWorkoutName} onEndEditing={handleEndEditting} value={workout.name} style={styles.workoutNameInput} />
                                 {startTime !== 0 && <Timer startTime={startTime} textStyle={{fontSize: 20, color: "#C4C4C4"}} />}
+                                
                             </View>
 
                             <Spacer height={20} />
@@ -419,6 +426,7 @@ const styles = StyleSheet.create({
         fontSize: 23,
         color: "white",
         flex: 1,
-        fontWeight: 700
+        fontWeight: 700,
+        marginVertical: Platform.OS === "android" ? -10 : 0,
       }
 })
