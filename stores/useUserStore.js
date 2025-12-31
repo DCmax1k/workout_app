@@ -57,7 +57,8 @@ const fillMissingKeys = (base, user) => {
   //filled.tracking.visibleWidgets = ["nutrition"];
   //filled.consumedMeals["12/12/2025"] = [];
   //console.log(JSON.stringify(filled.savedWorkouts.reverse()));
-  filled.extraDetails.ai.image.credits = 5;
+  //filled.extraDetails.ai.image.credits = 5;
+  // filled.extraDetails.preferences.restTimerAmount = 0;
 
   return filled;
 }

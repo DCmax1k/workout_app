@@ -48,7 +48,7 @@ const USER = {
         systemTheme: "dark", // light, dark, system
 
         // Workouts
-        restTimerAmount: 120, // seconds. 0 counts up 
+        restTimerAmount: 120, // seconds. 0 counts up, -1 disables
 
         // Sharing
         workouts: true,

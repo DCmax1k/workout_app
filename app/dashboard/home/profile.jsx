@@ -293,12 +293,14 @@ const Profile = () => {
       router.push('/dashboard/home/accountRecovery');
     }
 
-    const openSettings = () => {
-
+    const openPreferences = () => {
+      router.push('/dashboard/home/preferences');
     }
+    
 
     const actionMenuOptions = [
       {title: "Edit Profile", icon: pencilIcon, onPress: () => router.push("/dashboard/home/editProfile"),},
+      {title: "Preferences", icon: null, onPress: openPreferences,},
       {title: "Account Recovery", icon: null, onPress: openAccountRecovery,},
       {title: "Sign Out",  onPress: signOut,},
     ];

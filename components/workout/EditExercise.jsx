@@ -501,7 +501,7 @@ const EditExercise = ({exercise, updateExercise, index, removeExercise, activeWo
                 {/* Each set */}
                 
                 {exercise?.sets.map((set, setIndex) => {
-                    const timerActive = restTimerIndex === setIndex;
+                    const timerActive = user.extraDetails.preferences.restTimerAmount < 0 ? false : restTimerIndex === setIndex;
                     return (
                     <Animated.View layout={LinearTransition.springify().damping(90)} entering={FadeIn} exiting={FadeOut} key={setIndex} style={[ {borderRadius: 999, flexDirection: "column"}]} >
                         <View style={[styles.row, {backgroundColor: (set.complete && activeWorkoutStyle) ? "rgba(33, 134, 60, 0.14)":"transparent", borderRadius: 9999},]}>
