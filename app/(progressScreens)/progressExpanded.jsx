@@ -28,12 +28,22 @@ import calculateFat from '../../util/calculateNutrition/calculateFat'
 import { Colors } from '../../constants/Colors'
 import calculateExpenditure from '../../util/calculateExpenditure'
 import EnergyBalanceGraph from '../../components/nutrition/EnergyBalanceGraph'
+import ImageContain from '../../components/ImageContain'
 
 const screenWidth = Dimensions.get('screen').width;
 
+const BMI_IMAGES = {
+  underweight: require('../../assets/bmi/underweight.svg'),
+  normal: require('../../assets/bmi/normal.svg'),
+  overweight: require('../../assets/bmi/overweight.svg'),
+  obese: require('../../assets/bmi/obese.svg'),
+  extremely: require('../../assets/bmi/extremely.svg'),
+
+  gradient: require('../../assets/bmi/gradient.svg'),
+};
+
 const firstCapital = (str = '') =>
   str
-    .toLowerCase()
     .replace(/\b\w/g, char => char.toUpperCase());
 
 
@@ -150,17 +160,22 @@ const ProgressExpanded = () => {
 
   //console.log(widget);
 
-  let bmiSectionIndex = -1 ;
+  // let bmiSectionIndex = -1 ;
+  let bmiMarkerLeftPercentage = "0%";
   if (widget.layout === 'bmi') {
-    if ( mostRecentValue < 18.5 ) {
-      bmiSectionIndex = 0;
-    } else if (mostRecentValue >= 18.5 && mostRecentValue < 25) {
-      bmiSectionIndex = 1;
-    } else if (mostRecentValue >= 25 && mostRecentValue < 30) {
-      bmiSectionIndex = 2;
-    } else if (mostRecentValue >= 30) {
-      bmiSectionIndex = 3;
-    }
+    if (mostRecentValue >= 40) bmiMarkerLeftPercentage = "100%"
+    else if (mostRecentValue <= 15) bmiMarkerLeftPercentage = "0%"
+    else bmiMarkerLeftPercentage = (((mostRecentValue-15)/25) * 100) + "%";
+    // Old design
+    // if ( mostRecentValue < 18.5 ) {
+    //   bmiSectionIndex = 0;
+    // } else if (mostRecentValue >= 18.5 && mostRecentValue < 25) {
+    //   bmiSectionIndex = 1;
+    // } else if (mostRecentValue >= 25 && mostRecentValue < 30) {
+    //   bmiSectionIndex = 2;
+    // } else if (mostRecentValue >= 30) {
+    //   bmiSectionIndex = 3;
+    // }
   }
   
   const clickGoal = () => {
@@ -602,34 +617,81 @@ const ProgressExpanded = () => {
             <View>
               <ThemedText style={{fontSize: 13, fontWeight: '600', marginTop: 20, marginBottom: 10, textAlign: "center"}}>Breakdown of your current BMI</ThemedText>
 
-              <View style={{width: "100%", borderRadius: 10, overflow: "hidden"}}>
-                <View style={{backgroundColor: bmiSectionIndex===0 ? "#4E4E4E" : "#3A3A3A", width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 60, padding: 10}}>
-                  <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===0 ? '800' : '300' }}>Underweight</Text>
-                  <View style={{width: "40%", alignItems: "center"}}>
-                      <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===0 ? '800' : '300'}}>Below 18.5</Text>
-                  </View>
+              <View style={{width: "100%", backgroundColor: "#3a3a3a", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 20}}>
+                <View style={{flexDirection: "row", justifyContent: "space-around", width: "100%",}}>
+                  {Array(5).fill(null).map((_, i) => {
+                    const name = ["underweight", "normal", "overweight", "obese", "extremely obese"][i];
+                    const label = ["< 18.5", "18.5 - 24.9", "25 - 29.9", "30 - 34.9", "> 35"][i];
+                    const imageKey = name.split(" ")[0];
+                    const image = BMI_IMAGES[imageKey];
+                    return (
+                      <View style={{width: 1, height: 100, overflow: "visible"}}>
+                          <View key={imageKey} style={{alignItems: "center", width: 100, transform: [{translateX: '-50%'}]}}>
+                            <ImageContain source={image} height={70} width={100} />
+                            <Spacer height={5} />
+                            <Text style={{color: "#A6A6A6", fontSize: 9, textAlign: "center"}}>{firstCapital(name)}</Text>
+                            <Text style={{color: "white", fontSize: 9, textAlign: "center"}}>{label}</Text>
+                          </View>
+                      </View>
+                      
+                    )
+                  })}
                 </View>
-                <View style={{backgroundColor: bmiSectionIndex===1 ? "#4E4E4E" : "#3A3A3A", width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 60, padding: 10}}>
-                  <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===1 ? '800' : '300' }}>Healthy</Text>
-                  <View style={{width: "40%", alignItems: "center"}}>
-                      <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===1 ? '800' : '300'}}>18.5 - 24.9</Text>
-                  </View>
+                <Spacer height={10} />
+                <View style={{width: "100%", height: 10, flexDirection: "row",}}>
+                  <ImageContain source={BMI_IMAGES['gradient']} width={"100%"} height={10} style={{alignSelf: "center"}} />
+                  {/* Marker */}
+                  <View style={{height: 10, width: 10, borderRadius: 999, backgroundColor: "white", borderColor: "black", borderWidth: 2, position: "absolute", left: bmiMarkerLeftPercentage, top: "50%", transform: [{translateY: "-50%"}]}} />
                 </View>
-                <View style={{backgroundColor: bmiSectionIndex===2 ? "#4E4E4E" : "#3A3A3A", width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 60, padding: 10}}>
-                  <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===2 ? '800' : '300' }}>Overweight</Text>
-                  <View style={{width: "40%", alignItems: "center"}}>
-                      <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===2 ? '800' : '300'}}>25.0 – 29.9</Text>
-                  </View>
+                
+                <View style={{flexDirection: "row", justifyContent: "space-around", width: "100%", position: "relative",}}>
+                  {Array(5).fill(null).map((_, i) => {
+                    const value = [17.5, 22.5, 27.5, 32.5, 37.5][i];
+                    const percentage = ["10%", "30%", "50%", "70%", "90%"][i];
+                    return (
+                      <View key={value} style={{width: 1, overflow: "visible", position: "absolute", top: 0, left: percentage}}>
+                          <View key={value} style={{alignItems: "center", width: 100, transform: [{translateX: '-50%'}]}}>
+                            <Text style={{color: "white", fontSize: 10, textAlign: "center"}}>{value}</Text>
+                          </View>
+                      </View>
+                      
+                    )
+                  })}
                 </View>
-                <View style={{backgroundColor: bmiSectionIndex===3 ? "#4E4E4E" : "#3A3A3A", width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 60, padding: 10}}>
-                  <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===3 ? '800' : '300' }}>Obesity</Text>
-                  <View style={{width: "40%", alignItems: "center"}}>
-                      <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===3 ? '800' : '300'}}>30.0 or above</Text>
-                  </View>
-                </View>
-
+                <Spacer height={10} />
               </View>
             </View>
+            // <View>
+            //   <ThemedText style={{fontSize: 13, fontWeight: '600', marginTop: 20, marginBottom: 10, textAlign: "center"}}>Breakdown of your current BMI</ThemedText>
+
+            //   <View style={{width: "100%", borderRadius: 10, overflow: "hidden"}}>
+            //     <View style={{backgroundColor: bmiSectionIndex===0 ? "#4E4E4E" : "#3A3A3A", width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 60, padding: 10}}>
+            //       <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===0 ? '800' : '300' }}>Underweight</Text>
+            //       <View style={{width: "40%", alignItems: "center"}}>
+            //           <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===0 ? '800' : '300'}}>Below 18.5</Text>
+            //       </View>
+            //     </View>
+            //     <View style={{backgroundColor: bmiSectionIndex===1 ? "#4E4E4E" : "#3A3A3A", width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 60, padding: 10}}>
+            //       <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===1 ? '800' : '300' }}>Healthy</Text>
+            //       <View style={{width: "40%", alignItems: "center"}}>
+            //           <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===1 ? '800' : '300'}}>18.5 - 24.9</Text>
+            //       </View>
+            //     </View>
+            //     <View style={{backgroundColor: bmiSectionIndex===2 ? "#4E4E4E" : "#3A3A3A", width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 60, padding: 10}}>
+            //       <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===2 ? '800' : '300' }}>Overweight</Text>
+            //       <View style={{width: "40%", alignItems: "center"}}>
+            //           <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===2 ? '800' : '300'}}>25.0 – 29.9</Text>
+            //       </View>
+            //     </View>
+            //     <View style={{backgroundColor: bmiSectionIndex===3 ? "#4E4E4E" : "#3A3A3A", width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 60, padding: 10}}>
+            //       <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===3 ? '800' : '300' }}>Obesity</Text>
+            //       <View style={{width: "40%", alignItems: "center"}}>
+            //           <Text style={{color: "white", fontSize: 17, fontWeight: bmiSectionIndex===3 ? '800' : '300'}}>30.0 or above</Text>
+            //       </View>
+            //     </View>
+
+            //   </View>
+            // </View>
           )}
 
           {widget.layout === "expenditure" && (

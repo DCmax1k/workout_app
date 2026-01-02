@@ -46,7 +46,6 @@ const IndexProgress = () => {
 
 
   const openProgressExpanded = (category, categoryData) => {
-
     const data = {
       category,
       ...categoryData

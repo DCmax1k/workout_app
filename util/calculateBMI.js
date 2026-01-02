@@ -16,7 +16,7 @@ const dayProgress = () => {
 const getWeightAtDate = (weights, targetDate) => {
 
     const targetTimeDate = new Date(targetDate);
-    targetTimeDate.setHours(17,0,0,0); // Checks up to before 5pm if the weight was logged
+    targetTimeDate.setHours(23,59,59,0); // Checks up to before 5pm if the weight was logged
     const targetTime = targetTimeDate.getTime();
 
     // Filter all weights that happened **before or at the target date**

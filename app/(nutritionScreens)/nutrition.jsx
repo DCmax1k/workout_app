@@ -39,6 +39,7 @@ import calculateExpenditure from '../../util/calculateExpenditure'
 import sendData from '../../util/server/sendData'
 import { useBottomSheet } from '../../context/BottomSheetContext'
 import * as Haptics from 'expo-haptics';
+import TouchableScale from '../../components/TouchableScale'
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -492,7 +493,7 @@ const Nutrition = () => {
                     <Spacer height={10} />
                     <PageSwiper ref={pageSwiperRef} width={screenWidth} height={caloriesGraphHeight+30} >
                         <View style={{height: caloriesGraphHeight, width: pageSwipeWidth}}>
-                            <Pressable style={{flex: 1}} onPress={openCalorieExpanded}>
+                            <TouchableScale activeScale={1.03} parentStyle={{flex: 1}} style={{flex: 1}} onPress={openCalorieExpanded}>
                                 <GraphWidget
                                     fillWidth={true}
                                     data={calorieData}
@@ -508,11 +509,11 @@ const Nutrition = () => {
                                     initialSectionIndex={1}
                                     animationDuration={widgetAnimationDuration}
                                 />
-                            </Pressable>
+                            </TouchableScale>
                             
                         </View>
                         <View style={{height: caloriesGraphHeight, width: pageSwipeWidth}}>
-                            <Pressable style={{flex: 1}} onPress={openEnergyBalanceExpanded}>
+                            <TouchableScale activeScale={1.03} parentStyle={{flex: 1}} style={{flex: 1,}} onPress={openEnergyBalanceExpanded}>
                                 <EnergyBalanceGraph
                                     fillWidth={true}
                                     data={expenditureData.data}
@@ -530,7 +531,7 @@ const Nutrition = () => {
                                     initialSectionIndex={1}
                                     animationDuration={0}
                                 />
-                            </Pressable>
+                            </TouchableScale>
                             
                         </View>
                         
@@ -544,7 +545,7 @@ const Nutrition = () => {
                         {/* Macros */}
                         <ThemedText style={ [{fontSize: 15, fontWeight: "700"}]} >Macros</ThemedText>
                         <Spacer height={10} />
-                        <Pressable onPress={openCalorieExpanded} style={[styles.widgetCont, { paddingVertical: 20, paddingHorizontal: 10}]}>
+                        <TouchableScale activeScale={1.03} onPress={openCalorieExpanded} style={[styles.widgetCont, { paddingVertical: 20, paddingHorizontal: 10}]}>
                             <View style={{width: "100%", flexDirection: "row", justifyContent: "space-around"}}>
                                 {/* Protein ring */}
                                 <View style={{alignItems: "center"}}>
@@ -599,7 +600,7 @@ const Nutrition = () => {
                                 </View>
                                 
                             </View>
-                        </Pressable>
+                        </TouchableScale>
                         
                         <Spacer height={30} />
 

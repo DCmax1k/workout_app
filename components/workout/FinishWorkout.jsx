@@ -85,7 +85,8 @@ const FinishWorkout = ({data, closeModal, ...props}) => {
         const response = await sendData("/dashboard/requestactivity", {jsonWebToken: user.jsonWebToken, activityData});
         if (response.status !== "success") showAlert("An error occured while attempting activity post.", false);
         // Socket.io send
-        socket.emit("send_recent_activity", {jsonWebToken: user.jsonWebToken, dbActivity: response.activity})
+        if (!response.reject) socket.emit("send_recent_activity", {jsonWebToken: user.jsonWebToken, dbActivity: response.activity});
+        
         // Update client with activity model
         const activity = response.activity;
         const recentActivity = user.recentActivity;

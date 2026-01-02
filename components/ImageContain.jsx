@@ -3,9 +3,9 @@ import React from 'react'
 import exIcon from '../assets/icons/aiSparkle.png'
 import { Image } from 'expo-image'
 
-const ImageContain = ({style, imgStyle, source=exIcon, cover=false, size=20, ...props}) => {
+const ImageContain = ({style, imgStyle, source=exIcon, cover=false, size=20, width=null, height=null, ...props}) => {
   return (
-    <View style={[{height: size, width: size},style]} {...props}>
+    <View style={[{height: height ? height : size, width: width ? width : size},style]} {...props}>
       <Image source={source} contentFit= {cover ? "cover" : 'contain'} style={[{height: "100%", width: "100%",}, imgStyle]} />
     </View>
   )
