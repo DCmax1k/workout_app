@@ -12,14 +12,19 @@ import Animated, { Easing, interpolate, interpolateColor, useAnimatedStyle, useS
 import * as Haptics from 'expo-haptics';
 import sendData from '../../../util/server/sendData'
 import { useBottomSheet } from '../../../context/BottomSheetContext'
+import { router } from 'expo-router'
+import emitter from '../../../util/eventBus'
 
-const MultiOption = ({options=[{label: "one", onPress: ()=>{}}, {label: "two", onPress: ()=>{}}, {label: "three", onPress: ()=>{}}], activeIndex}) => {
+const MultiOption = ({options=[{label: "one", onPress: ()=>{}}, {label: "two", onPress: ()=>{}}, {label: "three", onPress: ()=>{}}], activeIndex, children=[null, null, null]}) => {
     return (
-        <View style={{flexDirection: "row", alignItems: "center", borderColor: Colors.primaryBlue, borderWidth: 1, borderRadius: 10, overflow: "hidden"}}>
+        <View style={{flexDirection: "row", alignItems: "center", borderColor: Colors.primaryBlue, borderWidth: 1, borderRadius: 10, overflow: "hidden", height: 40}}>
             {options.map((item, i) => {
                 return (
-                    <Pressable key={i} onPress={() => {Haptics.selectionAsync(); item.onPress();}} style={{backgroundColor: activeIndex===i ? Colors.primaryBlue : "transparent", }}>
-                        <ThemedText style={{paddingHorizontal: 20, fontWeight: "800", paddingVertical: 10, fontSize: 15, borderLeftColor: Colors.primaryBlue, borderLeftWidth: i === 0 ? 0 : 1 }}>{item.label}</ThemedText>
+                    <Pressable key={i} onPress={() => {Haptics.selectionAsync(); item.onPress();}} style={{alignItems: "center", justifyContent: "center", height: "100%", borderLeftColor: Colors.primaryBlue, borderLeftWidth: i === 0 ? 0 : 1, backgroundColor: activeIndex===i ? Colors.primaryBlue : "transparent", }}>
+                       {children[i] ? (children[i]) : ( <View style={[{height: "100%", alignItems: "center", justifyContent: "center",  }, item.style]}>
+                            <ThemedText style={[{fontWeight: "800",  fontSize: 15, paddingHorizontal: 20}, item.textStyle]}>{item.label}</ThemedText>
+                        </View>
+                        )}
                     </Pressable>
                     
                 )
@@ -111,6 +116,20 @@ const PreferencesPage = () => {
     const heightIndex = prefs.heightUnit === "imperial" ? 0 : 1;
     const distanceIndex = prefs.distanceUnit === "imperial" ? 0 : 1;
 
+    // For inputValueScreen
+    useEffect(() => {
+        const sub = emitter.addListener("done", (data) => {
+            if (data?.target === "restTimerAmount") {
+                const quantity = data.value;
+                updateUser({lastRestTimerAmount: quantity, extraDetails: {preferences: {restTimerAmount: quantity}}});
+            }
+        });
+        
+        return () => {
+            sub.remove();
+        }
+    }, [emitter]);
+
 
     const setPref = async (key, value) => {
         updateUser({extraDetails: {preferences: {[key]: value}}});
@@ -119,6 +138,25 @@ const PreferencesPage = () => {
         if (response.status !== "success") {
             return showAlert(response.message, false);
         }
+    }
+
+    const openRestTimerInput = () => {
+        const info = {
+            title: "Rest Timer Amount",
+            target: 'restTimerAmount',
+            value: user.lastRestTimerAmount,
+            unit: "s",
+            increment: 1,
+            range: [0, 1200],
+            scrollItemWidth: 20,
+            defaultValue: 120,
+        }
+        router.push({
+            pathname: "/inputValueScreen",
+            params: {
+                data: JSON.stringify(info),
+            },
+        });
     }
 
   return (
@@ -169,8 +207,13 @@ const PreferencesPage = () => {
                     options={[
                         {label: "Off", onPress: ()=>{setPref("restTimerAmount", -1)}},
                         {label: "Up", onPress: ()=>{setPref("restTimerAmount", 0)}},
-                        {label: 120 + "s", onPress: ()=>{setPref("restTimerAmount", 120)}},
+                        {label: user.lastRestTimerAmount + "s", onPress: restTimerIndexActive === 2 ? openRestTimerInput : () => setPref("restTimerAmount", user.lastRestTimerAmount)},
                     ]}
+                    children={[null, null, (
+                        <View style={{backgroundColor: restTimerIndexActive === 2 ? "#ffffff28": "#ffffff3b", borderRadius: 5, paddingVertical: 5, paddingHorizontal: 10, marginHorizontal: 5}}>
+                            <ThemedText style={{fontWeight: "800",  fontSize: 15,}}>{user.lastRestTimerAmount}<Text style={{fontSize: 12}}> s</Text></ThemedText>
+                        </View>
+                    )]}
                     activeIndex={restTimerIndexActive}
                 />
             </View>
@@ -180,6 +223,10 @@ const PreferencesPage = () => {
             <View style={{flexDirection: "row", justifyContent: "flex-start", gap: 10, alignItems: "center",}}>
                 <ToggleSwitch isActive={prefs.workouts} handleToggle={() => setPref("workouts", !prefs.workouts)} />
                 <ThemedText style={{fontSize: 17, fontWeight: 400, }}>Workouts</ThemedText>
+            </View>
+            <View style={{flexDirection: "row", justifyContent: "flex-start", gap: 10, alignItems: "center",}}>
+                <ToggleSwitch isActive={prefs.achievements} handleToggle={() => setPref("achievements", !prefs.achievements)} />
+                <ThemedText style={{fontSize: 17, fontWeight: 400, }}>Achievements</ThemedText>
             </View>
 
 

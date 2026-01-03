@@ -149,49 +149,94 @@ const OnboardingIndex = () => {
                     console.log("Error checking third party user.");
                     return;
                 } else {
-                    if (checkUserExists.userFound) {
-                        // Login user - below [block] is copied from loginPage.jsx
-                        const { jsonWebToken } = checkUserExists;
-                        //then call auth which will get userInfo to set with user
-                        const authResponse = await auth(jsonWebToken);
-                        if (authResponse.status !== "success") {
-                            console.log("Error: ", authResponse.message);
-                            alertRef.current.showAlert(authResponse.message, false);
-                            return;
-                        }
-                        const {userInfo, fullLocalUser} = authResponse;
-                        // Find user in users and set
-                        const localUserIds = Object.keys(users);
-                        const idx = localUserIds.findIndex(localId => users[localId].dbId === userInfo.dbId);
-                        let userToSet;
-                        if (idx > -1) {
-                            // Local user found
-                            userToSet = {...users[localUserIds[idx]], ...userInfo, jsonWebToken};
-                        } else {
-                            // Steal more data from db to complete user
-                            const dbId = fullLocalUser._id;
-                            const newLocalUser = {...fullLocalUser, _id: generateUniqueId(), dbId: dbId, jsonWebToken};
-                            userToSet = newLocalUser;
-                        }
-                        setUser(userToSet);
-                        updateOptions({animateDashboard: true});
-                        router.replace("/dashboard");
-                    } else {
-                        // Create account
-                        router.push({
-                            pathname: "/onboarding/createUsername",
-                            params: {
-                                data: JSON.stringify(data),
+                    try {
+                        if (checkUserExists.userFound) {
+                            // 1. Check if token exists
+                            const { jsonWebToken } = checkUserExists;
+                            if (!jsonWebToken) {
+                                alertRef.current.showAlert("Error: No Token received from server", false);
+                                return;
                             }
-                        });
+
+                            // 2. Call auth - likely failure point
+                            let authResponse;
+                            try {
+                                authResponse = await auth(jsonWebToken);
+                            } catch (e) {
+                                alertRef.current.showAlert("Crash in auth() function: " + e.message, false);
+                                return;
+                            }
+
+                            if (authResponse.status !== "success") {
+                                console.log("Error: ", authResponse.message);
+                                alertRef.current.showAlert("Auth Failed: " + authResponse.message, false);
+                                return;
+                            }
+
+                            // 3. Destructure and check if data exists
+                            const { userInfo, fullLocalUser } = authResponse;
+                            if (!userInfo) {
+                                alertRef.current.showAlert("Error: userInfo is missing from auth response", false);
+                                return;
+                            }
+
+                            // 4. Find user in local state
+                            const localUserIds = Object.keys(users || {});
+                            const idx = localUserIds.findIndex(localId => users[localId]?.dbId === userInfo.dbId);
+                            
+                            let userToSet;
+                            try {
+                                if (idx > -1) {
+                                    // Local user found
+                                    userToSet = { ...users[localUserIds[idx]], ...userInfo, jsonWebToken };
+                                } else {
+                                    // 5. Check fullLocalUser before accessing _id
+                                    if (!fullLocalUser || !fullLocalUser._id) {
+                                        alertRef.current.showAlert("Error: fullLocalUser or its ID is missing", false);
+                                        return;
+                                    }
+                                    const dbId = fullLocalUser._id;
+                                    const newLocalUser = { ...fullLocalUser, _id: generateUniqueId(), dbId: dbId, jsonWebToken };
+                                    userToSet = newLocalUser;
+                                }
+
+                                // 6. State Updates
+                                setUser(userToSet);
+                                updateOptions({ animateDashboard: true });
+                                router.replace("/dashboard");
+                            } catch (e) {
+                                alertRef.current.showAlert("Crash during User State Mapping: " + e.message, false);
+                            }
+
+                        } else {
+                            // Create account flow
+                            router.push({
+                                pathname: "/onboarding/createUsername",
+                                params: {
+                                    data: JSON.stringify(data),
+                                }
+                            });
+                        }
+                    } catch (outerError) {
+                        alertRef.current.showAlert("Major block failure: " + outerError.message, false);
                     }
                 }
+                
 
             } else {
                 // sign in was cancelled by user
             }
         } catch (error) {
-            alertRef.current.showAlert("catch ERR: " + JSON.stringify(error));
+
+            // This extracts the properties that JSON.stringify misses
+            const detailedError = JSON.stringify({
+            code: error.code,
+            message: error.message,
+            name: error.name,
+            }, null, 2);
+
+            alertRef.current.showAlert("DEBUG: " + detailedError);
+                
             if (isErrorWithCode(error)) {
                 switch (error.code) {
                     case statusCodes.IN_PROGRESS:

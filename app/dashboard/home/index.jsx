@@ -1,5 +1,5 @@
-import { Alert, Button, Dimensions, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import { Alert, Button, Dimensions, FlatList, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { Link, Slot, Stack, useRouter } from 'expo-router'
 import ThemedView from '../../../components/ThemedView'
 import ThemedText from '../../../components/ThemedText'
@@ -8,11 +8,13 @@ import Spacer from '../../../components/Spacer'
 import { useUserStore } from '../../../stores/useUserStore'
 import BlueButton from '../../../components/BlueButton'
 import NotificationCard from '../../../components/NotificationCard'
-
+import calenderIcon from '../../../assets/icons/calender.png'
 import profileIcon from '../../../assets/icons/profileIcon.png'
 import search from '../../../assets/icons/search.png'
 import rightArrow from '../../../assets/icons/rightArrow.png'
-import eye from '../../../assets/icons/eye.png'
+import dumbbellIcon from '../../../assets/tabBarIcons/dumbbell.png'
+import clockIcon from '../../../assets/icons/clock.png'
+import appleIcon from '../../../assets/icons/apple.svg'
 import hollowClock from '../../../assets/icons/hollowClock.png'
 import rotate from '../../../assets/icons/rotate.png'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -30,9 +32,10 @@ import { useIsFocused } from '@react-navigation/native'
 import auth from '../../../util/server/auth'
 import DisplayName from '../../../components/DisplayName'
 import ProfileImg from '../../../components/ProfileImg'
-import { SuggestedWorkouts } from '../../../constants/SuggestedWorkouts'
+import { SuggestedWorkoutImages, SuggestedWorkouts } from '../../../constants/SuggestedWorkouts'
 import { Image } from 'expo-image'
 import * as Haptics from 'expo-haptics';
+import ImageContain from '../../../components/ImageContain'
 
 const truncate = (text, maxLength) =>
     text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
@@ -67,6 +70,148 @@ const SuggestedWorkoutTemplate = ({workout, ...props}) => {
   )
 }
 
+const LinearGradientWorkout = ({workout, isThereWorkout}) => {
+  const continuedWorkout = workout;
+  return (
+    <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
+      <View style={{height: 80, width: 50, justifyContent: "center", alignItems: "center"}}>
+        <View style={{height: 40, width: 40, backgroundColor: "#3D52A6", borderWidth: 2, borderColor: Colors.primaryBlue, borderRadius: "50%", marginRight: 3, padding: 7}}>
+          <Image source={isThereWorkout === "yes" ? rightArrow : isThereWorkout === "rest" ? hollowClock : rotate} style={[{height: "100%", width: "100%"}, isThereWorkout === "yes" ? {transform: [{rotate: "0deg"}]} : null]} />
+        </View>
+
+      </View>
+      <View style={styles.quickStartTexts}>
+        <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>{isThereWorkout === "yes" ? truncate(continuedWorkout.name, 30) : isThereWorkout === "rest" ? "Rest Day" : "Create a schedule" }</Text>
+        {isThereWorkout === "yes" ? (
+          <WorkoutDescription style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}} workout={continuedWorkout} />
+        ) : (
+          <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>{isThereWorkout === "rest" ? "Click here for your next workout!" : "Add or create workouts to add!"}</Text>
+        )}
+        
+      </View>
+      {/* <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
+        <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={isThereWorkout==="yes" ?  () => openWorkout(continuedWorkout) : isThereWorkout==="rest" ? rotateNext : () => router.push('/dashboard/workout') }>
+          <Text style={{fontSize: 14, color: "white"}}>{isThereWorkout==="yes" ?  "Open workout" : isThereWorkout==="rest" ? "Next" : "Go to workouts"}</Text>
+        </Pressable>
+        {isThereWorkout==="yes" && (
+          <Pressable onPress={rotateNext} style={{padding: 5, backgroundColor: "#656565", borderRadius: 10}}>
+            <Text style={{fontSize: 12, color: "white"}}>Skip</Text>
+          </Pressable>
+        )}
+        
+      </View> */}
+    </LinearGradient>
+  )
+}
+
+const CardFlipAnimation = forwardRef(({frontData, behindData, onPress, setFrontData}, ref) => {
+  const isThereWorkoutFront = frontData.isThereWorkout;
+  const isThereWorkoutBack = frontData.isThereWorkout;
+  delete frontData.isThereWorkout;
+  delete behindData.isThereWorkout;
+
+  const [cardFlipAnimation, setCardFlipAnimation] = useState(false);
+
+  // ANIMATE QUICK START CARD
+  const topCardOffset = useSharedValue(0); 
+  const topCardScale = useSharedValue(1); // to 180deg
+  const [topCardZIndex, setTopCardZIndex] = useState(1);
+
+  const BHND_CARD_VERTICAL_OFFSET = 0; // -15
+  const behindCardOffset = useSharedValue(BHND_CARD_VERTICAL_OFFSET); // behind card offset
+  const behindCardScale = useSharedValue(0.9);
+
+  const topCardAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: topCardOffset.value, }, { scale: topCardScale.value }],
+    };
+  });
+  const behindCardAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{scale: behindCardScale.value}, { translateY: behindCardOffset.value }],
+    };
+  });
+
+  const ANIMATION_DURATION = 500;
+  const rotateNext = () => {
+    if (cardFlipAnimation) return;
+    setCardFlipAnimation(true);
+
+    // const newIndex = findNextScheduleIndex();
+
+    // Start animation
+    // Beginning animation, lasts 150
+    topCardOffset.value = withTiming(80, { duration: ANIMATION_DURATION/2, easing: Easing.bezier(0.42, 0.57, 0.21, 1.03), });
+    behindCardScale.value = withTiming(1, { duration: ANIMATION_DURATION / 2 });
+    behindCardOffset.value = withTiming(0, { duration: ANIMATION_DURATION/2 });
+    topCardScale.value = withTiming(0.3, { duration: ANIMATION_DURATION/2 });
+    setTimeout(() => {
+
+      // Halfway - these set top card back to ceil, top card scale smaller, and behind card scale 1
+      setTopCardZIndex(-1);
+
+      topCardOffset.value = withTiming(0, { duration: ANIMATION_DURATION/2 });
+      behindCardScale.value = withTiming(1, { duration: ANIMATION_DURATION/2 });
+      topCardScale.value = withTiming(0.5, { duration: ANIMATION_DURATION/2 });
+
+      setTimeout(() => {
+        // Make both the next one
+        setFrontData(behindData);
+        //setSwitchContinuedWorkouts(true);
+
+        setTimeout(() => {
+          // Reset positions ecept top
+          topCardScale.value = withTiming(1, { duration: 0 });
+
+          setTimeout(() => {
+            setTopCardZIndex(1);
+            //console.log(continuedWorkout);
+            setTimeout(() => {
+              // Broken because the back one is not correct for some reason.
+              behindCardOffset.value = withTiming(0, { duration: 0 });
+              behindCardScale.value = withTiming(0.9, { duration: 0 });
+              setTimeout(() => {
+                // Small adjust at end
+                behindCardOffset.value = withTiming(BHND_CARD_VERTICAL_OFFSET, { duration: 100 })
+                setTimeout(() => {  
+                  // Update state
+                  // updateUser({schedule: {...user.schedule, currentIndex: newIndex}});
+                  //setSwitchContinuedWorkouts(false);
+                  setCardFlipAnimation(false);
+                  
+                }, 5)
+              }, 5);
+            }, 5)
+
+
+
+          }, 5);
+        }, 5)
+        
+      }, (ANIMATION_DURATION/2))
+
+    }, (ANIMATION_DURATION/2));
+  }
+
+  useImperativeHandle(ref, () => ({
+    rotateNext,
+  }))
+  return (
+      <Pressable style={{height: QUICK_START_CARD_HEIGHT, overflow: "visible", zIndex: 1}} onPress={onPress}>
+        {/* Behind element to animate */}
+          {/* cardFlipAnimation && */(<Animated.View style={[styles.animateQuickCard, {zIndex: 0, elevation: 0,}, behindCardAnimatedStyle ]}>
+            <LinearGradientWorkout workout={behindData} isThereWorkout={isThereWorkoutFront} />
+          </Animated.View>)}
+          {/* Top element to animate */}
+          {/*!cardFlipAnimation && */(<Animated.View style={[styles.animateQuickCard, {zIndex: topCardZIndex, elevation: 1,}, topCardAnimatedStyle]} >
+            <LinearGradientWorkout workout={frontData} isThereWorkout={isThereWorkoutBack} />
+          </Animated.View>)}
+        
+
+      </Pressable>
+  )
+})
+
 const IndexHome = () => {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
@@ -75,11 +220,12 @@ const IndexHome = () => {
   const setUser = useUserStore((state) => state.setUser);
   const updateUser = useUserStore((state) => state.updateUser);
 
+  const cardFlipRef = useRef(null);
+
   const { openSheet, setTabBarRoute } = useBottomSheet();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
-  const [cardFlipAnimation, setCardFlipAnimation] = useState(false);
   const [switchContinuedWorkouts, setSwitchContinuedWorkouts] = useState(false);
   const [openExercise, setOpenExercise] = useState(false);
   const [exerciseOpen, setExerciseOpen] = useState({});
@@ -123,8 +269,8 @@ const IndexHome = () => {
       } else {
         const workout = user.savedWorkouts.find(w => w.id === currentId);
         setContinuedWorkout(workout ?? null);
-        console.log("test");
-        console.log(workout);
+        // console.log("test");
+        // console.log(workout);
       }
     } else {
       setContinuedWorkout(null);
@@ -150,94 +296,6 @@ const IndexHome = () => {
   const openWorkout = (workout) => {
     setSelectedWorkout(workout);
     setModalVisible(true);
-  }
-
-  // ANIMATE QUICK START CARD
-  const topCardOffset = useSharedValue(0); 
-  const topCardScale = useSharedValue(1); // to 180deg
-  const [topCardZIndex, setTopCardZIndex] = useState(1);
-
-  const BHND_CARD_VERTICAL_OFFSET = 0; // -15
-  const behindCardOffset = useSharedValue(BHND_CARD_VERTICAL_OFFSET); // behind card offset
-  const behindCardScale = useSharedValue(0.9);
-
-  const topCardAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateY: topCardOffset.value, }, { scale: topCardScale.value }],
-    };
-  });
-  const behindCardAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{scale: behindCardScale.value}, { translateY: behindCardOffset.value }],
-    };
-  });
-
-  const ANIMATION_DURATION = 500;
-  const rotateNext = () => {
-    if (cardFlipAnimation) return;
-    setCardFlipAnimation(true);
-
-    const newIndex = findNextScheduleIndex();
-
-    // Start animation
-    // Beginning animation, lasts 150
-    topCardOffset.value = withTiming(80, { duration: ANIMATION_DURATION/2, easing: Easing.bezier(0.42, 0.57, 0.21, 1.03), });
-    behindCardScale.value = withTiming(1, { duration: ANIMATION_DURATION / 2 });
-    behindCardOffset.value = withTiming(0, { duration: ANIMATION_DURATION/2 });
-    topCardScale.value = withTiming(0.3, { duration: ANIMATION_DURATION/2 });
-    setTimeout(() => {
-
-      // Halfway - these set top card back to ceil, top card scale smaller, and behind card scale 1
-      setTopCardZIndex(-1);
-
-      topCardOffset.value = withTiming(0, { duration: ANIMATION_DURATION/2 });
-      behindCardScale.value = withTiming(1, { duration: ANIMATION_DURATION/2 });
-      topCardScale.value = withTiming(0.5, { duration: ANIMATION_DURATION/2 });
-
-      setTimeout(() => {
-        // Make both the next one
-        setContinuedWorkout(continuedWorkoutNext);
-        //setSwitchContinuedWorkouts(true);
-
-        setTimeout(() => {
-          // Reset positions ecept top
-          topCardScale.value = withTiming(1, { duration: 0 });
-
-          setTimeout(() => {
-            setTopCardZIndex(1);
-            //console.log(continuedWorkout);
-            setTimeout(() => {
-              // Broken because the back one is not correct for some reason.
-              behindCardOffset.value = withTiming(0, { duration: 0 });
-              behindCardScale.value = withTiming(0.9, { duration: 0 });
-              setTimeout(() => {
-                // Small adjust at end
-                behindCardOffset.value = withTiming(BHND_CARD_VERTICAL_OFFSET, { duration: 100 })
-                setTimeout(() => {  
-                  // Update state
-                  updateUser({schedule: {...user.schedule, currentIndex: newIndex}});
-                  //setSwitchContinuedWorkouts(false);
-                  setCardFlipAnimation(false);
-                  
-                }, 5)
-              }, 5);
-            }, 5)
-
-
-
-          }, 5);
-        }, 5)
-        
-      }, (ANIMATION_DURATION/2))
-
-    }, (ANIMATION_DURATION/2));
-
-
-
-    
-
-    
-    
   }
 
 
@@ -312,6 +370,32 @@ const IndexHome = () => {
     
   // )
 
+  const rotateNext = () => {
+    cardFlipRef.current?.rotateNext();
+    const newIndex = findNextScheduleIndex();
+    updateUser({schedule: {...user.schedule, currentIndex: newIndex}});
+  }
+
+  const displayWorkout = isThereWorkout==="yes" ?  continuedWorkout : isThereWorkout==="rest" ? {name: "Rest Day"} : {name: "No Schedule Created Yet"}
+
+
+  const calculateWorkoutTime = wkt => {
+    // 16 seconds per rep average, this would include rest time default
+    let seconds = 0;
+    wkt.exercises.forEach(ex => {
+      ex.sets.forEach(set => {
+        if (ex.tracks.includes('time')) {
+          return seconds += (set['time']*60);
+        }
+        if (ex.tracks.includes('reps')) {
+          return seconds += set['reps'] * (ex.setTime ?? 16);
+        }
+        
+      })
+    });
+    return parseInt(seconds/60); // Returns in minutes
+  }
+
   return (
     <ThemedView style={styles.container}> 
 
@@ -332,8 +416,8 @@ const IndexHome = () => {
         
       )}
 
-      <SafeAreaView style={{flex: 1}} >
-        <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}} contentContainerStyle={{paddingBottom: 120, }}>
+      <SafeAreaView style={{flex: 1,}} >
+        <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}} contentContainerStyle={{paddingBottom: 120, paddingHorizontal: 20 }}>
           {/* <BlueButton onPress={clearUserData} title={"[BETA] RESET USER DATA"} style={{marginLeft: 20}} /> */}
           {/* <BlueButton onPress={changeUsernameTest} title={"Change username"} style={{marginLeft: 20}} /> */}
           <View style={styles.welcomeCont}>
@@ -356,95 +440,82 @@ const IndexHome = () => {
 
           <Spacer />
 
-          <View style={{flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
-                <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10,}}>Quick Start</ThemedText>
+          {/* <View style={{flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
+                <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10,}}>Up Next</ThemedText>
 
                 {isThereWorkout !== "none" && (<Pressable onPress={rotateNext} style={{flexDirection: "row", alignItems: "center",  padding: 5}}>
                   <Text style={{color: "#5a5a5a"}}>Skip </Text>
                   <Image source={rightArrow} style={{height: 10, width: 10, tintColor: "#5a5a5a"}} />
                 </Pressable>)}
+          </View> */}
+          
+          {/* <CardFlipAnimation
+          ref={cardFlipRef}
+          onPress={isThereWorkout==="yes" ?  () => openWorkout(continuedWorkout) : isThereWorkout==="rest" ? rotateNext : navigateToSchedule}
+          frontData={{isThereWorkout, ...continuedWorkout}}
+          behindData={{isThereWorkoutNext, ...continuedWorkoutNext}}
+          setFrontData={setContinuedWorkout}
+          /> */}
+
+          {/* <ThemedText style={{fontSize: 12, paddingVertical: 15, textAlign: 'center'}}>or</ThemedText>
+          <BlueButton style={{flex: 1}} onPress={() => startEmptyWorkout()} title={"Start an Empty Workout"} icon={playCircle}/> */}
+
+          {/* NEW HOME DESIGN */}
+          <View style={{flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <ThemedText style={{fontSize: 15, fontWeight: 700,}}>Up Next</ThemedText>
+
+                <Pressable onPress={navigateToSchedule}>
+                  <Text style={{color: "rgba(123, 169, 255, 1)", fontSize: 15, fontWeight: "600"}}>View Schedule</Text>
+                </Pressable>
           </View>
+          <View style={{borderRadius: 15, borderColor: "#ffffff27", borderWidth: 1, padding: 20, /* backgroundColor: "#6392ff31" */}}>
+            <ThemedText style={{fontSize: 18, fontWeight: "600"}} title={true}>{displayWorkout.name}</ThemedText>
+            {isThereWorkout==="yes" ?  (
+              <View>
+                <WorkoutDescription workout={displayWorkout} />
+                <Spacer height={10} />
+                <View style={{flexDirection:"row", alignItems: "center", marginLeft: 5}}>
+                  <ImageContain size={15} imgStyle={{tintColor: "white"}} source={clockIcon} />
+                  <Text style={{color: "white", marginLeft: 5, fontWeight: "800"}}>{8 * displayWorkout.exercises.length} mins</Text>
+                </View>
+              </View>
+            ) : isThereWorkout==="rest" ? (
+              <ThemedText style={{fontSize: 13}}>Click here for your next workout!</ThemedText>
+            ) : (
+              <ThemedText>Add or create workouts to add!</ThemedText>
+            )}
+            <Spacer height={20} />
+            <BlueButton
+            style={{flex: 1}}
+            onPress={isThereWorkout==="yes" ?  () => openWorkout(displayWorkout) : isThereWorkout==="rest" ? rotateNext : navigateToSchedule}
+            title={isThereWorkout==="yes" ?  "Start Workout" : isThereWorkout==="rest" ? "Next" : "Create a Schedule"}
+            icon={isThereWorkout==="yes" ?  playCircle : isThereWorkout==="rest" ? null : calenderIcon}/>
+          </View>
+          <Spacer />
+
+          <View style={{flex: 1, flexDirection: "row", gap: 10}}>
+            <Pressable onPress={() => {startEmptyWorkout()}} style={{flex: 1,backgroundColor: Colors.primaryBlue, borderRadius: 10, padding: 10}}>
+              <View style={{backgroundColor: "rgba(255, 255, 255, 0.29)000ff", borderRadius: 8, height: 40, width: 40, justifyContent: "center", alignItems: "center"}}>
+                <ImageContain size={20} imgStyle={{tintColor: "white"}} source={dumbbellIcon} />
+              </View>
+              <Text style={{color: "white", fontWeight: "600", fontSize: 17, marginTop: 10}}>Start Empty</Text>
+              <Text style={{color: "#d1d1d1ff", fontWeight: "600", fontSize: 13, marginTop: 2}}>Track workout freely</Text>
+            </Pressable>
+            <Pressable onPress={() => router.navigate("/nutrition")} style={{flex: 1,backgroundColor: "#db545698", borderColor: "#ff6769a4", borderWidth: 1, borderRadius: 10, padding: 10}}>
+              <View style={{backgroundColor: "#db545650", borderRadius: 8, height: 40, width: 40, justifyContent: "center", alignItems: "center"}}>
+                <ImageContain size={20} source={appleIcon} />
+              </View>
+              <Text style={{color: "white", fontWeight: "600", fontSize: 17, marginTop: 10}}>Log Food</Text>
+              <Text style={{color: "#d1d1d1ff", fontWeight: "600", fontSize: 13, marginTop: 2}}>Keep streak</Text>
+            </Pressable>
+          </View>
+
           
-
-
-          {/* If a schedule, show next in schedule. Else, show create a schedule */}
-          <Pressable style={{height: QUICK_START_CARD_HEIGHT, overflow: "visible", zIndex: 1}} onPress={isThereWorkout==="yes" ?  () => openWorkout(continuedWorkout) : isThereWorkout==="rest" ? rotateNext : navigateToSchedule}>
-            {/* Behind element to animate */}
-              {/* cardFlipAnimation && */(<Animated.View style={[styles.animateQuickCard, {zIndex: 0, elevation: 0,}, behindCardAnimatedStyle ]}>
-                <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
-                  <View style={{height: 80, width: 50, justifyContent: "center", alignItems: "center"}}>
-                    <View style={{height: 40, width: 40, backgroundColor: "#3D52A6", borderWidth: 2, borderColor: Colors.primaryBlue, borderRadius: "50%", marginRight: 3, padding: 7}}>
-                      <Image source={isThereWorkoutNext === "yes" ? rightArrow : isThereWorkoutNext === "rest" ? hollowClock : rotate} style={[{height: "100%", width: "100%"}, isThereWorkoutNext === "yes" ? {transform: [{rotate: "0deg"}]} : null]} />
-                    </View>
-
-                  </View>
-                  <View style={styles.quickStartTexts}>
-                    <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>{isThereWorkoutNext === "yes" ? truncate(continuedWorkoutNext.name, 30) : isThereWorkoutNext === "rest" ? "Rest Day" : "Create a schedule" }</Text>
-                    {isThereWorkoutNext === "yes" ? (
-                      <WorkoutDescription style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}} workout={continuedWorkoutNext} />
-                    ) : (
-                      <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>{isThereWorkoutNext === "rest" ? "Click here for your next workout!" : "Add or create workouts to add!"}</Text>
-                    )}
-                    
-                  </View>
-                  {/* <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
-                    <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={isThereWorkoutNext==="yes" ?  () => openWorkout(continuedWorkoutNext) : isThereWorkoutNext==="rest" ? rotateNext : () => router.push('/dashboard/workout') }>
-                      <Text style={{fontSize: 14, color: "white"}}>{isThereWorkoutNext==="yes" ?  "Open workout" : isThereWorkoutNext==="rest" ? "Next" : "Go to workouts"}</Text>
-                    </Pressable>
-                    {isThereWorkoutNext==="yes" && (
-                      <Pressable onPress={rotateNext} style={{padding: 5, backgroundColor: "#656565", borderRadius: 10}}>
-                        <Text style={{fontSize: 12, color: "white"}}>Skip</Text>
-                      </Pressable>
-                    )}
-                    
-                  </View> */}
-                </LinearGradient>
-              </Animated.View>)}
-              {/* Top element to animate */}
-              {/*!cardFlipAnimation && */(<Animated.View style={[styles.animateQuickCard, {zIndex: topCardZIndex, elevation: 1,}, topCardAnimatedStyle]} >
-                <LinearGradient style={[styles.gradientView]} colors={['#262C47', '#473326']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
-                  <View style={{height: 80, width: 50, justifyContent: "center", alignItems: "center"}}>
-                    <View style={{height: 40, width: 40, backgroundColor: "#3D52A6", borderWidth: 2, borderColor: Colors.primaryBlue, borderRadius: "50%", marginRight: 3, padding: 7}}>
-                      <Image source={isThereWorkout === "yes" ? rightArrow : isThereWorkout === "rest" ? hollowClock : rotate} style={[{height: "100%", width: "100%"}, isThereWorkout === "yes" ? {transform: [{rotate: "0deg"}]} : null]} />
-                    </View>
-
-                  </View>
-                  <View style={styles.quickStartTexts}>
-                    <Text style={{fontSize: 17, color: "white", fontWeight: 700}}>{isThereWorkout === "yes" ? truncate(continuedWorkout.name, 30) : isThereWorkout === "rest" ? "Rest Day" : "Create a schedule" }</Text>
-                    {isThereWorkout === "yes" ? (
-                      <WorkoutDescription style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}} workout={continuedWorkout} />
-                    ) : (
-                      <Text style={{fontSize: 13, color: "#E4E4E4", fontWeight: 400}}>{isThereWorkout === "rest" ? "Click here for your next workout!" : "Add or create workouts to add!"}</Text>
-                    )}
-                    
-                  </View>
-                  {/* <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", width: "100%"}}>
-                    <Pressable style={{padding: 10, backgroundColor: "#546FDB", borderRadius: 10, marginRight: 10}} onPress={isThereWorkout==="yes" ?  () => openWorkout(continuedWorkout) : isThereWorkout==="rest" ? rotateNext : () => router.push('/dashboard/workout') }>
-                      <Text style={{fontSize: 14, color: "white"}}>{isThereWorkout==="yes" ?  "Open workout" : isThereWorkout==="rest" ? "Next" : "Go to workouts"}</Text>
-                    </Pressable>
-                    {isThereWorkout==="yes" && (
-                      <Pressable onPress={rotateNext} style={{padding: 5, backgroundColor: "#656565", borderRadius: 10}}>
-                        <Text style={{fontSize: 12, color: "white"}}>Skip</Text>
-                      </Pressable>
-                    )}
-                    
-                  </View> */}
-                </LinearGradient>
-              </Animated.View>)}
-            
-
-          </Pressable>
-          
-            
-
-          <ThemedText style={{fontSize: 12, paddingVertical: 15, textAlign: 'center'}}>or</ThemedText>
-          <BlueButton onPress={() => startEmptyWorkout()} title={"Start an empty workout"} icon={playCircle}/>
 
           <Spacer />
           <ThemedText style={{fontSize: 15, fontWeight: 700, marginBottom: 10}}>Suggested Workout Templates</ThemedText>
           
-          <View style={{flex: 1, justifyContent: "space-between", flexDirection: "row", gap: 15,}}>
-            {/* Left column */}
+          {/* <View style={{flex: 1, justifyContent: "space-between", flexDirection: "row", gap: 15,}}>
             <View style={{gap: 15,}}>
                 {SuggestedWorkouts.map((workout, i) => {
               return i%2 === 0 ? (
@@ -466,7 +537,6 @@ const IndexHome = () => {
               ) : null;
                 })}
             </View>
-            {/* Right column */}
             <View style={{gap: 15,}}>
                 {SuggestedWorkouts.map((workout, i) => {
               return i%2 === 1 ? (
@@ -489,7 +559,42 @@ const IndexHome = () => {
                 })}
             </View>
             
+          </View> */}
+          {/* New suggested workouts */}
+          <View style={{width: screenWidth, marginHorizontal: -20,}}>
+            <FlatList
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 20 }}
+            data={SuggestedWorkouts}
+            keyExtractor={(item) => item.id}
+            renderItem={({item, index}) => {
+              const image = SuggestedWorkoutImages[index];
+              const topOffsets = new Array(6).fill(-120);
+              topOffsets[0] = -170;
+              topOffsets[4] = -170;
+              topOffsets[5] = -200;
+              const topOffset = topOffsets[index];
+              return (
+                <Pressable onPress={() => openWorkout({...item, id: generateUniqueId()})} style={{borderRadius: 20, backgroundColor: "#6392ff31", borderColor: "#ffffff27", borderWidth: 1, padding: 10 , gap: 5, marginRight: 10}}>
+                  <View style={{width: 200, height: 90, borderRadius: 10, overflow: "hidden"}}>
+                    <Image source={image} style={{width: "100%", height: "100%"}} contentFit='cover' contentPosition={{left: "50%", top: topOffset}} />
+                  </View>
+                  <ThemedText title={true} style={{fontSize: 14, fontWeight: "800"}}>{truncate(item.name, 20)}</ThemedText>
+                  <View style={{flexDirection: "row", alignItems: "center"}}>
+                    <ThemedText style={{fontSize: 14, fontWeight: "600"}}>{item.exercises.length} exercise{item.exercises.length===1?"":"s"}</ThemedText>
+                    <View style={{height: 5, width: 5, backgroundColor: "#D0D0D0", borderRadius: 999, marginHorizontal: 5}} />
+                    <ThemedText style={{fontSize: 14, fontWeight: "600"}}>{calculateWorkoutTime(item)} mins</ThemedText>
+                  </View>
+                  
+                  
+                </Pressable>
+              )
+            }}
+
+            />
           </View>
+          
           
           
           {/* <NotificationCard header={"3 min ago"} title={"{Friend} started a workout"} subtitle={"Chest and shoulders"} /> */}
@@ -548,7 +653,8 @@ export default IndexHome
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingVertical: 20,
+    width: screenWidth,
   },
   welcomeCont: {
     width: '100%',

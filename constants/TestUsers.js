@@ -52,6 +52,7 @@ const USER = {
 
         // Sharing
         workouts: true,
+        achievements: true,
         // .......
       },
     },
@@ -264,6 +265,7 @@ const USER = {
     editActiveWorkout: null, // Edit workout screen
     editActivePlate: null, // {foods: [{foodId, quantity, ...food}], name: "My Plate", id: "234234"}
     activeReopenExercise: null,
+    lastRestTimerAmount: 120,
 };
 
 export const TestUsers = [USER];

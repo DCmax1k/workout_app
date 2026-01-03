@@ -36,6 +36,7 @@ function groupActivityByDate(activity) {
     const grouped = {};
   
     activity.forEach(act => {
+      if (!act || !act.timestamp) return null;
       if (!grouped[sinceWhen(act.timestamp)]) {
         grouped[sinceWhen(act.timestamp)] = [];
       }
@@ -239,13 +240,16 @@ const Activity = ({style, activity, ...props}) => {
             <View style={{flex: 1}}>
               
               {/* Workout */}
-              <Pressable onPress={()=> { viewWorkout(activity.details.workout)}} style={[styles.selectWorkout, styles.boxShadow]} >
-                <PastWorkoutCard
-                  disablePress={true}
-                  data={activity.details.workout}
-                  hideDate={true}
-                  />
-              </Pressable>
+              {activity.details.workout !== null && (
+                <Pressable onPress={()=> { viewWorkout(activity.details.workout)}} style={[styles.selectWorkout, styles.boxShadow]} >
+                  <PastWorkoutCard
+                    disablePress={true}
+                    data={activity.details.workout}
+                    hideDate={true}
+                    />
+                </Pressable>
+              )}
+              
               
             </View>
           )}

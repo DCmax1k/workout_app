@@ -28,6 +28,7 @@ import TouchableScale from '../../components/TouchableScale'
 import FoodPreview from '../../components/nutrition/FoodPreview'
 import { useBottomSheet } from '../../context/BottomSheetContext'
 import sendData from '../../util/server/sendData'
+import deepEqual from '../../util/deepEqual'
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
@@ -38,6 +39,7 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
     const updateUser = useUserStore(state => state.updateUser);
 
     const plate = user.editActivePlate ?? {name: "New Plate", id: 0, foods: [] };
+
 
     const [foodPreview, setFoodPreview] = useState(null); // {...food}
     const [foodPreviewOpen, setFoodPreviewOpen] = useState(false);
@@ -109,6 +111,9 @@ const EditPlate = forwardRef(({closeSheet, closeKeyboardIfOpen, animatedHeaderOp
         });
 
     const requestDiscardPlate = () => {
+        if (plate.foods.length < 1) {
+            return discardPlate();
+        } 
         setConfirmMenuData({
             title: "Discard Plate?",
             subTitle: "Any items added to your plate",

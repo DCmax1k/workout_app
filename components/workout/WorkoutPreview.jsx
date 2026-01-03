@@ -1,4 +1,4 @@
-import { Dimensions, Image, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import ThemedText from '../ThemedText'
 import Spacer from '../Spacer'
@@ -6,10 +6,12 @@ import { Colors } from '../../constants/Colors';
 import formatDuration from '../../util/formatDuration';
 import clock from '../../assets/icons/clock.png';
 import weight from '../../assets/icons/weight.png';
+import flame from '../../assets/icons/flame.svg';
 import whiteRunner from '../../assets/icons/whiteRunner.png';
 import formatDate from '../../util/formatDate';
 import minutesToHMS from '../../util/minutesToHMS';
 import formatExerciseTime from '../../util/formatExerciseTime';
+import { Image } from 'expo-image';
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -22,31 +24,37 @@ const WorkoutPreview = ({style, data, ...props}) => {
 
       {/* Behind section */}
       <View style={[styles.section, {alignItems: "center", zIndex: 0}]} >
-        <Spacer height={125} />
+        <Spacer height={100} />
         <ThemedText title={true} style={{fontSize: 25, fontWeight: "bold"}} >{data.workoutName}</ThemedText>
         <ThemedText title={false} style={{fontSize: 15}} >{formatDate(data.time)}</ThemedText>
+        <Spacer height={10} />
+        <View style={[ {flexDirection: "row", justifyContent: "center", alignItems: "flex-end"}]}>
+            <Image source={flame} style={{height: 16, width: 16, tintColor: "white", marginRight: 5}} contentFit='contain' />
+            <ThemedText style={{fontSize: 17, fontWeight: 600, marginBottom: -3}}>{`${parseInt(data.totalExpenditure)}`}</ThemedText>
+            <ThemedText style={{fontSize: 12, fontWeight: 400, marginBottom: -2, marginLeft: 2}}>{`kcal`}</ThemedText>
+        </View>
 
-        <Spacer />
+        <Spacer height={30} />
 
         <View style={{flexDirection: "row", }}>
 
           <View style={{marginHorizontal: 5, alignItems: "center", minWidth: 100}}>
             <View style={{height: 30, width: 30, overflow: "visible", justifyContent: "center", alignItems: "center", marginBottom: 5}}>
-              <Image style={{height: 30, width: 30, objectFit: "contain"}} source={clock} />
+              <Image style={{height: 30, width: 30,}} contentFit='contain' source={clock} />
             </View>
             <ThemedText style={{color: "white", fontSize: 17}}>{formatDuration(data.workoutLength)}</ThemedText>
           </View>
 
           {data.totalWeightLifted > 0 && (<View style={{marginHorizontal: 5, alignItems: "center", minWidth: 100}}>
             <View style={{height: 30, width: 30, overflow: "visible", justifyContent: "center", alignItems: "center", marginBottom: 5}}>
-              <Image style={{height: 40, width: 40, objectFit: "contain"}} source={weight} />
+              <Image style={{height: 40, width: 40,}} contentFit='contain' source={weight} />
             </View>
             <ThemedText style={{color: "white", fontSize: 17}}>{`${parseInt(data.totalWeightLifted)} lbs`}</ThemedText>
           </View>)}
 
           {data.totalDistanceTraveled > 0 && (<View style={{marginHorizontal: 5, alignItems: "center", minWidth: 100}}>
             <View style={{height: 30, width: 30, overflow: "visible", justifyContent: "center", alignItems: "center", marginBottom: 5}}>
-              <Image style={{height: 40, width: 40, objectFit: "contain"}} source={whiteRunner} />
+              <Image style={{height: 40, width: 40,}} contentFit='contain' source={whiteRunner} />
             </View>
             <ThemedText style={{color: "white", fontSize: 17}}>{`${parseInt(data.totalDistanceTraveled)} miles`}</ThemedText>
           </View>)}

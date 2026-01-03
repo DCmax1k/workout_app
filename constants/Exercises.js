@@ -3,7 +3,7 @@ import { Image } from "react-native"
 const track = {
     strength: ['weight', 'reps'],
     strengthPlus: ['weightPlus', 'reps'],
-    cardio: ['mile', 'time'],
+    cardio: ['mile', 'time'], // time in mintes
     distance: ['mile'],
     repsOnly: ['reps'],
     timeOnly: ['time'],
@@ -249,7 +249,8 @@ export const Exercises = [
         "muscleGroups": ["chest", "shoulders", "triceps"],
         "difficulty": "beginner",
         "id": "11",
-        "met": 6
+        "met": 6,
+        "setTime": 5,
     },
     {
         "name": "Machine Ab Crunch",
@@ -318,7 +319,8 @@ export const Exercises = [
         "muscleGroups": ["abs"],
         "difficulty": "intermediate",
         "id": "17",
-        "met": 4
+        "met": 4,
+        "setTime": 5,
     },
     {
         "name": "Sit-Up",
@@ -353,7 +355,8 @@ export const Exercises = [
         "muscleGroups": ["abs", "core", "hip flexors"],
         "difficulty": "intermediate",
         "id": "20",
-        "met": 8
+        "met": 8,
+        "setTime": 7,
     },
     {
         "name": "Barbell Deadlift",

@@ -625,8 +625,8 @@ const ProgressExpanded = () => {
                     const imageKey = name.split(" ")[0];
                     const image = BMI_IMAGES[imageKey];
                     return (
-                      <View style={{width: 1, height: 100, overflow: "visible"}}>
-                          <View key={imageKey} style={{alignItems: "center", width: 100, transform: [{translateX: '-50%'}]}}>
+                      <View key={imageKey} style={{width: 1, height: 100, overflow: "visible"}}>
+                          <View style={{alignItems: "center", width: 100, transform: [{translateX: '-50%'}]}}>
                             <ImageContain source={image} height={70} width={100} />
                             <Spacer height={5} />
                             <Text style={{color: "#A6A6A6", fontSize: 9, textAlign: "center"}}>{firstCapital(name)}</Text>

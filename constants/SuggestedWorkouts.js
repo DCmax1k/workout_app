@@ -1,3 +1,12 @@
+export const SuggestedWorkoutImages = [
+   require('../assets/exercises/benchPress.webp'),
+   require("../assets/exercises/barbellSquat.webp"),
+   require("../assets/exercises/dumbbellShoulderPress.webp"),
+   require("../assets/exercises/barbellCurl.webp"),
+   require("../assets/exercises/barbellSkullCrusher.webp"),
+   require("../assets/exercises/barbellDeadlift.webp"),
+]
+
 export const SuggestedWorkouts = [
    {
       "exercises":[
@@ -374,6 +383,7 @@ export const SuggestedWorkouts = [
                }
             ],
             "name":"Sit-Up",
+            "setTime": 5,
             "tracks":[
                "weight",
                "reps"

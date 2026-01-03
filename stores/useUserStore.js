@@ -59,6 +59,7 @@ const fillMissingKeys = (base, user) => {
   //console.log(JSON.stringify(filled.savedWorkouts.reverse()));
   //filled.extraDetails.ai.image.credits = 5;
   // filled.extraDetails.preferences.restTimerAmount = 0;
+  // filled.streak.achievementAmount = 0;
 
   return filled;
 }
